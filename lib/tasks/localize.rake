@@ -14,9 +14,9 @@ def cap_config(site)
   instance_variable_set("@cap_config_#{site}",instance_variable_get("@cap_config_#{site}") || `cap #{site} deploy:print_config_variables`)
   instance_variable_get("@cap_config_#{site}")
 end
-
 def linked_files(site)
   config =  cap_config(site).match(/linked_files.*$/)[0]
+  # ":linked_files => [\"filename\",...]"
   raise "No Capistrano linked files configured" if config.blank?
   files = config.match(/\[(.*)\]/)[1].split(',').map{|s| s.gsub("\"","").strip }
   files.map do |file|
@@ -25,12 +25,10 @@ def linked_files(site)
     [file_path, link_path, file]
   end
 end
-
 def deploy_to(site)
   deploy_path = cap_config(site).match(/deploy_to => "(.*)"$/)[1]
   shared_path = deploy_path+"/shared/"
 end
-
 namespace :nhri_hub do
 
   desc "upload linked files to server"
