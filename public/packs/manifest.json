@@ -1,0 +1,14 @@
+{
+  "entrypoints": {
+    "shared": {
+      "js": [
+        "/packs/js/shared-fe5c38ce7d88a4a6aaf5.js"
+      ],
+      "js.map": [
+        "/packs/js/shared-fe5c38ce7d88a4a6aaf5.js.map"
+      ]
+    }
+  },
+  "shared.js": "/packs/js/shared-fe5c38ce7d88a4a6aaf5.js",
+  "shared.js.map": "/packs/js/shared-fe5c38ce7d88a4a6aaf5.js.map"
+}

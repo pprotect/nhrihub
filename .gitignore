@@ -17,7 +17,7 @@
 
 /config/secrets.yml
 .DS_Store
-
+.NERDTreeBookmarks
 
 # capistrano configuration
 config/deploy/demo.rb
