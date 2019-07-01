@@ -11,7 +11,6 @@ module ComplaintsSpecHelpers
   include NotesSpecCommonHelpers
 
   def add_a_communication
-    page.find('.case_reference', :text => Complaint.first.case_reference) # hack to make sure the page is loaded and rendered
     open_communications_modal
     add_communication
     expect(page).to have_selector('#new_communication')
@@ -203,6 +202,7 @@ module ComplaintsSpecHelpers
   end
 
   def expand
+    sleep(0.4)
     all('.complaint #expand').first.click
   end
 
@@ -211,6 +211,7 @@ module ComplaintsSpecHelpers
   end
 
   def open_communications_modal
+    page.find('.case_reference', :text => Complaint.first.case_reference) # hack to make sure the page is loaded and rendered
     page.all('#complaints .complaint .fa-comments-o')[0].click
   end
 
