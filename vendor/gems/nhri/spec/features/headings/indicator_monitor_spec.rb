@@ -203,13 +203,13 @@ feature "monitors behaviour when indicator is configured to monitor with file fo
   # b/c there was a bug!
   scenario "file select, then remove selection, then click upload should give warning and no upload" do
     show_monitors.click
-    expect(file_upload_button[:disabled]).to eq "true"
+    expect(file_upload_button[:disabled]).to eq "disabled"
     page.attach_file("monitor_file", upload_document, :visible => false)
     expect(file_upload_button[:disabled]).to be_nil
     expect(selected_file).to eq "first_upload_file.pdf"
     deselect_file
     expect(selected_file).to be_blank
-    expect(file_upload_button[:disabled]).to eq "true"
+    expect(file_upload_button[:disabled]).to eq "disabled"
   end
 
 end
