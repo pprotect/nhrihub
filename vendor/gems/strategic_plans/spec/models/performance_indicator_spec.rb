@@ -27,19 +27,19 @@ describe "#indexed_description" do
     before do
       spl = StrategicPlan.new
       spl.save
-      sp = FactoryGirl.create(:strategic_priority, :priority_level => 1, :strategic_plan => spl)
-      pr = FactoryGirl.create(:planned_result, :strategic_priority => sp)
-      o = FactoryGirl.create(:outcome, :planned_result => pr)
-      a1 = FactoryGirl.create(:activity, :outcome => o)
+      sp = FactoryBot.create(:strategic_priority, :priority_level => 1, :strategic_plan => spl)
+      pr = FactoryBot.create(:planned_result, :strategic_priority => sp)
+      o = FactoryBot.create(:outcome, :planned_result => pr)
+      a1 = FactoryBot.create(:activity, :outcome => o)
       2.times do
-        FactoryGirl.create(:performance_indicator, :activity => a1)
+        FactoryBot.create(:performance_indicator, :activity => a1)
       end
-      a2 = FactoryGirl.create(:activity, :outcome => o)
+      a2 = FactoryBot.create(:activity, :outcome => o)
       8.times do
-        FactoryGirl.create(:performance_indicator, :activity => a2)
+        FactoryBot.create(:performance_indicator, :activity => a2)
       end
 
-      a1.performance_indicators << FactoryGirl.create(:performance_indicator, :activity => a1)
+      a1.performance_indicators << FactoryBot.create(:performance_indicator, :activity => a1)
       a1.save
       @new_performance_indicator = a1.performance_indicators.to_a.last
     end
@@ -54,12 +54,12 @@ describe "#lower_priority_siblings" do
   before do
     spl = StrategicPlan.new
     spl.save
-    sp = FactoryGirl.create(:strategic_priority, :priority_level => 1, :strategic_plan => spl)
-    pr = FactoryGirl.create(:planned_result, :strategic_priority => sp)
-    o = FactoryGirl.create(:outcome, :planned_result_id => pr.id)
-    a = FactoryGirl.create(:activity, :outcome_id => o.id)
+    sp = FactoryBot.create(:strategic_priority, :priority_level => 1, :strategic_plan => spl)
+    pr = FactoryBot.create(:planned_result, :strategic_priority => sp)
+    o = FactoryBot.create(:outcome, :planned_result_id => pr.id)
+    a = FactoryBot.create(:activity, :outcome_id => o.id)
     8.times do
-      FactoryGirl.create(:performance_indicator, :activity_id => a.id)
+      FactoryBot.create(:performance_indicator, :activity_id => a.id)
     end
   end
 
@@ -71,7 +71,7 @@ end
 
 describe "destroy" do
   before do
-    FactoryGirl.create(:strategic_plan, :well_populated)
+    FactoryBot.create(:strategic_plan, :well_populated)
   end
 
   it "should set the initial values of the indexes" do
@@ -96,7 +96,7 @@ end
 
 describe "#index_url" do
   before do
-    @strategic_plan = FactoryGirl.create(:strategic_plan, :populated)
+    @strategic_plan = FactoryBot.create(:strategic_plan, :populated)
     @performance_indicator = PerformanceIndicator.first
   end
 
@@ -115,18 +115,18 @@ end
 
 describe ".in_current_strategic_plan scope" do
   before do
-    previous_strategic_plan = FactoryGirl.create(:strategic_plan, :created_at => Date.new(Date.today.year-1,1,1))
-    sp = FactoryGirl.create(:strategic_priority, :priority_level => 1, :strategic_plan_id => previous_strategic_plan.id)
-    pr = FactoryGirl.create(:planned_result, :strategic_priority => sp)
-    o = FactoryGirl.create(:outcome, :planned_result => pr)
-    a = FactoryGirl.create(:activity, :outcome => o)
-    pi = FactoryGirl.create(:performance_indicator, :activity => a)
-    @current_strategic_plan = FactoryGirl.create(:strategic_plan, :created_at => Date.new(Date.today.year,1,1))
-    sp = FactoryGirl.create(:strategic_priority, :priority_level => 1, :strategic_plan_id => @current_strategic_plan.id)
-    pr = FactoryGirl.create(:planned_result, :strategic_priority => sp)
-    o = FactoryGirl.create(:outcome, :planned_result => pr)
-    a = FactoryGirl.create(:activity, :outcome => o)
-    @pi = FactoryGirl.create(:performance_indicator, :activity => a)
+    previous_strategic_plan = FactoryBot.create(:strategic_plan, :created_at => Date.new(Date.today.year-1,1,1))
+    sp = FactoryBot.create(:strategic_priority, :priority_level => 1, :strategic_plan_id => previous_strategic_plan.id)
+    pr = FactoryBot.create(:planned_result, :strategic_priority => sp)
+    o = FactoryBot.create(:outcome, :planned_result => pr)
+    a = FactoryBot.create(:activity, :outcome => o)
+    pi = FactoryBot.create(:performance_indicator, :activity => a)
+    @current_strategic_plan = FactoryBot.create(:strategic_plan, :created_at => Date.new(Date.today.year,1,1))
+    sp = FactoryBot.create(:strategic_priority, :priority_level => 1, :strategic_plan_id => @current_strategic_plan.id)
+    pr = FactoryBot.create(:planned_result, :strategic_priority => sp)
+    o = FactoryBot.create(:outcome, :planned_result => pr)
+    a = FactoryBot.create(:activity, :outcome => o)
+    @pi = FactoryBot.create(:performance_indicator, :activity => a)
   end
 
   it "should include only planned results from current strategic plan" do

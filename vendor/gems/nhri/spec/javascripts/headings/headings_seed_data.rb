@@ -4,6 +4,6 @@ class HeadingsSeedData
   end
 
   def self.headings_init
-    FactoryGirl.create(:heading, :with_three_human_rights_attributes)
+    FactoryBot.create(:heading, :with_three_human_rights_attributes)
   end
 end

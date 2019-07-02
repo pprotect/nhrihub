@@ -1,6 +1,6 @@
 class AdvisoryCouncilIssueTest
   def self.populate_test_data
-    aci = FactoryGirl.build(:advisory_council_issue,
+    aci = FactoryBot.build(:advisory_council_issue,
                             :hr_violation_subarea,
                             :crc_subarea,
                             :title => "Fantasy land",
@@ -9,7 +9,7 @@ class AdvisoryCouncilIssueTest
                             :created_at => DateTime.new(2015,1,1,0,0,0,'-8'))
     aci.save
 
-    aci = FactoryGirl.build(:advisory_council_issue,
+    aci = FactoryBot.build(:advisory_council_issue,
                             :hr_violation_subarea,
                             :crc_subarea,
                             :title => "May the force be with you",
@@ -17,7 +17,7 @@ class AdvisoryCouncilIssueTest
     aci.save
 
     6.times do |i|
-      aci = FactoryGirl.build(:advisory_council_issue,
+      aci = FactoryBot.build(:advisory_council_issue,
                               :no_f_in_title,
                               :si_area,
                               :created_at => DateTime.new(2014,1,1,0,0,0,'-8'))

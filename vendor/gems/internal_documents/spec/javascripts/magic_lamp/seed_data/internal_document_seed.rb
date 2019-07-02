@@ -15,11 +15,11 @@ class InternalDocumentSeed
 
   def self.populate_test_data
     3.times do
-      doc = FactoryGirl.create(:internal_document, :revision => rev, :title => rand_title, :original_filename => rand_filename)
+      doc = FactoryBot.create(:internal_document, :revision => rev, :title => rand_title, :original_filename => rand_filename)
       2.times do
-        doc = FactoryGirl.create(:internal_document, :document_group_id => doc.document_group_id)
+        doc = FactoryBot.create(:internal_document, :document_group_id => doc.document_group_id)
       end
     end
-    FactoryGirl.create(:accreditation_required_document, :revision => rev, :title => "Statement of Compliance", :original_filename => rand_filename)
+    FactoryBot.create(:accreditation_required_document, :revision => rev, :title => "Statement of Compliance", :original_filename => rand_filename)
   end
 end

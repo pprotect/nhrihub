@@ -137,7 +137,7 @@ feature "agency admin", :js => true do
   end
 
   scenario "some agencies are configured" do
-    FactoryGirl.create(:agency, :name => "ABC", :full_name => "Anywhere But Colma")
+    FactoryBot.create(:agency, :name => "ABC", :full_name => "Anywhere But Colma")
     visit complaint_admin_path('en')
     expect(page).to have_selector('#agencies .agency td.name', :text => 'ABC')
     expect(page).to have_selector('#agencies .agency td.full_name', :text => 'Anywhere But Colma')
@@ -174,7 +174,7 @@ feature "agency admin", :js => true do
   end
 
   scenario "add an agency with duplicate name" do
-    FactoryGirl.create(:agency, :name => "ABC", :full_name => "Anywhere But Colma")
+    FactoryBot.create(:agency, :name => "ABC", :full_name => "Anywhere But Colma")
     visit complaint_admin_path('en')
     page.find('form#new_agency input#agency_name').set('abc') # case insensitive
     page.find('form#new_agency input#agency_full_name').set('Anywhere But Chelmsford')
@@ -185,7 +185,7 @@ feature "agency admin", :js => true do
   end
 
   scenario "add an agency with duplicate full name" do
-    FactoryGirl.create(:agency, :name => "ABC", :full_name => "Anywhere But Colma")
+    FactoryBot.create(:agency, :name => "ABC", :full_name => "Anywhere But Colma")
     visit complaint_admin_path('en')
     page.find('form#new_agency input#agency_name').set('XYZ')
     page.find('form#new_agency input#agency_full_name').set('Anywhere But colma') # case insensitive!
@@ -196,14 +196,14 @@ feature "agency admin", :js => true do
   end
 
   scenario "delete an agency that is not associated with any complaint" do
-    FactoryGirl.create(:agency, :name => "ABC", :full_name => "Anywhere But Colma")
+    FactoryBot.create(:agency, :name => "ABC", :full_name => "Anywhere But Colma")
     visit complaint_admin_path('en')
     expect{find("#agencies .agency .delete_agency").click; wait_for_ajax}.to change{Agency.count}.from(1).to(0)
   end
 
   scenario "delete an agency that is already associated with a complaint" do
-    agency = FactoryGirl.create(:agency, :name => "ABC", :full_name => "Anywhere But Colma")
-    FactoryGirl.create(:complaint, :agencies => [agency])
+    agency = FactoryBot.create(:agency, :name => "ABC", :full_name => "Anywhere But Colma")
+    FactoryBot.create(:complaint, :agencies => [agency])
     visit complaint_admin_path('en')
     expect{find("#agencies .agency .delete_agency").click; wait_for_ajax}.not_to change{Agency.count}
     expect(page).to have_selector('#delete_disallowed', :text => "cannot delete an agency that is associated with complaints")

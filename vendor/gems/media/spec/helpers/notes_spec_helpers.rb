@@ -5,6 +5,6 @@ module NotesSpecHelpers
   extend RSpec::Core::SharedContext
   include NotesSpecCommonHelpers
   def setup_note
-    FactoryGirl.create(:note, :notable_type => "MediaAppearance", :notable_id => MediaAppearance.first.id)
+    FactoryBot.create(:note, :notable_type => "MediaAppearance", :notable_id => MediaAppearance.first.id)
   end
 end

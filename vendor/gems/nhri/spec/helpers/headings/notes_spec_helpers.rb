@@ -5,7 +5,7 @@ module NotesSpecHelpers
   extend RSpec::Core::SharedContext
   include NotesSpecCommonHelpers
   def setup_note
-    FactoryGirl.create(:note,
+    FactoryBot.create(:note,
                        :notable_type => "Nhri::Indicator",
                        :notable_id => Nhri::Indicator.first.id)
   end

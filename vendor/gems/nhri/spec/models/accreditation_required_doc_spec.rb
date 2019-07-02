@@ -10,7 +10,7 @@ end
 
 describe "create the first document in an accreditation_document_group" do
   it "should create a new accreditation document group" do
-    document = FactoryGirl.create(:accreditation_required_document, :title => "Statement of Compliance")
+    document = FactoryBot.create(:accreditation_required_document, :title => "Statement of Compliance")
     expect(document.accreditation_document_group).to be_a AccreditationDocumentGroup
   end
 end
@@ -19,7 +19,7 @@ describe "create accreditation required docs also creates accreditation required
   before do
     # in this not-anticipated situation an accreditation required doc is created
     # without a previously existing doc group
-    @icc_doc = FactoryGirl.create(:accreditation_required_document)
+    @icc_doc = FactoryBot.create(:accreditation_required_document)
   end
 
   it "should create two document groups," do
@@ -37,10 +37,10 @@ describe "edit a document, creating an icc accreditation document" do
   context "the icc accreditation document group already exists" do
     before do
       setup_accreditation_required_groups # normally all accreditation required doc groups are pre-existing
-      @document3 = FactoryGirl.create(:internal_document, :revision=>"1.0")
-      @document2 = FactoryGirl.create(:internal_document, :revision=>"1.1", :document_group_id => @document3.document_group_id)
-      @document1 = FactoryGirl.create(:internal_document, :revision=>"1.2", :document_group_id => @document2.document_group_id)
-      @icc_doc = FactoryGirl.create(:accreditation_required_document, :title => "Statement of Compliance")
+      @document3 = FactoryBot.create(:internal_document, :revision=>"1.0")
+      @document2 = FactoryBot.create(:internal_document, :revision=>"1.1", :document_group_id => @document3.document_group_id)
+      @document1 = FactoryBot.create(:internal_document, :revision=>"1.2", :document_group_id => @document2.document_group_id)
+      @icc_doc = FactoryBot.create(:accreditation_required_document, :title => "Statement of Compliance")
       @icc_group_id = @icc_doc.document_group_id
     end
 

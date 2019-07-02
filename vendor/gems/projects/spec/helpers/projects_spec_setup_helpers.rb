@@ -21,12 +21,12 @@ module ProjectsSpecSetupHelpers
     # project_reminders_spec needs 1 project
     # projects_spec needs 2
     unless self.class.name =~ /Reminder/
-      FactoryGirl.create(:project,
+      FactoryBot.create(:project,
                          :with_documents,
                          :with_performance_indicators)
     end
 
-    @project = FactoryGirl.create(:project,
+    @project = FactoryBot.create(:project,
                              :with_named_documents,
                              :with_performance_indicators,
                              :with_mandates,

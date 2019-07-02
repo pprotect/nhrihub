@@ -20,13 +20,13 @@ feature "show media archive", :js => true do
     setup_file_constraints
     setup_areas
     3.times do
-      @media_appearance = FactoryGirl.create(:media_appearance,
+      @media_appearance = FactoryBot.create(:media_appearance,
                                              :hr_area,
-                                             :reminders=>[FactoryGirl.create(:reminder, :media_appearance)])
+                                             :reminders=>[FactoryBot.create(:reminder, :media_appearance)])
     end
-    @media_appearance = FactoryGirl.create(:media_appearance,
+    @media_appearance = FactoryBot.create(:media_appearance,
                                            :hr_area,
-                                           :reminders=>[FactoryGirl.create(:reminder, :media_appearance)],
+                                           :reminders=>[FactoryBot.create(:reminder, :media_appearance)],
                                            :title => '" all? the<>\ [] ){} ({)888.,# weird // @;:characters &')
     visit media_appearances_path(:en)
   end

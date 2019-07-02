@@ -5,7 +5,7 @@ require 'rubygems'
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
 require "rspec/rails"
-require "factory_girl_rails"
+require "factory_bot_rails"
 require 'database_cleaner'
 require 'authengine/testing_support/factories/user_factory'
 require 'authengine/testing_support/factories/organization_factory'

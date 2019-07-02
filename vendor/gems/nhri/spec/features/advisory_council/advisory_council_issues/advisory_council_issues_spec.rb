@@ -16,9 +16,9 @@ feature "show advisory council issue archive", :js => true do
   before do
     setup_areas
     2.times do
-      @issue = FactoryGirl.create(:advisory_council_issue,
+      @issue = FactoryBot.create(:advisory_council_issue,
                          :hr_area,
-                         :reminders=>[FactoryGirl.create(:reminder, :advisory_council_issue)] )
+                         :reminders=>[FactoryBot.create(:reminder, :advisory_council_issue)] )
     end
     visit nhri_advisory_council_issues_path(:en)
   end

@@ -18,7 +18,7 @@ feature "icc reference document admin titles configuration", :js => true do
   end
 
   scenario "titles configured" do
-    FactoryGirl.create(:accreditation_document_group, :title => "Statement of Compliance")
+    FactoryBot.create(:accreditation_document_group, :title => "Statement of Compliance")
     visit nhri_admin_path('en')
     within page.find('#doc_groups') do
       expect(page.find('.type').text).to eq 'Statement of Compliance'
@@ -39,7 +39,7 @@ feature "icc reference document admin titles configuration", :js => true do
   end
 
   scenario "add duplicate title" do
-    FactoryGirl.create(:accreditation_document_group, :title => "Statement of Compliance")
+    FactoryBot.create(:accreditation_document_group, :title => "Statement of Compliance")
     visit nhri_admin_path('en')
     sleep(0.1)
     within page.find('#doc_groups') do
@@ -60,8 +60,8 @@ feature "icc reference document admin titles configuration", :js => true do
   end
 
   scenario "delete a title" do
-    FactoryGirl.create(:accreditation_document_group, :title => "Statement of Compliance")
-    FactoryGirl.create(:accreditation_document_group, :title => "Annual Report")
+    FactoryBot.create(:accreditation_document_group, :title => "Statement of Compliance")
+    FactoryBot.create(:accreditation_document_group, :title => "Annual Report")
     visit nhri_admin_path('en')
     within page.find('#doc_groups') do
       expect{ delete_title("Statement of Compliance"); wait_for_ajax }.to change{AccreditationDocumentGroup.count}.by(-1)

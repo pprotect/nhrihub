@@ -667,7 +667,7 @@ feature "complaints index", :js => true do
   end
 
   it "permits only one edit at a time" do
-    FactoryGirl.create(:complaint, :open)
+    FactoryBot.create(:complaint, :open)
     visit complaints_path('en')
     edit_first_complaint
     edit_second_complaint

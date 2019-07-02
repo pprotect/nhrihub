@@ -171,12 +171,12 @@ feature "open strategic plan and highlight performance indicator when its id is 
     activity = setup_activity
     #resize_browser_window
     15.times do
-      FactoryGirl.create(:performance_indicator, :activity_id => activity.id)
+      FactoryBot.create(:performance_indicator, :activity_id => activity.id)
     end
-    selected_performance_indicator = FactoryGirl.create(:performance_indicator, :activity => activity)
-    reminder = FactoryGirl.create(:reminder, :remindable => selected_performance_indicator)
+    selected_performance_indicator = FactoryBot.create(:performance_indicator, :activity => activity)
+    reminder = FactoryBot.create(:reminder, :remindable => selected_performance_indicator)
     15.times do
-      FactoryGirl.create(:performance_indicator, :activity_id => activity.id)
+      FactoryBot.create(:performance_indicator, :activity_id => activity.id)
     end
     @id = selected_performance_indicator.id
     url = URI(selected_performance_indicator.index_url)
@@ -207,7 +207,7 @@ feature "renders performance indicators in order of index", :js => true do
     activity = setup_activity
     #resize_browser_window
     15.times do
-      FactoryGirl.create(:performance_indicator, :activity_id => activity.id)
+      FactoryBot.create(:performance_indicator, :activity_id => activity.id)
     end
     selected_performance_indicator = PerformanceIndicator.create(:activity_id => activity.id, :description => "things get better", :target => "85% improvement")
     @id = selected_performance_indicator.id

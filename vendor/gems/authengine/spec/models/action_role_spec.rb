@@ -11,7 +11,7 @@ describe 'permits_access_for class method' do
 
   context "access based on user's permitted roles" do
     before(:each) do
-      @user = FactoryGirl.create(:user, :login => 'just_me')
+      @user = FactoryBot.create(:user, :login => 'just_me')
       UserRole.create(:role_id => role.id, :user_id => @user.id)
     end
 
@@ -27,7 +27,7 @@ describe 'permits_access_for class method' do
     end
 
     context "user has no roles assigned" do
-      before { @user = FactoryGirl.create(:user, :login => 'another_person') }
+      before { @user = FactoryBot.create(:user, :login => 'another_person') }
       it { is_expected.to eq(false) }
     end
 
@@ -50,7 +50,7 @@ describe 'permits_access_for class method' do
 
   context "access based on role id" do
     let(:another_role){ Role.create(:name => 'minion') }
-    let(:user){ FactoryGirl.create(:user, :login => 'just_me') }
+    let(:user){ FactoryBot.create(:user, :login => 'just_me') }
     let(:access_permitted){ ActionRole.permits_access_for(controller.controller_name, action.action_name, @role_ids) }
 
     context "should permit when one of the passed-in roles has an action_role that links to the passed in controller/action" do

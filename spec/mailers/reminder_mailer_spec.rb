@@ -2,9 +2,9 @@ require "rails_helper"
 
 RSpec.describe ReminderMailer, type: :mailer do
   describe "reminder" do
-    let(:user) { FactoryGirl.build(:user, :email => "norm@acme.org") }
-    let(:complaint) { FactoryGirl.create(:complaint) }
-    let(:reminder){ FactoryGirl.build(:reminder, :complaint, :remindable_id => complaint.id, :user => user) }
+    let(:user) { FactoryBot.build(:user, :email => "norm@acme.org") }
+    let(:complaint) { FactoryBot.create(:complaint) }
+    let(:reminder){ FactoryBot.build(:reminder, :complaint, :remindable_id => complaint.id, :user => user) }
     let(:mail) { ReminderMailer.reminder(reminder) }
 
     it "renders the headers" do

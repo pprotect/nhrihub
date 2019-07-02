@@ -5,36 +5,36 @@ module AdvisoryCouncilIssueSetupHelper
   def setup_database(type = :advisory_council_issue_with_file)
     setup_areas
     if type == :advisory_council_issue_with_file
-      FactoryGirl.create(:advisory_council_issue,
+      FactoryBot.create(:advisory_council_issue,
                          :hr_area,
                          :file,
                          :reminders=>[] )
     elsif type == :advisory_council_issue_with_link
-      FactoryGirl.create(:advisory_council_issue,
+      FactoryBot.create(:advisory_council_issue,
                          :hr_area,
                          :link,
                          :reminders=>[] )
     else
-      FactoryGirl.create(:advisory_council_issue,
+      FactoryBot.create(:advisory_council_issue,
                          :hr_area,
                          :reminders=>[] )
     end
   end
 
   def add_a_second_article
-    FactoryGirl.create(:advisory_council_issue,
+    FactoryBot.create(:advisory_council_issue,
                        :hr_area,
                        :reminders=>[] )
   end
 
   def add_reminder
     issue = Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first
-    issue.reminders << FactoryGirl.create(:reminder, :reminder_type => 'weekly', :text => "don't forget the fruit gums mum", :users => [User.first])
+    issue.reminders << FactoryBot.create(:reminder, :reminder_type => 'weekly', :text => "don't forget the fruit gums mum", :users => [User.first])
     issue.save
   end
 
   def setup_articles
-    FactoryGirl.create(:advisory_council_issue)
+    FactoryBot.create(:advisory_council_issue)
   end
 
   def setup_areas

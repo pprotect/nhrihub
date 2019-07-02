@@ -24,10 +24,10 @@ describe "#lower_priority_siblings" do
   before do
     spl = StrategicPlan.new
     spl.save
-    sp = FactoryGirl.create(:strategic_priority, :priority_level => 1, :strategic_plan => spl)
-    pr = FactoryGirl.create(:planned_result, :strategic_priority => sp)
+    sp = FactoryBot.create(:strategic_priority, :priority_level => 1, :strategic_plan => spl)
+    pr = FactoryBot.create(:planned_result, :strategic_priority => sp)
     8.times do
-      FactoryGirl.create(:outcome, :planned_result_id => pr.id)
+      FactoryBot.create(:outcome, :planned_result_id => pr.id)
     end
   end
 
@@ -39,7 +39,7 @@ end
 
 describe "destroy" do
   before do
-    FactoryGirl.create(:strategic_plan, :well_populated)
+    FactoryBot.create(:strategic_plan, :well_populated)
   end
 
   it "should set the initial values of the indexes" do

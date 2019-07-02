@@ -18,8 +18,8 @@ feature "terms of reference document", :js => true do
   before do
     Nhri::AdvisoryCouncil::TermsOfReferenceVersion.maximum_filesize = 5
     Nhri::AdvisoryCouncil::TermsOfReferenceVersion.permitted_filetypes = ['pdf']
-    FactoryGirl.create(:terms_of_reference_version, :revision_major => 1, :revision_minor => 2)
-    FactoryGirl.create(:terms_of_reference_version, :revision_major => 3, :revision_minor => 1)
+    FactoryBot.create(:terms_of_reference_version, :revision_major => 1, :revision_minor => 2)
+    FactoryBot.create(:terms_of_reference_version, :revision_major => 3, :revision_minor => 1)
     visit nhri_advisory_council_terms_of_references_path('en')
   end
 

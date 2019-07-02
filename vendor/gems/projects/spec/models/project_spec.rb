@@ -2,12 +2,12 @@ require 'rails_helper'
 
 describe 'to_json' do
   before do
-    project = FactoryGirl.create(:project)
-    mandate = FactoryGirl.create(:mandate, :key => "human_rights")
+    project = FactoryBot.create(:project)
+    mandate = FactoryBot.create(:mandate, :key => "human_rights")
     project.mandates << mandate
-    @type1 = FactoryGirl.create(:project_type, :mandate_id => mandate.id, :name => "Schools")
-    @type2 = FactoryGirl.create(:project_type, :mandate_id => mandate.id, :name => "Police")
-    @type3 = FactoryGirl.create(:project_type, :mandate_id => mandate.id, :name => "Farms")
+    @type1 = FactoryBot.create(:project_type, :mandate_id => mandate.id, :name => "Schools")
+    @type2 = FactoryBot.create(:project_type, :mandate_id => mandate.id, :name => "Police")
+    @type3 = FactoryBot.create(:project_type, :mandate_id => mandate.id, :name => "Farms")
     project.project_types << [@type1,@type2]
     project_json = project.to_json
     @project_ruby = JSON.parse(project_json)

@@ -3,9 +3,9 @@ $:.unshift File.expand_path '../../helpers', __FILE__
 
 feature "complaint report" do
   scenario "it should produce valid xml with weird characters in fields" do
-    user = FactoryGirl.create(:user)
-    agency = FactoryGirl.create(:agency, :name => "&&<<>>//")
-    complaint = FactoryGirl.create(:complaint, :details=> "&><**/", :agencies => [agency])
+    user = FactoryBot.create(:user)
+    agency = FactoryBot.create(:agency, :name => "&&<<>>//")
+    complaint = FactoryBot.create(:complaint, :details=> "&><**/", :agencies => [agency])
     complaint_report = ComplaintReport.new(complaint, user)
     report = complaint_report.generate_word_doc
     docx = File.read(ComplaintReport::TMP_DIR.join('docx', 'word', 'document.xml').to_s)
@@ -16,7 +16,7 @@ end
 
 feature "complaints report" do
   scenario "it should produce valid xml with weird characters in fields" do
-    complaint = FactoryGirl.create(:complaint, :details=> "&><**/")
+    complaint = FactoryBot.create(:complaint, :details=> "&><**/")
     complaints_report = ComplaintsReport.new([complaint])
     report = complaints_report.generate_word_doc
     docx = File.read(ComplaintsReport::TMP_DIR.join('docx', 'word', 'document.xml').to_s)

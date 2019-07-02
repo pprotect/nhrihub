@@ -8,7 +8,7 @@ module ComplaintsSpecSetupHelpers
     create_agencies
     create_staff
     create_complaint_statuses
-    FactoryGirl.create(:complaint, :case_reference => "c12-34",
+    FactoryBot.create(:complaint, :case_reference => "c12-34",
                        :date_received => DateTime.now.advance(:days => -100),
                        :village => Faker::Address.city,
                        :phone => Faker::PhoneNumber.phone_number,
@@ -28,9 +28,9 @@ module ComplaintsSpecSetupHelpers
   end
 
   def create_complaints
-    FactoryGirl.create(:complaint, :case_reference => "c12-22")
-    FactoryGirl.create(:complaint, :case_reference => "c12-33")
-    @complaint = FactoryGirl.create(:complaint, :case_reference => "c12-55")
+    FactoryBot.create(:complaint, :case_reference => "c12-22")
+    FactoryBot.create(:complaint, :case_reference => "c12-33")
+    @complaint = FactoryBot.create(:complaint, :case_reference => "c12-55")
   end
 
   private
@@ -42,23 +42,23 @@ module ComplaintsSpecSetupHelpers
   end
 
   def create_staff
-    FactoryGirl.create(:user, :staff, :with_password, :firstName => "Hailee", :lastName => "Ortiz")
+    FactoryBot.create(:user, :staff, :with_password, :firstName => "Hailee", :lastName => "Ortiz")
   end
 
   def create_mandates
     [:good_governance, :human_rights, :special_investigations_unit, :strategic_plan].each do |key|
-      FactoryGirl.create(:mandate, :key => key)
+      FactoryBot.create(:mandate, :key => key)
     end
   end
 
   def create_complaint_statuses
      ["Open", "Incomplete", "Closed"].each do |status_name|
-       FactoryGirl.create(:complaint_status, :name => status_name)
+       FactoryBot.create(:complaint_status, :name => status_name)
      end
   end
 
   def _communications
-    [ FactoryGirl.create(:communication) ]
+    [ FactoryBot.create(:communication) ]
   end
 
   def _mandate_id
@@ -71,42 +71,42 @@ module ComplaintsSpecSetupHelpers
 
   def _status_changes
     # open 100 days ago, closed 50 days ago
-    [FactoryGirl.build(:status_change,
+    [FactoryBot.build(:status_change,
                        :created_at => DateTime.now.advance(:days => -100),
-                       :complaint_status_id => FactoryGirl.create(:complaint_status, :name => "Open").id,
+                       :complaint_status_id => FactoryBot.create(:complaint_status, :name => "Open").id,
                        :change_date => DateTime.now.advance(:days => -100),
                        :user_id => User.staff.pluck(:id).first),
-     FactoryGirl.build(:status_change,
+     FactoryBot.build(:status_change,
                        :created_at => DateTime.now.advance(:days => -50),
-                       :complaint_status_id => FactoryGirl.create(:complaint_status, :name => "Closed").id,
+                       :complaint_status_id => FactoryBot.create(:complaint_status, :name => "Closed").id,
                        :change_date => DateTime.now.advance(:days => -50),
                        :user_id => User.staff.pluck(:id).second )]
   end
 
   def complaint_docs
-    Array.new(2) { FactoryGirl.create(:complaint_document) }
+    Array.new(2) { FactoryBot.create(:complaint_document) }
   end
 
   def hr_complaint_bases
     names = ["CAT", "ICESCR"]
-    names.collect{|name| FactoryGirl.create(:convention, :name => name)}
+    names.collect{|name| FactoryBot.create(:convention, :name => name)}
   end
 
   def gg_complaint_bases
     names = ["Delayed action", "Failure to act", "Contrary to Law", "Oppressive", "Private"]
-    names.collect{|name| FactoryGirl.create(:good_governance_complaint_basis, :name => name) }
+    names.collect{|name| FactoryBot.create(:good_governance_complaint_basis, :name => name) }
     names = ["Delayed action", "Failure to act"]
     GoodGovernance::ComplaintBasis.where(:name => names)
   end
 
   def siu_complaint_bases
     names = ["Unreasonable delay", "Not properly investigated"]
-    names.collect{|name| FactoryGirl.create(:siu_complaint_basis, :name => name) }
+    names.collect{|name| FactoryBot.create(:siu_complaint_basis, :name => name) }
   end
 
   def assigns
     Array.new(2) do
-      assignee = FactoryGirl.create(:assignee, :with_password)
+      assignee = FactoryBot.create(:assignee, :with_password)
       date = DateTime.now.advance(:days => -rand(365))
       Assign.new(:created_at => date, :assignee => assignee)
     end

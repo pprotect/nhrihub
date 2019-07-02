@@ -12,7 +12,7 @@ module OrganizationPresetsHelper
                                                                                     { :phone => '489-733-4829' }]),
                                                       :email => "kahuna@bigbrother.gov")
     @organization_with_users = Organization.create(:name => "Government of Maldonia")
-    FactoryGirl.create(:user, :organization => @arganization_with_users)
+    FactoryBot.create(:user, :organization => @arganization_with_users)
   end
 end
 

@@ -3,8 +3,8 @@ require 'rails_helper'
 
 describe "model uniqueness validation" do
   before do
-    FactoryGirl.create(:organization, :name => "Food for you")
-    @org = FactoryGirl.build(:organization, :name => "Food for you")
+    FactoryBot.create(:organization, :name => "Food for you")
+    @org = FactoryBot.build(:organization, :name => "Food for you")
     @org.valid?
   end
 

@@ -5,54 +5,54 @@ class ComplaintsSeedData
 
   def self.init_statuses
     ["Active", "Complete", "No further action", "Presumed Resolved", "Suspended", "Under Evaluation"].each do |status|
-      FactoryGirl.create(:complaint_status, :name => status)
+      FactoryBot.create(:complaint_status, :name => status)
     end
   end
 
   def self.init_special_investigations_unit_complaint_bases
     #Siu::ComplaintBasis.all
     Siu::ComplaintBasis::DefaultNames.each do |name|
-      FactoryGirl.create(:siu_complaint_basis, :name => name)
+      FactoryBot.create(:siu_complaint_basis, :name => name)
     end
   end
 
   def self.init_human_rights_complaint_bases
     CONVENTIONS.keys.each do |name|
-      FactoryGirl.create(:convention, :name => name)
+      FactoryBot.create(:convention, :name => name)
     end
   end
 
   def self.init_good_governance_complaint_bases
     GoodGovernance::ComplaintBasis::DefaultNames.each do |name|
-      FactoryGirl.create(:good_governance_complaint_basis, :name => name)
+      FactoryBot.create(:good_governance_complaint_basis, :name => name)
     end
   end
 
   def self.init_staff_users
-    FactoryGirl.create(:user, :staff)
+    FactoryBot.create(:user, :staff)
   end
 
   def self.init_complaints_data
     GoodGovernance::ComplaintBasis::DefaultNames.sample(4).each do |name|
-      FactoryGirl.create(:complaint_basis, :gg, :name => name)
+      FactoryBot.create(:complaint_basis, :gg, :name => name)
     end
 
     GoodGovernance::ComplaintBasis::DefaultNames.sample(2).each do |name|
-      FactoryGirl.create(:complaint_basis, :siu, :name => name)
+      FactoryBot.create(:complaint_basis, :siu, :name => name)
     end
 
     Nhri::ComplaintBasis::DefaultNames.sample(2).each do |name|
-      FactoryGirl.create(:convention)
+      FactoryBot.create(:convention)
     end
 
     AGENCIES.keys.sample(2).each do |name|
       Agency.create(:name => name)
     end
 
-    active_complaint_status = FactoryGirl.create(:complaint_status, :id => 1, :name => "Active")
-    completed_complaint_status = FactoryGirl.create(:complaint_status, :id => 2, :name => "Completed")
+    active_complaint_status = FactoryBot.create(:complaint_status, :id => 1, :name => "Active")
+    completed_complaint_status = FactoryBot.create(:complaint_status, :id => 2, :name => "Completed")
 
-    FactoryGirl.create(:complaint,
+    FactoryBot.create(:complaint,
                        :chiefly_title => "Arjuna",
                        :firstName => "Camilla",
                        :lastName  => "Lebsack",
@@ -64,11 +64,11 @@ class ComplaintsSeedData
                        :human_rights_complaint_basis_ids => [1,2],
                        :special_investigations_unit_complaint_basis_ids => [5,6],
                        :agency_ids => [1],
-                       :assignees => [FactoryGirl.create(:user, :with_password, :staff, :firstName => "Peyton", :lastName => "Krajcik")],
-                       :status_changes => [FactoryGirl.create(:status_change,
+                       :assignees => [FactoryBot.create(:user, :with_password, :staff, :firstName => "Peyton", :lastName => "Krajcik")],
+                       :status_changes => [FactoryBot.create(:status_change,
                                                               :complaint_status_id => active_complaint_status.id)])
 
-    FactoryGirl.create(:complaint,
+    FactoryBot.create(:complaint,
                        :chiefly_title => "Arjuna",
                        :firstName => "Bo",
                        :lastName  => "McCullough",
@@ -80,11 +80,11 @@ class ComplaintsSeedData
                        :human_rights_complaint_basis_ids => [1,2],
                        :special_investigations_unit_complaint_basis_ids => [5,6],
                        :agency_ids => [2],
-                       :assignees => [FactoryGirl.create(:user, :with_password, :staff, :firstName => "Angelina", :lastName => "Ward")],
-                       :status_changes => [FactoryGirl.create(:status_change,
+                       :assignees => [FactoryBot.create(:user, :with_password, :staff, :firstName => "Angelina", :lastName => "Ward")],
+                       :status_changes => [FactoryBot.create(:status_change,
                                                               :complaint_status_id => active_complaint_status.id)])
 
-    FactoryGirl.create(:complaint,
+    FactoryBot.create(:complaint,
                        :chiefly_title => "Arjuna",
                        :firstName => "Ned",
                        :lastName  => "Kessler",
@@ -96,11 +96,11 @@ class ComplaintsSeedData
                        :human_rights_complaint_basis_ids => [1,2],
                        :special_investigations_unit_complaint_basis_ids => [5,6],
                        :agency_ids => [2],
-                       :assignees => [FactoryGirl.create(:user, :with_password, :staff, :firstName => "Hosea", :lastName => "O'Connor")],
-                       :status_changes => [FactoryGirl.create(:status_change,
+                       :assignees => [FactoryBot.create(:user, :with_password, :staff, :firstName => "Hosea", :lastName => "O'Connor")],
+                       :status_changes => [FactoryBot.create(:status_change,
                                                               :complaint_status_id => completed_complaint_status.id)])
 
-    FactoryGirl.create(:complaint,
+    FactoryBot.create(:complaint,
                        :chiefly_title => "Arjuna",
                        :firstName => "Marissa",
                        :lastName  => "Yost",
@@ -112,8 +112,8 @@ class ComplaintsSeedData
                        :human_rights_complaint_basis_ids => [1,2],
                        :special_investigations_unit_complaint_basis_ids => [5,6],
                        :agency_ids => [2],
-                       :assignees => [FactoryGirl.create(:user, :with_password, :staff, :firstName => "Delbert", :lastName => "Brown")],
-                       :status_changes => [FactoryGirl.create(:status_change,
+                       :assignees => [FactoryBot.create(:user, :with_password, :staff, :firstName => "Delbert", :lastName => "Brown")],
+                       :status_changes => [FactoryBot.create(:status_change,
                                                               :complaint_status_id => completed_complaint_status.id)])
 
   end

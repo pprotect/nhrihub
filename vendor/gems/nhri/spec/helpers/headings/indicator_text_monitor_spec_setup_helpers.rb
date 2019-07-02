@@ -4,13 +4,13 @@ module IndicatorsTextMonitorSpecSetupHelpers
   extend RSpec::Core::SharedContext
 
   before do
-    FactoryGirl.create(:heading)
-    FactoryGirl.create(:human_rights_attribute)
-    FactoryGirl.create(:indicator,
+    FactoryBot.create(:heading)
+    FactoryBot.create(:human_rights_attribute)
+    FactoryBot.create(:indicator,
                        :monitor_format => 'text',
-                       :reminders=>[FactoryGirl.create(:reminder, :indicator)],
-                       :notes => [FactoryGirl.create(:note, :indicator, :created_at => 3.days.ago.to_datetime),FactoryGirl.create(:note, :indicator, :created_at => 4.days.ago.to_datetime)],
-                       :text_monitors => [FactoryGirl.create(:text_monitor, :date => 3.days.ago),FactoryGirl.create(:text_monitor, :date => 4.days.ago)])
+                       :reminders=>[FactoryBot.create(:reminder, :indicator)],
+                       :notes => [FactoryBot.create(:note, :indicator, :created_at => 3.days.ago.to_datetime),FactoryBot.create(:note, :indicator, :created_at => 4.days.ago.to_datetime)],
+                       :text_monitors => [FactoryBot.create(:text_monitor, :date => 3.days.ago),FactoryBot.create(:text_monitor, :date => 4.days.ago)])
     #resize_browser_window
     visit nhri_heading_path(:en, Nhri::Heading.first.id)
     show_monitors.click

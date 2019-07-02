@@ -151,8 +151,8 @@ feature "deleting strategic priorities", :js => true do
     include StrategicPrioritySpecHelpers
     before do
       @sp1 = StrategicPlan.create(:start_date => 6.months.ago.to_date, :title => "a plan for the millenium")
-      FactoryGirl.create(:strategic_priority, :populated, :strategic_plan_id => @sp1.id, :priority_level => 1, :description => "Gonna do things betta")
-      FactoryGirl.create(:strategic_priority, :populated, :strategic_plan_id => @sp1.id, :priority_level => 2, :description => "second priority stuff")
+      FactoryBot.create(:strategic_priority, :populated, :strategic_plan_id => @sp1.id, :priority_level => 1, :description => "Gonna do things betta")
+      FactoryBot.create(:strategic_priority, :populated, :strategic_plan_id => @sp1.id, :priority_level => 2, :description => "second priority stuff")
       visit strategic_plans_strategic_plan_path(:en, StrategicPlan.most_recent.id)
     end
 

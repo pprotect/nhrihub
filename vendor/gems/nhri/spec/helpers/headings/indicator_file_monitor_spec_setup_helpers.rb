@@ -4,13 +4,13 @@ module IndicatorsFileMonitorSpecSetupHelpers
   extend RSpec::Core::SharedContext
 
   before do
-    FactoryGirl.create(:heading)
-    FactoryGirl.create(:human_rights_attribute)
-    FactoryGirl.create(:indicator,
+    FactoryBot.create(:heading)
+    FactoryBot.create(:human_rights_attribute)
+    FactoryBot.create(:indicator,
                        :monitor_format => 'file',
-                       #:reminders=>[FactoryGirl.create(:reminder, :indicator)],
-                       #:notes => [FactoryGirl.create(:note, :indicator, :created_at => 3.days.ago.to_datetime),FactoryGirl.create(:note, :indicator, :created_at => 4.days.ago.to_datetime)],
-                       :file_monitor => FactoryGirl.create(:file_monitor, :created_at => 3.days.ago, :user => User.first))
+                       #:reminders=>[FactoryBot.create(:reminder, :indicator)],
+                       #:notes => [FactoryBot.create(:note, :indicator, :created_at => 3.days.ago.to_datetime),FactoryBot.create(:note, :indicator, :created_at => 4.days.ago.to_datetime)],
+                       :file_monitor => FactoryBot.create(:file_monitor, :created_at => 3.days.ago, :user => User.first))
     #resize_browser_window
 
     Nhri::FileMonitor.permitted_filetypes = ["pdf"]
@@ -26,9 +26,9 @@ module IndicatorsUnpopulatedFileMonitorSpecSetupHelpers
   extend RSpec::Core::SharedContext
 
   before do
-    FactoryGirl.create(:heading)
-    FactoryGirl.create(:human_rights_attribute)
-    FactoryGirl.create(:indicator,
+    FactoryBot.create(:heading)
+    FactoryBot.create(:human_rights_attribute)
+    FactoryBot.create(:indicator,
                        :monitor_format => 'file')
 
     Nhri::FileMonitor.permitted_filetypes = ["pdf"]

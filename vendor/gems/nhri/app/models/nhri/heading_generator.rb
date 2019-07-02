@@ -23,7 +23,7 @@ class Nhri::HeadingGenerator
   def self.generate_attributes
     Nhri::Heading.pluck(:id).each do |h_id|
       5.times do
-        FactoryGirl.create(:human_rights_attribute, :heading_id => h_id)
+        FactoryBot.create(:human_rights_attribute, :heading_id => h_id)
       end
     end
   end
@@ -58,19 +58,19 @@ class Nhri::HeadingGenerator
   end
 
   def self.text_monitors
-    count(3).times.collect{|i| FactoryGirl.build(:text_monitor)}
+    count(3).times.collect{|i| FactoryBot.build(:text_monitor)}
   end
 
   def self.numeric_monitors
-    count(3).times.collect{|i| FactoryGirl.build(:numeric_monitor)}
+    count(3).times.collect{|i| FactoryBot.build(:numeric_monitor)}
   end
 
   def self.notes
-    count(3).times.collect{|i| FactoryGirl.build(:note)}
+    count(3).times.collect{|i| FactoryBot.build(:note)}
   end
 
   def self.reminders
-    count(3).times.collect{|i| FactoryGirl.build(:reminder)}
+    count(3).times.collect{|i| FactoryBot.build(:reminder)}
   end
 
   def self.title
@@ -78,7 +78,7 @@ class Nhri::HeadingGenerator
   end
 
   def self.create_indicator_with_text_monitor(nature,heading,o_id)
-    FactoryGirl.create(:indicator,
+    FactoryBot.create(:indicator,
                        :title => title,
                        :nature => nature,
                        :human_rights_attribute_id => o_id,
@@ -90,7 +90,7 @@ class Nhri::HeadingGenerator
 
 
   def self.create_indicator_with_numeric_monitor(nature,heading,o_id)
-    FactoryGirl.create(:indicator,
+    FactoryBot.create(:indicator,
                        :title => title,
                        :nature => nature,
                        :human_rights_attribute_id => o_id,
@@ -102,8 +102,8 @@ class Nhri::HeadingGenerator
   end
 
   def self.create_indicator_with_file_monitor(nature,heading,o_id)
-    monitor = FactoryGirl.build(:file_monitor)
-    FactoryGirl.create(:indicator,
+    monitor = FactoryBot.build(:file_monitor)
+    FactoryBot.create(:indicator,
                        :title => title,
                        :nature => nature,
                        :human_rights_attribute_id => o_id,

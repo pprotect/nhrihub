@@ -180,11 +180,11 @@ describe "#as_json" do
       end
 
       4.times do
-        FactoryGirl.create(:user, :with_password)
+        FactoryBot.create(:user, :with_password)
       end
 
       2.times do |i|
-        FactoryGirl.create(:complaint, :with_fixed_associations, :with_assignees, :with_document, :with_comm, :with_reminders, :with_two_notes, :case_reference => "C17-#{3-i}")
+        FactoryBot.create(:complaint, :with_fixed_associations, :with_assignees, :with_document, :with_comm, :with_reminders, :with_two_notes, :case_reference => "C17-#{3-i}")
       end
     end
 
@@ -252,7 +252,7 @@ describe "#as_json" do
   context "with empty associations" do
     before do
       2.times do |i|
-        FactoryGirl.create(:complaint, :case_reference => "C17-#{3-i}")
+        FactoryBot.create(:complaint, :case_reference => "C17-#{3-i}")
       end
     end
 

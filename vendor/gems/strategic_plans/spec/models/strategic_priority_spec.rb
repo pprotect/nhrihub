@@ -31,13 +31,13 @@ describe ".create!" do
   context "when there are existing strategic priorities with the various priority level" do
     before do
       @sp = StrategicPlan.create()
-      FactoryGirl.create(:strategic_priority, :populated, :priority_level => 1, :description => "blah blah blah", :strategic_plan_id => @sp.id)
-      FactoryGirl.create(:strategic_priority, :populated, :priority_level => 2, :description => "blah blah bloo", :strategic_plan_id => @sp.id)
-      FactoryGirl.create(:strategic_priority, :populated, :priority_level => 3, :description => "blah blah blank", :strategic_plan_id => @sp.id)
+      FactoryBot.create(:strategic_priority, :populated, :priority_level => 1, :description => "blah blah blah", :strategic_plan_id => @sp.id)
+      FactoryBot.create(:strategic_priority, :populated, :priority_level => 2, :description => "blah blah bloo", :strategic_plan_id => @sp.id)
+      FactoryBot.create(:strategic_priority, :populated, :priority_level => 3, :description => "blah blah blank", :strategic_plan_id => @sp.id)
     end
 
     it "should increment the priority level of the existing strategic priority with lower priority" do
-      FactoryGirl.create(:strategic_priority, :populated, :priority_level => 2, :description => "bish bash bosh", :strategic_plan_id => @sp.id)
+      FactoryBot.create(:strategic_priority, :populated, :priority_level => 2, :description => "bish bash bosh", :strategic_plan_id => @sp.id)
 
       expect(StrategicPriority.count).to eq 4
       expect(StrategicPriority.all.sort[0].priority_level).to eq 1
@@ -138,7 +138,7 @@ end
 
 describe "destroy" do
   before do
-    FactoryGirl.create(:strategic_plan, :well_populated)
+    FactoryBot.create(:strategic_plan, :well_populated)
   end
 
   it "should set the initial values of the indexes" do

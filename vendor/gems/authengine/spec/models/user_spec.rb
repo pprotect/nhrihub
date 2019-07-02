@@ -4,7 +4,7 @@ require 'i18n'
 
 describe "when a new user is added" do
   it "a registration email should be sent" do
-    expect{FactoryGirl.create(:user)}.to change{ActionMailer::Base.deliveries.size}.by 1
+    expect{FactoryBot.create(:user)}.to change{ActionMailer::Base.deliveries.size}.by 1
   end
 
   it "email should have 'Please activate' etc in subject" do
@@ -14,35 +14,35 @@ end
 
 describe "#initials method" do
   it "returns the user's capitalized initials" do
-    user = FactoryGirl.create(:user, :firstName => 'frank', :lastName => 'Herbert')
+    user = FactoryBot.create(:user, :firstName => 'frank', :lastName => 'Herbert')
     expect(user.initials).to eq 'FH'
   end
 end
 
 describe "email uniqueness validation" do
   it "should declare invalid if another active user has the email" do
-    FactoryGirl.create(:user, :email => 'foo@bar.co', :status => 'active')
-    user = FactoryGirl.build(:user, :email => 'foo@bar.co')
+    FactoryBot.create(:user, :email => 'foo@bar.co', :status => 'active')
+    user = FactoryBot.build(:user, :email => 'foo@bar.co')
     expect(user.valid?).to be false
   end
 
   it "should declare invalid if another active user has the same email with alternative case" do
-    FactoryGirl.create(:user, :email => 'Foo@bar.co', :status => 'active')
-    user = FactoryGirl.build(:user, :email => 'foo@bar.co')
+    FactoryBot.create(:user, :email => 'Foo@bar.co', :status => 'active')
+    user = FactoryBot.build(:user, :email => 'foo@bar.co')
     expect(user.valid?).to be false
   end
 
   it "should declare valid if no other user has the email" do
-    FactoryGirl.create(:user, :email => 'baz@bar.co', :status => 'active')
-    user = FactoryGirl.build(:user, :email => 'foo@bar.co')
+    FactoryBot.create(:user, :email => 'baz@bar.co', :status => 'active')
+    user = FactoryBot.build(:user, :email => 'foo@bar.co')
     expect(user.valid?).to be true
   end
 end
 
 describe "staff scope" do
   before do
-    @staff_user = FactoryGirl.create(:user, :staff)
-    @admin_user = FactoryGirl.create(:user, :admin)
+    @staff_user = FactoryBot.create(:user, :staff)
+    @admin_user = FactoryBot.create(:user, :admin)
   end
 
   it "should include users who have staff role assigned" do
@@ -56,7 +56,7 @@ end
 
 describe "password confirmation" do
   before do
-    @user = FactoryGirl.create(:user)
+    @user = FactoryBot.create(:user)
   end
 
   context "when account is activated" do

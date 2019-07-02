@@ -5,7 +5,7 @@ module AdvisoryCouncilMembershipSpecSetupHelper
 
   def setup_membership_database
     3.times do
-      FactoryGirl.create(:advisory_council_member)
+      FactoryBot.create(:advisory_council_member)
     end
   end
 end

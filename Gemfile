@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '5.1.2'
+gem 'rails', '5.2.0'
 # Use postgresql as the database for Active Record
 gem 'pg'
 #gem 'mysql'
@@ -83,7 +83,7 @@ gem 'font-awesome-sass'
 gem 'simple-navigation', '~> 3.14.0'
 gem 'simplecov', :require => false, :group => [:test, :jstest]
 gem 'poltergeist', group: [:test, :jstest]
-gem 'factory_girl_rails', '~> 4.0'
+gem 'factory_bot_rails', '~> 4.0'
 gem 'faker'
 
 gem 'tzinfo-data' # so that we use the ruby tzinfo vs what is installed on the machine e.g. /usr/share/zoneinfo

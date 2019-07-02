@@ -15,6 +15,6 @@ module ComplaintsRemindersSetupHelpers
   end
 
   def populate_database
-    FactoryGirl.create(:complaint)
+    FactoryBot.create(:complaint)
   end
 end

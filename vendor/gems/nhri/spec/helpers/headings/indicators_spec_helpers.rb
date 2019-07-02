@@ -4,7 +4,7 @@ module IndicatorsSpecHelpers
   extend RSpec::Core::SharedContext
 
   def setup_fully_populated_heading
-    heading = FactoryGirl.create(:heading)
+    heading = FactoryBot.create(:heading)
     Nhri::HeadingGenerator.generate_attributes
     Nhri::HeadingGenerator.generate(:fixed)
   end

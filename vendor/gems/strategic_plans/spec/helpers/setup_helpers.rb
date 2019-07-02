@@ -21,14 +21,14 @@ module SetupHelpers
 
   def setup_media_appearances(n=1)
     n.times do
-      ma = FactoryGirl.build(:media_appearance)
+      ma = FactoryBot.build(:media_appearance)
       ma.performance_indicators = [@performance_indicator]
       ma.save
     end
   end
 
   def setup_projects
-    p = FactoryGirl.build(:project)
+    p = FactoryBot.build(:project)
     p.performance_indicators = [@performance_indicator]
     p.save
   end

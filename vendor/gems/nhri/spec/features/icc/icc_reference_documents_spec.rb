@@ -17,7 +17,7 @@ feature "list of icc reference documents", :js => true do
   before do
     SiteConfig['nhri.icc_reference_documents.filetypes'] = ['pdf']
     SiteConfig['nhri.icc_reference_documents.filesize'] = 3
-    doc = FactoryGirl.create(:icc_reference_document, :title => "my important document")
+    doc = FactoryBot.create(:icc_reference_document, :title => "my important document")
     visit nhri_icc_reference_documents_path('en')
   end
 
@@ -38,7 +38,7 @@ feature "icc reference document management", :js => true do
   before do
     SiteConfig['nhri.icc_reference_documents.filetypes'] = ['pdf']
     SiteConfig['nhri.icc_reference_documents.filesize'] = 3
-    @doc = FactoryGirl.create(:icc_reference_document, :title => "my important document")
+    @doc = FactoryBot.create(:icc_reference_document, :title => "my important document")
     visit nhri_icc_reference_documents_path('en')
   end
 
@@ -239,7 +239,7 @@ feature "open document from source_url", :js => true do
   before do
     #@example_dot_com_server = FakeExampleDotCom.boot
     #@source_url = "http://#{@example_dot_com_server.host}:#{@example_dot_com_server.port}/something"
-    @doc = FactoryGirl.create(:icc_reference_document, :title => "my important document", :source_url => example_dot_com )
+    @doc = FactoryBot.create(:icc_reference_document, :title => "my important document", :source_url => example_dot_com )
     visit nhri_icc_reference_documents_path('en')
   end
 
@@ -261,12 +261,12 @@ feature "reference document highlighted when its id is passed in via url query s
 
   before do
     15.times do
-      FactoryGirl.create(:icc_reference_document)
+      FactoryBot.create(:icc_reference_document)
     end
-    icc_reference_document = FactoryGirl.create(:icc_reference_document)
+    icc_reference_document = FactoryBot.create(:icc_reference_document)
     @id = icc_reference_document.id
     15.times do
-      FactoryGirl.create(:icc_reference_document)
+      FactoryBot.create(:icc_reference_document)
     end
     url = URI(icc_reference_document.index_url)
     visit icc_reference_document.index_url.gsub(%r{.*#{url.host}},'') # hack, don't know how else to do it, host otherwise is SITE_URL defined in lib/constants

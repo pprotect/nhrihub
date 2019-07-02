@@ -43,9 +43,9 @@ feature "when there are already some strategic plans", :js => true do
   include StrategicPlanAdminSpecHelpers
 
   before do
-    FactoryGirl.create(:strategic_plan, :title => 'the plan for the planet')
+    FactoryBot.create(:strategic_plan, :title => 'the plan for the planet')
     # it's well-populated so that we can test copy of associations
-    FactoryGirl.create(:strategic_plan, :well_populated, :title => 'a man a plan')
+    FactoryBot.create(:strategic_plan, :well_populated, :title => 'a man a plan')
     visit strategic_plans_admin_path(:en)
   end
 

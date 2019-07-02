@@ -5,19 +5,19 @@ module MediaSetupHelper
   def setup_database(type)
     setup_areas
     if type == :media_appearance_with_file
-      FactoryGirl.create(:media_appearance,
+      FactoryBot.create(:media_appearance,
                          :with_performance_indicators,
                          :hr_area,
                          :file,
                          :reminders=>[] )
     elsif type == :media_appearance_with_link
-      FactoryGirl.create(:media_appearance,
+      FactoryBot.create(:media_appearance,
                          :with_performance_indicators,
                          :hr_area,
                          :article_link => example_dot_com,
                          :reminders=>[] )
     else
-      FactoryGirl.create(:media_appearance,
+      FactoryBot.create(:media_appearance,
                          :with_performance_indicators,
                          :hr_area,
                          :reminders=>[] )
@@ -26,19 +26,19 @@ module MediaSetupHelper
   end
 
   def add_a_second_article
-    FactoryGirl.create(:media_appearance,
+    FactoryBot.create(:media_appearance,
                        :hr_area,
                        :reminders=>[] )
   end
 
   def add_reminder
     ma = MediaAppearance.first
-    ma.reminders << FactoryGirl.create(:reminder, :reminder_type => 'weekly', :text => "don't forget the fruit gums mum", :user => User.first)
+    ma.reminders << FactoryBot.create(:reminder, :reminder_type => 'weekly', :text => "don't forget the fruit gums mum", :user => User.first)
     ma.save
   end
 
   def setup_articles
-    FactoryGirl.create(:media_appearance)
+    FactoryBot.create(:media_appearance)
   end
 
   def setup_areas
