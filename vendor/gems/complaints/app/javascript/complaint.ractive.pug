@@ -245,9 +245,9 @@ script#show_complaint_template(type = 'text/ractive')
             .col-md-9('data-toggle'='edit')
               .no_edit.in
                 span.chiefly_title
-                  | {{ chiefly_title }}&nbsp;
+                  | {{ chiefly_title }}
                 span.firstName
-                  | {{ firstName }}&nbsp;
+                  | {{ firstName }}
                 span.lastName
                   | {{ lastName }}
               .edit
@@ -312,6 +312,9 @@ script#show_complaint_template(type = 'text/ractive')
 | {{else}}
 | {{> new_complaint_template}}
 | {{/if}}
+
+style.
+  .firstName, .chiefly_title {margin-right: .25em;}
 
 script(type='text/javascript').
   import Mandates from './mandates'
@@ -544,6 +547,7 @@ script(type='text/javascript').
 
   export default Ractive.extend({
     template : $TEMPLATE,
+    css: $CSS,
     computed : {
       delete_confirmation_message() {
         return `${i18n.delete_complaint_confirmation_message} ${this.get('case_reference')}?`;
