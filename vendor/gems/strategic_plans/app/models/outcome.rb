@@ -3,6 +3,8 @@ class Outcome < ActiveRecord::Base
   belongs_to :planned_result
   has_many :activities, :autosave => true, :dependent => :destroy
 
+  default_scope ->{ order("string_to_array(outcomes.index,'.')::int[]") }
+
   def as_json(options={})
     super(:except => [:updated_at, :created_at],
           :methods => [:indexed_description, :description, :id, :url, :create_activity_url, :activities, :description_error])

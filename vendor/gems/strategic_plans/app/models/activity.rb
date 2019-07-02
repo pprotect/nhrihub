@@ -3,6 +3,8 @@ class Activity < ActiveRecord::Base
   belongs_to  :outcome
   has_many :performance_indicators, :dependent => :destroy
 
+  default_scope ->{ order("string_to_array(activities.index,'.')::int[]") }
+
   def as_json(options={})
     super(:except =>  [:updated_at, :created_at, :progress], #progress shouldn't even be in the schema!
           :methods => [:indexed_description,

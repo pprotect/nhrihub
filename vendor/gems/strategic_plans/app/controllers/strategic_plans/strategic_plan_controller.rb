@@ -1,3 +1,5 @@
+require 'strategic_plan'
+
 class StrategicPlans::StrategicPlanController < StrategicPlanController
 
   def create

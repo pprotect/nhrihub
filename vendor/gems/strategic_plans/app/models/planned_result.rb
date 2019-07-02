@@ -5,6 +5,7 @@ class PlannedResult < ActiveRecord::Base
   accepts_nested_attributes_for :outcomes
 
   scope :in_current_strategic_plan, ->{ joins(:strategic_priority => :strategic_plan).merge(StrategicPlan.current) }
+  default_scope ->{ order("string_to_array(planned_results.index,'.')::int[]") }
 
 
   def self.all_with_associations
