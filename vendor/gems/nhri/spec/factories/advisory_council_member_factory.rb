@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :advisory_council_member do
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
-    title { Faker::Name.title }
+    title { Faker::Name.prefix }
     organization { "A Goverment Agency" }
     department { "A department" }
     mobile_phone { Faker::PhoneNumber.phone_number }
