@@ -1,5 +1,5 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :area do
-    name 'an area'
+    name { 'an area' }
   end
 end

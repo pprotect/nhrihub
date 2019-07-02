@@ -1,4 +1,4 @@
-FactoryGirl.define  do
+FactoryBot.define  do
   factory :organization do
     name { Faker::Company.name }
     street  { Faker::Address.street_address }
@@ -10,7 +10,7 @@ FactoryGirl.define  do
 
     #trait :with_users do
       #after(:build) do |o|
-        #o.users << FactoryGirl.build(:user, :organization_id => o.id)
+        #o.users << FactoryBot.build(:user, :organization_id => o.id)
       #end
     #end
   end

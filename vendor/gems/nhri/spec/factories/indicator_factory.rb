@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :indicator, :class => Nhri::Indicator do
     title {Faker::Lorem.sentence}
     human_rights_attribute_id {(Nhri::HumanRightsAttribute.pluck(:id)+[nil]).sample}
@@ -9,7 +9,7 @@ FactoryGirl.define do
 
     trait :with_reminder do
       after(:build) do |indicator|
-        reminder = FactoryGirl.create(:reminder,
+        reminder = FactoryBot.create(:reminder,
                                         :indicator,
                                         :reminder_type => :weekly,
                                         :text => "don't forget the fruit gums mum",
@@ -20,8 +20,8 @@ FactoryGirl.define do
 
     trait :with_notes do
       after(:build) do |indicator|
-        indicator.notes << FactoryGirl.create(:note, :indicator, :created_at => 3.days.ago.to_datetime)
-        indicator.notes << FactoryGirl.create(:note, :indicator, :created_at => 4.days.ago.to_datetime)
+        indicator.notes << FactoryBot.create(:note, :indicator, :created_at => 3.days.ago.to_datetime)
+        indicator.notes << FactoryBot.create(:note, :indicator, :created_at => 4.days.ago.to_datetime)
       end
     end
   end

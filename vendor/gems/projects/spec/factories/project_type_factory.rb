@@ -1,5 +1,5 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :project_type do
-    name "Foo"
+    name { "Foo" }
   end
 end

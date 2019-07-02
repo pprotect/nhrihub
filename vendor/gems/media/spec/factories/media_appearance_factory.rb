@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :media_appearance do
     title {Faker::Lorem.sentence(5)}
 
@@ -10,7 +10,7 @@ FactoryGirl.define do
       file                { LoremIpsumDocument.new.docfile }
       filesize            { 10000 + (30000*rand).to_i }
       original_filename   { "#{Faker::Lorem.words(2).join("_")}.pdf" }
-      original_type       "application/pdf"
+      original_type       { "application/pdf" }
     end
 
     after(:build) do |media_appearance|
@@ -32,14 +32,15 @@ FactoryGirl.define do
     end
 
     trait :no_f_in_title do
-      title Faker::Lorem.sentence(5).gsub(/f/i,"b")
+      title { Faker::Lorem.sentence(5).gsub(/f/i,"b") }
     end
 
     trait :title_has_an_f do
-      str = Faker::Lorem.sentence(5)
-      i = rand(str.length)
-      l = str.length
-      title { new_str = (str.dup.slice(0,i-1)+'f'+str.dup.slice(i-l,1000)).dup }
+      title {
+        str = Faker::Lorem.sentence(5)
+        i = rand(str.length)
+        l = str.length
+        new_str = (str.dup.slice(0,i-1)+'f'+str.dup.slice(i-l,1000)).dup }
     end
 
     trait :hr_area do
@@ -72,7 +73,7 @@ FactoryGirl.define do
     trait :with_notes do
       after(:create) do |ma|
         rand(3).times do
-          FactoryGirl.create(:note, :media_appearance, :notable_id => ma.id)
+          FactoryBot.create(:note, :media_appearance, :notable_id => ma.id)
         end
       end
     end
@@ -80,7 +81,7 @@ FactoryGirl.define do
     trait :with_reminders do
       after(:create) do |ma|
         rand(3).times do
-          FactoryGirl.create(:reminder, :media_appearance, :remindable_id => ma.id)
+          FactoryBot.create(:reminder, :media_appearance, :remindable_id => ma.id)
         end
       end
     end

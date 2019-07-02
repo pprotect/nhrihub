@@ -5,19 +5,19 @@ nn = Faker::Name.last_name
 until(!uu.include?(nn)) do (nn = Faker::Name.last_name) end
 nn}
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :user, :aliases => [:assignee] do
     login {get_name.call}
     email {Faker::Internet.email}
     activated_at {Date.today - rand(365)}
-    enabled 1
+    enabled { 1 }
     firstName {Faker::Name.first_name}
     lastName {Faker::Name.last_name}
 
     #if Organization.count > 20 # arbitrary number, but some threshold here prevents organization name collisions
       #organization_id { Organization.pluck(:id).sample }
     #else
-      #until (organization = FactoryGirl.create(:organization)).valid?
+      #until (organization = FactoryBot.create(:organization)).valid?
         #organization_id organization.id
         ##association :organization, strategy: :create
       #end
@@ -46,7 +46,7 @@ FactoryGirl.define do
         if Role.exists?(:name => 'admin')
           u.roles. << Role.where(:name => 'admin').first
         else
-          u.roles << FactoryGirl.build(:admin_role)
+          u.roles << FactoryBot.build(:admin_role)
         end
       end
     end
@@ -56,7 +56,7 @@ FactoryGirl.define do
         if Role.exists?(:name => 'staff')
           u.roles << Role.where(:name => 'staff').first
         else
-          u.roles << FactoryGirl.build(:staff_role)
+          u.roles << FactoryBot.build(:staff_role)
         end
       end
     end

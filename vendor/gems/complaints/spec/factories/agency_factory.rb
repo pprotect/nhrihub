@@ -1,7 +1,7 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :agency do
     key = AGENCIES.keys.sample
     name { key }
-    full_name AGENCIES[key]
+    full_name { AGENCIES[key] }
   end
 end

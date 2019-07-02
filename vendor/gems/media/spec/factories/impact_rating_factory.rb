@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :impact_rating do
     attrs = Proc.new { ImpactRating::DefaultValues.sample }
     text { attrs.call.text }

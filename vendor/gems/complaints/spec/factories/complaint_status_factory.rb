@@ -1,17 +1,17 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :complaint_status do
-    name  "oogly woo"
+    name  { "oogly woo" }
 
     trait :open do
-      name  "Open"
+      name  { "Open" }
     end
 
     trait :suspended do
-      name "Suspended"
+      name { "Suspended" }
     end
 
     trait :closed do
-      name "Closed"
+      name { "Closed" }
     end
   end
 end

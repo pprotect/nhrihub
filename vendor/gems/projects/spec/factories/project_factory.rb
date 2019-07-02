@@ -1,25 +1,25 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :project do
     title { Faker::Lorem.words(7).join(' ') }
     description { Faker::Lorem.sentences(3).join(' ') }
 
     trait :with_reminders do
       after(:build) do |project|
-        project.reminders << FactoryGirl.create(:reminder, :project)
+        project.reminders << FactoryBot.create(:reminder, :project)
       end
     end
 
     trait :with_documents do
       after(:build) do |project|
-        project.project_documents << FactoryGirl.build(:project_document)
-        project.project_documents << FactoryGirl.build(:project_document)
+        project.project_documents << FactoryBot.build(:project_document)
+        project.project_documents << FactoryBot.build(:project_document)
       end
     end
 
     trait :with_named_documents do
       after(:build) do |project|
-        project.project_documents << FactoryGirl.build(:project_document, :title => "Final Report")
-        project.project_documents << FactoryGirl.build(:project_document, :title => "Project Document")
+        project.project_documents << FactoryBot.build(:project_document, :title => "Final Report")
+        project.project_documents << FactoryBot.build(:project_document, :title => "Project Document")
       end
     end
 

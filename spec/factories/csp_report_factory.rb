@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :csp_report do
     document_uri { "http://localhost:3000/en/login"}
     referrer {  "http://localhost:3000/en/dashboard/index" }

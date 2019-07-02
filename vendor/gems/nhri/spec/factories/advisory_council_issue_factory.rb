@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :advisory_council_issue, :class => Nhri::AdvisoryCouncil::AdvisoryCouncilIssue do
     title {Faker::Lorem.sentence(5)}
 
@@ -10,7 +10,7 @@ FactoryGirl.define do
       file                { LoremIpsumDocument.new.docfile }
       filesize            { 10000 + (30000*rand).to_i }
       original_filename   { "#{Faker::Lorem.words(2).join("_")}.pdf" }
-      original_type       "application/pdf"
+      original_type       { "application/pdf" }
     end
 
     after(:build) do |advisory_council_issue|
@@ -24,14 +24,15 @@ FactoryGirl.define do
     end
 
     trait :no_f_in_title do
-      title Faker::Lorem.sentence(5).gsub(/f/i,"b")
+      title { Faker::Lorem.sentence(5).gsub(/f/i,"b") }
     end
 
     trait :title_has_an_f do
-      str = Faker::Lorem.sentence(5)
-      i = rand(str.length)
-      l = str.length
-      title { new_str = (str.dup.slice(0,i-1)+'f'+str.dup.slice(i-l,1000)).dup }
+      title {
+        str = Faker::Lorem.sentence(5)
+        i = rand(str.length)
+        l = str.length
+        new_str = (str.dup.slice(0,i-1)+'f'+str.dup.slice(i-l,1000)).dup }
     end
 
     trait :hr_area do
@@ -64,7 +65,7 @@ FactoryGirl.define do
     trait :with_notes do
       after(:create) do |aci|
         rand(3).times do
-          FactoryGirl.create(:note, :advisory_council_issue, :notable_id => aci.id)
+          FactoryBot.create(:note, :advisory_council_issue, :notable_id => aci.id)
         end
       end
     end
@@ -72,7 +73,7 @@ FactoryGirl.define do
     trait :with_reminders do
       after(:create) do |aci|
         (rand(3)+1).times do
-          FactoryGirl.create(:reminder, :advisory_council_issue, :remindable_id => aci.id)
+          FactoryBot.create(:reminder, :advisory_council_issue, :remindable_id => aci.id)
         end
       end
     end

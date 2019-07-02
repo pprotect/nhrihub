@@ -14,9 +14,9 @@ def rand_filename
   Faker::Lorem.words(l).join('_').downcase + ".docx"
 end
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :complaint do
-    case_reference  "some string"
+    case_reference  { "some string" }
     firstName { Faker::Name.first_name }
     lastName { Faker::Name.last_name }
     village { Faker::Address.city }
@@ -35,7 +35,7 @@ FactoryGirl.define do
         complaint.good_governance_complaint_bases << GoodGovernance::ComplaintBasis.all.sample(2)
         complaint.human_rights_complaint_bases << Nhri::ComplaintBasis.all.sample(2)
         complaint.special_investigations_unit_complaint_bases << Siu::ComplaintBasis.all.sample(2)
-        complaint.status_changes << FactoryGirl.create(:status_change, :open, :change_date => DateTime.now, :user_id => User.all.sample.id)
+        complaint.status_changes << FactoryBot.create(:status_change, :open, :change_date => DateTime.now, :user_id => User.all.sample.id)
         complaint.mandate_id = Mandate.pluck(:id).sample(1)
         complaint.mandate_ids = Mandate.pluck(:id).sample(2)
         complaint.agency_ids = Agency.pluck(:id).sample(2)
@@ -47,7 +47,7 @@ FactoryGirl.define do
         complaint.good_governance_complaint_bases << GoodGovernance::ComplaintBasis.all
         complaint.human_rights_complaint_bases << Nhri::ComplaintBasis.all
         complaint.special_investigations_unit_complaint_bases << Siu::ComplaintBasis.all
-        complaint.status_changes << FactoryGirl.create(:status_change, :open, :change_date => DateTime.now, :user_id => User.all.sample.id)
+        complaint.status_changes << FactoryBot.create(:status_change, :open, :change_date => DateTime.now, :user_id => User.all.sample.id)
         complaint.mandate_id = Mandate.pluck(:id).sample(1)
         complaint.mandate_ids = Mandate.pluck(:id).sample(2)
         complaint.agency_ids = Agency.pluck(:id).sample(2)
@@ -56,7 +56,7 @@ FactoryGirl.define do
 
     trait :with_document do
       after :build do |complaint|
-        complaint_document = FactoryGirl.create(:complaint_document, :title => rand_title, :filename => rand_filename)
+        complaint_document = FactoryBot.create(:complaint_document, :title => rand_title, :filename => rand_filename)
         complaint.complaint_documents << complaint_document
       end
     end
@@ -67,7 +67,7 @@ FactoryGirl.define do
         if User.count > 20
           assignees = User.all.sample(2)
         else
-          assignees = [FactoryGirl.create(:assignee, :with_password), FactoryGirl.create(:assignee, :with_password)]
+          assignees = [FactoryBot.create(:assignee, :with_password), FactoryBot.create(:assignee, :with_password)]
         end
         assigns = assignees.map do |user|
           date = DateTime.now.advance(:days => -rand(365))
@@ -78,14 +78,14 @@ FactoryGirl.define do
 
     trait :with_comm do
       after(:create) do |complaint|
-        complaint.communications = [FactoryGirl.create(:communication, :with_notes, :date => DateTime.now), FactoryGirl.create(:communication, :with_notes, :date => DateTime.now.advance(:days => -7))]
+        complaint.communications = [FactoryBot.create(:communication, :with_notes, :date => DateTime.now), FactoryBot.create(:communication, :with_notes, :date => DateTime.now.advance(:days => -7))]
       end
     end
 
     trait :with_notes do
       after(:create) do |complaint|
         rand(3).times do
-          FactoryGirl.create(:note, :complaint, :notable_id => complaint.id)
+          FactoryBot.create(:note, :complaint, :notable_id => complaint.id)
         end
       end
     end
@@ -93,26 +93,26 @@ FactoryGirl.define do
     trait :with_two_notes do
       after(:create) do |complaint|
         2.times do
-          FactoryGirl.create(:note, :complaint, :notable_id => complaint.id, :created_at => DateTime.new(2017,5,5))
+          FactoryBot.create(:note, :complaint, :notable_id => complaint.id, :created_at => DateTime.new(2017,5,5))
         end
       end
     end
 
     trait :with_reminders do
       after(:build) do |complaint|
-        complaint.reminders << FactoryGirl.create(:reminder, :complaint)
+        complaint.reminders << FactoryBot.create(:reminder, :complaint)
       end
     end
 
     trait :open do
       after(:build) do |complaint|
-        complaint.status_changes = [FactoryGirl.create(:status_change, :open)]
+        complaint.status_changes = [FactoryBot.create(:status_change, :open)]
       end
     end
 
     trait :closed do
       after(:build) do |complaint|
-        complaint.status_changes = [FactoryGirl.create(:status_change, :closed)]
+        complaint.status_changes = [FactoryBot.create(:status_change, :closed)]
       end
     end
   end

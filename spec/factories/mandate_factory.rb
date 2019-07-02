@@ -1,5 +1,5 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :mandate do
-    key [:human_rights, :good_governance, :special_investigations_unit].sample
+    key { [:human_rights, :good_governance, :special_investigations_unit].sample }
   end
 end
