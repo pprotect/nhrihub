@@ -36,6 +36,7 @@ require_relative 'helpers/download_helpers'
 # to confirm, uncomment this line:
 # puts ENV['TZ']
 
+# props for this config go to https://medium.com/@cesargralmeida/using-selenium-chrome-driver-and-capybara-to-automate-web-only-reports-7ffda7dfb83e
 Capybara.register_driver :headless_chrome do |app|
   chrome_options = Selenium::WebDriver::Chrome::Options.new
   chrome_options.add_argument('--headless') unless ENV['UI']
@@ -51,7 +52,20 @@ Capybara.register_driver :headless_chrome do |app|
 
   chrome_options.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
 
-  Capybara::Selenium::Driver.new(app, :browser => :chrome, :options => chrome_options)
+  driver = Capybara::Selenium::Driver.new(app, :browser => :chrome, :options => chrome_options)
+
+  bridge = driver.browser.send(:bridge)
+
+  path = '/session/:session_id/chromium/send_command'
+  path[':session_id'] = bridge.session_id
+
+  bridge.http.call(:post, path, cmd: 'Page.setDownloadBehavior',
+                   params: {
+                       behavior: 'allow',
+                       downloadPath: DownloadHelpers::PATH
+                   })
+
+  driver
 end
 
 Capybara.register_driver :chrome do |app|

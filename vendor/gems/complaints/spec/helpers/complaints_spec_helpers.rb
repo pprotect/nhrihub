@@ -11,7 +11,6 @@ module ComplaintsSpecHelpers
   include NotesSpecCommonHelpers
 
   def add_a_communication
-    open_communications_modal
     add_communication
     expect(page).to have_selector('#new_communication')
     within new_communication do

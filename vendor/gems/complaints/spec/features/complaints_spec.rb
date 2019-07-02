@@ -538,7 +538,7 @@ feature "complaints index", :js => true do
                                           and change{ documents.count }.by(-1)
   end
 
-  it "should download a complaint document file", :driver => :chrome do
+  it "should download a complaint document file" do
     sleep(0.2)
     expand
     @doc = ComplaintDocument.first
