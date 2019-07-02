@@ -79,7 +79,7 @@ end
 gem 'js-routes'
 gem 'bootstrap-sass'
 gem 'simple-navigation-bootstrap'
-gem 'font-awesome-sass'
+gem 'font-awesome-sass', '=4.7.0'
 #gem 'simple-navigation', '~> 4.0.3' seems to have some problems with simple-navigation-bootstrap
 gem 'simple-navigation', '~> 3.14.0'
 gem 'simplecov', :require => false, :group => [:test, :jstest]
