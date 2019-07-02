@@ -48,6 +48,7 @@ $ ->
           data : data
         ractive.toHTML()
       template : $('#popover_template').html()
+      sanitize : false
       trigger: 'hover'
     teardown: ->
       $(node).off('mouseenter')

@@ -39,6 +39,7 @@ feature "Registered user logs in with valid credentials", :js => true do
 
   scenario "staff member logs in", :driver => :chrome do
     visit "/fr"
+    configure_keystore
 
     fill_in "Nom d'usilateur", :with => "staff"
     fill_in "Mot de pass", :with => "password"

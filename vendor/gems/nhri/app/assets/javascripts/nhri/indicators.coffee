@@ -90,6 +90,7 @@ $ ->
           template : template
           data : data
         ractive.toHTML()
+      sanitize : false
       template : $('#popover_template').html()
       trigger: 'hover'
     teardown: ->

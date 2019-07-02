@@ -176,6 +176,7 @@ $ ->
         ractive.toHTML()
       template : $('#popover_template').html()
       trigger: 'hover'
+      sanitize: false
     teardown: ->
       $(node).off('mouseenter')
 

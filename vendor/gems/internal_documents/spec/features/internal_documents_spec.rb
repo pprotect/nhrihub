@@ -119,7 +119,7 @@ feature "internal document management", :js => true do
     expect(page).to have_css(".files .template-download", :count => 1)
     expect(page).to have_css("div.icon.details")
     page.execute_script("$('div.icon.details').first().trigger('mouseenter')")
-    sleep(0.2) # transition animation
+    sleep(0.4) # transition animation
     expect(page).to have_css('.fileDetails')
     expect(page.find('.popover-content .name' ).text).to         eq (@doc.original_filename)
     expect(page.find('.popover-content .size' ).text).to         match /\d+\.?\d+ KB/

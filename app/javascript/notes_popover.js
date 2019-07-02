@@ -30,6 +30,7 @@ export default function(node){
       });
       return ractive.toHTML();
     },
+    sanitize: false,
     template : `
       <div class='popover fileDetails' role='tooltip'>
         <div class='arrow'/>
