@@ -358,6 +358,8 @@ GEM
       cliver (~> 0.3.1)
       websocket-driver (>= 0.2.0)
     public_suffix (3.1.1)
+    puma (4.0.0)
+      nio4r (~> 2.0)
     rack-attack (6.0.0)
       rack (>= 1.0, < 3)
     rack-mini-profiler (1.0.2)
@@ -561,6 +563,7 @@ DEPENDENCIES
   pg
   poltergeist
   projects!
+  puma
   rack!
   rack-attack
   rack-mini-profiler (~> 1.0.2)

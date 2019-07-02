@@ -37,26 +37,39 @@ require_relative 'helpers/download_helpers'
 # puts ENV['TZ']
 
 Capybara.register_driver :headless_chrome do |app|
-  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-    chromeOptions: { args: %w(headless disable-gpu --window-size=1400,800),
-                     prefs: {"download.default_directory" => DownloadHelpers::PATH } }
-  )
+  chrome_options = Selenium::WebDriver::Chrome::Options.new
+  chrome_options.add_argument('--headless') unless ENV['UI']
+  #chrome_options.add_argument('--no-sandbox')
+  #chrome_options.add_argument('--disable-gpu')
+  #chrome_options.add_argument('--disable-dev-shm-usage')
+  chrome_options.add_argument('--window-size=1400,1400')
 
-  Capybara::Selenium::Driver.new app,
-    browser: :chrome,
-    desired_capabilities: capabilities
+  chrome_options.add_preference(:download,
+                            directory_upgrade: true,
+                            prompt_for_download: false,
+                            default_directory: DownloadHelpers::PATH)
+
+  chrome_options.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
+
+  Capybara::Selenium::Driver.new(app, :browser => :chrome, :options => chrome_options)
 end
 
-
-
 Capybara.register_driver :chrome do |app|
-  caps = Selenium::WebDriver::Remote::Capabilities.chrome(
-    "chromeOptions" => {
-      "args" => [ "--window-size=1400,800"],
-      "prefs" => {"download.default_directory" => DownloadHelpers::PATH }
-    }
-  )
-  Capybara::Selenium::Driver.new(app, :browser => :chrome, :desired_capabilities => caps)
+  chrome_options = Selenium::WebDriver::Chrome::Options.new
+  #chrome_options.add_argument('--headless') unless ENV['UI']
+  #chrome_options.add_argument('--no-sandbox')
+  #chrome_options.add_argument('--disable-gpu')
+  #chrome_options.add_argument('--disable-dev-shm-usage')
+  chrome_options.add_argument('--window-size=1400,1400')
+
+  chrome_options.add_preference(:download,
+                            directory_upgrade: true,
+                            prompt_for_download: false,
+                            default_directory: DownloadHelpers::PATH)
+
+  chrome_options.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
+
+  Capybara::Selenium::Driver.new(app, :browser => :chrome, :options => chrome_options)
 end
 
 Capybara.register_driver :poltergeist do |app|

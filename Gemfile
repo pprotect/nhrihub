@@ -74,6 +74,7 @@ group :development, :test, :jstest do
   gem 'magic_lamp'
   gem 'launchy'
   gem 'byebug'
+  gem 'puma'
 end
 gem 'js-routes'
 gem 'bootstrap-sass'
