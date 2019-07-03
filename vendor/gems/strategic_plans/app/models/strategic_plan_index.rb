@@ -22,6 +22,7 @@ module StrategicPlanIndex
   end
 
   def lower_priority_siblings
+    # includes self
     siblings.select{|sibling| sibling >= self}
   end
 
@@ -76,7 +77,7 @@ module StrategicPlanIndex
 
   private
   def parent_index
-    index_parent.index
+    index_parent.reload.index
   end
 
   def increment?
