@@ -276,7 +276,7 @@ feature "reference document highlighted when its id is passed in via url query s
     expect(page).to have_selector("#reference_documents .panel-heading.highlight .icc_reference_document#icc_reference_document_editable#{@id}")
   end
 
-  it "should scroll the selected document into view" do
+  it "should scroll the selected document into view", :driver => :chrome do
     page_position = page.evaluate_script("$(document).scrollTop()")
     element_offset = page.evaluate_script("$('#icc_reference_document_editable#{@id}').offset().top")
     expect(page_position).to eq element_offset - 100

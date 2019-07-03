@@ -25,7 +25,7 @@ feature "indicators behaviour", :js => true do
     expect(page).to have_selector(".indicator.highlight", :text => Nhri::Indicator.find(@indicator_id).title)
     page_position = page.evaluate_script("$(document).scrollTop()")
     element_offset = page.evaluate_script("$('.indicator.highlight').offset().top")
-    expect(page_position).to eq element_offset - 100
+    expect(page_position).to eq element_offset - 88
   end
 end
 
