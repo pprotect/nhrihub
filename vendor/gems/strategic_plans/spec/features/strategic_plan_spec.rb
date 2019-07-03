@@ -43,7 +43,7 @@ feature "select strategic plan from prior years", :js => true do
     if page.driver.browser.is_a? Capybara::Poltergeist::Browser
       expect(add_priority_button['disabled']).to eq "disabled"
     else
-      expect(add_priority_button['disabled']).to eq "true"
+      expect(add_priority_button['disabled']).to eq "disabled"
     end
     add_priority_button.click
     expect(flash_message).to eq "Strategic priorities can only be added to the current strategic plan"
