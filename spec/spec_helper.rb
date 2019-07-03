@@ -109,14 +109,17 @@ end
 if ENV["client"] =~ /(sel|ff)/i
   puts "Browser: Firefox via Selenium"
   Capybara.javascript_driver = :selenium
+  Capybara.server = :puma, { Silent: true }
 elsif ENV["client"] =~ /^chrome$/i
   puts "Browser: Chrome"
 
   Capybara.javascript_driver = :chrome
+  Capybara.server = :puma, { Silent: true }
 elsif ENV["client"] =~ /phantom/i
   puts "Browser: Phantomjs via Poltergeist"
 
   Capybara.javascript_driver = :poltergeist
+  Capybara.server = :puma, { Silent: true }
 elsif ENV["client"] =~ /ie/i
   puts "Browser: IE"
   CONFIGURATION FOR REMOTE TESTING OF IE
@@ -137,6 +140,7 @@ else
   puts "Browser: headless Chrome"
 
   Capybara.javascript_driver = :headless_chrome
+  Capybara.server = :puma, { Silent: true }
 end
 
 #require 'simplecov'
