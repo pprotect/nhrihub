@@ -10,7 +10,6 @@ class PerformanceIndicator < ActiveRecord::Base
   has_many :projects, :through => :project_performance_indicators
 
   scope :in_current_strategic_plan, ->{ joins(:activity => {:outcome => {:planned_result => {:strategic_priority => :strategic_plan}}}).merge(StrategicPlan.current) }
-  default_scope ->{ order("string_to_array(performance_indicators.index,'.')::int[]") }
 
   def as_json(options={})
     default_options = {:except =>  [:updated_at, :created_at],
