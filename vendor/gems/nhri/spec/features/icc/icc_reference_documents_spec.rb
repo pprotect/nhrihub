@@ -163,7 +163,7 @@ feature "icc reference document management", :js => true do
     expect(page.find('div.title .edit input').value).to eq "my important document"
   end
 
-  scenario "download a file", :driver => :chrome do
+  scenario "download a file" do
     click_the_download_icon
     filename = @doc.original_filename
     unless page.driver.instance_of?(Capybara::Selenium::Driver) # response_headers not supported
@@ -243,7 +243,7 @@ feature "open document from source_url", :js => true do
     visit nhri_icc_reference_documents_path('en')
   end
 
-  it "should open the source_url link", :driver => :chrome do
+  it "should open the source_url link" do
     click_the_source_url_link
     page.switch_to_window(page.windows[-1])
     page.find('h1',:text => "Example Domain") # better than sleep to await the page load
@@ -276,7 +276,7 @@ feature "reference document highlighted when its id is passed in via url query s
     expect(page).to have_selector("#reference_documents .panel-heading.highlight .icc_reference_document#icc_reference_document_editable#{@id}")
   end
 
-  it "should scroll the selected document into view", :driver => :chrome do
+  it "should scroll the selected document into view" do
     page_position = page.evaluate_script("$(document).scrollTop()")
     element_offset = page.evaluate_script("$('#icc_reference_document_editable#{@id}').offset().top")
     expect(page_position).to eq element_offset - 100

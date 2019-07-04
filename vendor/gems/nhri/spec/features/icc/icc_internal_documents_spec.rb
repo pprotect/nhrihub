@@ -31,7 +31,7 @@ feature "show icc internal documents index page", :js => true do
     expect(page.all('.template-upload .title select#accreditation_required_doc_title option').map(&:text)).not_to include @title
   end
 
-  scenario "download a file", :driver => :chrome do
+  scenario "download a file" do
     @doc = InternalDocument.all.find(&:document_group_primary?)
     click_the_download_icon
     unless page.driver.instance_of?(Capybara::Selenium::Driver) # response_headers not supported
@@ -42,7 +42,7 @@ feature "show icc internal documents index page", :js => true do
     expect(downloaded_file).to eq @doc.original_filename
   end
 
-  scenario "download an archive file", :driver => :chrome do
+  scenario "download an archive file" do
     @doc = InternalDocument.all.find(&:document_group_primary?).archive_files.last
     click_the_archive_icon
     within archive_panel do

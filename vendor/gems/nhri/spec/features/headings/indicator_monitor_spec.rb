@@ -270,7 +270,7 @@ feature "monitors behaviour when indicator is configured to monitor with file fo
     expect(page).not_to have_selector('#selected_file', :text => 'first_upload_file.pdf')
   end
 
-  scenario "download the monitor file", :driver => :chrome do
+  scenario "download the monitor file" do
     click_the_download_icon
     filename = Nhri::FileMonitor.first.original_filename
     unless page.driver.instance_of?(Capybara::Selenium::Driver) # response_headers not supported

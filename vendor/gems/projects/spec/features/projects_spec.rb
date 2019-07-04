@@ -465,7 +465,7 @@ feature "projects index", :js => true do
     end
   end
 
-  it "should download a project document file", :driver => :chrome do
+  it "should download a project document file" do
     expand_first_project
     @doc = ProjectDocument.first
     filename = @doc.filename

@@ -185,7 +185,7 @@ feature "internal document management", :js => true do
     expect(page.find('td.revision .edit input').value).to eq "3.0"
   end
 
-  scenario "download a file", :driver => :chrome do
+  scenario "download a file" do
     click_the_download_icon
     unless page.driver.instance_of?(Capybara::Selenium::Driver) # response_headers not supported
       expect(page.response_headers['Content-Type']).to eq('application/pdf')
@@ -195,7 +195,7 @@ feature "internal document management", :js => true do
     expect(downloaded_file).to eq @doc.original_filename
   end
 
-  scenario "download an archive file", :driver => :chrome do # b/c there was a bug!
+  scenario "download an archive file" do # b/c there was a bug!
     @doc = InternalDocument.all.find(&:document_group_primary?).archive_files.first
     click_the_archive_icon
     within archive_panel do

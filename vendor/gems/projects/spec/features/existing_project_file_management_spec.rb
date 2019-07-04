@@ -72,7 +72,7 @@ feature "existing project file management", :js => true do
                                                                 and change{ project_documents.all('.project_document').count }.by(-1)
   end
 
-  it "can download the saved document", :driver => :chrome do
+  it "can download the saved document" do
     @doc = Project.last.project_documents.first
     filename = @doc.filename
     expand_last_project

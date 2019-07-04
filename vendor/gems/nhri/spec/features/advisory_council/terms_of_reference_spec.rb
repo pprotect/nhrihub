@@ -118,7 +118,7 @@ feature "terms of reference document", :js => true do
     expect(page).not_to have_css('.fileDetails')
   end
 
-  it "can download the saved document", :driver => :chrome do
+  it "can download the saved document" do
     doc = Nhri::AdvisoryCouncil::TermsOfReferenceVersion.first
     click_the_download_icon
     unless page.driver.instance_of?(Capybara::Selenium::Driver) # response_headers not supported

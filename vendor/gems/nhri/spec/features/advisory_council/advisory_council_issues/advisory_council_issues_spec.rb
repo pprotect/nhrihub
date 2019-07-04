@@ -391,7 +391,7 @@ feature "view attachments", :js => true do
   include AdvisoryCouncilIssueSetupHelper
   include DownloadHelpers
 
-  scenario "download attached file", :driver => :chrome do
+  scenario "download attached file" do
     setup_database
     doc = Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first
     visit nhri_advisory_council_issues_path(:en)
