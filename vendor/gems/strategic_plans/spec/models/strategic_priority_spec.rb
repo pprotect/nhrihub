@@ -42,31 +42,31 @@ describe ".create!" do
       expect(StrategicPriority.count).to eq 4
       expect(StrategicPriority.all.sort[0].priority_level).to eq 1
       expect(StrategicPriority.all.sort[0].description).to eq "blah blah blah"
-      expect(StrategicPriority.all.sort[0].planned_results.sort[0].index).to eq "1.1"
-      expect(StrategicPriority.all.sort[0].planned_results.sort[0].outcomes.sort[0].index).to eq "1.1.1"
-      expect(StrategicPriority.all.sort[0].planned_results.sort[0].outcomes.sort[0].activities.sort[0].index).to eq "1.1.1.1"
-      expect(StrategicPriority.all.sort[0].planned_results.sort[0].outcomes.sort[0].activities.sort[0].performance_indicators.sort[0].index).to eq "1.1.1.1.1"
+      expect(StrategicPriority.all.sort[0].planned_results.sort[0].index).to eq [1,1]
+      expect(StrategicPriority.all.sort[0].planned_results.sort[0].outcomes.sort[0].index).to eq [1,1,1]
+      expect(StrategicPriority.all.sort[0].planned_results.sort[0].outcomes.sort[0].activities.sort[0].index).to eq [1,1,1,1]
+      expect(StrategicPriority.all.sort[0].planned_results.sort[0].outcomes.sort[0].activities.sort[0].performance_indicators.sort[0].index).to eq [1,1,1,1,1]
 
       expect(StrategicPriority.all.sort[1].priority_level).to eq 2
       expect(StrategicPriority.all.sort[1].description).to eq "bish bash bosh"
-      expect(StrategicPriority.all.sort[1].planned_results.sort[0].index).to eq "2.1"
-      expect(StrategicPriority.all.sort[1].planned_results.sort[0].outcomes.sort[0].index).to eq "2.1.1"
-      expect(StrategicPriority.all.sort[1].planned_results.sort[0].outcomes.sort[0].activities.sort[0].index).to eq "2.1.1.1"
-      expect(StrategicPriority.all.sort[1].planned_results.sort[0].outcomes.sort[0].activities.sort[0].performance_indicators.sort[0].index).to eq "2.1.1.1.1"
+      expect(StrategicPriority.all.sort[1].planned_results.sort[0].index).to eq [2,1]
+      expect(StrategicPriority.all.sort[1].planned_results.sort[0].outcomes.sort[0].index).to eq [2,1,1]
+      expect(StrategicPriority.all.sort[1].planned_results.sort[0].outcomes.sort[0].activities.sort[0].index).to eq [2,1,1,1]
+      expect(StrategicPriority.all.sort[1].planned_results.sort[0].outcomes.sort[0].activities.sort[0].performance_indicators.sort[0].index).to eq [2,1,1,1,1]
 
       expect(StrategicPriority.all.sort[2].priority_level).to eq 3
       expect(StrategicPriority.all.sort[2].description).to eq "blah blah bloo"
-      expect(StrategicPriority.all.sort[2].planned_results.sort[0].index).to eq "3.1"
-      expect(StrategicPriority.all.sort[2].planned_results.sort[0].outcomes.sort[0].index).to eq "3.1.1"
-      expect(StrategicPriority.all.sort[2].planned_results.sort[0].outcomes.sort[0].activities.sort[0].index).to eq "3.1.1.1"
-      expect(StrategicPriority.all.sort[2].planned_results.sort[0].outcomes.sort[0].activities.sort[0].performance_indicators.sort[0].index).to eq "3.1.1.1.1"
+      expect(StrategicPriority.all.sort[2].planned_results.sort[0].index).to eq [3,1]
+      expect(StrategicPriority.all.sort[2].planned_results.sort[0].outcomes.sort[0].index).to eq [3,1,1]
+      expect(StrategicPriority.all.sort[2].planned_results.sort[0].outcomes.sort[0].activities.sort[0].index).to eq [3,1,1,1]
+      expect(StrategicPriority.all.sort[2].planned_results.sort[0].outcomes.sort[0].activities.sort[0].performance_indicators.sort[0].index).to eq [3,1,1,1,1]
 
       expect(StrategicPriority.all.sort[3].priority_level).to eq 4
       expect(StrategicPriority.all.sort[3].description).to eq "blah blah blank"
-      expect(StrategicPriority.all.sort[3].planned_results.sort[0].index).to eq "4.1"
-      expect(StrategicPriority.all.sort[3].planned_results.sort[0].outcomes.sort[0].index).to eq "4.1.1"
-      expect(StrategicPriority.all.sort[3].planned_results.sort[0].outcomes.sort[0].activities.sort[0].index).to eq "4.1.1.1"
-      expect(StrategicPriority.all.sort[3].planned_results.sort[0].outcomes.sort[0].activities.sort[0].performance_indicators.sort[0].index).to eq "4.1.1.1.1"
+      expect(StrategicPriority.all.sort[3].planned_results.sort[0].index).to eq [4,1]
+      expect(StrategicPriority.all.sort[3].planned_results.sort[0].outcomes.sort[0].index).to eq [4,1,1]
+      expect(StrategicPriority.all.sort[3].planned_results.sort[0].outcomes.sort[0].activities.sort[0].index).to eq [4,1,1,1]
+      expect(StrategicPriority.all.sort[3].planned_results.sort[0].outcomes.sort[0].activities.sort[0].performance_indicators.sort[0].index).to eq [4,1,1,1,1]
     end
   end # /context
 
@@ -142,11 +142,11 @@ describe "destroy" do
   end
 
   it "should set the initial values of the indexes" do
-    expect(PlannedResult.pluck(:index)).to eq ["1.1","1.2","2.1","2.2"]
-    expect(Outcome.pluck(:index)).to eq [ "1.1.1", "1.1.2", "1.2.1", "1.2.2", "2.1.1", "2.1.2", "2.2.1", "2.2.2"]
-    expect(Activity.pluck(:index)).to eq [ "1.1.1.1", "1.1.1.2", "1.1.2.1", "1.1.2.2", "1.2.1.1", "1.2.1.2", "1.2.2.1", "1.2.2.2", "2.1.1.1", "2.1.1.2", "2.1.2.1", "2.1.2.2", "2.2.1.1", "2.2.1.2", "2.2.2.1", "2.2.2.2"]
-    expect(PerformanceIndicator.pluck(:index)).to eq [ "1.1.1.1.1", "1.1.1.1.2", "1.1.1.2.1", "1.1.1.2.2", "1.1.2.1.1", "1.1.2.1.2", "1.1.2.2.1", "1.1.2.2.2", "1.2.1.1.1", "1.2.1.1.2", "1.2.1.2.1", "1.2.1.2.2", "1.2.2.1.1", "1.2.2.1.2", "1.2.2.2.1", "1.2.2.2.2",
-                                                       "2.1.1.1.1", "2.1.1.1.2", "2.1.1.2.1", "2.1.1.2.2", "2.1.2.1.1", "2.1.2.1.2", "2.1.2.2.1", "2.1.2.2.2", "2.2.1.1.1", "2.2.1.1.2", "2.2.1.2.1", "2.2.1.2.2", "2.2.2.1.1", "2.2.2.1.2", "2.2.2.2.1", "2.2.2.2.2"]
+    expect(PlannedResult.pluck(:index)).to eq [[1,1],[1,2],[2,1],[2,2]]
+    expect(Outcome.pluck(:index)).to eq [ [1,1,1], [1,1,2], [1,2,1], [1,2,2], [2,1,1], [2,1,2], [2,2,1], [2,2,2]]
+    expect(Activity.pluck(:index)).to eq [ [1,1,1,1], [1,1,1,2], [1,1,2,1], [1,1,2,2], [1,2,1,1], [1,2,1,2], [1,2,2,1], [1,2,2,2], [2,1,1,1], [2,1,1,2], [2,1,2,1], [2,1,2,2], [2,2,1,1], [2,2,1,2], [2,2,2,1], [2,2,2,2]]
+    expect(PerformanceIndicator.pluck(:index)).to eq [ [1,1,1,1,1], [1,1,1,1,2], [1,1,1,2,1], [1,1,1,2,2], [1,1,2,1,1], [1,1,2,1,2], [1,1,2,2,1], [1,1,2,2,2], [1,2,1,1,1], [1,2,1,1,2], [1,2,1,2,1], [1,2,1,2,2], [1,2,2,1,1], [1,2,2,1,2], [1,2,2,2,1], [1,2,2,2,2],
+                                                       [2,1,1,1,1], [2,1,1,1,2], [2,1,1,2,1], [2,1,1,2,2], [2,1,2,1,1], [2,1,2,1,2], [2,1,2,2,1], [2,1,2,2,2], [2,2,1,1,1], [2,2,1,1,2], [2,2,1,2,1], [2,2,1,2,2], [2,2,2,1,1], [2,2,2,1,2], [2,2,2,2,1], [2,2,2,2,2]]
   end
 
   context "when the highest strategic priority is deleted" do
@@ -160,19 +160,19 @@ describe "destroy" do
     end
 
     it "should decrement the planned_result index" do
-      expect(PlannedResult.pluck(:index)).to eq ["1.1","1.2"]
+      expect(PlannedResult.pluck(:index)).to eq [[1,1],[1,2]]
     end
 
     it "should decrement the outcomes indexes" do
-      expect(Outcome.pluck(:index)).to eq ["1.1.1", "1.1.2", "1.2.1", "1.2.2"]
+      expect(Outcome.pluck(:index)).to eq [[1,1,1], [1,1,2], [1,2,1], [1,2,2]]
     end
 
     it "should decrement the activities indexes" do
-      expect(Activity.pluck(:index)).to eq [ "1.1.1.1", "1.1.1.2", "1.1.2.1", "1.1.2.2", "1.2.1.1", "1.2.1.2", "1.2.2.1", "1.2.2.2" ]
+      expect(Activity.pluck(:index)).to eq [ [1,1,1,1], [1,1,1,2], [1,1,2,1], [1,1,2,2], [1,2,1,1], [1,2,1,2], [1,2,2,1], [1,2,2,2] ]
     end
 
     it "should decrement the performance_indicators indexes" do
-      expect(PerformanceIndicator.pluck(:index)).to eq [ "1.1.1.1.1", "1.1.1.1.2", "1.1.1.2.1", "1.1.1.2.2", "1.1.2.1.1", "1.1.2.1.2", "1.1.2.2.1", "1.1.2.2.2", "1.2.1.1.1", "1.2.1.1.2", "1.2.1.2.1", "1.2.1.2.2", "1.2.2.1.1", "1.2.2.1.2", "1.2.2.2.1", "1.2.2.2.2"]
+      expect(PerformanceIndicator.pluck(:index)).to eq [ [1,1,1,1,1], [1,1,1,1,2], [1,1,1,2,1], [1,1,1,2,2], [1,1,2,1,1], [1,1,2,1,2], [1,1,2,2,1], [1,1,2,2,2], [1,2,1,1,1], [1,2,1,1,2], [1,2,1,2,1], [1,2,1,2,2], [1,2,2,1,1], [1,2,2,1,2], [1,2,2,2,1], [1,2,2,2,2]]
     end
   end
 end

@@ -443,7 +443,7 @@ feature "view attachments", :js => true do
     setup_file_constraints
   end
 
-  scenario "download attached file", :driver => :chrome do
+  scenario "download attached file" do
     setup_database(:media_appearance_with_file)
     visit media_appearances_path(:en)
     click_the_download_icon

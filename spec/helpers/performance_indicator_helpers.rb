@@ -23,7 +23,7 @@ module PerformanceIndicatorHelpers
     current_pis = @model.first.performance_indicators.map(&:indexed_description)
     unique_pi_selector = page.all("li.performance_indicator a").reject{|pi| current_pis.include? pi.text}.first
     unique_pi_selector.click
-    PerformanceIndicator.where(:index => unique_pi_selector.text.split(' ')[0]).first
+    PerformanceIndicator.where(:index => unique_pi_selector.text.split(' ')[0].split('.').map(&:to_i)).first
   end
 
 end

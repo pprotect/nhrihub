@@ -1,9 +1,9 @@
 {
-  "complaints.js": "/packs-test/js/complaints-5c770de27f4e4badfcea.js",
+  "complaints.js": "/packs-test/js/complaints-936ba33b4965c5168c93.js",
   "entrypoints": {
     "complaints": {
       "js": [
-        "/packs-test/js/complaints-5c770de27f4e4badfcea.js"
+        "/packs-test/js/complaints-936ba33b4965c5168c93.js"
       ]
     }
   }
