@@ -2,13 +2,13 @@ require "rails_helper"
 require 'login_helpers'
 
 feature "Unregistered user tries to log in", :js => true do
-  scenario "navigation not available before user logs in", :driver => :chrome do
+  scenario "navigation not available before user logs in" do
     visit "/en"
     expect(page_heading).to eq "Please log in"
     expect(page).not_to have_selector(".nav")
   end
 
-  scenario "admin logs in", :driver => :chrome do
+  scenario "admin logs in" do
     visit "/en"
     fill_in "User name", :with => "admin"
     fill_in "Password", :with => "password"
@@ -24,7 +24,7 @@ feature "Registered user logs in with valid credentials", :js => true do
   context "two factor authentication is required" do
     include RegisteredUserHelper
 
-    scenario "admin logs in", :driver => :chrome do
+    scenario "admin logs in" do
       visit "/en"
       configure_keystore
 
@@ -39,7 +39,7 @@ feature "Registered user logs in with valid credentials", :js => true do
       click_link('Logout')
     end
 
-    scenario "staff member logs in", :driver => :chrome, :js => true do
+    scenario "staff member logs in", :js => true do
       visit "/en"
       configure_keystore
 
@@ -63,7 +63,7 @@ feature "Registered user logs in with valid credentials", :js => true do
       remove_user_two_factor_authentication_credentials('staff')
     end
 
-    scenario "admin logs in", :driver => :chrome do
+    scenario "admin logs in" do
       visit "/en"
 
       fill_in "User name", :with => "admin"
@@ -76,7 +76,7 @@ feature "Registered user logs in with valid credentials", :js => true do
       click_link('Logout')
     end
 
-    scenario "staff member logs in", :driver => :chrome do
+    scenario "staff member logs in" do
       visit "/en"
 
       fill_in "User name", :with => "staff"
@@ -148,7 +148,7 @@ end
 
 feature "Registered user logs in with invalid credentials", :js => true do
   include RegisteredUserHelper
-  scenario "enters bad password", :driver => :chrome do
+  scenario "enters bad password" do
     visit "/en"
     configure_keystore
 
@@ -160,7 +160,7 @@ feature "Registered user logs in with invalid credentials", :js => true do
     expect(page_heading).to eq "Please log in"
   end
 
-  scenario "enters bad user name", :driver => :chrome do
+  scenario "enters bad user name" do
     visit "/en"
 
     fill_in "User name", :with => "notavaliduser"
@@ -175,7 +175,7 @@ end
 
 feature "User is not logged in but tries to access a page", :js => true do
   include RegisteredUserHelper
-  scenario "visit a protected page", :driver => :chrome do
+  scenario "visit a protected page" do
     visit "/en/nhri/icc"
     expect(page_heading).to eq "Please log in"
   end

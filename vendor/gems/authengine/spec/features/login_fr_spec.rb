@@ -2,13 +2,13 @@ require "rails_helper"
 require 'login_helpers'
 
 feature "Unregistered user tries to log in", :js => true do
-  scenario "navigation not available before user logs in", :driver => :chrome do
+  scenario "navigation not available before user logs in" do
     visit "/fr"
     expect(page_heading).to eq "S'il vous plaît connecter"
     expect(page).not_to have_selector(".nav")
   end
 
-  scenario "unregistered admin logs in", :driver => :chrome do
+  scenario "unregistered admin logs in" do
     visit "/fr"
 
     fill_in "Nom d'usilateur", :with => "admin"
@@ -23,7 +23,7 @@ end
 
 feature "Registered user logs in with valid credentials", :js => true do
   include RegisteredUserHelper
-  scenario "admin logs in", :driver => :chrome do
+  scenario "admin logs in" do
     visit "/fr"
     configure_keystore
 
@@ -37,7 +37,7 @@ feature "Registered user logs in with valid credentials", :js => true do
     click_link('Déconnecter')
   end
 
-  scenario "staff member logs in", :driver => :chrome do
+  scenario "staff member logs in" do
     visit "/fr"
     configure_keystore
 
@@ -54,7 +54,7 @@ end
 
 feature "Registered user logs in with invalid credentials", :js => true do
   include RegisteredUserHelper
-  scenario "enters bad password", :driver => :chrome do
+  scenario "enters bad password" do
     visit "/fr"
 
     fill_in "Nom d'usilateur", :with => "staff"
@@ -65,7 +65,7 @@ feature "Registered user logs in with invalid credentials", :js => true do
     expect(page_heading).to eq "S'il vous plaît connecter"
   end
 
-  scenario "enters bad user name", :driver => :chrome do
+  scenario "enters bad user name" do
     visit "/fr"
 
     fill_in "Nom d'usilateur", :with => "notvaliduser"
