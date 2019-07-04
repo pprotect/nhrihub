@@ -176,6 +176,8 @@ GEM
       aws-sdk-core (= 2.11.307)
     aws-sigv4 (1.1.0)
       aws-eventstream (~> 1.0, >= 1.0.2)
+    bootsnap (1.4.4)
+      msgpack (~> 1.0)
     bootstrap-sass (3.4.1)
       autoprefixer-rails (>= 5.2.1)
       sassc (>= 2.0.0)
@@ -337,6 +339,7 @@ GEM
     mini_mime (1.0.1)
     mini_portile2 (2.4.0)
     minitest (5.11.3)
+    msgpack (1.3.0)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
     mustermann (1.0.3)
@@ -524,6 +527,7 @@ DEPENDENCIES
   acme_plugin (~> 0.0.10)
   authengine!
   aws-sdk (~> 2)
+  bootsnap
   bootstrap-sass
   bulk_cache_fetcher
   byebug
