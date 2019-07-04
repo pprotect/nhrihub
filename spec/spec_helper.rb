@@ -43,7 +43,7 @@ Capybara.register_driver :headless_chrome do |app|
   #chrome_options.add_argument('--no-sandbox')
   #chrome_options.add_argument('--disable-gpu')
   #chrome_options.add_argument('--disable-dev-shm-usage')
-  chrome_options.add_argument('--window-size=1400,1400')
+  chrome_options.add_argument('--window-size=1400,800') # value affects the scrolling behaviour measurements
 
   chrome_options.add_preference(:download,
                             directory_upgrade: true,
@@ -74,7 +74,7 @@ Capybara.register_driver :chrome do |app|
   #chrome_options.add_argument('--no-sandbox')
   #chrome_options.add_argument('--disable-gpu')
   #chrome_options.add_argument('--disable-dev-shm-usage')
-  chrome_options.add_argument('--window-size=1400,1400')
+  chrome_options.add_argument('--window-size=1400,800')
 
   chrome_options.add_preference(:download,
                             directory_upgrade: true,
