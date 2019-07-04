@@ -11,7 +11,7 @@ namespace :nhri do
       desc "populates headings"
       task :populate => "nhri:human_rights_indicators:headings:depopulate" do
         6.times do
-          FactoryGirl.create(:heading)
+          FactoryBot.create(:heading)
         end
       end
 

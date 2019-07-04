@@ -3,7 +3,7 @@ namespace :users do
   task :populate => "users:depopulate" do
     if (uc = User.count) < 20
       (20 - uc).times do
-        FactoryGirl.create(:user, :staff)
+        FactoryBot.create(:user, :staff)
       end
     end
   end

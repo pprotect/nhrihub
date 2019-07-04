@@ -4,15 +4,15 @@ namespace :strategic_plan do
 
   def populate_strategic_plan(strategic_plan)
     2.times do |i|
-      sp = FactoryGirl.create(:strategic_priority, :priority_level => i+1, :strategic_plan_id => strategic_plan.id)
+      sp = FactoryBot.create(:strategic_priority, :priority_level => i+1, :strategic_plan_id => strategic_plan.id)
       2.times do
-        pr = FactoryGirl.create(:planned_result, :strategic_priority => sp)
+        pr = FactoryBot.create(:planned_result, :strategic_priority => sp)
         2.times do
-          o = FactoryGirl.create(:outcome, :planned_result => pr)
+          o = FactoryBot.create(:outcome, :planned_result => pr)
           2.times do
-            a = FactoryGirl.create(:activity, :outcome => o)
+            a = FactoryBot.create(:activity, :outcome => o)
             2.times do
-              FactoryGirl.create(:performance_indicator, :well_populated, :activity => a)
+              FactoryBot.create(:performance_indicator, :well_populated, :activity => a)
             end
           end
         end
@@ -29,8 +29,8 @@ namespace :strategic_plan do
 
   desc "re-initialize strategic plans"
   task :populate_sp => "strategic_plan:depopulate" do
-    previous_strategic_plan = FactoryGirl.create(:strategic_plan, :created_at => Date.new(Date.today.year-1,1,1))
-    current_strategic_plan = FactoryGirl.create(:strategic_plan, :created_at => Date.new(Date.today.year,1,1))
+    previous_strategic_plan = FactoryBot.create(:strategic_plan, :created_at => Date.new(Date.today.year-1,1,1))
+    current_strategic_plan = FactoryBot.create(:strategic_plan, :created_at => Date.new(Date.today.year,1,1))
     populate_strategic_plan(previous_strategic_plan)
     populate_strategic_plan(current_strategic_plan)
   end

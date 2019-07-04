@@ -23,7 +23,7 @@ namespace :csp_reports do
   desc "populates some csp reports"
   task :populate => "csp_reports:depopulate" do
     5.times do
-      FactoryGirl.create(:csp_report)
+      FactoryBot.create(:csp_report)
     end
   end
 
