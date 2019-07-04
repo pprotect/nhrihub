@@ -1,9 +1,7 @@
 class Outcome < ActiveRecord::Base
   include StrategicPlanIndex
-  belongs_to :planned_result
+  belongs_to :planned_result, :inverse_of => :outcomes
   has_many :activities, :autosave => true, :dependent => :destroy
-
-  default_scope ->{ order("string_to_array(outcomes.index,'.')::int[]") }
 
   def as_json(options={})
     super(:except => [:updated_at, :created_at],

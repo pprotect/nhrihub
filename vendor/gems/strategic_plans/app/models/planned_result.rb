@@ -1,7 +1,7 @@
 class PlannedResult < ActiveRecord::Base
   include StrategicPlanIndex
   belongs_to :strategic_priority
-  has_many :outcomes, :dependent => :destroy, :autosave => true
+  has_many :outcomes, :inverse_of => :planned_result, :dependent => :destroy, :autosave => true
   accepts_nested_attributes_for :outcomes
 
   scope :in_current_strategic_plan, ->{ joins(:strategic_priority => :strategic_plan).merge(StrategicPlan.current) }

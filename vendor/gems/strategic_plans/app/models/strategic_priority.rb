@@ -41,7 +41,7 @@ class StrategicPriority < ActiveRecord::Base
 
   # for the purposes of StrategicPlanIndexer
   def index
-    priority_level.to_s
+    [priority_level]
   end
 
   def description_error
