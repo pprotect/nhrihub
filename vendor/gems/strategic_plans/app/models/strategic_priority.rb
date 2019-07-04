@@ -36,7 +36,7 @@ class StrategicPriority < ActiveRecord::Base
 
   def decrement_priority_level
     decrement!(:priority_level)
-    planned_results.each{|pr| pr.decrement_index_prefix(priority_level)}
+    planned_results.each{|pr| pr.decrement_index_prefix([priority_level])}
   end
 
   # for the purposes of StrategicPlanIndexer

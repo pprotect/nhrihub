@@ -47,6 +47,6 @@ module PerformanceIndicatorsSpecHelpers
   end
 
   def performance_indicator_indices
-    page.evaluate_script("_(strategic_plan.findAllComponents('pi')).map(function(pi){return pi.get('index')})")
+    page.evaluate_script("_(strategic_plan.findAllComponents('pi')).map(function(pi){return pi.get('index')})").map{|i| i.join('.') }
   end
 end

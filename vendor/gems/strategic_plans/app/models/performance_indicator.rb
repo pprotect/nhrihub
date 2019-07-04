@@ -83,7 +83,7 @@ class PerformanceIndicator < ActiveRecord::Base
     if target.blank?
       ""
     else
-      [index, target].join(' ')
+      [index.join('.'), target].join(' ')
     end
   end
 
