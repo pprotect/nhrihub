@@ -57,7 +57,7 @@ class Admin::UsersController < ApplicationController
   # here we capture the user's public_key and public_key_handle
   def activate
     user = User.find_and_activate!(params[:activation_code])
-    if user.update_attributes(activation_params)
+    if user.update(activation_params)
       flash[:notice] =t('admin.users.activate.activated')
       redirect_to root_path
     else
@@ -99,7 +99,7 @@ class Admin::UsersController < ApplicationController
     u2f_sign_response = params[:user][:u2f_sign_response]
     @user = User.find_by_password_reset_code(password_reset_code)
 
-    if @user.authenticated_token?( u2f_sign_response) && @user.update_attributes(params.require(:user).slice(:password, :password_confirmation).permit(:password, :password_confirmation))
+    if @user.authenticated_token?( u2f_sign_response) && @user.update(params.require(:user).slice(:password, :password_confirmation).permit(:password, :password_confirmation))
       flash[:notice] = t('.flash_notice.no_errors')
       redirect_to root_path
     else
@@ -147,7 +147,7 @@ class Admin::UsersController < ApplicationController
 
   def update_self
     @user = User.find(current_user.id)
-    if @user.update_attributes(user_params)
+    if @user.update(user_params)
       flash[:notice] = t('.flash_notice')
       redirect_to admin_users_path
     else
@@ -157,7 +157,7 @@ class Admin::UsersController < ApplicationController
 
   def update
     @user = User.find(params[:id])
-    if @user.update_attributes(user_params)
+    if @user.update(user_params)
       flash[:notice] = t('.flash_notice')
       redirect_to admin_users_path
     else

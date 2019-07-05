@@ -7,7 +7,7 @@ class Session < ActiveRecord::Base
 
   def self.create_or_update(*args)
     if previous_login = where({user_id:  args[0][:user_id], logout_date: nil}).last
-      previous_login.update_attributes(session_id: args[0][:session_id])
+      previous_login.update(session_id: args[0][:session_id])
       previous_login.reload
     else
       create(args[0])

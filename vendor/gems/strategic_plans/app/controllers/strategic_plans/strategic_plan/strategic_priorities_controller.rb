@@ -10,7 +10,7 @@ class StrategicPlans::StrategicPlan::StrategicPrioritiesController < StrategicPl
 
   def update
     strategic_priority = StrategicPriority.find(params[:id])
-    if strategic_priority.update_attributes(strategic_priority_params)
+    if strategic_priority.update(strategic_priority_params)
       render :json => strategic_priority.siblings, :status => 200
     else
       head :internal_server_error

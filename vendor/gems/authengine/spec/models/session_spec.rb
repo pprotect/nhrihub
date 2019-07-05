@@ -31,7 +31,7 @@ describe ".create_or_update class method" do
       user = FactoryBot.create(:user)
       login1 = Session.create_or_update(:user_id => user.id, :session_id => rand(10**12).to_s, :login_date => Time.new(2014,5,15,10,10,00,"+00:00"))
       login2 = Session.create_or_update(:user_id => user.id, :session_id => rand(10**12).to_s, :login_date => Time.new(2014,5,16,10,10,00,"+00:00"))
-      login2.update_attributes(:logout_date => Time.new(2014,5,16,10,10,05,"+00:00"))
+      login2.update(:logout_date => Time.new(2014,5,16,10,10,05,"+00:00"))
       @login3 = Session.create_or_update(:user_id => user.id, :session_id => rand(10**12).to_s, :login_date => Time.new(2014,5,17,10,10,00,"+00:00"))
     end
 

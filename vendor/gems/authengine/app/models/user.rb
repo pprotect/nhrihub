@@ -31,7 +31,7 @@ class User < ActiveRecord::Base
     #find by login params username/pw
     #todo better to include replacement_token_registration_code as an additional auth param
     user = find_and_authenticate_by_login_params(activation_params[:login], activation_params[:password])
-    user.update_attributes(activation_params.slice(:u2f_register_response).merge(:replacement_token_registration_code => nil))
+    user.update(activation_params.slice(:u2f_register_response).merge(:replacement_token_registration_code => nil))
   end
 
   def self.find_by_password_reset_code(password_reset_code)
@@ -298,7 +298,7 @@ class User < ActiveRecord::Base
   end
 
   def nullify_public_key_params
-    update_attributes(:public_key => nil, :public_key_handle => nil)
+    update(:public_key => nil, :public_key_handle => nil)
   end
 
   # called from users_controller#send_change_authentication_email

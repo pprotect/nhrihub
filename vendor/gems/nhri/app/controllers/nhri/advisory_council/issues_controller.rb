@@ -31,7 +31,7 @@ class Nhri::AdvisoryCouncil::IssuesController < ApplicationController
 
   def update
     issue = Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.find(params[:id])
-    issue.update_attributes(issue_params)
+    issue.update(issue_params)
     render :json => issue, :status => 200
   end
 

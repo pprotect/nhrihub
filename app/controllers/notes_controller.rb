@@ -12,7 +12,7 @@ class NotesController < ApplicationController
   def update
     note = Note.find(params[:id])
     note.editor = current_user
-    if note.update_attributes(note_params)
+    if note.update(note_params)
       render :json => note, :status => 200
     else
       head :internal_server_error

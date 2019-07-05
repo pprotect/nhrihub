@@ -11,7 +11,7 @@ class Nhri::Indicator::FileMonitorsController < ApplicationController
 
   def update
     monitor = Nhri::FileMonitor.find(params[:id])
-    if monitor.update_attributes(monitor_params)
+    if monitor.update(monitor_params)
       render :json => monitor, :status => 200
     else
       head :internal_server_error

@@ -25,7 +25,7 @@ class Nhri::Heading::IndicatorsController < ApplicationController
 
   def update
     indicator = Nhri::Indicator.find(params[:id])
-    if indicator.update_attributes(indicator_params)
+    if indicator.update(indicator_params)
       render :json => indicator, :status => 200
     else
       head :internal_server_error

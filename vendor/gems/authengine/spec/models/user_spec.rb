@@ -61,14 +61,14 @@ describe "password confirmation" do
 
   context "when account is activated" do
     it "should validate password when password confirmation matches" do
-      @user.update_attributes(:password => "sekret", :password_confirmation => "sekret")
+      @user.update(:password => "sekret", :password_confirmation => "sekret")
       @user.send(:activate!)
       expect(@user.errors).to be_empty
       expect(@user.activation_code).not_to be_blank
     end
 
     it "should not validate password when password confirmation does not match" do
-      @user.update_attributes(:password => "sekret", :password_confirmation => "another_word")
+      @user.update(:password => "sekret", :password_confirmation => "another_word")
       expect(@user.errors).not_to be_empty
       expect(@user.activation_code).not_to be_blank
     end
@@ -76,18 +76,18 @@ describe "password confirmation" do
 
   context "when a password reset has been initiated" do
     before do
-      @user.update_attributes(:password => "sekret", :password_confirmation => "sekret", :password_reset_code => "abc23234fab")
+      @user.update(:password => "sekret", :password_confirmation => "sekret", :password_reset_code => "abc23234fab")
     end
 
     it "should validate password when password confirmation matches" do
-      @user.update_attributes(:password => "sekret", :password_confirmation => "sekret")
+      @user.update(:password => "sekret", :password_confirmation => "sekret")
       @user.reset_password
       expect(@user.errors).to be_empty
       expect(@user.password_reset_code).to be_blank
     end
 
     it "should not validate password when password confirmation does not match" do
-      @user.update_attributes(:password => "sekret", :password_confirmation => "another_word")
+      @user.update(:password => "sekret", :password_confirmation => "another_word")
       expect(@user.errors).not_to be_empty
       expect(@user.password_reset_code).not_to be_nil
     end

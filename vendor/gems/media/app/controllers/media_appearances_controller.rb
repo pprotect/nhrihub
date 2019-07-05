@@ -26,7 +26,7 @@ class MediaAppearancesController < ApplicationController
 
   def update
     media_appearance = MediaAppearance.find(params[:id])
-    media_appearance.update_attributes(media_appearance_params)
+    media_appearance.update(media_appearance_params)
     render :json => media_appearance, :status => 200
   end
 

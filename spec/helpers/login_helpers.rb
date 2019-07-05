@@ -15,7 +15,7 @@ module RegisteredUserHelper
 
   def remove_user_two_factor_authentication_credentials(user)
     user = User.where(:login => user).first
-    user.update_attributes(:public_key => nil, :public_key_handle => nil)
+    user.update(:public_key => nil, :public_key_handle => nil)
   end
 
   def login_button

@@ -26,7 +26,7 @@ class NamedDocumentCallbacks
   # all documents in the group_class have the same title
   def retitle_archive_docs(doc)
     doc.document_group.internal_documents.reject(&:document_group_primary?).each do |internal_document|
-      internal_document.update_attributes(:title => doc.title) # other attributes: document_group_id and type are assigned in the before_save c/b
+      internal_document.update(:title => doc.title) # other attributes: document_group_id and type are assigned in the before_save c/b
     end
   end
 end

@@ -75,7 +75,7 @@ describe "when accreditation required special filename is assigned to non-accred
       @archive = FactoryBot.create(:internal_document, :revision_major => nil, :revision_minor => nil)
       @primary = FactoryBot.create(:internal_document, :document_group_id => @archive.document_group_id, :revision_major => nil, :revision_minor => nil)
       @group_id = @archive.document_group_id
-      @primary.update_attributes(:title => "Budget")
+      @primary.update(:title => "Budget")
     end
 
     it "should assign the primary and all associated archive files to the accreditation required group" do

@@ -10,7 +10,7 @@ class StrategicPlans::Activities::PerformanceIndicatorsController < StrategicPla
 
   def update
     performance_indicator = PerformanceIndicator.find(params[:id])
-    if performance_indicator.update_attributes(performance_indicator_params)
+    if performance_indicator.update(performance_indicator_params)
       render :json => performance_indicator, :status => 200
     else
       head :internal_server_error

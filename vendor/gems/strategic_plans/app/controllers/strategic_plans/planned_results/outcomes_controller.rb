@@ -9,7 +9,7 @@ class StrategicPlans::PlannedResults::OutcomesController < StrategicPlanControll
 
   def update
     outcome = Outcome.find(params[:id])
-    if outcome.update_attributes(outcome_params)
+    if outcome.update(outcome_params)
       render :json => outcome.to_json, :status => 200
     else
       head :internal_server_error

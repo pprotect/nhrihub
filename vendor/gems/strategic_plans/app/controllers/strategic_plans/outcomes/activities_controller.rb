@@ -9,7 +9,7 @@ class StrategicPlans::Outcomes::ActivitiesController < StrategicPlanController
 
   def update
     activity = Activity.find(params[:id])
-    if activity.update_attributes(activity_params)
+    if activity.update(activity_params)
       render :json => activity, :status => 200
     else
       head :internal_server_error

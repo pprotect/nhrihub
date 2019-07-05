@@ -11,7 +11,7 @@ class Nhri::Indicator::MonitorsController < ApplicationController
 
   def update
     monitor = model.find(params[:id])
-    if monitor.update_attributes(monitor_params)
+    if monitor.update(monitor_params)
       render :json => monitor, :status => 200
     else
       head :internal_server_error

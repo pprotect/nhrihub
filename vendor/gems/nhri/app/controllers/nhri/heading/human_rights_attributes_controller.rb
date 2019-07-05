@@ -10,7 +10,7 @@ class Nhri::Heading::HumanRightsAttributesController < ApplicationController
 
   def update
     attribute = Nhri::HumanRightsAttribute.find(params[:id])
-    if attribute.update_attributes(attribute_params)
+    if attribute.update(attribute_params)
       render :json => attribute, :status => 200
     else
       head :internal_server_error

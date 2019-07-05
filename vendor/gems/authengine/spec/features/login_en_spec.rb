@@ -96,7 +96,7 @@ feature "user logs in", :js => true do
 
   context "without registering their token" do
     before do
-      User.where(:login => 'admin').first.update_attributes(:public_key_handle => nil)
+      User.where(:login => 'admin').first.update(:public_key_handle => nil)
     end
 
     scenario "admin logs in" do
@@ -113,7 +113,7 @@ feature "user logs in", :js => true do
 
   context "without activating their account" do
     before do
-      User.where(:login => 'admin').first.update_attributes(:activated_at => nil)
+      User.where(:login => 'admin').first.update(:activated_at => nil)
     end
 
     scenario "admin logs in" do
@@ -130,7 +130,7 @@ feature "user logs in", :js => true do
 
   context "when their account has been disabled" do
     before do
-      User.where(:login => 'admin').first.update_attributes(:enabled => false)
+      User.where(:login => 'admin').first.update(:enabled => false)
     end
 
     scenario "admin logs in" do
