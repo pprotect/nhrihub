@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '5.2.3'
+gem 'rails', '~>6.0.0.rc1'
 
 gem 'bootsnap', :require => false
 
@@ -19,7 +19,7 @@ gem 'coffee-rails'#, '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer',  "~> 0.12.3", platforms: :ruby
 
-gem 'i18n', "~>0.8.6" # bug in 0.8.5
+gem 'i18n'
 
 gem 'rb-readline'
 
@@ -104,7 +104,7 @@ gem "capistrano-linked-files"
 gem "message_block", git: "https://github.com/lazylester/message_block.git"
 gem "surus", git: "https://github.com/asiapacificforum/surus.git", :ref => "36cb18a" # postgres direct to json
 gem "aws-sdk", "~> 2"
-gem "glacier_on_rails", '= 0.9.9'
+gem "glacier_on_rails", '= 1.0.0'
 gem "rack-attack"
 gem "rack-mini-profiler", '~>1.0.2'
 gem "flamegraph"
