@@ -7,7 +7,7 @@ class AccreditationRequiredDoc < InternalDocument
     @callback_class ||= NamedDocumentCallbacks.new("AccreditationRequiredDoc", "AccreditationDocumentGroup")
   end
 
-  before_save callback_class, :on => :update # creates the AccreditationDocumentGroup or associates with existing
+  before_update callback_class # creates the AccreditationDocumentGroup or associates with existing
   after_save callback_class
 
   alias_method :document_group, :accreditation_document_group
