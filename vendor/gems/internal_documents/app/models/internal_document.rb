@@ -41,7 +41,7 @@ class InternalDocument < ActiveRecord::Base
     # it's an InternalDocument that has been edited to an AccreditationRequiredDoc
     # or an AccreditationRequiredDoc being created
     if AccreditationDocumentGroup.pluck(:title).include?(self.title)
-      NamedDocumentCallbacks.new("AccreditationRequiredDoc", "AccreditationDocumentGroup").before_save(self)
+      NamedDocumentCallbacks.new("AccreditationRequiredDoc", "AccreditationDocumentGroup").before_update(self)
     end
   end
 

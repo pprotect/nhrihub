@@ -16,7 +16,7 @@ class NamedDocumentCallbacks
     end
   end
 
-  def before_save(doc)
+  def before_update(doc)
     retitle_archive_docs(doc) if doc.document_group_primary?
     doc.type = type
     doc.becomes(document_class).document_group = group_class.find_or_create_by(:title => doc.title)
