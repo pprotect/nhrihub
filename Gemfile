@@ -64,7 +64,7 @@ group :development do
 end
 
 gem 'haml-rails'
-gem 'haml', '~> 5.0.0'
+gem 'haml', '~> 5.1.0'
 gem 'html2haml', '~> 2.2.0'
 
 group :development, :test, :jstest do
