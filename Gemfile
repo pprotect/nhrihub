@@ -71,6 +71,7 @@ group :development, :test, :jstest do
   gem 'rspec-rails'
   gem 'capybara'
   gem 'selenium-webdriver'
+  gem 'webdrivers'
   gem 'database_cleaner', '~>1.6.1'
   gem 'teaspoon'
   gem 'teaspoon-mocha'
