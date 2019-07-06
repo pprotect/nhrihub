@@ -1,7 +1,7 @@
 require 'byebug'
 
 # config valid only for current version of Capistrano
-lock '3.8.1'
+lock '3.8.2'
 
 set :application, 'nhri_docs'
 set :repo_url, 'git@github.com:asiapacificforum/nhridocs.git'
