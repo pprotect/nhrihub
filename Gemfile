@@ -79,6 +79,7 @@ group :development, :test, :jstest do
   gem 'launchy'
   gem 'byebug'
   gem 'puma'
+  gem "sinatra", git: "https://github.com/sinatra/sinatra.git" #, :ref => "285275b42fa1bf096a5c9559b6cead2f31b65b66" # for rack 2 compatibility as required for rails5
 end
 gem 'js-routes'
 gem 'bootstrap-sass'
@@ -96,7 +97,6 @@ gem 'tzinfo-data' # so that we use the ruby tzinfo vs what is installed on the m
 gem 'acme_plugin', "~> 0.0.10"
 
 gem "refile", :git => "https://github.com/refile/refile.git", :ref => "d7a42", require: "refile/rails" # for rails5 compatibility
-gem "sinatra", git: "https://github.com/sinatra/sinatra.git" #, :ref => "285275b42fa1bf096a5c9559b6cead2f31b65b66" # for rack 2 compatibility as required for rails5
 gem "rack", git: "https://github.com/rack/rack.git" # also for sinatra 2.0.0-alpha support
 gem "rack-protection" #, git: "https://github.com/sinatra/rack-protection.git"
 gem "rails-settings-cached", '~> 0.4.2'
