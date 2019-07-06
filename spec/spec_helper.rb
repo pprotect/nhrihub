@@ -225,6 +225,14 @@ RSpec.configure do |config| # rspec-expectations config goes here. You can use a
   ]
 
   config.before(:suite) do
+    FileUtils.cd 'vendor/gems/complaints' do
+      `yarn`
+      `bin/webpack`
+      Timeout.timeout(300) do
+        loop until Webpacker.config.public_manifest_path.exist?
+      end
+    end
+
     begin
       DatabaseCleaner.clean_with(:truncation)
       #Controller.update_table
@@ -235,6 +243,9 @@ RSpec.configure do |config| # rspec-expectations config goes here. You can use a
     end
   end
 
+  config.after(:suite) do
+    FileUtils.rm_rf Rails.root.join('vendor/gems/complaints/public/complaints_packs')
+  end
   #config.around(:each) do |example|
     #DatabaseCleaner.strategy = example.metadata[:js] ? :truncation : :transaction
     #DatabaseCleaner.start
