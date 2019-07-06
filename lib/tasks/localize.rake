@@ -53,8 +53,6 @@ namespace :nhri_hub do
           # in case the link was not present, no need to remove it!
         end
         File.symlink file_path, link_path
-        #TODO why can't we just symlink and make sure the files are in gitignore?
-        #FileUtils.cp file_path, link_path
       else
         puts "#{file} not found"
       end #/if

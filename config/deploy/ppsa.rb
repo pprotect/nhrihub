@@ -1,6 +1,6 @@
 # If the environment differs from the stage name
 set :rails_env, 'production'
-set :site_name, 'demo' # ensures that the correct site_specific_linked_files are linked after deployment
+set :site_name, 'ppsa' # ensures that the correct site_specific_linked_files are linked after deployment
 set :tmp_dir, "/var/www/nhrihub/tmp_dir" # dev server
 #set :tmp_dir, '/var/www/nhri-hub.com/tmp_dir' # vps server
 

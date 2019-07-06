@@ -4,7 +4,7 @@ require 'byebug'
 lock '3.8.2'
 
 set :application, 'nhri_docs'
-set :repo_url, 'git@github.com:asiapacificforum/nhridocs.git'
+set :repo_url, 'git@github.com:pprotect/nhrihub.git'
 #for a ton of debugging information use this:
 #set :ssh_options, { :verbose => :debug }
 
