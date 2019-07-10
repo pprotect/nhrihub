@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~>6.0.0.rc1'
+gem 'activestorage'
 
 gem 'bootsnap', :require => false
 
@@ -68,6 +69,7 @@ gem 'haml', '~> 5.1.0'
 gem 'html2haml', '~> 2.2.0'
 
 group :development, :test, :jstest do
+  gem 'irb'
   gem 'rspec-rails'
   gem 'capybara'
   gem 'selenium-webdriver'

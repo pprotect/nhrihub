@@ -90,4 +90,6 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.middleware.use Rack::Attack
+
+  config.active_storage.service = :local # TODO temp until we figure out what it should be
 end

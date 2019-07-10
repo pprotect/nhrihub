@@ -16,7 +16,7 @@ class InternalDocument < ActiveRecord::Base
   belongs_to :user
   alias_method :uploaded_by, :user
 
-  attachment :file
+  has_one_attached :file
 
   default_scope ->{ order(:revision_major, :revision_minor) }
 
@@ -62,6 +62,10 @@ class InternalDocument < ActiveRecord::Base
     if doc.document_group && doc.document_group.reload.empty?
       doc.document_group.destroy unless doc.document_group.is_a?(AccreditationDocumentGroup)
     end
+  end
+
+  after_destroy do |doc|
+    file.purge
   end
 
   after_save do |doc|

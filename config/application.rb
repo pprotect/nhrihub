@@ -11,6 +11,7 @@ require "action_controller/railtie"
 require "action_mailer/railtie"
 require "action_view/railtie"
 require "sprockets/railtie"
+require "active_storage/engine"
 # require "rails/test_unit/railtie"
 
 require File.expand_path('../../lib/rails_class_extensions', __FILE__)

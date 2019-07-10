@@ -43,7 +43,7 @@ class InternalDocumentsController < ApplicationController
   end
 
   def show
-    send_attached_file(InternalDocument.find(params[:id]))
+    send_blob(InternalDocument.find(params[:id]))
   end
 
   private

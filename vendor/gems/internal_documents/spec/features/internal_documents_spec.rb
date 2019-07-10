@@ -2,6 +2,7 @@ require 'rails_helper'
 require 'login_helpers'
 require 'navigation_helpers'
 require 'download_helpers'
+require 'active_storage_helpers'
 require_relative '../helpers/internal_documents_spec_helpers'
 require_relative '../helpers/internal_documents_default_settings'
 require_relative '../helpers/internal_documents_spec_common_helpers'
@@ -14,6 +15,7 @@ feature "internal document management", :js => true do
   include InternalDocumentsSpecHelpers
   include InternalDocumentsSpecCommonHelpers
   include DownloadHelpers
+  include ActiveStorageHelpers
 
   before do
     SiteConfig['internal_documents.filetypes'] = ['pdf']
@@ -112,7 +114,8 @@ feature "internal document management", :js => true do
   end
 
   scenario "delete a file from filesystem" do
-    expect{ click_delete_document; confirm_deletion; wait_for_ajax}.to change{Dir.new(Rails.root.join('tmp', 'uploads', 'store')).entries.length}.by(-1)
+    expect{ click_delete_document; confirm_deletion; wait_for_ajax}.
+      to change{stored_files_count}.by(-1)
   end
 
   scenario "view file details", :js => true do

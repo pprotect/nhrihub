@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :internal_document do
-    file                { LoremIpsumDocument.new.docfile }
+    file                { LoremIpsumDocument.new.upload_file }
     title               { Faker::Lorem.words(4).join(" ") }
     filesize            { 10000 + (30000*rand).to_i }
     original_filename   { "#{Faker::Lorem.words(2).join("_")}.docx" }

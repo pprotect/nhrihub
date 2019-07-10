@@ -1,7 +1,12 @@
 class LoremIpsumDocument < WordReport
+  include ActionDispatch::TestProcess
   Root = Rails.root
   TMP_DIR = Root.join('tmp','tmp_doc')
   TEMPLATE_PATH = Root.join('app', 'templates', 'msword_template')
+
+  def upload_file
+    fixture_file_upload(tmpfile, :doc )
+  end
 
   def generate_word_doc
     @word_doc = template.gsub(/\{\{\s*(\w*)\s*\}\}/) do |s|

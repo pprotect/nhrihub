@@ -69,4 +69,6 @@ Rails.application.configure do
   ]
 
   config.middleware.use Rack::Attack
+
+  config.active_storage.service = :local
 end
