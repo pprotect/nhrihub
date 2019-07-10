@@ -1,4 +1,6 @@
 class ComplaintDocumentsController < ApplicationController
+  include AttachedFile
+
   def destroy
     @complaint_document = ComplaintDocument.find(params[:id])
     @complaint_document.destroy
@@ -6,10 +8,6 @@ class ComplaintDocumentsController < ApplicationController
   end
 
   def show
-    complaint_document = ComplaintDocument.find(params[:id])
-    send_opts = { :filename => complaint_document.filename,
-                  :type => complaint_document.original_type,
-                  :disposition => :attachment }
-    send_file complaint_document.file.to_io, send_opts
+    send_blob(ComplaintDocument.find(params[:id]))
   end
 end

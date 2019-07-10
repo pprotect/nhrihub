@@ -8,6 +8,6 @@ class ProjectDocumentsController < ApplicationController
   end
 
   def show
-    send_attached_file ProjectDocument.find(params[:id])
+    send_blob ProjectDocument.find(params[:id])
   end
 end

@@ -468,7 +468,7 @@ feature "projects index", :js => true do
   it "should download a project document file" do
     expand_first_project
     @doc = ProjectDocument.first
-    filename = @doc.filename
+    filename = @doc.original_filename
     click_the_download_icon
     unless page.driver.instance_of?(Capybara::Selenium::Driver) # response_headers not supported
       expect(page.response_headers['Content-Type']).to eq('application/pdf')

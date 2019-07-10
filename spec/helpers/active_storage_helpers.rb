@@ -9,6 +9,6 @@ module ActiveStorageHelpers
   end
 
   def stored_files_count
-    Dir.glob( Pathname(storage_path).join("**/*")).length
+    Dir.glob( Pathname(storage_path).join("**/*")).select{|f| File.file? f }.length
   end
 end

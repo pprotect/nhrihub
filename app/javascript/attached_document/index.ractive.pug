@@ -29,7 +29,7 @@ script#new_attached_document_template(type = 'text/ractive')
         span.help-block.error#unconfigured_filetypes_error
           | {{ t.noFileTypes }}
     .col-md-4.filename(style = "overflow-wrap:break-word")
-      | {{filename}}
+      | {{original_filename}}
     .col-md-2
       i.fa.fa-remove.remove('on-click' = 'remove_file()')
 
@@ -63,7 +63,7 @@ script.
     },
     computed : {
       persistent_attributes() {
-        if (!this.get('persisted')) { return ['title', 'filename', 'filesize', 'lastModifiedDate', 'file', 'original_type']; }
+        if (!this.get('persisted')) { return ['title', 'original_filename', 'filesize', 'lastModifiedDate', 'file', 'original_type']; }
       },
       unconfigured_filetypes_error() {
         return this.get('unconfigured_validation_parameter_error');
@@ -78,11 +78,11 @@ script.
         return `"${this.get('title').split(' ').slice(0,4).join(' ')}..."`;
       },
       truncated_filename() {
-        if (this.get('filename').length > 50) {
-          const [base,extension] = Array.from(this.get('filename').split('.'));
+        if (this.get('original_filename').length > 50) {
+          const [base,extension] = Array.from(this.get('original_filename').split('.'));
           return base.slice(0,40)+"..."+extension;
         } else {
-          return this.get('filename');
+          return this.get('original_filename');
         }
       },
       delete_confirmation_message() {

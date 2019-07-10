@@ -89,7 +89,7 @@ ProjectDocument = Ractive.extend
     serialization_key : 'project[project_documents_attributes][]'
   computed :
     persistent_attributes : ->
-      ['title', 'filename', 'file', 'original_type'] unless @get('id') # only persist if it's not already persisted, otherwise don't
+      ['title', 'original_filename', 'file', 'original_type'] unless @get('id') # only persist if it's not already persisted, otherwise don't
     unconfigured_filetypes_error : ->
       @get('unconfigured_validation_parameter_error')
     persisted : ->
@@ -102,7 +102,7 @@ ProjectDocument = Ractive.extend
       unless _.isEmpty(@get('title'))
         @get('truncated_title')
       else
-        @get('filename')
+        @get('original_filename')
     delete_confirmation_message : ->
       "#{delete_project_document_confirmation_message} \"#{@get('truncated_title_or_filename')}\"?"
   remove_file : ->
@@ -278,7 +278,7 @@ Project = Ractive.extend
       title: ''
       file_id : ''
       url : ''
-      filename : file.name
+      original_filename : file.name
       original_type : file.type
     @unshift('project_documents', project)
   show_file_selector : ->

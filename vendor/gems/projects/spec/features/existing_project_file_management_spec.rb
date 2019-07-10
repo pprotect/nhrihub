@@ -74,7 +74,7 @@ feature "existing project file management", :js => true do
 
   it "can download the saved document" do
     @doc = Project.last.project_documents.first
-    filename = @doc.filename
+    filename = @doc.original_filename
     expand_last_project
     click_the_download_icon
     unless page.driver.instance_of?(Capybara::Selenium::Driver) # response_headers not supported

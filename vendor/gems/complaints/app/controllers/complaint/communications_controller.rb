@@ -33,7 +33,7 @@ class Complaint::CommunicationsController < ApplicationController
   private
   def communication_params
     params.require(:communication).permit(:user_id, :complaint_id, :direction, :mode, :date, :note,
-                                          :communication_documents_attributes => [:file, :title, :filename, :original_type, :filesize, :lastModifiedDate],
+                                          :communication_documents_attributes => [:file, :title, :original_filename, :original_type, :filesize, :lastModifiedDate],
                                           :communicants_attributes => [:name])
   end
 end

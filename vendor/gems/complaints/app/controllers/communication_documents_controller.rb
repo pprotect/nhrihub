@@ -8,6 +8,6 @@ class CommunicationDocumentsController < ApplicationController
   end
 
   def show
-    send_attached_file CommunicationDocument.find(params[:id])
+    send_blob CommunicationDocument.find(params[:id])
   end
 end

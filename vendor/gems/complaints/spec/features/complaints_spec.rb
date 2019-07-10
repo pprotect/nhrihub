@@ -8,8 +8,7 @@ require 'complaints_spec_helpers'
 require 'upload_file_helpers'
 require 'complaints_context_notes_spec_helpers'
 require 'complaints_communications_spec_helpers'
-#require 'reminders_spec_common_helpers'
-#require 'complaints_reminders_setup_helpers'
+require 'active_storage_helpers'
 
 feature "complaints index", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
@@ -18,6 +17,7 @@ feature "complaints index", :js => true do
   include ComplaintsSpecHelpers
   include UploadFileHelpers
   include DownloadHelpers
+  include ActiveStorageHelpers
 
   before(:context) do
     Webpacker.compile
@@ -181,7 +181,7 @@ feature "complaints index", :js => true do
     expect(complaint.agencies.map(&:name)).to include "SAA"
     expect(complaint.agencies.map(&:name)).to include "ACC"
     expect(complaint.complaint_documents.count).to eq 1
-    expect(complaint.complaint_documents[0].filename).to eq "first_upload_file.pdf"
+    expect(complaint.complaint_documents[0].original_filename).to eq "first_upload_file.pdf"
     expect(complaint.complaint_documents[0].title).to eq "Complaint Document"
     expect(complaint.date_received.to_date).to eq Date.new(Date.today.year, Date.today.month, 16)
 
@@ -454,7 +454,7 @@ feature "complaints index", :js => true do
                        and change{ Complaint.first.phone }.to("555-1212").
                        and change{ Complaint.first.assignees.count }.by(1).
                        and change{ Complaint.first.complaint_documents.count }.by(1).
-                       and change{ (`\ls tmp/uploads/store | wc -l`).to_i }.by(1).
+                       and change{ stored_files_count }.by(1).
                        and change { ActionMailer::Base.deliveries.count }.by(1)
 
     expect( Complaint.first.chiefly_title ).to eq "kahunga"
@@ -542,7 +542,7 @@ feature "complaints index", :js => true do
     sleep(0.2)
     expand
     @doc = ComplaintDocument.first
-    filename = @doc.filename
+    filename = @doc.original_filename
     click_the_download_icon
     unless page.driver.instance_of?(Capybara::Selenium::Driver) # response_headers not supported
       expect(page.response_headers['Content-Type']).to eq('application/pdf')

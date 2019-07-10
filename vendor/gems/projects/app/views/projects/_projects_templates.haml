@@ -54,7 +54,7 @@
     .col-md-6.title=t('.title')
     .col-md-4.filename=t('.filename')
   {{#project_documents}}
-  <projectDocument maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' id='{{id}}' filesize_error='{{filesize_error}}' filetype_error='{{filetype_error}}' validation_criteria='{{validation_criteria}}' id='{{id}}' file='{{file}}' title='{{title}}' file_id='{{file_id}}' filename='{{filename}}' project_named_documents_titles='{{ project_named_documents_titles}}' />
+  <projectDocument maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' id='{{id}}' filesize_error='{{filesize_error}}' filetype_error='{{filetype_error}}' validation_criteria='{{validation_criteria}}' id='{{id}}' file='{{file}}' title='{{title}}' file_id='{{file_id}}' original_filename='{{original_filename}}' project_named_documents_titles='{{ project_named_documents_titles}}' />
   {{/project_documents}}
   {{^project_documents}}
   %div{:style => 'padding-left:15px;'}=t('.no_documents')
@@ -71,7 +71,7 @@
   .project_document
     .row{:style => "margin-left:0px;"}
       .col-md-6.title {{title}}
-      .col-md-4.filename {{filename}}
+      .col-md-4.filename {{original_filename}}
       .col-md-1
         %i.fa.fa-cloud-download{'on-click' => '@this.download_attachment()'.html_safe}
       .col-md-1.delete
@@ -91,7 +91,7 @@
         %span.help-block.error#filetype_error= t('error_messages.unpermitted_type')
       .errors.form-group{'class-has-error' => 'unconfigured_filetypes_error'}
         %span.help-block.error#unconfigured_filetypes_error= t('error_messages.noFileTypes')
-    .col-md-4.filename{:style => "overflow-wrap:break-word"} {{filename}}
+    .col-md-4.filename{:style => "overflow-wrap:break-word"} {{original_filename}}
     .col-md-2
       %i.fa.fa-remove.remove{'on-click' => '@this.remove_file()'.html_safe}
 

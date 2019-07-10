@@ -3,7 +3,7 @@ class ProjectDocument < ActiveRecord::Base
 
   ConfigPrefix = 'project_document'
 
-  attachment :file
+  has_one_attached :file
 
   # hard-coded for now, maybe should be user-configurable? later dude!
   NamedProjectDocumentTitles = ["Project Document", "Analysis", "Final Report"]
@@ -20,10 +20,5 @@ class ProjectDocument < ActiveRecord::Base
 
   def not_named?
     !named?
-  end
-
-  # required for AttachedFile controller concern
-  def original_filename
-    filename
   end
 end

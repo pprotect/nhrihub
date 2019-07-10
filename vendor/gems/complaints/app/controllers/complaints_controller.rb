@@ -83,7 +83,7 @@ class ComplaintsController < ApplicationController
                                        :human_rights_complaint_basis_ids => [],
                                        :status_changes_attributes => [:user_id, :name],
                                        :agency_ids => [], :mandate_ids => [],
-                                       :complaint_documents_attributes => [:file, :title, :filename, :original_type, :filesize, :lastModifiedDate],
+                                       :complaint_documents_attributes => [:file, :title, :original_filename, :original_type, :filesize, :lastModifiedDate],
                                      )
   end
 
