@@ -3,7 +3,7 @@ class ComplaintDocument < ActiveRecord::Base
 
   ConfigPrefix = 'complaint_document'
 
-  attachment :file
+  has_one_attached :file
 
   def as_json(options={})
     super(:except => [:updated_at, :created_at], :methods => [:url, :serialization_key])
@@ -20,10 +20,4 @@ class ComplaintDocument < ActiveRecord::Base
   def serialization_key
     self.class.serialization_key
   end
-
-  # TODO need to harmonize column names throughout the app
-  def original_filename
-    filename
-  end
-
 end

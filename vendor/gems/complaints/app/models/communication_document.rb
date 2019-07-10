@@ -5,15 +5,10 @@ class CommunicationDocument < ActiveRecord::Base
 
   belongs_to :communication
 
-  attachment :file
+  has_one_attached :file
 
   def as_json(options={})
     super(:except => [:updated_at, :created_at])
-  end
-
-  # TODO need to harmonize column names throughout the app
-  def original_filename
-    filename
   end
 
 end
