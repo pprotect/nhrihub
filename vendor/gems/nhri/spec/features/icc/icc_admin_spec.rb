@@ -1,8 +1,9 @@
 require 'rails_helper'
 require 'login_helpers'
 require 'navigation_helpers'
-require_relative '../../helpers/icc/icc_admin_spec_helper'
-require_relative '../../helpers/icc/icc_context_admin_spec_helper'
+$:.unshift Nhri::Engine.root.join('spec', 'helpers', 'icc')
+require 'icc_admin_spec_helper'
+require 'icc_context_admin_spec_helper'
 require 'shared_behaviours/file_admin_behaviour'
 
 feature "icc reference document admin titles configuration", :js => true do

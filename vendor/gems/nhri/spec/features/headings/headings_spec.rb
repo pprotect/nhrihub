@@ -1,7 +1,8 @@
 require 'rails_helper'
 require 'login_helpers'
 require 'navigation_helpers'
-require_relative '../../helpers/headings/headings_spec_helper'
+$:.unshift Nhri::Engine.root.join('spec', 'helpers', 'headings')
+require 'headings_spec_helper'
 
 
 feature "show headings index page", :js => true do

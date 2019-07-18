@@ -1,6 +1,7 @@
 require 'rails_helper'
 require 'login_helpers'
-require_relative '../../helpers/headings/indicators_context_reminders_spec_helpers'
+$:.unshift Nhri::Engine.root.join('spec', 'helpers')
+require 'headings/indicators_context_reminders_spec_helpers'
 require 'reminders_behaviour'
 
 feature "show reminders", :js => true do

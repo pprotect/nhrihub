@@ -1,6 +1,7 @@
 class MediaAppearance < ActiveRecord::Base
   include Rails.application.routes.url_helpers
   include FileConstraints
+  include RemoveAttachedFile
   ConfigPrefix = 'media_appearance'
 
   belongs_to :user
@@ -15,7 +16,7 @@ class MediaAppearance < ActiveRecord::Base
   accepts_nested_attributes_for :media_appearance_performance_indicators
   alias_method :performance_indicator_associations_attributes=, :media_appearance_performance_indicators_attributes=
 
-  attachment :file
+  has_one_attached :file
 
   default_scope { order('media_appearances.created_at desc') }
 
@@ -90,7 +91,7 @@ class MediaAppearance < ActiveRecord::Base
   end
 
   def has_scanned_doc
-    !file_id.blank?
+    file.attached?
   end
 
 end

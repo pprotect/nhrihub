@@ -31,7 +31,7 @@ class MediaAppearancesController < ApplicationController
   end
 
   def show
-    send_attached_file MediaAppearance.find(params[:id])
+    send_blob MediaAppearance.find(params[:id])
   end
 
   private
@@ -40,7 +40,8 @@ class MediaAppearancesController < ApplicationController
       params["media_appearance"]["original_filename"] = nil
       params["media_appearance"]["filesize"] = nil
       params["media_appearance"]["original_type"] = nil
-      params[:media_appearance][:remove_file] = true
+      params["media_appearance"]["remove_file"] = true
+      params["media_appearance"].delete("file")
     end
     params["media_appearance"]["user_id"] = current_user.id
     params.

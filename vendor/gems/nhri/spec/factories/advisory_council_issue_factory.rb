@@ -1,27 +1,29 @@
 FactoryBot.define do
   factory :advisory_council_issue, :class => Nhri::AdvisoryCouncil::AdvisoryCouncilIssue do
     title {Faker::Lorem.sentence(5)}
+    user_id { User.pluck(:id).sample }
 
     trait :link do
       article_link { "http://www.example.com" } # so we can actually test it!
     end
 
     trait :file do
-      file                { LoremIpsumDocument.new.docfile }
+      file                { LoremIpsumDocument.new.upload_file }
       filesize            { 10000 + (30000*rand).to_i }
       original_filename   { "#{Faker::Lorem.words(2).join("_")}.pdf" }
       original_type       { "application/pdf" }
-    end
 
-    after(:build) do |advisory_council_issue|
-      advisory_council_issue.user_id = User.pluck(:id).sample
-      if advisory_council_issue.file_id
-        path = Rails.env.production? ?
-          Rails.root.join('..','..','shared') :
-          Rails.root.join('tmp')
-        FileUtils.touch path.join('uploads','store',advisory_council_issue.file_id) 
+      after(:build) do |advisory_council_issue|
+        original_file_path = Nhri::Engine.root.join('lib','sample.pdf')
+        advisory_council_issue.file.attach(
+          io: File.open(original_file_path),
+          filename: 'sample.pdf',
+          content_type: 'application/pdf',
+          identify: false
+        )
       end
     end
+
 
     trait :no_f_in_title do
       title { Faker::Lorem.sentence(5).gsub(/f/i,"b") }

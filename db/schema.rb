@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_10_144824) do
+ActiveRecord::Schema.define(version: 2019_07_16_034008) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -62,7 +62,6 @@ ActiveRecord::Schema.define(version: 2019_07_10_144824) do
   end
 
   create_table "advisory_council_documents", id: :serial, force: :cascade do |t|
-    t.string "file_id", limit: 255
     t.integer "filesize"
     t.string "original_filename", limit: 255
     t.integer "revision_major"
@@ -77,7 +76,6 @@ ActiveRecord::Schema.define(version: 2019_07_10_144824) do
   end
 
   create_table "advisory_council_issues", id: :serial, force: :cascade do |t|
-    t.string "file_id", limit: 255
     t.integer "filesize"
     t.string "original_filename", limit: 255
     t.string "original_type", limit: 255
@@ -162,7 +160,6 @@ ActiveRecord::Schema.define(version: 2019_07_10_144824) do
 
   create_table "communication_documents", id: :serial, force: :cascade do |t|
     t.integer "communication_id"
-    t.string "file_id", limit: 255
     t.string "title", limit: 255
     t.integer "filesize"
     t.string "original_filename", limit: 255
@@ -213,7 +210,6 @@ ActiveRecord::Schema.define(version: 2019_07_10_144824) do
 
   create_table "complaint_documents", id: :serial, force: :cascade do |t|
     t.integer "complaint_id"
-    t.string "file_id", limit: 255
     t.string "title", limit: 255
     t.integer "filesize"
     t.string "original_filename", limit: 255
@@ -300,7 +296,6 @@ ActiveRecord::Schema.define(version: 2019_07_10_144824) do
     t.integer "indicator_id"
     t.integer "user_id"
     t.datetime "lastModifiedDate"
-    t.string "file_id", limit: 255
     t.integer "filesize"
     t.string "original_filename", limit: 255
     t.string "original_type", limit: 255
@@ -344,7 +339,6 @@ ActiveRecord::Schema.define(version: 2019_07_10_144824) do
     t.datetime "updated_at"
     t.string "original_type", limit: 255
     t.integer "user_id"
-    t.string "file_id"
     t.datetime "lastModifiedDate"
   end
 
@@ -360,7 +354,6 @@ ActiveRecord::Schema.define(version: 2019_07_10_144824) do
   end
 
   create_table "internal_documents", id: :serial, force: :cascade do |t|
-    t.string "file_id"
     t.string "title"
     t.integer "filesize"
     t.string "original_filename"
@@ -403,7 +396,6 @@ ActiveRecord::Schema.define(version: 2019_07_10_144824) do
   end
 
   create_table "media_appearances", id: :serial, force: :cascade do |t|
-    t.string "file_id", limit: 255
     t.integer "filesize"
     t.string "original_filename", limit: 255
     t.string "original_type", limit: 255
@@ -490,7 +482,6 @@ ActiveRecord::Schema.define(version: 2019_07_10_144824) do
 
   create_table "project_documents", id: :serial, force: :cascade do |t|
     t.integer "project_id"
-    t.string "file_id", limit: 255
     t.string "title", limit: 255
     t.integer "filesize"
     t.string "original_filename", limit: 255

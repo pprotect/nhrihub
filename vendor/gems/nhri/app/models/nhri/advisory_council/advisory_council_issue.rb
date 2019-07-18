@@ -1,8 +1,10 @@
 class Nhri::AdvisoryCouncil::AdvisoryCouncilIssue < ActiveRecord::Base
   include Rails.application.routes.url_helpers
   include FileConstraints
+  include RemoveAttachedFile
   ConfigPrefix = 'nhri.advisory_council_issue'
-  attachment :file
+
+  has_one_attached :file
 
   belongs_to :user
   has_many :reminders, :as => :remindable, :dependent => :destroy
@@ -63,7 +65,7 @@ class Nhri::AdvisoryCouncil::AdvisoryCouncilIssue < ActiveRecord::Base
   end
 
   def has_scanned_doc
-    !file_id.blank?
+    file.attached?
   end
 
   def date

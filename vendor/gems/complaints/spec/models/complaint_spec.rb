@@ -231,7 +231,7 @@ describe "#as_json" do
       expect(@complaints.first["assigns"].first.keys).to match_array ["date", "name"]
       expect(@complaints.first["assigns"].first["date"]).to eq Complaint.first.assigns.first.date
       expect(@complaints.first["assigns"].first["name"]).to eq Complaint.first.assigns.first.name
-      expect(@complaints.first["attached_documents"].first.keys).to match_array ["complaint_id", "file_id", "filename", "filesize", "id", "lastModifiedDate", "original_type", "serialization_key", "title", "url", "user_id"]
+      expect(@complaints.first["attached_documents"].first.keys).to match_array ["complaint_id", "original_filename", "filesize", "id", "lastModifiedDate", "original_type", "serialization_key", "title", "url", "user_id"]
       expect(@complaints.first["attached_documents"].first["url"]).to eq Complaint.first.attached_documents.first.url
       expect(@complaints.first["good_governance_complaint_basis_ids"]).to be_an Array
       expect(@complaints.first["good_governance_complaint_basis_ids"]).to match_array Complaint.first.good_governance_complaint_basis_ids
@@ -244,7 +244,7 @@ describe "#as_json" do
       expect(@complaints.first["status_changes"].first["user_name"]).to eq Complaint.first.status_changes.first.user_name
       expect(@complaints.first["agency_ids"]).to be_an Array
       expect(@complaints.first["communications"].first.keys).to match_array ["attached_documents", "communicants", "complaint_id", "date", "direction", "id", "mode", "note", "user", "user_id"]
-      expect(@complaints.first["communications"].first["attached_documents"].first.keys ).to match_array ["communication_id", "file_id", "filename", "filesize", "id", "lastModifiedDate", "original_type", "title", "user_id"]
+      expect(@complaints.first["communications"].first["attached_documents"].first.keys ).to match_array ["communication_id", "original_filename", "filesize", "id", "lastModifiedDate", "original_type", "title", "user_id"]
       expect(@complaints.first["communications"].first["communicants"].first.keys).to match_array ["address", "email", "id", "name", "organization_id", "phone", "title_key"]
     end
   end

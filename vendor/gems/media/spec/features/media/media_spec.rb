@@ -2,12 +2,14 @@ require 'rails_helper'
 require 'login_helpers'
 require 'navigation_helpers'
 require 'download_helpers'
-require_relative '../../helpers/media_spec_helper'
-require_relative '../../helpers/media_setup_helper'
+require 'active_storage_helpers'
 require 'media_issues_common_helpers'
 require 'performance_indicator_helpers'
 require 'performance_indicator_association'
-require_relative '../../helpers/media_appearance_context_performance_indicator_spec_helpers'
+$:.unshift Media::Engine.root.join('spec', 'helpers')
+require 'media_spec_helper'
+require 'media_appearance_context_performance_indicator_spec_helpers'
+require 'media_setup_helper'
 
 
 feature "show media archive", :js => true do
@@ -222,6 +224,7 @@ feature "when there are existing articles", :js => true do
   include MediaIssuesCommonHelpers
   include MediaSpecHelper
   include MediaSetupHelper
+  include ActiveStorageHelpers
 
   before do
     setup_file_constraints
@@ -235,7 +238,7 @@ feature "when there are existing articles", :js => true do
     end
 
     scenario "delete an article" do
-      saved_file_path = File.join('tmp','uploads','store',MediaAppearance.first.file.id)
+      saved_file_path = stored_file_path(MediaAppearance.first)
       expect(File.exists?(saved_file_path)).to eq true
       expect{ click_delete_article; confirm_deletion; wait_for_ajax }.to change{MediaAppearance.count}.from(1).to(0)
       expect(media_appearances.length).to eq 0
@@ -262,24 +265,25 @@ feature "when there are existing articles", :js => true do
     scenario "edit an article and upload a different file" do
       scroll_to(edit_article[0]).click
       expect(page.find('#selected_file_container').text).not_to be_blank
-      previous_file_id = page.evaluate_script("collection.findAllComponents('collectionItem')[0].get('file_id')")
-      expect(File.exists?(File.join('tmp','uploads','store',previous_file_id))).to eq true
+      saved_file_path = stored_file_path(MediaAppearance.first)
+      expect(File.exists?(saved_file_path)).to eq true
       page.execute_script("collection.set('document_target',collection.findComponent('collectionItem'))")
       page.attach_file("primary_file", upload_document, :visible => false)
       edit_save
-      expect(File.exists?(File.join('tmp','uploads','store',previous_file_id))).to eq false
+      expect(File.exists?(saved_file_path)).to eq false
       new_file_id = page.evaluate_script("collection.findAllComponents('collectionItem')[0].get('file_id')")
-      expect(File.exists?(File.join('tmp','uploads','store',new_file_id))).to eq true
+      new_saved_file_path = stored_file_path(MediaAppearance.first.reload)
+      expect(File.exists?(new_saved_file_path)).to eq true
     end
 
     scenario "edit a file article and change to link" do
       scroll_to(edit_article[0]).click
-      previous_file_id = page.evaluate_script("collection.findAllComponents('collectionItem')[0].get('file_id')")
-      expect(File.exists?(File.join('tmp','uploads','store',previous_file_id))).to eq true
+      attached_file = stored_file_path(MediaAppearance.first)
+      expect(File.exists?(attached_file)).to eq true
       clear_file_attachment
       fill_in('media_appearance_article_link', :with => "http://www.example.com")
       edit_save
-      expect(File.exists?(File.join('tmp','uploads','store',previous_file_id))).to eq false
+      expect(File.exists?(attached_file)).to eq false
       expect(MediaAppearance.first.article_link).to eq "http://www.example.com"
       expect(MediaAppearance.first.original_filename).to be_nil
       expect(MediaAppearance.first.filesize).to be_nil

@@ -8,12 +8,19 @@ class IccReferenceDocument < ActiveRecord::Base
   alias_method :uploaded_by, :user
   has_many :reminders, :as => :remindable, :dependent => :destroy
 
-  attachment :file
+  has_one_attached :file
 
   before_save do |doc|
     if doc.title.blank?
       doc.title = doc.original_filename.split('.')[0]
     end
+  end
+
+  after_destroy do |doc|
+    # without this, ActiveStorage naturally invokes purge_later
+    # which removes the file, but the uncertain delay (later)
+    # is problematic for testing
+    doc.file.purge
   end
 
   def as_json(options = {})

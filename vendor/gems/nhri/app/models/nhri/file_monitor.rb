@@ -2,7 +2,7 @@ class Nhri::FileMonitor < ActiveRecord::Base
   include DocumentApi
   include FileConstraints
   ConfigPrefix = 'nhri.file_monitor'
-  attachment :file
+  has_one_attached :file
 
   PermittedAttributes = [:indicator_id, :file, :original_filename, :original_type, :filesize]
   belongs_to :indicator

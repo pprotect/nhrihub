@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :icc_reference_document do
     title               {Faker::Lorem.words(4).join(' ')}
-    file                { LoremIpsumDocument.new.docfile }
+    file                { LoremIpsumDocument.new.upload_file }
     source_url          { Faker::Internet.url }
     filesize            { rand(1000000) + 10000 }
     original_filename   { Faker::Lorem.words(4).join('_')+'.docx' }

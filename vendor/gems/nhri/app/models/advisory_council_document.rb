@@ -1,3 +1,6 @@
+# subclassed by:
+#    Nhri::AdvisoryCouncil::TermsOfReferenceVersion and
+#    Nhri::AdvisoryCouncil::AdvisoryCouncilMinutes
 class AdvisoryCouncilDocument < ActiveRecord::Base
   include DocumentVersioning
   include FileConstraints
@@ -6,7 +9,14 @@ class AdvisoryCouncilDocument < ActiveRecord::Base
   belongs_to :user
   alias_method :uploaded_by, :user
 
-  attachment :file
+  has_one_attached :file
+
+  after_destroy do |doc|
+    # without this, ActiveStorage naturally invokes purge_later
+    # which removes the file, but the uncertain delay (later)
+    # is problematic for testing
+    doc.file.purge
+  end
 
   before_save do |doc|
     doc.receives_next_major_rev if doc.revision.blank?

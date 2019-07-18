@@ -2,8 +2,9 @@ require 'rails_helper'
 require 'login_helpers'
 require 'navigation_helpers'
 require 'download_helpers'
-require_relative '../../helpers/icc/icc_spec_helper'
-require_relative '../../helpers/icc/icc_setup_helper'
+$:.unshift Nhri::Engine.root.join('spec', 'helpers', 'icc')
+require 'icc_spec_helper'
+require 'icc_setup_helper'
 
 
 feature "show icc internal documents index page", :js => true do

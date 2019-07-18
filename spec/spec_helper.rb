@@ -245,8 +245,9 @@ RSpec.configure do |config| # rspec-expectations config goes here. You can use a
 
   config.after(:suite) do
     #FileUtils.rm_rf Rails.root.join('vendor/gems/complaints/public/complaints_packs')
-    storage_dir = Rails.configuration.active_storage.service_configurations["test"]["root"]
-    FileUtils.rm_rf storage_dir
+    storage_config = Rails.configuration.active_storage.service_configurations
+    storage_dir = storage_config && storage_config["test"]["root"]
+    FileUtils.rm_rf(storage_dir) if storage_dir
   end
   #config.around(:each) do |example|
     #DatabaseCleaner.strategy = example.metadata[:js] ? :truncation : :transaction

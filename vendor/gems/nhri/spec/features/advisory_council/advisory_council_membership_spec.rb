@@ -1,8 +1,9 @@
 require 'rails_helper'
 require 'login_helpers'
 require 'navigation_helpers'
-require_relative '../../helpers/advisory_council/advisory_council_membership_spec_helper'
-require_relative '../../helpers/advisory_council/advisory_council_membership_spec_setup_helper'
+$:.unshift Nhri::Engine.root.join('spec', 'helpers', 'advisory_council')
+require 'advisory_council_membership_spec_helper'
+require 'advisory_council_membership_spec_setup_helper'
 
 
 feature "index page", :js => true do

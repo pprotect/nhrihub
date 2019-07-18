@@ -2,8 +2,10 @@ require 'rails_helper'
 require 'login_helpers'
 require 'navigation_helpers'
 require 'download_helpers'
-require_relative '../../helpers/advisory_council/advisory_council_minutes_setup_helper'
-require_relative '../../helpers/advisory_council/advisory_council_minutes_spec_helper'
+require 'active_storage_helpers'
+$:.unshift Nhri::Engine.root.join('spec', 'helpers', 'advisory_council')
+require 'advisory_council_minutes_setup_helper'
+require 'advisory_council_minutes_spec_helper'
 
 feature "advisory council minutes document", :js => true do
   include IERemoteDetector
@@ -12,6 +14,7 @@ feature "advisory council minutes document", :js => true do
   include AdvisoryCouncilMinutesSetupHelper
   include AdvisoryCouncilMinutesSpecHelper
   include DownloadHelpers
+  include ActiveStorageHelpers
 
   before do
     Nhri::AdvisoryCouncil::AdvisoryCouncilMinutes.maximum_filesize = 5
@@ -43,7 +46,7 @@ feature "advisory council minutes document", :js => true do
 
   it "can be deleted" do
     expect{first_delete_icon.click; confirm_deletion; wait_for_ajax}.to change{Nhri::AdvisoryCouncil::AdvisoryCouncilMinutes.count}.by(-1).
-                                               and change{attached_files.length}.by(-1).
+                                               and change{stored_files_count}.by(-1).
                                                and change{page.all('.advisory_council_minutes').count}.by(-1)
   end
 

@@ -1,10 +1,12 @@
 require 'rails_helper'
 require 'login_helpers'
 require 'download_helpers'
+require 'active_storage_helpers'
 require 'navigation_helpers'
 require 'active_support/number_helper'
-require_relative '../../helpers/icc/icc_reference_documents_spec_helpers'
-require_relative '../../helpers/icc/icc_reference_documents_default_settings'
+$:.unshift Nhri::Engine.root.join('spec', 'helpers', 'icc')
+require 'icc_reference_documents_spec_helpers'
+require 'icc_reference_documents_default_settings'
 
 feature "list of icc reference documents", :js => true do
   include IERemoteDetector
@@ -34,6 +36,7 @@ feature "icc reference document management", :js => true do
   include IccReferenceDocumentsSpecHelpers
   include IccReferenceDocumentDefaultSettings
   include DownloadHelpers
+  include ActiveStorageHelpers
 
   before do
     SiteConfig['nhri.icc_reference_documents.filetypes'] = ['pdf']
@@ -116,7 +119,7 @@ feature "icc reference document management", :js => true do
   end
 
   scenario "delete a file from filesystem" do
-    expect{ click_delete_icon; confirm_deletion; wait_for_ajax}.to change{uploaded_files_count}.by(-1)
+    expect{ click_delete_icon; confirm_deletion; wait_for_ajax}.to change{stored_files_count}.by(-1)
   end
 
   scenario "view file details", :js => true do

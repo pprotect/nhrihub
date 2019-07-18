@@ -1,7 +1,8 @@
 require 'rails_helper'
 require 'login_helpers'
-require_relative '../../helpers/headings/indicators_spec_helpers'
-require_relative '../../helpers/headings/indicators_spec_setup_helpers'
+$:.unshift Nhri::Engine.root.join('spec', 'helpers', 'headings')
+require 'indicators_spec_helpers'
+require 'indicators_spec_setup_helpers'
 
 feature "indicators behaviour", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user

@@ -6,10 +6,10 @@ module MediaSetupHelper
     setup_areas
     if type == :media_appearance_with_file
       FactoryBot.create(:media_appearance,
-                         :with_performance_indicators,
-                         :hr_area,
-                         :file,
-                         :reminders=>[] )
+                        :with_performance_indicators,
+                        :hr_area,
+                        :file,
+                        :reminders=>[] )
     elsif type == :media_appearance_with_link
       FactoryBot.create(:media_appearance,
                          :with_performance_indicators,

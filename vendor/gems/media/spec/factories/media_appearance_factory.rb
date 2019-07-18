@@ -1,28 +1,29 @@
 FactoryBot.define do
   factory :media_appearance do
     title {Faker::Lorem.sentence(5)}
+    user_id { User.pluck(:id).sample }
 
     trait :link do
       article_link { "http://www.example.com" } # so we can actually test it!
     end
 
     trait :file do
-      file                { LoremIpsumDocument.new.docfile }
+      file                { LoremIpsumDocument.new.upload_file }
       filesize            { 10000 + (30000*rand).to_i }
       original_filename   { "#{Faker::Lorem.words(2).join("_")}.pdf" }
       original_type       { "application/pdf" }
-    end
 
-    after(:build) do |media_appearance|
-      media_appearance.user_id = User.pluck(:id)
-      if media_appearance.file_id
-        path = Rails.env.production? ?
-          Rails.root.join('..','..','shared') :
-          Rails.root.join('tmp')
+      after(:build) do |media_appearance|
         original_file_path = Media::Engine.root.join('lib','sample.pdf')
-        FileUtils.copy_file original_file_path, path.join('uploads','store',media_appearance.file_id) 
+        media_appearance.file.attach(
+          io: File.open(original_file_path),
+          filename: 'sample.pdf',
+          content_type: 'application/pdf',
+          identify: false
+        )
       end
     end
+
 
     trait :with_performance_indicators do
       after(:build) do |media_appearance|

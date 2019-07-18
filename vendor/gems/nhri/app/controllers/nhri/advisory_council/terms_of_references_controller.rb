@@ -32,7 +32,7 @@ class Nhri::AdvisoryCouncil::TermsOfReferencesController < ApplicationController
   end
 
   def show
-    send_attached_file( Nhri::AdvisoryCouncil::TermsOfReferenceVersion.find(params[:id]) )
+    send_blob( Nhri::AdvisoryCouncil::TermsOfReferenceVersion.find(params[:id]) )
   end
 
   private

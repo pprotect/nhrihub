@@ -1,4 +1,6 @@
 class Nhri::Indicator::FileMonitorsController < ApplicationController
+  include AttachedFile
+
   def create
     monitor = Nhri::FileMonitor.new(monitor_params)
     monitor.author = current_user
@@ -30,12 +32,7 @@ class Nhri::Indicator::FileMonitorsController < ApplicationController
 
   def show
     monitor = Nhri::FileMonitor.find(params[:id])
-    response.headers['Content-Length'] = monitor.filesize.to_s
-    send_opts = { :filename => monitor.original_filename,
-                  :type => monitor.original_type,
-                  :disposition => :attachment,
-                  :x_sendfile => true }
-    send_file monitor.file.to_io, send_opts
+    send_blob monitor
   end
 
   private

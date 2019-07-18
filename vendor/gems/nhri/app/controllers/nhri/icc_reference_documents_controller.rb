@@ -30,7 +30,7 @@ class Nhri::IccReferenceDocumentsController < ApplicationController
   end
 
   def show
-    send_attached_file IccReferenceDocument.find(params[:id])
+    send_blob IccReferenceDocument.find(params[:id])
   end
 
   private

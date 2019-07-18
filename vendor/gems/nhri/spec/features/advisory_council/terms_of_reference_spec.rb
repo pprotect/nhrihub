@@ -3,8 +3,10 @@ require 'login_helpers'
 require 'navigation_helpers'
 require 'upload_file_helpers'
 require 'download_helpers'
-require_relative '../../helpers/advisory_council/terms_of_reference_setup_helper'
-require_relative '../../helpers/advisory_council/terms_of_reference_spec_helper'
+require 'active_storage_helpers'
+$:.unshift Nhri::Engine.root.join('spec', 'helpers', 'advisory_council')
+require 'terms_of_reference_setup_helper'
+require 'terms_of_reference_spec_helper'
 
 feature "terms of reference document", :js => true do
   include IERemoteDetector
@@ -14,6 +16,7 @@ feature "terms of reference document", :js => true do
   include TermsOfReferenceSpecHelper
   include UploadFileHelpers
   include DownloadHelpers
+  include ActiveStorageHelpers
 
   before do
     Nhri::AdvisoryCouncil::TermsOfReferenceVersion.maximum_filesize = 5
@@ -39,8 +42,7 @@ feature "terms of reference document", :js => true do
     page.find('#terms_of_reference_version_revision').set('3.4')
     expect{upload_files_link.click; wait_for_ajax}.to change{Nhri::AdvisoryCouncil::TermsOfReferenceVersion.count}.by(1)
     uploaded_file = Nhri::AdvisoryCouncil::TermsOfReferenceVersion.where(:revision_major => 3, :revision_minor => 4).first
-    filename = Rails.root.join('tmp','uploads','store',uploaded_file.file_id).to_s
-    expect(File.exists?(filename)).to eq true
+    expect(File.exists?(stored_file_path(uploaded_file))).to eq true
     expect(page).to have_selector('.terms_of_reference_version', :text => 'Terms of Reference, revision 3.4', :count => 1)
   end
 
@@ -100,8 +102,8 @@ feature "terms of reference document", :js => true do
 
   it "revision can be deleted" do
     expect{first_delete_icon.click; confirm_deletion; wait_for_ajax}.to change{Nhri::AdvisoryCouncil::TermsOfReferenceVersion.count}.by(-1).
-                                               and change{Dir.new(Rails.root.join('tmp', 'uploads', 'store')).entries.length}.by(-1)
-    expect(page.all('.terms_of_reference_version').count).to eq 1
+                                               and change{stored_files_count}.by(-1).
+                                               and change{page.all('.terms_of_reference_version').count}.by(-1)
   end
 
   it "shows information popover populated with file details" do

@@ -36,12 +36,13 @@ class Nhri::AdvisoryCouncil::IssuesController < ApplicationController
   end
 
   def show
-    send_attached_file( Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.find(params[:id]))
+    send_blob( Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.find(params[:id]))
   end
 
   private
   def issue_params
     if params[:advisory_council_issue][:file] == "_remove"
+      params[:advisory_council_issue].delete(:file)
       params["advisory_council_issue"]["original_filename"] = nil
       params["advisory_council_issue"]["filesize"] = nil
       params["advisory_council_issue"]["original_type"] = nil

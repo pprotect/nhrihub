@@ -2,6 +2,7 @@ require 'rails_helper'
 require 'login_helpers'
 require 'navigation_helpers'
 require 'download_helpers'
+require 'active_storage_helpers'
 require_relative '../../../helpers/advisory_council/advisory_council_issues_spec_helper'
 require_relative '../../../helpers/advisory_council/advisory_council_issues_setup_helper'
 require 'media_issues_common_helpers'
@@ -184,6 +185,7 @@ feature "when there are existing articles", :js => true do
   include MediaIssuesCommonHelpers
   include AdvisoryCouncilIssueSpecHelper
   include AdvisoryCouncilIssueSetupHelper
+  include ActiveStorageHelpers
 
   feature "and existing article has file attachment" do
     before do
@@ -203,7 +205,7 @@ feature "when there are existing articles", :js => true do
     end
 
     scenario "delete an article" do
-      saved_file_path = File.join('tmp','uploads','store',Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.file.id)
+      saved_file_path = stored_file_path(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first)
       expect(File.exists?(saved_file_path)).to eq true
       expect{ click_delete_article; confirm_deletion; wait_for_ajax }.to change{Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.count}.from(1).to(0)
       expect(advisory_council_issues.length).to eq 0
@@ -228,24 +230,24 @@ feature "when there are existing articles", :js => true do
     scenario "edit an article and upload a different file" do
       scroll_to(edit_article[0]).click
       expect(page.find('#selected_file_container').text).not_to be_blank
-      previous_file_id = page.evaluate_script("collection.findAllComponents('collectionItem')[0].get('file_id')")
-      expect(File.exists?(File.join('tmp','uploads','store',previous_file_id))).to eq true
+      saved_file_path = stored_file_path(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first)
+      expect(File.exists?(saved_file_path)).to eq true
       page.execute_script("collection.set('document_target',collection.findComponent('collectionItem'))")
       page.attach_file("primary_file", upload_document, :visible => false)
       edit_save
-      expect(File.exists?(File.join('tmp','uploads','store',previous_file_id))).to eq false
-      new_file_id = page.evaluate_script("collection.findAllComponents('collectionItem')[0].get('file_id')")
-      expect(File.exists?(File.join('tmp','uploads','store',new_file_id))).to eq true
+      expect(File.exists?(saved_file_path)).to eq false
+      new_saved_file_path = stored_file_path(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.reload)
+      expect(File.exists?(new_saved_file_path)).to eq true
     end
 
     scenario "edit a file article and change to link" do
       scroll_to(edit_article[0]).click
-      previous_file_id = page.evaluate_script("collection.findAllComponents('collectionItem')[0].get('file_id')")
-      expect(File.exists?(File.join('tmp','uploads','store',previous_file_id))).to eq true
+      saved_file_path = stored_file_path(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first)
+      expect(File.exists?(saved_file_path)).to eq true
       clear_file_attachment
       fill_in('advisory_council_issue_article_link', :with => "http://www.example.com")
       edit_save
-      expect(File.exists?(File.join('tmp','uploads','store',previous_file_id))).to eq false
+      expect(File.exists?(saved_file_path)).to eq false
       expect(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.article_link).to eq "http://www.example.com"
       expect(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.original_filename).to be_nil
       expect(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.filesize).to be_nil
@@ -254,17 +256,17 @@ feature "when there are existing articles", :js => true do
 
     scenario "edit a file article and add a link" do
       scroll_to(edit_article[0]).click
-      previous_file_id = page.evaluate_script("collection.findAllComponents('collectionItem')[0].get('file_id')")
-      previous_file = Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first
-      expect(File.exists?(File.join('tmp','uploads','store',previous_file_id))).to eq true
+      original_issue = Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first
+      original_issue_attached_file_path = stored_file_path(original_issue)
+      expect(File.exists?(original_issue_attached_file_path)).to eq true
       fill_in('advisory_council_issue_article_link', :with => "http://www.example.com")
       expect(page).not_to have_selector('#single_attachment_error', :text => 'Either file or link, not both')
       expect{edit_save}.not_to change{Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.count}
-      expect(File.exists?(File.join('tmp','uploads','store',previous_file_id))).to eq true
+      expect(File.exists?(original_issue_attached_file_path)).to eq true
       expect(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.article_link).to eq "http://www.example.com"
-      expect(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.original_filename).to eq previous_file.original_filename
-      expect(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.filesize).to eq previous_file.filesize
-      expect(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.original_type).to eq previous_file.original_type
+      expect(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.original_filename).to eq original_issue.original_filename
+      expect(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.filesize).to eq original_issue.filesize
+      expect(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.original_type).to eq original_issue.original_type
     end
 
     scenario "edit an article and add title error" do

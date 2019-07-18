@@ -257,8 +257,8 @@ $ ->
       @compact() #nothing to do with errors, but this method is called on edit_cancel
       @restore()
     persistent_attributes : ->
-      attrs = ['file', 'title', 'article_link', 'lastModifiedDate', 'area_ids', 'subarea_ids',
-               'filesize', 'original_filename', 'original_type']
+      attrs = ['title', 'article_link', 'lastModifiedDate', 'area_ids', 'subarea_ids' ]
+      attrs.push('file', 'lastModifiedDate', 'filesize', 'original_filename', 'original_type') unless typeof(@get('file')) == 'undefined'
       attrs.push('selected_performance_indicators_attributes') if item_name == "media_appearance"
       attrs
     formData : ->

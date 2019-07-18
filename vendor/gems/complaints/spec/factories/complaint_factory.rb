@@ -56,7 +56,7 @@ FactoryBot.define do
 
     trait :with_document do
       after :build do |complaint|
-        complaint_document = FactoryBot.create(:complaint_document, :title => rand_title, :filename => rand_filename)
+        complaint_document = FactoryBot.create(:complaint_document, :title => rand_title, :original_filename => rand_filename)
         complaint.complaint_documents << complaint_document
       end
     end

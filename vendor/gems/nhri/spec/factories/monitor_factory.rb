@@ -12,7 +12,7 @@ FactoryBot.define do
   end
 
   factory :file_monitor, :class => Nhri::FileMonitor do
-    file                { LoremIpsumDocument.new.docfile }
+    file                { LoremIpsumDocument.new.upload_file }
     filesize            { 10000 + (30000*rand).to_i }
     original_filename   { "#{Faker::Lorem.words(2).join("_")}.pdf" }
     original_type       { "application/msword" }

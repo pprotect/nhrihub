@@ -31,11 +31,12 @@ class Nhri::AdvisoryCouncil::MinutesController < ApplicationController
   end
 
   def show
-    send_attached_file Nhri::AdvisoryCouncil::AdvisoryCouncilMinutes.find(params[:id])
+    send_blob Nhri::AdvisoryCouncil::AdvisoryCouncilMinutes.find(params[:id])
   end
 
   private
   def doc_params
-    params.require(:advisory_council_minutes).permit(:date, :file, :filesize, :original_type, :original_filename, :lastModifiedDate)
+    params.require(:advisory_council_minutes).
+      permit(:date, :file, :filesize, :original_type, :original_filename, :lastModifiedDate)
   end
 end
