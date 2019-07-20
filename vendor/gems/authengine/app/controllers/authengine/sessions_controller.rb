@@ -114,6 +114,7 @@ private
   def record_logout
     if s = Session.where(:session_id => session[:session_id]).first
       s.update_attribute(:logout_date, Time.now)
+      AccessLog.info I18n.t("access_log.logout", user: s.user, roles: s.user.roles.map(&:to_s).join(', '))
     end
   end
 

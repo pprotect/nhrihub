@@ -129,21 +129,21 @@ class User < ActiveRecord::Base
   class ActivationCodeNotFound < StandardError; end
   class BlankActivationCode < StandardError; end
   class BlankPasswordResetCode < StandardError; end
-  class AlreadyActivated < StandardError
-    attr_reader :user, :message;
-    def initialize(user, message=nil)
-      @message, @user = message, user
-    end
-  end
+  class AlreadyActivated < StandardError; end
   class BlankPasswordResetCode < StandardError; end
   class AuthenticationError < StandardError
-    def initialize
-      super I18n.t("exceptions.#{self.class.name.underscore}")
+    def initialize(interpolation_params)
+      # log message carries more detail than the message sent back to the user
+      AccessLog.info I18n.t("#{self.class.name.underscore}.access_log_message", interpolation_params)
+      # message sent back to the user
+      super I18n.t("#{self.class.name.underscore}.flash_message")
     end
   end
   class BlankReplacementTokenRegistrationCode < AuthenticationError; end
   class TokenError < AuthenticationError; end
   class LoginNotFound < AuthenticationError; end
+  class InvalidPassword < AuthenticationError; end
+  class LoginBlank < AuthenticationError; end
   class TokenNotRegistered < AuthenticationError; end
   class AccountNotActivated < AuthenticationError; end
   class AccountDisabled < AuthenticationError; end
@@ -199,11 +199,11 @@ class User < ActiveRecord::Base
   end
 
   def self.find_by_login(login)
-    raise LoginNotFound if login.blank?
+    raise LoginBlank if login.blank?
     user = find_by(:login => login)
-    raise LoginNotFound if user.nil?
-    raise AccountNotActivated.new unless user.active? # never see this as user would be nil, login is blank if user is not activated
-    raise AccountDisabled.new unless user.enabled?
+    raise LoginNotFound.new({login: login}) if user.nil?
+    raise AccountNotActivated.new(user: user) unless user.active? # never see this as user would be nil, login is blank if user is not activated
+    raise AccountDisabled.new(user: user) unless user.enabled?
     user
   end
 
@@ -271,7 +271,7 @@ class User < ActiveRecord::Base
 
   def generate_challenge
     if public_key.nil? or public_key_handle.nil?
-      raise TokenNotRegistered.new
+      raise TokenNotRegistered.new(user: self)
     else
       self.challenge = U2F::U2F.new(APPLICATION_ID).challenge
       save(:validation => false)
@@ -281,7 +281,7 @@ class User < ActiveRecord::Base
   end
 
   def authenticated_password?(password)
-    raise LoginNotFound unless crypted_password == encrypt(password)
+    raise InvalidPassword.new({login: login, user: self}) unless crypted_password == encrypt(password)
     true
   end
 

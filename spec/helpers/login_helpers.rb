@@ -9,8 +9,8 @@ module RegisteredUserHelper
     admin = create_user('admin')
     @user = admin
     assign_permissions(admin, 'admin', admin_roles)
-    staff = create_user('staff')
-    assign_permissions(staff, 'staff', staff_roles)
+    @staff_user = create_user('staff')
+    assign_permissions(@staff_user, 'staff', staff_roles)
   end
 
   def remove_user_two_factor_authentication_credentials(user)

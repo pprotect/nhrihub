@@ -1,7 +1,26 @@
 fr:
-  exceptions:
-    user/token_not_registered: "Vous devez disposer d'un jeton de clé enregistré pour vous connecter"
-    user/login_not_found: "Votre nom d'utilisateur ou mot de passe est incorrect."
-    user/account_not_activated: "Votre compte est inactif, S'il vous plaît vérifier votre e-mail pour le code d'activation."
-    user/account_disabled: "Votre compte a-été désactivé, S'il vous plaît contacter l'administrateur."
-    user/token_error: "Il y a un problème avec votre jeton."
+  user/token_not_registered:
+    flash_message: "Vous devez disposer d'un jeton de clé enregistré pour vous connecter"
+    access_log_message: "Tentative de connexion par %{user}, jeton non enregistré"
+  user/login_blank:
+    flash_message: "Votre nom d'utilisateur ou mot de passe est incorrect."
+    access_log_message: "Nom d'utilisateur non fourni"
+  user/invalid_password:
+    flash_message: "Votre nom d'utilisateur ou mot de passe est incorrect."
+    access_log_message: "Mot de passe invalide pour la connexion: %{login}, utilisateur: %{user}"
+  user/login_not_found:
+    flash_message: "Votre nom d'utilisateur ou mot de passe est incorrect."
+    access_log_message: "Échec de la connexion. Nom d'utilisateur '%{login}' introuvable dans la base de données"
+  user/account_not_activated:
+    flash_message: "Votre compte est inactif, S'il vous plaît vérifier votre e-mail pour le code d'activation."
+    access_log_message: "Tentative de connexion par %{user}, compte non activé"
+  user/account_disabled:
+    flash_message: "Votre compte a-été désactivé, S'il vous plaît contacter l'administrateur."
+    access_log_message: "Tentative de connexion par %{user}, Compte désactivé"
+  user/token_error:
+    flash_message: "Il y a un problème avec votre jeton."
+  user/blank_replacement_token_registration_code:
+    flash_message: "code d'enregistrement de jeton de remplacement manquant"
+  access_log:
+    login: "S'identifier %{user} rôle(s): %{roles}"
+    logout: "Connectez - Out %{user} rôle(s): %{roles}"
