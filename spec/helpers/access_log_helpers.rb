@@ -5,6 +5,6 @@ module AccessLogHelpers
   extend RSpec::Core::SharedContext
 
   def access_log_message
-    File.readlines(AccessLog::LogFile)[-1]
+    AccessEvent.last.to_s
   end
 end

@@ -12,7 +12,7 @@ class Session < ActiveRecord::Base
     else
       session = create(args[0])
     end
-      AccessLog.info I18n.t("access_log.login", user: session.user, roles: session.user.roles.map(&:to_s).join(', '))
+      AccessEvent.create(exception_type: 'login', user: session.user)
       session
   end
 

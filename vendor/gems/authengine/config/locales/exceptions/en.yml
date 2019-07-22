@@ -21,6 +21,7 @@ en:
     flash_message: 'There is a problem with your token'
   user/blank_replacement_token_registration_code:
     flash_message: 'replacement token registration code missing'
-  access_log:
-    login: "Login %{user} role(s): %{roles}"
-    logout: "Logout %{user} role(s): %{roles}"
+  login:
+    access_log_message: "Login %{user} role(s): %{roles}"
+  logout:
+    access_log_message: "Logout %{user} role(s): %{roles}"

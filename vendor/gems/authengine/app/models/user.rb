@@ -134,7 +134,7 @@ class User < ActiveRecord::Base
   class AuthenticationError < StandardError
     def initialize(interpolation_params)
       # log message carries more detail than the message sent back to the user
-      AccessLog.info I18n.t("#{self.class.name.underscore}.access_log_message", interpolation_params)
+      AccessEvent.create interpolation_params.merge!(exception_type: self.class.name.underscore)
       # message sent back to the user
       super I18n.t("#{self.class.name.underscore}.flash_message")
     end
@@ -334,6 +334,10 @@ class User < ActiveRecord::Base
 
   def has_role?(name)
     self.roles.find_by_name(name) ? true : false
+  end
+
+  def roles_list
+    roles.map(&:to_s).join(', ')
   end
 
   def is_developer?
