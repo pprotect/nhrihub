@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_22_040541) do
+ActiveRecord::Schema.define(version: 2019_07_22_134806) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,11 +121,6 @@ ActiveRecord::Schema.define(version: 2019_07_22_040541) do
   create_table "application_data_backups", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "application_data_backups_glacier_file_archives", id: false, force: :cascade do |t|
-    t.integer "application_data_backup_id", null: false
-    t.integer "glacier_file_archive_id", null: false
   end
 
   create_table "areas", id: :serial, force: :cascade do |t|
@@ -309,20 +304,6 @@ ActiveRecord::Schema.define(version: 2019_07_22_040541) do
     t.string "original_type", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "glacier_archives", id: :serial, force: :cascade do |t|
-    t.text "description"
-    t.text "archive_id"
-    t.text "checksum"
-    t.text "location"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.json "notification"
-    t.string "archive_retrieval_job_id"
-    t.integer "application_data_backup_id"
-    t.string "type"
-    t.string "filename"
   end
 
   create_table "headings", id: :serial, force: :cascade do |t|

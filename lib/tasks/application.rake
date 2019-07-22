@@ -13,7 +13,7 @@ desc "remove user-added data and wipes database ready for 'go-live'"
 task :depopulate => :environment do
   Note.destroy_all
   Reminder.destroy_all
-  modules = ["users", "csp_reports", "projects", "complaints", "strategic_plan", "media", "nhri", "internal_documents"]
+  modules = ["users", "csp_reports", "projects", "complaints", "strategic_plan", "media", "nhri", "internal_documents", "access_events"]
   modules.each do |mod|
     Rake::Task[mod+":depopulate"].invoke
   end
@@ -30,5 +30,19 @@ namespace :csp_reports do
   desc "removes all csp reports"
   task :depopulate => :environment do
     CspReport.destroy_all
+  end
+end
+
+namespace :access_events do
+  desc "populates access log table"
+  task :populate => "access_log:depopulate" do
+    50.times do
+      FactoryBot.create(:access_event)
+    end
+  end
+
+  desc "removes all access log entries"
+  task :depopulate => :environment do
+    AccessEvent.destroy_all
   end
 end

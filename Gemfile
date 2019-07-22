@@ -107,7 +107,6 @@ gem "capistrano-linked-files"
 gem "message_block", git: "https://github.com/lazylester/message_block.git"
 gem "surus", git: "https://github.com/asiapacificforum/surus.git", :ref => "36cb18a" # postgres direct to json
 gem "aws-sdk", "~> 2"
-gem "glacier_on_rails", '= 1.0.0'
 gem "rack-attack"
 gem "rack-mini-profiler", '~>1.0.2'
 gem "flamegraph"

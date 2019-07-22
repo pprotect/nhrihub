@@ -42,6 +42,3 @@ SSL Certificate expiry date:
 
     $('body').on 'click', '#csp_reports #delete_all', delete_all
 
-
-- if defined? ApplicationDataBackup
-  = render :partial => 'glacier_on_rails/aws_archive_retrieval_jobs/index', :locals => {:application_data_backups => @application_data_backups}
