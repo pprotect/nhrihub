@@ -35,7 +35,7 @@ end
 
 namespace :access_events do
   desc "populates access log table"
-  task :populate => "access_log:depopulate" do
+  task :populate => "access_events:depopulate" do
     50.times do
       FactoryBot.create(:access_event)
     end

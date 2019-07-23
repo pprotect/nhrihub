@@ -26,11 +26,35 @@ SSL Certificate expiry date:
 
 #csp_reports
 
+%h2 Logs
+%ul
+  %li#access_log_link.action_link{onclick: "fetch_access_events()"} Access log
+
+#access_events
+
 :coffeescript
+  $('body').on('click', ()->
+    flash.hide()
+  )
+  access_events_visible = false
+  @fetch_access_events = ->
+    unless access_events_visible
+      $('#access_events').load("#{authengine_access_events_path}", (response, status, xhr)->
+        if xhr.status == 401
+          eval(response)
+      )
+      access_events_visible = true
+    else
+      $('#access_events *').hide()
+      access_events_visible = false
+
   csp_reports_visible = false
   @fetch_csp_reports = ->
     unless csp_reports_visible
-      $('#csp_reports').load("#{csp_reports_path}")
+      $('#csp_reports').load("#{csp_reports_path}", (response, status, xhr)->
+        if xhr.status == 401
+          eval(response)
+      )
       csp_reports_visible = true
     else
       $('#csp_reports *').hide()
