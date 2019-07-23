@@ -29,7 +29,6 @@ $ ->
         url : @get('url')
         data : data
         method : 'post'
-        dataType : 'json'
         context : @
         success : @success_callback
         error : @error_callback

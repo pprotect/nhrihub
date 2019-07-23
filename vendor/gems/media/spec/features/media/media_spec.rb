@@ -8,8 +8,8 @@ require 'performance_indicator_helpers'
 require 'performance_indicator_association'
 $:.unshift Media::Engine.root.join('spec', 'helpers')
 require 'media_spec_helper'
-require 'media_appearance_context_performance_indicator_spec_helpers'
 require 'media_setup_helper'
+require 'media_appearance_context_performance_indicator_spec_helpers'
 
 
 feature "show media archive", :js => true do

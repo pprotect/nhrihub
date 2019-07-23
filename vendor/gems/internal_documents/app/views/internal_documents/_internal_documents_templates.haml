@@ -14,7 +14,7 @@
         .col-md-4= t('.title')
         .col-md-4= t('.type')
       .row{:style => "margin-bottom:12px;"}
-        .col-md-4= text_field_tag :title, "{{filter_criteria.title}}", :placeholder => t('.enter_title'), :class => 'form-control'
+        .col-md-4= text_field_tag :title, "{{filter_criteria.title}}", :placeholder => t('.enter_title'), :class => 'form-control', :autocomplete => 'off'
         .col-md-4
           .btn-group.select
             %button.btn.btn-default.dropdown-toggle{:type=>:button, 'data-toggle'=>'dropdown'}

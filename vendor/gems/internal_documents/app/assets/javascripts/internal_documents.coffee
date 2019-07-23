@@ -322,7 +322,7 @@ $ ->
         revision : null
       internal_document_uploader.unshift('upload_documents', attached_document)
     delete_callback : (data,textStatus,jqxhr)->
-      if _.isUndefined(data) # last doc in the group, so nothing returned
+      if _.isEmpty(data) # last doc in the group, so nothing returned
         @parent.remove(@)
       else
         @parent.replace(data)
