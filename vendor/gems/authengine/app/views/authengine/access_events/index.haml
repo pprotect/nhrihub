@@ -16,9 +16,9 @@
           %span.caret
         %ul.dropdown-menu#time_window_select
           - for period in ["all", "past day", "past week", "past month"]
-            %li{:class => 'dropdown-header period_filter {{#if selected}}selected{{/if}}'}
+            %li{:class => 'dropdown-header period_filter'}
               %a
-                %span= period
+                %span{id: period}= period
                 %span.fa.fa-check
     .col-md-3
       .btn-group.select{:style=>"width:240px;"}
@@ -27,24 +27,38 @@
           %span.caret
         %ul.dropdown-menu#user_select
           - for user in @users
-            %li{:class => 'dropdown-header period_filter {{#if selected}}selected{{/if}}'}
+            %li{:class => 'dropdown-header period_filter'}
               %a
-                %span= user
+                %span{id: user.id}= user.first_last_name
                 %span.fa.fa-check
     .col-md-3
       .btn-group.select{:style=>"width:240px;"}
         %button.btn.btn-default.dropdown-toggle{:type=>:button, 'data-toggle'=>'dropdown'}
           %span.filter-option.pull-left
           %span.caret
-        %ul.dropdown-menu#user_select
+        %ul.dropdown-menu#outcome_select
           - for outcome in ["success", "fail", "all"]
-            %li{:class => 'dropdown-header period_filter {{#if selected}}selected{{/if}}'}
+            %li{:class => 'dropdown-header period_filter'}
               %a
-                %span= outcome
+                %span{id: outcome}= outcome
                 %span.fa.fa-check
 
 - for @access_event in @access_events do
   .row{:class => event_outcome}
     .col-sm-1
-    .col-md-3= timestamp
-    .col-md-4= log_entry
+    .col-md-2{style: 'width: 18%;'}= timestamp
+    .col-md-2= ip
+    .col-md-6= log_entry
+
+:coffeescript
+  $ ->
+    window.selected = {period: 'all', user: 'all', outcome: 'all'}
+    $('.dropdown-menu li a').on 'click', (event)->
+       event.stopPropagation()
+       event.preventDefault()
+       $(event.target).closest('ul').find('li').removeClass('selected')
+       $(event.target).closest('li').addClass('selected')
+       changed_parameter = $(event.target).closest('ul').attr('id').replace(/_select/,'')
+       console.log(changed_parameter)
+       new_val = $(event.target).parent().find('span').first().attr('id')
+       console.log('changed_to '+ new_val)

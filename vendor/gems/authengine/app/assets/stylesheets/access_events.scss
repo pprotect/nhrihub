@@ -19,8 +19,19 @@
 
   &:before {
     font-family: FontAwesome;
-    content: "\f00c";
+    content: "\f00c"; // filled-in circle
     color: #4e984e;
     margin-left: -0.3em;
+  }
+}
+
+div.ip_address_field {
+  display: inline-block;
+  width: 20%;
+  text-align: left;
+  font-family: Courier;
+
+  &:not(:last-child):after {
+    content: '.';
   }
 }
