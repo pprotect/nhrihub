@@ -1,9 +1,9 @@
 # This controller handles the login/logout function of the site.
 require "date"
-require "access_logger"
+require "user_exceptions_logger"
 
 class Authengine::SessionsController < ApplicationController
-  include AccessLogger
+  include UserExceptionsLogger
 
   skip_before_action :check_permissions, :only => [:new, :create, :destroy]
 
@@ -102,7 +102,7 @@ private
     session_role = SessionRole.new
     session_role.add_roles(user.role_ids)
     session[:role] = Marshal.dump(session_role)
-    Session.create_or_update(:session_id => session[:session_id], :user_id => session[:user_id], :login_date => Time.now)
+    Session.create_or_update(:request => request, :session_id => session[:session_id], :user_id => session[:user_id], :login_date => Time.now)
     flash[:notice] = t('.success')
     return_to = session[:return_to]
     if return_to.nil?
@@ -115,8 +115,7 @@ private
 
   def record_logout
     if s = Session.where(:session_id => session[:session_id]).first
-      s.update_attribute(:logout_date, Time.now)
-      AccessEvent.create(exception_type: 'logout', user: s.user)
+      s.update(logout_date: Time.now, request: request)
     end
   end
 

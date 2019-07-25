@@ -1,15 +1,9 @@
-module AccessLogger
-  def with_logging(request, &block)
-    begin
-      request_params = {:ip => request.remote_ip, :ua => request.user_agent}
-      access_event = AccessEvent.new
-      xhr = !!(request.xhr?)
-      block.call
-    rescue User::AuthenticationError => exception
-      attrs = exception.interpolation_params
-      attrs.each{|(attr,val)| access_event.send(:"#{attr}=",val)}
-      access_event.save
-      failed_login exception.message
-    end
+class AccessLogger
+  def self.before_save(session)
+    exception_type = session.persisted? ? 'logout' : 'login'
+    AccessEvent.create(exception_type: exception_type,
+                       user: session.user,
+                       request_user_agent: session.request.user_agent,
+                       request_ip: session.request.ip)
   end
 end

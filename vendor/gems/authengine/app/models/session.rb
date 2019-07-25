@@ -1,19 +1,20 @@
 class Session < ActiveRecord::Base
+  attr_accessor :request
   belongs_to :user
 
   scope :belonging_to_user, ->(user) { where("user_id like ?", user) } # use % for wildcard
   scope :logged_in_after, ->(time) { where("(login_date >= ?) or logout_date is null", time) } # pass in a time object
   scope :logged_in_before, ->(time) { where("login_date <= ?", time) } # pass in a time object
 
-  def self.create_or_update(*args)
-    if previous_login = where({user_id:  args[0][:user_id], logout_date: nil}).last
-      previous_login.update(session_id: args[0][:session_id])
+  before_save AccessLogger
+
+  def self.create_or_update(params)
+    if previous_login = where({user_id:  params[:user_id], logout_date: nil}).last
+      previous_login.update(params.slice(:session_id, :request))
       session = previous_login.reload
     else
-      session = create(args[0])
+      session = create( params )
     end
-      AccessEvent.create(exception_type: 'login', user: session.user)
-      session
   end
 
   def formatted_login_date

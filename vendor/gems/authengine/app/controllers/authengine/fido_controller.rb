@@ -1,7 +1,7 @@
-require "access_logger"
+require "user_exceptions_logger"
 
 class Authengine::FidoController < ApplicationController
-  include AccessLogger
+  include UserExceptionsLogger
   skip_before_action :check_permissions, :only => [:challenge_request]
 
   def challenge_request

@@ -277,7 +277,6 @@ class User < ActiveRecord::Base
     else
       self.challenge = U2F::U2F.new(APPLICATION_ID).challenge
       save(:validation => false)
-      # TODO if user does not have a public_key_handle -> generate error (exception?)
       [public_key_handle, challenge]
     end
   end

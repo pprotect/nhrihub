@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_22_134806) do
+ActiveRecord::Schema.define(version: 2019_07_25_035005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(version: 2019_07_22_134806) do
     t.integer "user_id"
     t.string "exception_type"
     t.string "login"
+    t.string "request_ip"
+    t.string "request_user_agent"
   end
 
   create_table "action_roles", id: :serial, force: :cascade do |t|
