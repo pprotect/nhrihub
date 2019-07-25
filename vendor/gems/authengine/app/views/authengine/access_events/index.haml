@@ -1,2 +1,50 @@
-- for access_event in @access_events do
-  %p= access_event.to_s
+= stylesheet_link_tag 'access_events'
+%h1 Access Log
+.row.filter_control_box#access_events_controls
+  .row
+    .col-md-12
+      %h4= t('.search')
+  .row.labels
+    .col-md-3= t('.period')
+    .col-md-3= t('.user')
+    .col-md-3= t('.outcome')
+  .row{:style => "margin-bottom:12px;"}
+    .col-md-3
+      .btn-group.select{:style=>"width:240px;"}
+        %button.btn.btn-default.dropdown-toggle{:type=>:button, 'data-toggle'=>'dropdown'}
+          %span.filter-option.pull-left
+          %span.caret
+        %ul.dropdown-menu#time_window_select
+          - for period in ["all", "past day", "past week", "past month"]
+            %li{:class => 'dropdown-header period_filter {{#if selected}}selected{{/if}}'}
+              %a
+                %span= period
+                %span.fa.fa-check
+    .col-md-3
+      .btn-group.select{:style=>"width:240px;"}
+        %button.btn.btn-default.dropdown-toggle{:type=>:button, 'data-toggle'=>'dropdown'}
+          %span.filter-option.pull-left
+          %span.caret
+        %ul.dropdown-menu#user_select
+          - for user in @users
+            %li{:class => 'dropdown-header period_filter {{#if selected}}selected{{/if}}'}
+              %a
+                %span= user
+                %span.fa.fa-check
+    .col-md-3
+      .btn-group.select{:style=>"width:240px;"}
+        %button.btn.btn-default.dropdown-toggle{:type=>:button, 'data-toggle'=>'dropdown'}
+          %span.filter-option.pull-left
+          %span.caret
+        %ul.dropdown-menu#user_select
+          - for outcome in ["success", "fail", "all"]
+            %li{:class => 'dropdown-header period_filter {{#if selected}}selected{{/if}}'}
+              %a
+                %span= outcome
+                %span.fa.fa-check
+
+- for @access_event in @access_events do
+  .row{:class => event_outcome}
+    .col-sm-1
+    .col-md-3= timestamp
+    .col-md-4= log_entry

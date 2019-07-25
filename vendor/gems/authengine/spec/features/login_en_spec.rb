@@ -20,7 +20,8 @@ feature "Unregistered user tries to log in", :js => true do
     expect(flash_message).to have_text("Your username or password is incorrect.")
     expect(page).not_to have_selector(".nav")
     expect(page_heading).to eq "Please log in"
-    expect(access_log_message).to have_text  "Failed login. Username 'admin' not found in database"
+    expect(access_event.exception_type).to eq "user/login_not_found"
+    expect(access_event.login).to eq "admin"
   end
 end
 
@@ -41,9 +42,9 @@ feature "Registered user logs in with valid credentials", :js => true do
       expect(flash_message).to have_text("Logged in successfully")
       expect(navigation_menu).to include("Admin")
       expect(navigation_menu).to include("Logout")
-      expect(access_log_message).to have_text "Login #{@user} role(s): #{@user.roles.map(&:to_s).join(', ')}"
+      expect(access_event.exception_type).to eq "login"
       click_link('Logout')
-      expect(access_log_message).to have_text "Logout #{@user} role(s): #{@user.roles.map(&:to_s).join(', ')}"
+      expect(access_event.exception_type).to eq "logout"
     end
 
     scenario "staff member logs in", :js => true do
@@ -57,9 +58,9 @@ feature "Registered user logs in with valid credentials", :js => true do
       expect(flash_message).to have_text("Logged in successfully")
       expect(navigation_menu).not_to include("Admin")
       expect(navigation_menu).to include("Logout")
-      expect(access_log_message).to have_text "Login #{@staff_user} role(s): #{@staff_user.roles.map(&:to_s).join(', ')}"
+      expect(access_event.exception_type).to eq "login"
       click_link('Logout')
-      expect(access_log_message).to have_text "Logout #{@staff_user} role(s): #{@staff_user.roles.map(&:to_s).join(', ')}"
+      expect(access_event.exception_type).to eq "logout"
     end
   end
 
@@ -83,9 +84,9 @@ feature "Registered user logs in with valid credentials", :js => true do
       expect(flash_message).to have_text("Logged in successfully")
       expect(navigation_menu).to include("Admin")
       expect(navigation_menu).to include("Logout")
-      expect(access_log_message).to have_text "Login #{@user} role(s): #{@user.roles.map(&:to_s).join(', ')}"
+      expect(access_event.exception_type).to eq "login"
       click_link('Logout')
-      expect(access_log_message).to have_text "Logout #{@user} role(s): #{@user.roles.map(&:to_s).join(', ')}"
+      expect(access_event.exception_type).to eq "logout"
     end
 
     scenario "staff member logs in" do
@@ -98,9 +99,9 @@ feature "Registered user logs in with valid credentials", :js => true do
       expect(flash_message).to have_text("Logged in successfully")
       expect(navigation_menu).not_to include("Admin")
       expect(navigation_menu).to include("Logout")
-      expect(access_log_message).to have_text "Login #{@staff_user} role(s): #{@staff_user.roles.map(&:to_s).join(', ')}"
+      expect(access_event.exception_type).to eq "login"
       click_link('Logout')
-      expect(access_log_message).to have_text "Logout #{@staff_user} role(s): #{@staff_user.roles.map(&:to_s).join(', ')}"
+      expect(access_event.exception_type).to eq "logout"
     end
   end
 end
@@ -123,7 +124,7 @@ feature "user logs in", :js => true do
       sleep(0.1) # javascript renders the flash message
 
       expect(flash_message).to eq "You must have a registered key token to log in"
-      expect(access_log_message).to have_text "Login attempt by #{@user}, unregistered token"
+      expect(access_event.exception_type).to eq "user/token_not_registered"
     end
   end
 
@@ -141,7 +142,7 @@ feature "user logs in", :js => true do
       sleep(0.1) # javascript renders the flash message
 
       expect(flash_message).to eq "Your account is not active, please check your email for the activation code."
-      expect(access_log_message).to have_text  "Login attempt by #{@user}, account not activated"
+      expect(access_event.exception_type).to eq "user/account_not_activated"
     end
   end
 
@@ -159,7 +160,7 @@ feature "user logs in", :js => true do
       sleep(0.1) # javascript renders the flash message
 
       expect(flash_message).to eq "Your account has been disabled, please contact administrator."
-      expect(access_log_message).to have_text "Login attempt by #{@user}, account disabled"
+      expect(access_event.exception_type).to eq "user/account_disabled"
     end
   end
 end
@@ -177,7 +178,7 @@ feature "Registered user logs in with invalid credentials", :js => true do
 
     expect(flash_message).to have_text("Your username or password is incorrect.")
     expect(page_heading).to eq "Please log in"
-    expect(access_log_message).to have_text  "invalid password for login: admin, user: #{@user}"
+    expect(access_event.exception_type).to eq "user/invalid_password"
   end
 
   scenario "enters bad user name" do
@@ -190,7 +191,7 @@ feature "Registered user logs in with invalid credentials", :js => true do
     expect(flash_message).to have_text("Your username or password is incorrect.")
     expect(page_heading).to eq "Please log in"
     expect(page).not_to have_selector(".nav")
-    expect(access_log_message).to have_text "Failed login. Username 'notavaliduser' not found in database"
+    expect(access_event.exception_type).to eq "user/login_not_found"
   end
 end
 

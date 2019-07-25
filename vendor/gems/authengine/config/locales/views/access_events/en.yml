@@ -1,0 +1,8 @@
+en:
+  authengine:
+    access_events:
+      index:
+        search: "Filter access log by:"
+        period: "Time period"
+        user: "User"
+        outcome: "Outcome"

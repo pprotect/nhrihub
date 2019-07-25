@@ -4,10 +4,10 @@ en:
     access_log_message: "Login attempt by %{user}, unregistered token"
   user/login_blank:
     flash_message: 'Your username or password is incorrect.'
-    access_log_message: "login name not supplied"
+    access_log_message: "Login name not supplied"
   user/invalid_password:
     flash_message: 'Your username or password is incorrect.'
-    access_log_message: "invalid password for login: %{login}, user: %{user}"
+    access_log_message: "Invalid password for login: %{login}, user: %{user}"
   user/login_not_found:
     flash_message: 'Your username or password is incorrect.'
     access_log_message: "Failed login. Username '%{login}' not found in database"
@@ -20,7 +20,7 @@ en:
   user/token_error:
     flash_message: 'There is a problem with your token'
   user/blank_replacement_token_registration_code:
-    flash_message: 'replacement token registration code missing'
+    flash_message: 'Replacement token registration code missing'
   login:
     access_log_message: "Login %{user} role(s): %{roles}"
   logout:

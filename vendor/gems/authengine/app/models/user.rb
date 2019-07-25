@@ -132,9 +132,11 @@ class User < ActiveRecord::Base
   class AlreadyActivated < StandardError; end
   class BlankPasswordResetCode < StandardError; end
   class AuthenticationError < StandardError
+    attr_accessor :interpolation_params
     def initialize(interpolation_params)
       # log message carries more detail than the message sent back to the user
-      AccessEvent.create interpolation_params.merge!(exception_type: self.class.name.underscore)
+      self.interpolation_params = interpolation_params.merge!(exception_type: self.class.name.underscore)
+      #AccessEvent.create interpolation_params.merge!(exception_type: self.class.name.underscore)
       # message sent back to the user
       super I18n.t("#{self.class.name.underscore}.flash_message")
     end

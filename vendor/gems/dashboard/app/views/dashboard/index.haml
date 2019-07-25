@@ -28,7 +28,7 @@ SSL Certificate expiry date:
 
 %h2 Logs
 %ul
-  %li#access_log_link.action_link{onclick: "fetch_access_events()"} Access log
+  %li#access_log_link= link_to "Access log", authengine_access_events_path
 
 #access_events
 
@@ -36,17 +36,6 @@ SSL Certificate expiry date:
   $('body').on('click', ()->
     flash.hide()
   )
-  access_events_visible = false
-  @fetch_access_events = ->
-    unless access_events_visible
-      $('#access_events').load("#{authengine_access_events_path}", (response, status, xhr)->
-        if xhr.status == 401
-          eval(response)
-      )
-      access_events_visible = true
-    else
-      $('#access_events *').hide()
-      access_events_visible = false
 
   csp_reports_visible = false
   @fetch_csp_reports = ->

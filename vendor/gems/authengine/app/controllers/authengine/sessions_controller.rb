@@ -1,7 +1,9 @@
 # This controller handles the login/logout function of the site.
 require "date"
+require "access_logger"
 
 class Authengine::SessionsController < ApplicationController
+  include AccessLogger
 
   skip_before_action :check_permissions, :only => [:new, :create, :destroy]
 
@@ -16,7 +18,9 @@ class Authengine::SessionsController < ApplicationController
       # user submits login, password and signed challenge
       format.html do
         logger.info "user logging in with #{params[:login]}"
-        authenticate_and_login(params[:login], params[:password], params[:u2f_sign_response])
+        with_logging request do
+          authenticate_and_login(params[:login], params[:password], params[:u2f_sign_response])
+        end
       end
     end
   end
@@ -64,8 +68,6 @@ protected
   def authenticate_and_login(login, password, u2f_sign_response)
     user = User.authenticate(login, password, u2f_sign_response)
     successful_login user
-  rescue User::AuthenticationError => message
-    failed_login message
   end
 
 private
