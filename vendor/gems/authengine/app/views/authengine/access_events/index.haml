@@ -78,7 +78,7 @@
     fetch = ()->
       $.get(location.href, filter.inspect(), load)
 
-    $('.dropdown-menu li a').on 'click', (event)->
+    $('#access_events_controls .dropdown-menu li a').on 'click', (event)->
        $(event.target).closest('ul').find('li').removeClass('selected')
        $(event.target).closest('li').addClass('selected')
        changed_parameter = $(event.target).closest('ul').attr('id').replace(/_select/,'')
