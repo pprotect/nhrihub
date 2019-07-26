@@ -3,6 +3,11 @@
 @import 'font-awesome-sprockets';
 @import 'font-awesome';
 
+.container {
+  width: 1000px;
+  left: -80px;
+  position: relative;
+}
 
 .row.fail .col-sm-1 {
   width: 2%;

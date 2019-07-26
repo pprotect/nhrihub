@@ -14,8 +14,8 @@
         %button.btn.btn-default.dropdown-toggle{:type=>:button, 'data-toggle'=>'dropdown'}
           %span.filter-option.pull-left
           %span.caret
-        %ul.dropdown-menu#time_window_select
-          - for period in ["all", "past day", "past week", "past month"]
+        %ul.dropdown-menu#period_select
+          - for period in ["all", "past day", "past week", "past month", "past year"]
             %li{:class => 'dropdown-header period_filter'}
               %a
                 %span{id: period}= period
@@ -26,10 +26,14 @@
           %span.filter-option.pull-left
           %span.caret
         %ul.dropdown-menu#user_select
+          %li{:class => 'dropdown-header user_filter'}
+            %a
+              %span{id: 'all'} all
+              %span.fa.fa-check
           - for user in @users
-            %li{:class => 'dropdown-header period_filter'}
+            %li{:class => 'dropdown-header user_filter'}
               %a
-                %span{id: user.id}= user.first_last_name
+                %span{id: user.first_last_name}= user.first_last_name
                 %span.fa.fa-check
     .col-md-3
       .btn-group.select{:style=>"width:240px;"}
@@ -37,28 +41,54 @@
           %span.filter-option.pull-left
           %span.caret
         %ul.dropdown-menu#outcome_select
-          - for outcome in ["success", "fail", "all"]
-            %li{:class => 'dropdown-header period_filter'}
+          - for outcome in ["all", "success", "fail"]
+            %li{:class => 'dropdown-header outcome_filter'}
               %a
                 %span{id: outcome}= outcome
                 %span.fa.fa-check
+    .col-md-1.col-md-offset-1
+      %i.erase.fa.fa-refresh{ 'data-toggle'=>'tooltip', 'title' => 'clear filters'}
 
-- for @access_event in @access_events do
-  .row{:class => event_outcome}
-    .col-sm-1
-    .col-md-2{style: 'width: 18%;'}= timestamp
-    .col-md-2= ip
-    .col-md-6= log_entry
+#access_events
 
 :coffeescript
   $ ->
-    window.selected = {period: 'all', user: 'all', outcome: 'all'}
+    filter = (->
+      values = {period: 'past month', user: 'all', outcome: 'success'}
+      default_values = {period: 'past month', user: 'all', outcome: 'success'}
+      update_display = (param,val)->
+        $('#'+param+'_select').parent().find('span.filter-option').html(val)
+        $('#'+param+'_select li').removeClass('selected')
+        $('#'+param+'_select li a span[id="'+val+'"]').closest('li').addClass('selected')
+      return {
+          set: (param,value)->
+            values[param] = value
+            update_display(param,value)
+          inspect: -> values
+          reset: ->
+            _.each(_.keys(default_values),(val)=>
+                @set(val,default_values[val])
+              )
+        }
+      )()
+
+    load = (data,status,xhr)->
+      $('#access_events').html(data)
+
+    fetch = ()->
+      $.get(location.href, filter.inspect(), load)
+
     $('.dropdown-menu li a').on 'click', (event)->
-       event.stopPropagation()
-       event.preventDefault()
        $(event.target).closest('ul').find('li').removeClass('selected')
        $(event.target).closest('li').addClass('selected')
        changed_parameter = $(event.target).closest('ul').attr('id').replace(/_select/,'')
-       console.log(changed_parameter)
        new_val = $(event.target).parent().find('span').first().attr('id')
-       console.log('changed_to '+ new_val)
+       filter.set(changed_parameter, new_val)
+       fetch()
+
+    $('i.erase').on 'click', (event)->
+       filter.reset()
+       fetch()
+
+    filter.reset()
+    fetch()
