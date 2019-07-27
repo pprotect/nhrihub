@@ -1,0 +1,11 @@
+= stylesheet_link_tag 'access_role_changes'
+
+%h1=t('.heading')
+
+.row#action_role_change_headings
+  .col-md-2= t('.date')
+  .col-md-3= t('.description')
+  .col-md-2= t('.state')
+  .col-md-2= t('.role')
+  .col-md-2= t('.author')
+= render @action_role_changes

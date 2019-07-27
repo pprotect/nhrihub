@@ -28,6 +28,10 @@ class Action < ActiveRecord::Base
     [controller_name, action_name]
   end
 
+  def description
+    sort_field.join('#')
+  end
+
   def self.list
     all_actions = Hash.new
     all(:include=>:controller).each{|a|

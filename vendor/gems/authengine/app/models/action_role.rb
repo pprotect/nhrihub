@@ -1,8 +1,11 @@
 class ActionRole < ActiveRecord::Base
+  attr_accessor :changed_by
   belongs_to :role, :touch => true
   belongs_to :action
 
   scope :for_developer, -> { joins(:role).merge(Role.developer) }
+  after_create ActionRoleAudit
+  after_destroy ActionRoleAudit
 
   # this is the key database lookup for checking permissions
   # returns true if there is at least one of the passed-in role ids
@@ -29,7 +32,7 @@ class ActionRole < ActiveRecord::Base
     end
   end
 
-  def self.update_permissions(params)
+  def self.update_permissions(params, current_user)
     aa = Role.all_with_permitted_action_ids
     params.each do |role_id,permissions| # role is the role name, permissions is a hash of controller/action names
        role_id = role_id.to_i
@@ -37,11 +40,12 @@ class ActionRole < ActiveRecord::Base
          action_id = action_id.to_i
          a = aa[role_id].include?(action_id)
          if val=="1" && !a # a newly-checked checkbox
-           new = ActionRole.create(:role_id=>role_id,:action_id=>action_id)
+           new = ActionRole.create(:role_id=>role_id,:action_id=>action_id,:changed_by => current_user)
            new.create_corresponding_create_and_update
          elsif val=="0" && a # a newly-unchecked checkbox
            to_be_deleted = ActionRole.find_by_role_id_and_action_id(role_id,action_id)
            to_be_deleted.delete_corresponding_create_and_update
+           to_be_deleted.changed_by = current_user
            to_be_deleted.destroy
          end
       end

@@ -12,10 +12,7 @@
     %table{:style=>"width:780px"}
       - for action in @actions do
         %tr{:class=>"#{cycle('odd', 'even')}"}
-          %td{:style=>"width:200px"}
-            = action[:controller_name]
-            \#
-            = action.action_name
+          %td{:style=>"width:200px"}=action.description
           %td{:style => "width:200px"}= text_field_tag "human_names[#{action.id}]", action.human_name
           - for role in @roles do
             %td{:style=>"width:70px"}

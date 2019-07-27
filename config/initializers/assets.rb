@@ -38,5 +38,6 @@ assets = [ 'in_page_edit.js',
            'mock_yubikey.js',
            'jsrsasign/jsrsasign-4.7.0-all-min.js',
            'confirm_delete_modal.js',
-           'access_events.css']
+           'access_events.css',
+           'access_role_changes.css']
 Rails.application.config.assets.precompile += assets

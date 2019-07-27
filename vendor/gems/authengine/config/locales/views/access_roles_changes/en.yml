@@ -1,0 +1,10 @@
+en:
+  authengine:
+    action_role_changes:
+      index:
+        date: 'Date'
+        description: 'Description'
+        state: 'Current state'
+        role: 'For role'
+        author: 'Change author'
+        heading: 'Access Configuration Audit Log'

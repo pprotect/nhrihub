@@ -41,6 +41,7 @@ Rails.application.routes.draw do
 
     namespace :authengine do
       resources :access_events
+      resources :action_role_changes
       resources :accounts
       resources :actions
       resources :useractions

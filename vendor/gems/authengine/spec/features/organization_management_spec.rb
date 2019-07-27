@@ -9,12 +9,9 @@ require 'role_presets_helper'
 require 'organization_presets_helper'
 
 feature "Manage organizations:", :js => true do
-  #include ApplicationHelpers
-  #include RolePresetsHelper
   include OrganizationPresetsHelper
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include NavigationHelpers
-  #include AsyncHelper
 
   before do
     toggle_navigation_dropdown("Admin")

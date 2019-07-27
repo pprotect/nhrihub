@@ -1,6 +1,4 @@
-#require File.expand_path("../../spec_helper", __FILE__)
 require 'rails_helper'
-
 
 describe 'permits_access_for class method' do
   subject{ access_permitted }
