@@ -42,7 +42,9 @@ module ComplaintsSpecSetupHelpers
   end
 
   def create_staff
-    FactoryBot.create(:user, :staff, :with_password, :firstName => "Hailee", :lastName => "Ortiz")
+    2.times do
+      FactoryBot.create(:user, :staff, :with_password, :firstName => Faker::Name.first_name, :lastName => Faker::Name.last_name)
+    end
   end
 
   def create_mandates

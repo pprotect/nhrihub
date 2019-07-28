@@ -41,11 +41,12 @@ module MediaAdminSpecHelpers
   end
 
   def remove_add_delete_fileconfig_permissions
-    ActionRole.
-      joins(:action => :controller).
-      where('actions.action_name' => ['create', 'destroy', 'update'],
-            'controllers.controller_name' => ['media_appearance/filetypes','media_appearance/filesizes']).
-      destroy_all
+    allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).with('media_appearance/filetypes','create').and_return(false)
+    allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).with('media_appearance/filetypes','destroy').and_return(false)
+    allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).with('media_appearance/filetypes','update').and_return(false)
+    allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).with('media_appearance/filesizes','create').and_return(false)
+    allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).with('media_appearance/filesizes','destroy').and_return(false)
+    allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).with('media_appearance/filesizes','update').and_return(false)
   end
 
   def create_default_areas

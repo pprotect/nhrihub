@@ -1,12 +1,15 @@
 require 'rails_helper'
 require 'login_helpers'
 require 'navigation_helpers'
+require_relative '../helpers/action_role_change_spec_helpers'
 
 feature "complaints index", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include NavigationHelpers
+  include ActionRoleChangeSpecHelpers
 
   before do
+    create_single_action_role
     visit authengine_action_roles_path(:en)
   end
 

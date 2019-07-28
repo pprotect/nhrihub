@@ -247,7 +247,6 @@ feature "Registered user logs in with invalid credentials", :js => true do
 end
 
 feature "User is not logged in but tries to access a page", :js => true do
-  include RegisteredUserHelper
   scenario "visit a protected page" do
     visit "/en/nhri/icc"
     expect(page_heading).to eq "Please log in"

@@ -23,10 +23,11 @@ module InternalDocumentAdminSpecHelpers
   end
 
   def remove_add_delete_fileconfig_permissions
-    ActionRole.
-      joins(:action => :controller).
-      where('actions.action_name' => ['create', 'destroy', 'update'],
-            'controllers.controller_name' => ['internal_documents/filetypes','internal_documents/filesizes']).
-      destroy_all
+    allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).with('internal_documents/filetypes','create').and_return(false)
+    allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).with('internal_documents/filetypes','destroy').and_return(false)
+    allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).with('internal_documents/filetypes','update').and_return(false)
+    allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).with('internal_documents/filesizes','create').and_return(false)
+    allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).with('internal_documents/filesizes','destroy').and_return(false)
+    allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).with('internal_documents/filesizes','update').and_return(false)
   end
 end
