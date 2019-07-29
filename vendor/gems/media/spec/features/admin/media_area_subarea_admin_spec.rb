@@ -15,10 +15,8 @@ feature "configure description areas and subareas", :js => true do
   end
 
   scenario 'default areas and subareas' do
-    expect(page.all('.area .text').map(&:text)).to include "Human Rights"
-    expect(page.all('.area .text').map(&:text)).to include "Good Governance"
-    expect(page.all('.area .text').map(&:text)).to include "Special Investigations Unit"
-    expect(page.all('.area .text').map(&:text)).to include "Corporate Services"
+    areas = [ "Human Rights", "Good Governance", "Special Investigations Unit", "Corporate Services"]
+    expect(page.all('.area .text').map(&:text)).to match_array areas
   end
 
   scenario 'add an area' do
@@ -56,13 +54,9 @@ feature "configure description areas and subareas", :js => true do
 
   scenario 'view subareas of an area' do
     open_accordion_for_area("Human Rights")
-    expect(subareas).to include "Violation"
-    expect(subareas).to include "Education activities"
-    expect(subareas).to include "Office reports"
-    expect(subareas).to include "Universal periodic review"
-    expect(subareas).to include "CEDAW"
-    expect(subareas).to include "CRC"
-    expect(subareas).to include "CRPD"
+    subareas = [ "Violation", "Education activities", "Office reports",
+                 "Universal periodic review", "CEDAW", "CRC", "CRPD" ]
+    expect(subareas).to match_array subareas
   end
 
   scenario 'add a subarea' do
