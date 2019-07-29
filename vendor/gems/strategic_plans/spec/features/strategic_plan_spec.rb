@@ -14,6 +14,7 @@ feature "when there are no previous strategic plans", :js => true do
   include StrategicPlanHelpers
 
   scenario "navigation menu shows none configured" do
+    visit '/en'
     toggle_navigation_dropdown('Strategic plan')
     expect(page).to have_selector("ul.dropdown-menu>li>a", :text => "none configured")
   end

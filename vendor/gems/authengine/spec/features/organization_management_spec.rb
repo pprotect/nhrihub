@@ -14,6 +14,7 @@ feature "Manage organizations:", :js => true do
   include NavigationHelpers
 
   before do
+    visit '/en'
     toggle_navigation_dropdown("Admin")
     select_dropdown_menu_item("Manage organizations")
   end
@@ -51,6 +52,7 @@ feature "Manage an existing organizations", :js => true do
   include AsyncHelper # 'eventually' method
 
   before do
+    visit '/en'
     toggle_navigation_dropdown("Admin")
     select_dropdown_menu_item("Manage organizations")
   end

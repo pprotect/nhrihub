@@ -6,6 +6,7 @@ feature "Manage users", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include NavigationHelpers
   before do
+    visit '/en'
     toggle_navigation_dropdown("Admin")
     select_dropdown_menu_item("Manage roles")
   end

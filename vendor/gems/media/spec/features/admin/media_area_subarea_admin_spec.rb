@@ -11,7 +11,7 @@ feature "configure description areas and subareas", :js => true do
     create_default_areas
     resize_browser_window
     visit media_appearance_admin_path('en')
-    sleep(0.1)
+    wait_for_ajax
   end
 
   scenario 'default areas and subareas' do
@@ -23,31 +23,31 @@ feature "configure description areas and subareas", :js => true do
 
   scenario 'add an area' do
     page.find('#area_name').set('What else')
-    expect{ page.find('button#add_area').click; sleep(0.2)}.to change{ Area.count }.by 1
+    expect{ page.find('button#add_area').click; wait_for_ajax}.to change{ Area.count }.by 1
     expect(page.all('.area .text').map(&:text)).to include "What else"
   end
 
   scenario 'add an area with blank text' do
-    expect{ find('button#add_area').click; sleep(0.2)}.not_to change{ Area.count }
+    expect{ find('button#add_area').click; wait_for_ajax}.not_to change{ Area.count }
     expect( page.find('#area_error') ).to have_text "Area can't be blank"
   end
 
   scenario 'add an area with whitespace text' do
     page.find('#area_name').set('    ')
-    expect{ find('button#add_area').click; sleep(0.2)}.not_to change{ Area.count }
+    expect{ find('button#add_area').click; wait_for_ajax}.not_to change{ Area.count }
     expect( page.find('#area_error') ).to have_text "Area can't be blank"
   end
 
   scenario 'add an area with leading/trailing whitespace' do
     page.find('#area_name').set('     What else       ')
-    expect{ find('button#add_area').click; sleep(0.2)}.to change{ Area.count }.by 1
+    expect{ find('button#add_area').click; wait_for_ajax}.to change{ Area.count }.by 1
     expect(page.all('.area .text').map(&:text)).to include "What else"
   end
 
   scenario 'blank area error message removed on keydown' do
     page.find('#area_name').set('    ')
     page.find('button#add_area').click
-    sleep(0.2)
+    wait_for_ajax
     expect( page.find('#area_error') ).to have_text "Area can't be blank"
     name_field = page.find("#area_name").native
     name_field.send_keys("!")
@@ -68,34 +68,34 @@ feature "configure description areas and subareas", :js => true do
   scenario 'add a subarea' do
     open_accordion_for_area("Human Rights")
     page.find('#subarea_name').set('Another subarea')
-    expect{ page.find('#add_subarea').click; sleep(0.2)}.to change{ Subarea.count }.by 1
+    expect{ page.find('#add_subarea').click; wait_for_ajax}.to change{ Subarea.count }.by 1
     expect(subareas).to include "Another subarea"
   end
 
   scenario 'add a subarea with blank text' do
     open_accordion_for_area("Human Rights")
-    expect{ find('#add_subarea').click; sleep(0.2)}.not_to change{ Subarea.count }
+    expect{ find('#add_subarea').click; wait_for_ajax}.not_to change{ Subarea.count }
     expect( page.find('#subarea_error') ).to have_text "Subarea can't be blank"
   end
 
   scenario 'add a subarea with whitespace text' do
     open_accordion_for_area("Human Rights")
     page.find('#subarea_name').set('   ')
-    expect{ page.find('#add_subarea').click; sleep(0.2)}.not_to change{ Subarea.count }
+    expect{ page.find('#add_subarea').click; wait_for_ajax}.not_to change{ Subarea.count }
     expect( page.find('#subarea_error') ).to have_text "Subarea can't be blank"
   end
 
   scenario 'add a subarea with leading/trailing whitespace' do
     open_accordion_for_area("Human Rights")
     page.find('#subarea_name').set('    Another subarea   ')
-    expect{ page.find('#add_subarea').click; sleep(0.2)}.to change{ Subarea.count }.by 1
+    expect{ page.find('#add_subarea').click; wait_for_ajax}.to change{ Subarea.count }.by 1
     expect(subareas).to include "Another subarea"
   end
 
   scenario 'blank subarea error message removed on keydown' do
     open_accordion_for_area("Human Rights")
     find('#add_subarea').click
-    sleep(0.2)
+    wait_for_ajax
     expect( page.find('#subarea_error') ).to have_text "Subarea can't be blank"
     name_field = page.find("#subarea_name").native
     name_field.send_keys("!")
@@ -103,13 +103,13 @@ feature "configure description areas and subareas", :js => true do
   end
 
   scenario 'delete an area' do
-    expect{click_delete_for("Human Rights"); sleep(0.4)}.to change{Area.count}.by(-1).
+    expect{click_delete_for("Human Rights"); wait_for_ajax}.to change{Area.count}.by(-1).
                                                          and change{Subarea.count}.by(-7)
     expect(page.all('.areas .area').length).to eq 3
   end
 
   scenario 'delete a subarea' do
-    expect{click_delete_for("Human Rights", "Violation"); sleep(0.4)}.to change{Subarea.count}.by(-1)
+    expect{click_delete_for("Human Rights", "Violation"); wait_for_ajax}.to change{Subarea.count}.by(-1)
     expect(subareas.length).to eq 6
   end
 end

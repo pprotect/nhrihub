@@ -17,6 +17,7 @@ feature "Manage users", :js => true do
   include UserManagementHelpers
   include AsyncHelper
   before do
+    visit '/en'
     toggle_navigation_dropdown("Admin")
     select_dropdown_menu_item("Manage users")
   end
@@ -156,6 +157,7 @@ feature "Edit profile of unactivated user", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
 
   before do
+    visit '/en'
     toggle_navigation_dropdown("Admin")
     select_dropdown_menu_item("Manage users")
   end
@@ -186,6 +188,7 @@ feature "user account activation", :js => true do
     before do
       allow(ENV).to receive(:fetch)
       allow(ENV).to receive(:fetch).with("two_factor_authentication").and_return("enabled")
+      visit '/en'
     end
 
     scenario "user activates account by clicking url in registration email" do
@@ -252,6 +255,7 @@ feature "user lost token replacement and registration", :js => true do
   include UserManagementHelpers
 
   before do
+    visit '/en'
     toggle_navigation_dropdown("Admin")
     select_dropdown_menu_item("Manage users")
   end
@@ -267,15 +271,15 @@ feature "user lost token replacement and registration", :js => true do
     expect( User.last.public_key ).to be_nil
     expect( User.last.public_key_handle ).to be_nil
     expect( User.last.replacement_token_registration_code ).not_to be_nil
+    # b/c otherwise the login fields will not be rendered, as another mock simulates always logged-in
+    allow_any_instance_of(Authengine::SessionsController).to receive(:logged_in?).and_return(false)
     click_link('Logout')
     # user whose token was lost responds to the link in the email
     visit(replacement_token_registration_link)
-    #configure_keystore
     expect(page_heading).to match /Register new token for/
     fill_in "user_login", :with => "staff"
     fill_in "user_password", :with => "password"
     register_button.click
-    #wait_for_authentication
     expect(flash_message).to eq "Your new token has been registered, you may login below."
     expect( User.last.public_key ).not_to be_nil
     expect( User.last.public_key_handle ).not_to be_nil

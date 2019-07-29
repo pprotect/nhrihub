@@ -6,13 +6,8 @@ module RegisteredUserHelper
   before do
     allow(ENV).to receive(:fetch).and_call_original
     allow(ENV).to receive(:fetch).with("two_factor_authentication").and_return("enabled")
-    admin = create_user('admin')
-    @user = admin
-    assign_permissions(admin, 'admin', admin_roles)
-    @staff_user = create_user('staff')
-    assign_permissions(@staff_user, 'staff', staff_roles)
-    #allow_any_instance_of(ApplicationController).to receive(:check_permissions).and_return(true)
-    #allow_any_instance_of(ApplicationController).to receive(:permitted?).and_return(true)
+    @user = create_user('admin', admin_roles)
+    @staff_user = create_user('staff', staff_roles)
     allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).and_return(true)
     allow_any_instance_of(ApplicationController).to receive(:action_permitted?).and_return(true)
     allow_any_instance_of(ApplicationHelper).to receive(:permissions_granted?).and_return(true)
@@ -37,12 +32,7 @@ module RegisteredUserHelper
 
 private
 
-  def create_user(login)
-    # see http://www.relishapp.com/rspec/rspec-mocks/v/3-5/docs/working-with-legacy-code/any-instance
-    #allow_any_instance_of(User).to receive(:authenticated?).and_return(true)
-    #allow_any_instance_of(AuthorizedSystem).to receive(:check_permissions).and_return(true)
-    #allow_any_instance_of(ApplicationHelper).to receive(:current_user_permitted?).and_return(true)
-
+  def create_user(login, roles)
     user = User.create(:login => login,
                 :email => Faker::Internet.email,
                 :enabled => true,
@@ -55,10 +45,11 @@ private
     user.update_attribute(:activation_code, '9bb0db48971821563788e316b1fdd53dd99bc8ff')
     user.update_attribute(:activated_at, DateTime.new(2011,1,1))
     user.update_attribute(:crypted_password, '660030f1be7289571b0467b9195ff39471c60651')
+    create_roles(user, user.login, roles) # in this case, the name of the role is the same as the user's login!
     user
   end
 
-  def assign_permissions(user, role, actions)
+  def create_roles(user, role, actions)
     role = Role.create(:name => role)
     #Controller.update_table
     #actions.each { |a| role.actions << a  }
@@ -86,6 +77,15 @@ module LoggedInEnAdminUserHelper
   include RegisteredUserHelper
   include IERemoteDetector
   before do
+    allow_any_instance_of(AuthenticatedSystem).to receive(:login_from_session).and_return(@user)
+  end
+end
+
+module RealLoggedInEnAdminUserHelper
+  extend RSpec::Core::SharedContext
+  include RegisteredUserHelper
+  include IERemoteDetector
+  before do
     visit "/en"
     configure_keystore
     #unless ie_remote?(page) # IE doesn't delete cookies and terminate session between scenarios, so no need for login
@@ -99,6 +99,7 @@ module LoggedInEnAdminUserHelper
     #resize_browser_window
   end
 end
+
 
 module LoggedInFrAdminUserHelper
   extend RSpec::Core::SharedContext

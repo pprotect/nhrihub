@@ -4,10 +4,11 @@ require 'navigation_helpers'
 require_relative '../helpers/user_management_helpers'
 
 feature "Password management, admin resets user password", :js => true do
-  include LoggedInEnAdminUserHelper # logs in as admin
+  include RealLoggedInEnAdminUserHelper # logs in as admin
   include NavigationHelpers
   include UserManagementHelpers
   before do
+    visit '/en'
     toggle_navigation_dropdown("Admin")
     select_dropdown_menu_item("Manage users")
   end
@@ -85,7 +86,6 @@ feature "Password management, admin resets user password", :js => true do
 end
 
 feature "Password management, user forgets password", :js => true do
-  #include LoggedInEnAdminUserHelper # logs in as admin
   include NavigationHelpers
   include UserManagementHelpers
   include RegisteredUserHelper
