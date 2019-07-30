@@ -14,15 +14,6 @@ FactoryBot.define do
     firstName {Faker::Name.first_name}
     lastName {Faker::Name.last_name}
 
-    #if Organization.count > 20 # arbitrary number, but some threshold here prevents organization name collisions
-      #organization_id { Organization.pluck(:id).sample }
-    #else
-      #until (organization = FactoryBot.create(:organization)).valid?
-        #organization_id organization.id
-        ##association :organization, strategy: :create
-      #end
-    #end
-
     after(:create) do |user|
       user.update_attribute(:salt, '1641b615ad281759adf85cd5fbf17fcb7a3f7e87')
       user.update_attribute(:activation_code, Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join ))
@@ -32,13 +23,6 @@ FactoryBot.define do
     end
 
     trait :with_password do
-      #after(:create) do |user|
-        #user.update_attribute(:salt, '1641b615ad281759adf85cd5fbf17fcb7a3f7e87')
-        #user.update_attribute(:activation_code, Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join ))
-        #user.update_attribute(:activated_at, DateTime.new(2011,1,1))
-        #user.update_attribute(:crypted_password, '660030f1be7289571b0467b9195ff39471c60651')
-        #user
-      #end
     end
 
     trait :admin do
