@@ -26,6 +26,18 @@ class Complaint < ActiveRecord::Base
   has_many :communications, :dependent => :destroy
 
   attr_accessor :witness_name
+  scope :index_page_associations, ->(ids){ includes({:assigns => :assignee},
+                                                   :mandates,
+                                                   {:status_changes => [:user, :complaint_status]},
+                                                   {:complaint_good_governance_complaint_bases=>:good_governance_complaint_basis},
+                                                   {:complaint_special_investigations_unit_complaint_bases => :special_investigations_unit_complaint_basis},
+                                                   {:complaint_human_rights_complaint_bases=>:human_rights_complaint_basis},
+                                                   {:complaint_agencies => :agency},
+                                                   {:communications => [:user, :communication_documents, :communicants]},
+                                                   :complaint_documents,
+                                                   {:reminders => :user},
+                                                   {:notes =>[:author, :editor]}).where(:id => ids)
+                                          }
 
   def status_changes_attributes=(attrs)
     # only create a status_change object if this is a new complaint

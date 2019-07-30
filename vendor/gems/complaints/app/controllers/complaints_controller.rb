@@ -3,10 +3,10 @@ class ComplaintsController < ApplicationController
     cache_fetcher = BulkCacheFetcher.new(Rails.cache)
     complaints = cache_fetcher.fetch(Complaint.cache_identifiers) do |uncached_keys_and_ids|
       ids = uncached_keys_and_ids.values
-      all_complaints(ids).map(&:to_json)
+      Complaint.index_page_associations(ids).map(&:to_json)
     end
 
-    @complaints = "[#{complaints.join(", ").html_safe}]".html_safe
+    @complaints = "[#{complaints.sort.join(", ").html_safe}]".html_safe
 
     @mandates = Mandate.all.sort_by(&:name)
     @agencies = Agency.all
@@ -85,20 +85,6 @@ class ComplaintsController < ApplicationController
                                        :agency_ids => [], :mandate_ids => [],
                                        :complaint_documents_attributes => [:file, :title, :original_filename, :original_type, :filesize, :lastModifiedDate],
                                      )
-  end
-
-  def all_complaints(ids)
-    Complaint.includes({:assigns => :assignee},
-                        :mandates,
-                        {:status_changes => [:user, :complaint_status]},
-                        {:complaint_good_governance_complaint_bases=>:good_governance_complaint_basis},
-                        {:complaint_special_investigations_unit_complaint_bases => :special_investigations_unit_complaint_basis},
-                        {:complaint_human_rights_complaint_bases=>:human_rights_complaint_basis},
-                        {:complaint_agencies => :agency},
-                        {:communications => [:user, :communication_documents, :communicants]},
-                        :complaint_documents,
-                        {:reminders => :user},
-                        {:notes =>[:author, :editor]}).where(:id => ids).sort
   end
 end
 
