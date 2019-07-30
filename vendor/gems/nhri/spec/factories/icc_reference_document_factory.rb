@@ -6,7 +6,7 @@ FactoryBot.define do
     filesize            { rand(1000000) + 10000 }
     original_filename   { Faker::Lorem.words(4).join('_')+'.docx' }
     original_type       { "docx" }
-    user_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user, :with_password).id end }
+    user_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user).id end }
 
     trait :with_reminder do
       after(:build) do |ref_doc|

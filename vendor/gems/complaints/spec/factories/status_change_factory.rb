@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :status_change do
-    user_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user, :with_password).id end }
+    user_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user).id end }
 
     trait :open do
       after(:create) do |status_change|

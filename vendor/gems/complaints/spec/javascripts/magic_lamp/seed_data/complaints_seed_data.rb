@@ -64,7 +64,7 @@ class ComplaintsSeedData
                        :human_rights_complaint_basis_ids => [1,2],
                        :special_investigations_unit_complaint_basis_ids => [5,6],
                        :agency_ids => [1],
-                       :assignees => [FactoryBot.create(:user, :with_password, :staff, :firstName => "Peyton", :lastName => "Krajcik")],
+                       :assignees => [FactoryBot.create(:user, :staff, :firstName => "Peyton", :lastName => "Krajcik")],
                        :status_changes => [FactoryBot.create(:status_change,
                                                               :complaint_status_id => active_complaint_status.id)])
 
@@ -80,7 +80,7 @@ class ComplaintsSeedData
                        :human_rights_complaint_basis_ids => [1,2],
                        :special_investigations_unit_complaint_basis_ids => [5,6],
                        :agency_ids => [2],
-                       :assignees => [FactoryBot.create(:user, :with_password, :staff, :firstName => "Angelina", :lastName => "Ward")],
+                       :assignees => [FactoryBot.create(:user, :staff, :firstName => "Angelina", :lastName => "Ward")],
                        :status_changes => [FactoryBot.create(:status_change,
                                                               :complaint_status_id => active_complaint_status.id)])
 
@@ -96,7 +96,7 @@ class ComplaintsSeedData
                        :human_rights_complaint_basis_ids => [1,2],
                        :special_investigations_unit_complaint_basis_ids => [5,6],
                        :agency_ids => [2],
-                       :assignees => [FactoryBot.create(:user, :with_password, :staff, :firstName => "Hosea", :lastName => "O'Connor")],
+                       :assignees => [FactoryBot.create(:user, :staff, :firstName => "Hosea", :lastName => "O'Connor")],
                        :status_changes => [FactoryBot.create(:status_change,
                                                               :complaint_status_id => completed_complaint_status.id)])
 
@@ -112,7 +112,7 @@ class ComplaintsSeedData
                        :human_rights_complaint_basis_ids => [1,2],
                        :special_investigations_unit_complaint_basis_ids => [5,6],
                        :agency_ids => [2],
-                       :assignees => [FactoryBot.create(:user, :with_password, :staff, :firstName => "Delbert", :lastName => "Brown")],
+                       :assignees => [FactoryBot.create(:user, :staff, :firstName => "Delbert", :lastName => "Brown")],
                        :status_changes => [FactoryBot.create(:status_change,
                                                               :complaint_status_id => completed_complaint_status.id)])
 

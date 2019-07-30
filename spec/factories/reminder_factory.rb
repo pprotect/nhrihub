@@ -3,7 +3,7 @@ FactoryBot.define do
     text { Faker::Lorem.sentences(2).join(' ') }
     reminder_type {["one-time", "weekly", "monthly", "quarterly", "semi-annual", "annual"].sample}
     start_date { Date.today.advance(:days => rand(365)) }
-    user_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user, :with_password).id end }
+    user_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user).id end }
 
     trait :due_today do
       reminder_type { "one-time" }

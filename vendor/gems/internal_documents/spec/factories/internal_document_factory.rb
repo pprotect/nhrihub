@@ -9,7 +9,7 @@ FactoryBot.define do
     lastModifiedDate    { Faker::Date.between(1.year.ago, Date.today) }
     original_type       { "docx" }
     type                { nil }
-    user_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user, :with_password).id end }
+    user_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user).id end }
 
     trait :null_revision do
       revision_major { nil }

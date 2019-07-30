@@ -180,7 +180,7 @@ describe "#as_json" do
       end
 
       4.times do
-        FactoryBot.create(:user, :with_password)
+        FactoryBot.create(:user)
       end
 
       2.times do |i|

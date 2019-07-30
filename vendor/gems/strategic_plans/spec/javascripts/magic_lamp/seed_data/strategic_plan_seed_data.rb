@@ -57,7 +57,7 @@ class StrategicPlanSeedData
                        #:human_rights_complaint_basis_ids => [1,2],
                        #:special_investigations_unit_complaint_basis_ids => [5,6],
                        #:agency_ids => [1],
-                       #:assignees => [FactoryBot.create(:user, :with_password, :staff, :firstName => "Peyton", :lastName => "Krajcik")])
+                       #:assignees => [FactoryBot.create(:user, :staff, :firstName => "Peyton", :lastName => "Krajcik")])
     #FactoryBot.create(:complaint, :open,
                         #:complainant => "Bo McCullough",
                         #:village => "Conroytown",
@@ -68,7 +68,7 @@ class StrategicPlanSeedData
                         #:human_rights_complaint_basis_ids => [1,2],
                         #:special_investigations_unit_complaint_basis_ids => [5,6],
                         #:agency_ids => [2],
-                        #:assignees => [FactoryBot.create(:user, :with_password, :staff, :firstName => "Angelina", :lastName => "Ward")])
+                        #:assignees => [FactoryBot.create(:user, :staff, :firstName => "Angelina", :lastName => "Ward")])
     #FactoryBot.create(:complaint, :open,
                         #:complainant => "Ned Kessler",
                         #:village => "Port Janiya",
@@ -79,7 +79,7 @@ class StrategicPlanSeedData
                         #:human_rights_complaint_basis_ids => [1,2],
                         #:special_investigations_unit_complaint_basis_ids => [5,6],
                         #:agency_ids => [2],
-                        #:assignees => [FactoryBot.create(:user, :with_password, :staff, :firstName => "Hosea", :lastName => "O'Connor")])
+                        #:assignees => [FactoryBot.create(:user, :staff, :firstName => "Hosea", :lastName => "O'Connor")])
     #FactoryBot.create(:complaint, :closed,
                         #:complainant => "Marissa Yost",
                         #:village => "Parkerfurt",
@@ -90,6 +90,6 @@ class StrategicPlanSeedData
                         #:human_rights_complaint_basis_ids => [1,2],
                         #:special_investigations_unit_complaint_basis_ids => [5,6],
                         #:agency_ids => [2],
-                        #:assignees => [FactoryBot.create(:user, :with_password, :staff, :firstName => "Delbert", :lastName => "Brown")])
+                        #:assignees => [FactoryBot.create(:user, :staff, :firstName => "Delbert", :lastName => "Brown")])
   #end
 end

@@ -67,7 +67,7 @@ FactoryBot.define do
         if User.count > 20
           assignees = User.all.sample(2)
         else
-          assignees = [FactoryBot.create(:assignee, :with_password), FactoryBot.create(:assignee, :with_password)]
+          assignees = [FactoryBot.create(:assignee), FactoryBot.create(:assignee)]
         end
         assigns = assignees.map do |user|
           date = DateTime.now.advance(:days => -rand(365))

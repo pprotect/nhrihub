@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :note do
     text { Faker::Lorem.sentence(10) }
-    author_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user, :with_password).id end }
-    editor_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user, :with_password).id end }
+    author_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user).id end }
+    editor_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user).id end }
 
     trait :media_appearance do
       notable_type { "MediaAppearance" }

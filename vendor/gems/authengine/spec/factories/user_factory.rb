@@ -22,9 +22,6 @@ FactoryBot.define do
       user
     end
 
-    trait :with_password do
-    end
-
     trait :admin do
       after(:build) do |u|
         if Role.exists?(:name => 'admin')
