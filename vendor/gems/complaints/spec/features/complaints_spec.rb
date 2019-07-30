@@ -10,6 +10,29 @@ require 'complaints_context_notes_spec_helpers'
 require 'complaints_communications_spec_helpers'
 require 'active_storage_helpers'
 
+feature "complaints index with multiple complaints", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include NavigationHelpers
+  include ComplaintsSpecHelpers
+  include UploadFileHelpers
+  include DownloadHelpers
+  include ActiveStorageHelpers
+
+  before(:context) do
+    Webpacker.compile
+  end
+
+  before do
+    multi_populate_database
+    visit complaints_path('en')
+  end
+
+  it "shows only complaints assigned to the current user" do
+    raise Hell
+  end
+end
+
 feature "complaints index", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecSetupHelpers

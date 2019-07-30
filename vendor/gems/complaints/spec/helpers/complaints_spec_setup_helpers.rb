@@ -3,27 +3,58 @@ require 'rspec/core/shared_context'
 module ComplaintsSpecSetupHelpers
   extend RSpec::Core::SharedContext
 
+  def multi_populate_database
+    create_mandates
+    create_agencies
+    create_complaint_statuses
+    admin_assigns = [ Assign.new(created_at: 4.days.ago, assignee: @user),
+                      Assign.new(created_at: 20.days.ago, assignee: @staff_user) ]
+
+    staff_assigns = [ Assign.new(created_at: 4.days.ago, assignee: @staff_user),
+                      Assign.new(created_at: 20.days.ago, assignee: @user) ]
+
+    [admin_assigns, staff_assigns].each do |assigns|
+      FactoryBot.create(:complaint, :case_reference => "c12-34",
+                        :date_received => DateTime.now.advance(:days => -100),
+                        :village => Faker::Address.city,
+                        :phone => Faker::PhoneNumber.phone_number,
+                        :dob => "19/08/1950",
+                        :human_rights_complaint_bases => hr_complaint_bases,
+                        :good_governance_complaint_bases => gg_complaint_bases,
+                        :special_investigations_unit_complaint_bases => siu_complaint_bases,
+                        :assigns => assigns,
+                        :desired_outcome => Faker::Lorem.sentence,
+                        :details => Faker::Lorem.sentence,
+                        :complaint_documents => complaint_docs,
+                        :status_changes => _status_changes,
+                        :mandate_ids => [_mandate_id],
+                        :agencies => _agencies,
+                        :communications => _communications)
+    end
+    set_file_defaults
+  end
+
   def populate_database
     create_mandates
     create_agencies
     create_staff
     create_complaint_statuses
     FactoryBot.create(:complaint, :case_reference => "c12-34",
-                       :date_received => DateTime.now.advance(:days => -100),
-                       :village => Faker::Address.city,
-                       :phone => Faker::PhoneNumber.phone_number,
-                       :dob => "19/08/1950",
-                       :human_rights_complaint_bases => hr_complaint_bases,
-                       :good_governance_complaint_bases => gg_complaint_bases,
-                       :special_investigations_unit_complaint_bases => siu_complaint_bases,
-                       :assigns => assigns,
-                       :desired_outcome => Faker::Lorem.sentence,
-                       :details => Faker::Lorem.sentence,
-                       :complaint_documents => complaint_docs,
-                       :status_changes => _status_changes,
-                       :mandate_ids => [_mandate_id],
-                       :agencies => _agencies,
-                       :communications => _communications)
+                      :date_received => DateTime.now.advance(:days => -100),
+                      :village => Faker::Address.city,
+                      :phone => Faker::PhoneNumber.phone_number,
+                      :dob => "19/08/1950",
+                      :human_rights_complaint_bases => hr_complaint_bases,
+                      :good_governance_complaint_bases => gg_complaint_bases,
+                      :special_investigations_unit_complaint_bases => siu_complaint_bases,
+                      :assigns => assigns,
+                      :desired_outcome => Faker::Lorem.sentence,
+                      :details => Faker::Lorem.sentence,
+                      :complaint_documents => complaint_docs,
+                      :status_changes => _status_changes,
+                      :mandate_ids => [_mandate_id],
+                      :agencies => _agencies,
+                      :communications => _communications)
     set_file_defaults
   end
 
@@ -43,7 +74,7 @@ module ComplaintsSpecSetupHelpers
 
   def create_staff
     2.times do
-      FactoryBot.create(:user, :staff, :with_password, :firstName => Faker::Name.first_name, :lastName => Faker::Name.last_name)
+      FactoryBot.create(:user, :staff, :firstName => Faker::Name.first_name, :lastName => Faker::Name.last_name)
     end
   end
 
@@ -54,9 +85,9 @@ module ComplaintsSpecSetupHelpers
   end
 
   def create_complaint_statuses
-     ["Open", "Incomplete", "Closed"].each do |status_name|
-       FactoryBot.create(:complaint_status, :name => status_name)
-     end
+    ["Open", "Incomplete", "Closed"].each do |status_name|
+      FactoryBot.create(:complaint_status, :name => status_name)
+    end
   end
 
   def _communications
@@ -74,15 +105,15 @@ module ComplaintsSpecSetupHelpers
   def _status_changes
     # open 100 days ago, closed 50 days ago
     [FactoryBot.build(:status_change,
-                       :created_at => DateTime.now.advance(:days => -100),
-                       :complaint_status_id => FactoryBot.create(:complaint_status, :name => "Open").id,
-                       :change_date => DateTime.now.advance(:days => -100),
-                       :user_id => User.staff.pluck(:id).first),
-     FactoryBot.build(:status_change,
-                       :created_at => DateTime.now.advance(:days => -50),
-                       :complaint_status_id => FactoryBot.create(:complaint_status, :name => "Closed").id,
-                       :change_date => DateTime.now.advance(:days => -50),
-                       :user_id => User.staff.pluck(:id).second )]
+                      :created_at => DateTime.now.advance(:days => -100),
+                      :complaint_status_id => FactoryBot.create(:complaint_status, :name => "Open").id,
+                      :change_date => DateTime.now.advance(:days => -100),
+                      :user_id => User.staff.pluck(:id).first),
+    FactoryBot.build(:status_change,
+                     :created_at => DateTime.now.advance(:days => -50),
+                     :complaint_status_id => FactoryBot.create(:complaint_status, :name => "Closed").id,
+                     :change_date => DateTime.now.advance(:days => -50),
+                     :user_id => User.staff.pluck(:id).second )]
   end
 
   def complaint_docs
@@ -91,24 +122,24 @@ module ComplaintsSpecSetupHelpers
 
   def hr_complaint_bases
     names = ["CAT", "ICESCR"]
-    names.collect{|name| FactoryBot.create(:convention, :name => name)}
+    @hr_complaint_bases ||= names.collect{|name| FactoryBot.create(:convention, :name => name)}
   end
 
   def gg_complaint_bases
     names = ["Delayed action", "Failure to act", "Contrary to Law", "Oppressive", "Private"]
-    names.collect{|name| FactoryBot.create(:good_governance_complaint_basis, :name => name) }
+    @gg_complaint_bases ||= names.collect{|name| FactoryBot.create(:good_governance_complaint_basis, :name => name) }
     names = ["Delayed action", "Failure to act"]
     GoodGovernance::ComplaintBasis.where(:name => names)
   end
 
   def siu_complaint_bases
     names = ["Unreasonable delay", "Not properly investigated"]
-    names.collect{|name| FactoryBot.create(:siu_complaint_basis, :name => name) }
+    @siu_complaint_bases ||= names.collect{|name| FactoryBot.create(:siu_complaint_basis, :name => name) }
   end
 
   def assigns
     Array.new(2) do
-      assignee = FactoryBot.create(:assignee, :with_password)
+      assignee = FactoryBot.create(:assignee) # assignee is simply an alias for user
       date = DateTime.now.advance(:days => -rand(365))
       Assign.new(:created_at => date, :assignee => assignee)
     end
