@@ -4,7 +4,7 @@ class Complaint < ActiveRecord::Base
   module Cache
     extend ActiveSupport::Concern
     def cache_key
-      "complaint_#{id}_#{updated_at.strftime("%s.%6L")}"
+      "complaint_#{id}_updated_#{updated_at.strftime("%s.%6L")}"
     end
 
     def cache_identifier

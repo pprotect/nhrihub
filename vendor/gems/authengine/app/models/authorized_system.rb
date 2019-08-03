@@ -25,7 +25,6 @@ module AuthorizedSystem
   # The controller and action can be passed as parameters, to check whether or not to display a link/button
   # or else the current request controller/action are used to check whether or not to display a page
   def check_permissions(controller = request.parameters["controller"], action = request.parameters["action"])
-    logger.info "the real check_permissions in authorized_system.rb #{controller} #{action}"
     permission = false
     if !logged_in?
       logger.info "access denied: not logged in"

@@ -1,11 +1,12 @@
 class ComplaintsController < ApplicationController
   def index
-    cache_fetcher = BulkCacheFetcher.new(Rails.cache)
-    complaints = cache_fetcher.fetch(Complaint.cache_identifiers) do |uncached_keys_and_ids|
-      ids = uncached_keys_and_ids.values
-      Complaint.index_page_associations(ids).map(&:to_json)
-    end
+    #cache_fetcher = BulkCacheFetcher.new(Rails.cache)
+    #complaints = cache_fetcher.fetch(Complaint.cache_identifiers) do |uncached_keys_and_ids|
+      #ids = uncached_keys_and_ids.values
+      #Complaint.index_page_associations(current_user, ids).map(&:to_json)
+    #end
 
+    complaints = Complaint.index_page_associations(current_user).map(&:to_json)
     @complaints = "[#{complaints.sort.join(", ").html_safe}]".html_safe
 
     @mandates = Mandate.all.sort_by(&:name)

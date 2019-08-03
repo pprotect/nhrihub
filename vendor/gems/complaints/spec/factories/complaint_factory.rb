@@ -14,6 +14,16 @@ def rand_filename
   Faker::Lorem.words(l).join('_').downcase + ".docx"
 end
 
+def admin_assigns(assignees)
+  if assignees.empty?
+    []
+  else
+    first_assignee, second_assignee = assignees
+    [ Assign.new(created_at: 4.days.ago, assignee: first_assignee),
+      Assign.new(created_at: 20.days.ago, assignee: second_assignee) ]
+  end
+end
+
 FactoryBot.define do
   factory :complaint do
     case_reference  { "some string" }
@@ -29,6 +39,11 @@ FactoryBot.define do
     email { Faker::Internet.email }
     gender { ["m","f","o"].sample }
     dob { y=20+rand(40); m=rand(12); d=rand(31); Date.today.advance(:years => -y, :months => -m, :days => -d).to_s }
+    transient do
+      assigned_to {[]}
+    end
+    assigns { admin_assigns(assigned_to) }
+
 
     trait :with_associations do
       after :build do |complaint|
@@ -106,13 +121,15 @@ FactoryBot.define do
 
     trait :open do
       after(:build) do |complaint|
-        complaint.status_changes = [FactoryBot.create(:status_change, :open)]
+        complaint.status_changes = [FactoryBot.create(:status_change, :open, change_date: 4.days.ago),
+                                    FactoryBot.create(:status_change, :closed, change_date: 20.days.ago)]
       end
     end
 
     trait :closed do
       after(:build) do |complaint|
-        complaint.status_changes = [FactoryBot.create(:status_change, :closed)]
+        complaint.status_changes = [FactoryBot.create(:status_change, :closed, change_date: 4.days.ago),
+                                    FactoryBot.create(:status_change, :open, change_date: 20.days.ago)]
       end
     end
   end

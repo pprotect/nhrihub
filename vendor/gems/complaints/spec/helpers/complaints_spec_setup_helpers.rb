@@ -3,37 +3,6 @@ require 'rspec/core/shared_context'
 module ComplaintsSpecSetupHelpers
   extend RSpec::Core::SharedContext
 
-  def multi_populate_database
-    create_mandates
-    create_agencies
-    create_complaint_statuses
-    admin_assigns = [ Assign.new(created_at: 4.days.ago, assignee: @user),
-                      Assign.new(created_at: 20.days.ago, assignee: @staff_user) ]
-
-    staff_assigns = [ Assign.new(created_at: 4.days.ago, assignee: @staff_user),
-                      Assign.new(created_at: 20.days.ago, assignee: @user) ]
-
-    [admin_assigns, staff_assigns].each do |assigns|
-      FactoryBot.create(:complaint, :case_reference => "c12-34",
-                        :date_received => DateTime.now.advance(:days => -100),
-                        :village => Faker::Address.city,
-                        :phone => Faker::PhoneNumber.phone_number,
-                        :dob => "19/08/1950",
-                        :human_rights_complaint_bases => hr_complaint_bases,
-                        :good_governance_complaint_bases => gg_complaint_bases,
-                        :special_investigations_unit_complaint_bases => siu_complaint_bases,
-                        :assigns => assigns,
-                        :desired_outcome => Faker::Lorem.sentence,
-                        :details => Faker::Lorem.sentence,
-                        :complaint_documents => complaint_docs,
-                        :status_changes => _status_changes,
-                        :mandate_ids => [_mandate_id],
-                        :agencies => _agencies,
-                        :communications => _communications)
-    end
-    set_file_defaults
-  end
-
   def populate_database
     create_mandates
     create_agencies

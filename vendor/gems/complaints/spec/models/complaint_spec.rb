@@ -1,4 +1,5 @@
 require 'rails_helper'
+require_relative '../../../authengine/spec/helpers/user_setup_helper'
 
 describe "complaint" do
   context "create" do
@@ -271,6 +272,50 @@ describe "#as_json" do
       expect(@complaints.first["status_changes"]).to be_empty
       expect(@complaints.first["agency_ids"]).to be_empty
       expect(@complaints.first["communications"]).to be_empty
+    end
+  end
+end
+
+describe "scope class methods" do
+  include UserSetupHelper
+
+  describe "query by current assignee" do
+    before do
+      @user = create_user('admin')
+      @staff_user = create_user('staff')
+      FactoryBot.create(:complaint, :assigned_to => [@user, @staff_user])
+      FactoryBot.create(:complaint, :assigned_to => [@staff_user, @user])
+    end
+
+    it "returns complaints based on assignee" do
+      expect(Complaint.for_assignee(@user.id)).to eq Complaint.all.select{|c| c.current_assignee_id == @user.id}
+      expect(Complaint.for_assignee(@staff_user.id)).to eq Complaint.all.select{|c| c.current_assignee_id == @staff_user.id}
+    end
+  end
+
+  describe "query by current status" do
+    before do
+      FactoryBot.create(:complaint, :open)
+      FactoryBot.create(:complaint, :closed)
+    end
+
+    it "returns complaints with current open status" do
+      expect(Complaint.with_open_status).to eq Complaint.all.select{|c| c.current_status == 'Open'}
+    end
+  end
+
+  describe "query by current status and current assignee" do
+    before do
+      @user = create_user('admin')
+      @staff_user = create_user('staff')
+      FactoryBot.create(:complaint, :open, :assigned_to => [@user, @staff_user])
+      FactoryBot.create(:complaint, :closed, :assigned_to => [@user, @staff_user])
+      FactoryBot.create(:complaint, :open, :assigned_to => [@staff_user, @user])
+      FactoryBot.create(:complaint, :closed, :assigned_to => [@staff_user, @user])
+    end
+
+    it "should merge the two scopes" do
+      expect(Complaint.with_open_status.for_assignee(@user.id).length).to eq 1
     end
   end
 end

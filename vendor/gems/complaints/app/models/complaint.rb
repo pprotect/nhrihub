@@ -26,7 +26,9 @@ class Complaint < ActiveRecord::Base
   has_many :communications, :dependent => :destroy
 
   attr_accessor :witness_name
-  scope :index_page_associations, ->(ids){ includes({:assigns => :assignee},
+  scope :index_page_associations, ->(user){ with_open_status.
+                                                 for_assignee(user.id).
+                                                 includes({:assigns => :assignee},
                                                    :mandates,
                                                    {:status_changes => [:user, :complaint_status]},
                                                    {:complaint_good_governance_complaint_bases=>:good_governance_complaint_basis},
@@ -36,8 +38,17 @@ class Complaint < ActiveRecord::Base
                                                    {:communications => [:user, :communication_documents, :communicants]},
                                                    :complaint_documents,
                                                    {:reminders => :user},
-                                                   {:notes =>[:author, :editor]}).where(:id => ids)
+                                                   {:notes =>[:author, :editor]})#.where(:id => ids)
                                           }
+  def self.with_open_status
+    joins(:status_changes => :complaint_status).
+      merge(StatusChange.most_recent_for_complaint).
+      merge(ComplaintStatus.open)
+  end
+
+  def self.for_assignee(user_id)
+    joins(:assigns).merge(Assign.most_recent_for_assignee(user_id))
+  end
 
   def status_changes_attributes=(attrs)
     # only create a status_change object if this is a new complaint

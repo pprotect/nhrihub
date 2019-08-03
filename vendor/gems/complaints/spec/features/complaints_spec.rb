@@ -12,24 +12,22 @@ require 'active_storage_helpers'
 
 feature "complaints index with multiple complaints", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
-  include ComplaintsSpecSetupHelpers
-  include NavigationHelpers
-  include ComplaintsSpecHelpers
-  include UploadFileHelpers
-  include DownloadHelpers
-  include ActiveStorageHelpers
 
   before(:context) do
     Webpacker.compile
   end
 
   before do
-    multi_populate_database
+    FactoryBot.create(:complaint, :open, :assigned_to => [@user, @staff_user])
+    FactoryBot.create(:complaint, :closed, :assigned_to => [@user, @staff_user])
+    FactoryBot.create(:complaint, :open, :assigned_to => [@staff_user, @user])
+    FactoryBot.create(:complaint, :closed, :assigned_to => [@staff_user, @user])
     visit complaints_path('en')
   end
 
-  it "shows only complaints assigned to the current user" do
-    raise Hell
+  it "shows only open complaints assigned to the current user" do
+    expect(page.all('#complaints .complaint').length).to eq 1
+    expect(page.find('#complaints .complaint .current_assignee').text).to eq @user.first_last_name
   end
 end
 
