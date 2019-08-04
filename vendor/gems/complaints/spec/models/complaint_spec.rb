@@ -318,4 +318,15 @@ describe "scope class methods" do
       expect(Complaint.with_open_status.for_assignee(@user.id).length).to eq 1
     end
   end
+
+  describe "a test that should not fail" do
+    before do
+      FactoryBot.create(:complaint, :open)
+    end
+
+    it "should merge the two scopes" do
+      expect(Complaint.first.current_status) == "Open"
+      expect(Complaint.with_open_status.length).to eq 1
+    end
+  end
 end

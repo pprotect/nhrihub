@@ -102,10 +102,10 @@ feature "complaints index", :js => true do
 
       within status_changes do
         expect(page).to have_selector('.status_change', :count => 2)
-        expect(all('.status_change .user_name')[0].text).to eq User.staff.first.first_last_name
-        expect(all('.status_change .user_name')[1].text).to eq User.staff.second.first_last_name
-        expect(all('.status_change .date')[0].text).to eq Complaint.first.status_changes[0].created_at.localtime.to_date.strftime("%b %-e, %Y")
-        expect(all('.status_change .date')[1].text).to eq Complaint.first.status_changes[1].created_at.localtime.to_date.strftime("%b %-e, %Y")
+        expect(all('.status_change .user_name')[0].text).to eq Complaint.first.status_changes.sort_by(&:change_date).last.user.first_last_name
+        expect(all('.status_change .user_name')[1].text).to eq Complaint.first.status_changes.sort_by(&:change_date).first.user.first_last_name
+        expect(all('.status_change .date')[0].text).to eq Complaint.first.status_changes[0].change_date.localtime.to_date.strftime("%b %-e, %Y")
+        expect(all('.status_change .date')[1].text).to eq Complaint.first.status_changes[1].change_date.localtime.to_date.strftime("%b %-e, %Y")
         expect(all('.status_change .status_humanized')[0].text).to eq "Open"
         expect(all('.status_change .status_humanized')[1].text).to eq "Closed"
       end
@@ -426,11 +426,11 @@ feature "complaints index", :js => true do
   it "changes complaint current status by adding a status_change" do
     edit_complaint
     within current_status do
-      expect(page).to have_checked_field "closed"
-      choose "open"
+      expect(page).to have_checked_field "open" # default result set is open complaints for current user
+      choose "closed"
     end
-    expect{ edit_save }.to change{ Complaint.first.current_status }.from("Closed").to("Open")
-    expect( first_complaint.all('#status_changes .status_change').last.text ).to match "Open"
+    expect{ edit_save }.to change{ Complaint.first.current_status }.from("Open").to("Closed")
+    expect( first_complaint.all('#status_changes .status_change').last.text ).to match "Closed"
     expect( first_complaint.all('#status_changes .date').last.text ).to match /#{Date.today.strftime("%b %-e, %Y")}/
     user = User.find_by(:login => 'admin')
     expect( first_complaint.all('#status_changes .user_name').last.text ).to match /#{user.first_last_name}/
@@ -688,7 +688,7 @@ feature "complaints index", :js => true do
   end
 
   it "permits only one edit at a time" do
-    FactoryBot.create(:complaint, :open)
+    FactoryBot.create(:complaint, :open, :assigned_to=>[@user, @staff_user])
     visit complaints_path('en')
     edit_first_complaint
     edit_second_complaint
@@ -786,7 +786,7 @@ feature "complaints index", :js => true do
     end
   end
 
-  it "shows a single complaint when a query string is appended to the url" do
+  it "shows a single complaint when a case_reference query string is appended to the url" do
     create_complaints # 3 complaints
     url = URI(@complaint.index_url)
     visit @complaint.index_url.gsub(%r{.*#{url.host}},'') # hack, don't know how else to do it, host otherwise is SITE_URL defined in lib/constants

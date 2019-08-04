@@ -7,7 +7,7 @@ class StatusChange < ActiveRecord::Base
   scope :most_recent_for_complaint, ->{
     sc = StatusChange.arel_table
     sc1 = sc.alias
-    subquery = sc[:created_at].eq(sc.project(sc1[:created_at].maximum).
+    subquery = sc[:change_date].eq(sc.project(sc1[:change_date].maximum).
                                    from(sc1).
                                    where(sc1[:complaint_id].eq(sc[:complaint_id]))
                                 )

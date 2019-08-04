@@ -12,9 +12,9 @@ class ComplaintsController < ApplicationController
     @mandates = Mandate.all.sort_by(&:name)
     @agencies = Agency.all
     @complaint_bases = [ StrategicPlans::ComplaintBasis.named_list,
-                        GoodGovernance::ComplaintBasis.named_list,
-                        Nhri::ComplaintBasis.named_list,
-                        Siu::ComplaintBasis.named_list ]
+                         GoodGovernance::ComplaintBasis.named_list,
+                         Nhri::ComplaintBasis.named_list,
+                         Siu::ComplaintBasis.named_list ]
     @next_case_reference = Complaint.next_case_reference
     @users = User.all
     @good_governance_complaint_bases = GoodGovernance::ComplaintBasis.all

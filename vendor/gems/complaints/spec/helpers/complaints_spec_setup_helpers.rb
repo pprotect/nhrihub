@@ -8,7 +8,11 @@ module ComplaintsSpecSetupHelpers
     create_agencies
     create_staff
     create_complaint_statuses
-    FactoryBot.create(:complaint, :case_reference => "c12-34",
+    user = User.where(:login => 'admin').first
+    staff_user = User.where(:login => 'staff').first
+    FactoryBot.create(:complaint, :open,
+                      :assigned_to => [user, staff_user],
+                      :case_reference => "c12-34",
                       :date_received => DateTime.now.advance(:days => -100),
                       :village => Faker::Address.city,
                       :phone => Faker::PhoneNumber.phone_number,
@@ -16,11 +20,9 @@ module ComplaintsSpecSetupHelpers
                       :human_rights_complaint_bases => hr_complaint_bases,
                       :good_governance_complaint_bases => gg_complaint_bases,
                       :special_investigations_unit_complaint_bases => siu_complaint_bases,
-                      :assigns => assigns,
                       :desired_outcome => Faker::Lorem.sentence,
                       :details => Faker::Lorem.sentence,
                       :complaint_documents => complaint_docs,
-                      :status_changes => _status_changes,
                       :mandate_ids => [_mandate_id],
                       :agencies => _agencies,
                       :communications => _communications)
@@ -71,20 +73,6 @@ module ComplaintsSpecSetupHelpers
     [ Agency.find_by(:name => 'SAA') ]
   end
 
-  def _status_changes
-    # open 100 days ago, closed 50 days ago
-    [FactoryBot.build(:status_change,
-                      :created_at => DateTime.now.advance(:days => -100),
-                      :complaint_status_id => FactoryBot.create(:complaint_status, :name => "Open").id,
-                      :change_date => DateTime.now.advance(:days => -100),
-                      :user_id => User.staff.pluck(:id).first),
-    FactoryBot.build(:status_change,
-                     :created_at => DateTime.now.advance(:days => -50),
-                     :complaint_status_id => FactoryBot.create(:complaint_status, :name => "Closed").id,
-                     :change_date => DateTime.now.advance(:days => -50),
-                     :user_id => User.staff.pluck(:id).second )]
-  end
-
   def complaint_docs
     Array.new(2) { FactoryBot.create(:complaint_document) }
   end
@@ -104,14 +92,6 @@ module ComplaintsSpecSetupHelpers
   def siu_complaint_bases
     names = ["Unreasonable delay", "Not properly investigated"]
     @siu_complaint_bases ||= names.collect{|name| FactoryBot.create(:siu_complaint_basis, :name => name) }
-  end
-
-  def assigns
-    Array.new(2) do
-      assignee = FactoryBot.create(:assignee) # assignee is simply an alias for user
-      date = DateTime.now.advance(:days => -rand(365))
-      Assign.new(:created_at => date, :assignee => assignee)
-    end
   end
 
   def create_agencies

@@ -38,7 +38,7 @@ class Complaint < ActiveRecord::Base
                                                    {:communications => [:user, :communication_documents, :communicants]},
                                                    :complaint_documents,
                                                    {:reminders => :user},
-                                                   {:notes =>[:author, :editor]})#.where(:id => ids)
+                                                   {:notes =>[:author, :editor]})
                                           }
   def self.with_open_status
     joins(:status_changes => :complaint_status).
@@ -163,11 +163,11 @@ class Complaint < ActiveRecord::Base
   end
 
   def current_status
-    status_changes.last.complaint_status.name
+    status_changes.sort_by(&:change_date).last.complaint_status.name
   end
 
   def current_status_humanized
-    status_changes.last.status_humanized unless status_changes.empty?
+    status_changes.sort_by(&:change_date).last.status_humanized unless status_changes.empty?
   end
 
   def _complained_to_subject_agency
