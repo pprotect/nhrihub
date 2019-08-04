@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_26_205426) do
+ActiveRecord::Schema.define(version: 2019_08_04_130630) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -540,6 +540,17 @@ ActiveRecord::Schema.define(version: 2019_07_26_205426) do
     t.datetime "start_date"
     t.datetime "next"
     t.integer "user_id"
+  end
+
+  create_table "role_assignments", force: :cascade do |t|
+    t.bigint "assigner_id"
+    t.bigint "assignee_id"
+    t.string "role_name"
+    t.string "action"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["assignee_id"], name: "index_role_assignments_on_assignee_id"
+    t.index ["assigner_id"], name: "index_role_assignments_on_assigner_id"
   end
 
   create_table "roles", id: :serial, force: :cascade do |t|

@@ -4,13 +4,14 @@ class Admin::UserRolesController < ApplicationController
     @user = User.find(params[:user_id])
     @all_roles = Role.order(:name).all
     @user_role = UserRole.new(:user_id => @user.id)
+    @title = t('.roles_for', name: @user.first_last_name)
   end
 
   # create_authengine_user_user_roles POST   /authengine/users/:user_id/user_roles/create(.:format)
   # assign a new user_role to this user
   def create
     @user = User.find(params[:user_id])
-    @user.user_roles.create(user_role_params)
+    @user.user_roles.create(user_role_params.merge!({assigner: current_user}))
     redirect_to admin_user_user_roles_path(@user)
   end
 
@@ -18,6 +19,7 @@ class Admin::UserRolesController < ApplicationController
   # remove a user_role for this user
   def destroy
     user_role = UserRole.find_by_role_id_and_user_id(params[:id],params[:user_id])
+    user_role.assigner = current_user
     user_role.destroy
     redirect_to admin_user_user_roles_path(params[:user_id])
   end

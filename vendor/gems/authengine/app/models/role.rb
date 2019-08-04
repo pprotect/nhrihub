@@ -2,6 +2,7 @@
 # for a session can be downgraded to a lower role.
 # The hierarchy gives meaning to "lower role".
 class Role < ActiveRecord::Base
+  attr_accessor :administrator
   has_many :user_roles, :dependent => :destroy
   has_many :users, :through=>:user_roles
 
@@ -24,6 +25,9 @@ class Role < ActiveRecord::Base
       false # don't delete a role if there are users assigned
     end
   end
+
+  after_save RoleAdministrationLogger
+  after_destroy RoleAdministrationLogger
 
   def self.all_with_permitted_action_ids
     all.inject({}){|hash,r| hash[r.id] =r.action_ids; hash}

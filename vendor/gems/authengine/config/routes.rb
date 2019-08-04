@@ -40,7 +40,8 @@ Rails.application.routes.draw do
     end
 
     namespace :authengine do
-      resources :access_events
+      resources :access_events, only: :index
+      resources :role_assignments, only: :index
       resources :action_role_changes
       resources :accounts
       resources :actions

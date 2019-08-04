@@ -1,0 +1,10 @@
+%h1=t('.heading')
+
+.row
+  .col-md-2= t('.date')
+  .col-md-2= t('.action')
+  .col-md-2= t('.role')
+  .col-md-2= t('.assigner')
+  .col-md-2= t('.assignee')
+
+= render @role_assignments

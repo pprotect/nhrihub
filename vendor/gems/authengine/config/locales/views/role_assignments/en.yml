@@ -1,0 +1,10 @@
+en:
+  authengine:
+    role_assignments:
+      index:
+        heading: "Role administration log"
+        date: "Date"
+        action: "Action"
+        role: "Role"
+        assigner: "By"
+        assignee: "For"
