@@ -22,6 +22,7 @@ class Authengine::RolesController < ApplicationController
 
   def create
     @role = Role.new(role_params)
+    @role.administrator = current_user
 
     if @role.save
       redirect_to authengine_roles_path

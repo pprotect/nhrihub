@@ -39,5 +39,5 @@ assets = [ 'in_page_edit.js',
            'jsrsasign/jsrsasign-4.7.0-all-min.js',
            'confirm_delete_modal.js',
            'access_events.css',
-           'access_role_changes.css']
+           'audit_logs.css']
 Rails.application.config.assets.precompile += assets

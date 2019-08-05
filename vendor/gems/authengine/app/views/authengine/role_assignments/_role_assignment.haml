@@ -1,0 +1,6 @@
+.row
+  .col-md-2= role_assignment.created_at.to_formatted_s(:long)
+  .col-md-2= role_assignment.action
+  .col-md-2= role_assignment.role_name
+  .col-md-2= role_assignment.assigner
+  .col-md-2= role_assignment.assignee || "n/a"

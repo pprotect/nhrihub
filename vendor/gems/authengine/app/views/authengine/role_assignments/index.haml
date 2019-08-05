@@ -4,8 +4,9 @@
 
 .row#audit_log_headings
   .col-md-2= t('.date')
-  .col-md-3= t('.description')
-  .col-md-2= t('.state')
+  .col-md-2= t('.action')
   .col-md-2= t('.role')
-  .col-md-2= t('.author')
-= render @action_role_changes
+  .col-md-2= t('.assigner')
+  .col-md-2= t('.assignee')
+
+= render @role_assignments

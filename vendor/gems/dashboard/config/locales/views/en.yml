@@ -2,3 +2,13 @@ en:
   dashboard:
     index:
       heading: "Site Dashboard"
+      ssl_expiry: "SSL Certificate expiry date:"
+      sec_test: "Security testing services:"
+      globalsign: "GlobalSign SSL report"
+      moz: "Mozilla Observatory scanner"
+      csp: "Content Security Policy"
+      csp_reports: "CSP reports"
+      logs: "Logs"
+      access_log: "Access log"
+      access_config_log: "Access configuration audit log"
+      role_admin_log: "Role administration audit log"

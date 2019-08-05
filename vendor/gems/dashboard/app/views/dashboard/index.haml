@@ -12,24 +12,25 @@
     cursor : pointer;
   }
 
-SSL Certificate expiry date: 
+= t('.ssl_expiry')
 = SslCertificate.new.expires_on
 
-%h2 Security testing services:
+%h2=t('.sec_test')
 %ul
-  %li= link_to_without_permission_check "GlobalSign SSL report", "https://globalsign.ssllabs.com/analyze.html?d=#{SITE_URL}&hideResults=on&clearCache=on", :target => "_blank"
-  %li= link_to_without_permission_check "Mozilla Observatory scanner", "https://observatory.mozilla.org/analyze.html?host=#{SITE_URL}", :target => "_blank"
+  %li= link_to_without_permission_check t('.globalsign'), "https://globalsign.ssllabs.com/analyze.html?d=#{SITE_URL}&hideResults=on&clearCache=on", :target => "_blank"
+  %li= link_to_without_permission_check t('.moz'), "https://observatory.mozilla.org/analyze.html?host=#{SITE_URL}", :target => "_blank"
 
-%h2 Content Security Policy
+%h2=t('.csp')
 %ul
-  %li#csp_link.action_link{:onclick=>"fetch_csp_reports()"} CSP reports
+  %li#csp_link.action_link{:onclick=>"fetch_csp_reports()"}=t('.csp_reports')
 
 #csp_reports
 
-%h2 Logs
+%h2=t('.logs')
 %ul
-  %li#access_log_link= link_to "Access log", authengine_access_events_path
-  %li#access_audit_link= link_to "Access configuration audit log", authengine_action_role_changes_path
+  %li#access_log_link= link_to t('.access_log'), authengine_access_events_path
+  %li#access_audit_link= link_to t('.access_config_log'), authengine_action_role_changes_path
+  %li#role_assignment_audit_link= link_to t('.role_admin_log'), authengine_role_assignments_path
 
 #access_events
 
