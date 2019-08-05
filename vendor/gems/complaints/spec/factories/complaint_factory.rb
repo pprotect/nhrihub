@@ -132,5 +132,11 @@ FactoryBot.define do
                                     FactoryBot.create(:status_change, :open, change_date: 20.days.ago)]
       end
     end
+
+    trait :under_evaluation do
+      after(:build) do |complaint|
+        complaint.status_changes = [FactoryBot.create(:status_change, :under_evaluation, change_date: 4.days.ago)]
+      end
+    end
   end
 end

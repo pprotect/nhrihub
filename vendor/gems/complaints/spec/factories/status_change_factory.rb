@@ -19,5 +19,11 @@ FactoryBot.define do
         status_change.complaint_status = ComplaintStatus.find_or_create_by(:name => "Closed")
       end
     end
+
+    trait :under_evaluation do
+      after(:create) do |status_change|
+        status_change.complaint_status = ComplaintStatus.find_or_create_by(:name => "Under Evaluation")
+      end
+    end
   end
 end

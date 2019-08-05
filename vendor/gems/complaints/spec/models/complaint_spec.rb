@@ -298,11 +298,13 @@ describe "scope class methods" do
     before do
       FactoryBot.create(:complaint, :open)
       FactoryBot.create(:complaint, :closed)
+      FactoryBot.create(:complaint, :under_evaluation)
     end
 
     it "returns complaints with current requested status" do
       expect(Complaint.with_status(:open)).to eq Complaint.all.select{|c| c.current_status == 'Open'}
       expect(Complaint.with_status(:closed)).to eq Complaint.all.select{|c| c.current_status == 'Closed'}
+      expect(Complaint.with_status(:under_evaluation)).to eq Complaint.all.select{|c| c.current_status == 'Under Evaluation'}
     end
   end
 
