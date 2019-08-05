@@ -26,8 +26,9 @@ class Complaint < ActiveRecord::Base
   has_many :communications, :dependent => :destroy
 
   attr_accessor :witness_name
-  scope :index_page_associations, ->(user){ with_open_status.
-                                                 for_assignee(user.id).
+  scope :filtered, ->(user){ with_open_status.for_assignee(user.id) }
+
+  scope :index_page_associations, ->(user, ids){ filtered(user).
                                                  includes({:assigns => :assignee},
                                                    :mandates,
                                                    {:status_changes => [:user, :complaint_status]},
@@ -38,7 +39,8 @@ class Complaint < ActiveRecord::Base
                                                    {:communications => [:user, :communication_documents, :communicants]},
                                                    :complaint_documents,
                                                    {:reminders => :user},
-                                                   {:notes =>[:author, :editor]})
+                                                   {:notes =>[:author, :editor]}).
+                                                 where(id: ids)
                                           }
   def self.with_open_status
     joins(:status_changes => :complaint_status).

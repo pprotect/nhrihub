@@ -12,8 +12,8 @@ class Complaint < ActiveRecord::Base
     end
 
     module ClassMethods
-      def cache_identifiers
-        select(:id, :updated_at).map(&:cache_identifier).inject({},:merge)
+      def cache_identifiers(user)
+        filtered(user).select(:id, :updated_at).map(&:cache_identifier).inject({},:merge)
       end
     end
   end
