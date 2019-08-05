@@ -26,7 +26,7 @@ class Complaint < ActiveRecord::Base
   has_many :communications, :dependent => :destroy
 
   attr_accessor :witness_name
-  scope :filtered, ->(user){ with_open_status.for_assignee(user.id) }
+  scope :filtered, ->(user){ with_status(:open).for_assignee(user.id) }
 
   scope :index_page_associations, ->(user, ids){ filtered(user).
                                                  includes({:assigns => :assignee},
@@ -42,14 +42,14 @@ class Complaint < ActiveRecord::Base
                                                    {:notes =>[:author, :editor]}).
                                                  where(id: ids)
                                           }
-  def self.with_open_status
+  def self.with_status(status)
     joins(:status_changes => :complaint_status).
       merge(StatusChange.most_recent_for_complaint).
-      merge(ComplaintStatus.open)
+      merge(ComplaintStatus.send(status))
   end
 
-  def self.for_assignee(user_id)
-    joins(:assigns).merge(Assign.most_recent_for_assignee(user_id))
+  def self.for_assignee(user_id = nil)
+    user_id ? joins(:assigns).merge(Assign.most_recent_for_assignee(user_id)) : unscoped
   end
 
   def status_changes_attributes=(attrs)

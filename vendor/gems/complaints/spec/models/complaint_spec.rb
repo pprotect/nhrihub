@@ -290,6 +290,7 @@ describe "scope class methods" do
     it "returns complaints based on assignee" do
       expect(Complaint.for_assignee(@user.id)).to eq Complaint.all.select{|c| c.current_assignee_id == @user.id}
       expect(Complaint.for_assignee(@staff_user.id)).to eq Complaint.all.select{|c| c.current_assignee_id == @staff_user.id}
+      expect(Complaint.for_assignee.pluck(:id)).to match_array Complaint.pluck(:id)
     end
   end
 
@@ -299,8 +300,9 @@ describe "scope class methods" do
       FactoryBot.create(:complaint, :closed)
     end
 
-    it "returns complaints with current open status" do
-      expect(Complaint.with_open_status).to eq Complaint.all.select{|c| c.current_status == 'Open'}
+    it "returns complaints with current requested status" do
+      expect(Complaint.with_status(:open)).to eq Complaint.all.select{|c| c.current_status == 'Open'}
+      expect(Complaint.with_status(:closed)).to eq Complaint.all.select{|c| c.current_status == 'Closed'}
     end
   end
 
@@ -315,7 +317,7 @@ describe "scope class methods" do
     end
 
     it "should merge the two scopes" do
-      expect(Complaint.with_open_status.for_assignee(@user.id).length).to eq 1
+      expect(Complaint.with_status(:open).for_assignee(@user.id).length).to eq 1
     end
   end
 
@@ -326,7 +328,7 @@ describe "scope class methods" do
 
     it "should merge the two scopes" do
       expect(Complaint.first.current_status) == "Open"
-      expect(Complaint.with_open_status.length).to eq 1
+      expect(Complaint.with_status(:open).length).to eq 1
     end
   end
 end
