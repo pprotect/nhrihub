@@ -46,7 +46,7 @@ describe "role assignment logging" do
     it "should create a role_assignment event" do
       expect{ FactoryBot.create(:role, name: 'bossman', administrator: @admin) }.to change{ RoleAssignment.count }.by(1)
       ra = RoleAssignment.last
-      expect(ra.assigner_id).to eq 1
+      expect(ra.assigner_id).to eq @admin.id
       expect(ra.assignee_id).to be_blank
       expect(ra.action).to eq "create"
       expect(ra.role_name).to eq "bossman"

@@ -32,7 +32,7 @@ describe 'permits_access_for class method' do
     context "user has a role that does not permit access to the requested action" do
       before {
         UserRole.delete_all
-        UserRole.create(:role_id => 555, :user_id => @user.id)
+        UserRole.create(:role_id => Role.create(:name => "whaaat").id, :user_id => @user.id)
       }
       it { is_expected.to eq(false) }
     end
