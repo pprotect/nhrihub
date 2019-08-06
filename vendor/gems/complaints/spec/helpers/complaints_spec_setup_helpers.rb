@@ -30,9 +30,11 @@ module ComplaintsSpecSetupHelpers
   end
 
   def create_complaints
-    FactoryBot.create(:complaint, :case_reference => "c12-22")
-    FactoryBot.create(:complaint, :case_reference => "c12-33")
-    @complaint = FactoryBot.create(:complaint, :case_reference => "c12-55")
+    admin = User.where(:login => 'admin').first
+    assignees = [admin, admin]
+    FactoryBot.create(:complaint, :open, :assigned_to => assignees, :case_reference => "c12-22")
+    FactoryBot.create(:complaint, :open, :assigned_to => assignees, :case_reference => "c12-33")
+    @complaint = FactoryBot.create(:complaint, :open, :assigned_to => assignees, :case_reference => "c12-55")
   end
 
   private
