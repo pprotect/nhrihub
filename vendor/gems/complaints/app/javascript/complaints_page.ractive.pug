@@ -15,6 +15,9 @@ script.
     data() {
       return $.extend(true,{},complaints_page_data());
     },
+    oninit() {
+      console.log("initializing the page");
+    },
     components : {
       complaint : Complaint,
       filterControls : FilterControls

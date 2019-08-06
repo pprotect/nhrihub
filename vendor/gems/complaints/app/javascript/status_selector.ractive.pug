@@ -1,24 +1,10 @@
-script#filter_select_template(type='text/ractive', src='./filter_select_template.html').
-
-| {{>filter_select_template}}
+include filter_select_template.pug
 
 script.
   import Toggle from './toggle'
-  var RactiveLocalMethods = require("exports-loader?local_methods!ractive_local_methods")
 
   export default Ractive.extend({
     template : $TEMPLATE,
-    computed : {
-      selected : {
-        get() {
-          return this.get('filter_criteria.selected_statuses').indexOf(this.get('name')) !== -1;
-        },
-        set(val){
-          if (val) {
-            return this.push('filter_criteria.selected_statuses', this.get('name'));
-          } else {
-            return this.remove_from_array('filter_criteria.selected_statuses', this.get('name'));
-          }
-        }
-      }
-    }}).extend(Toggle).extend(RactiveLocalMethods);
+    oninit: function(){console.log("init status select")},
+    source: 'filter_criteria.selected_statuses'
+    }).extend(Toggle)

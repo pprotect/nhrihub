@@ -12,6 +12,7 @@ require 'active_storage_helpers'
 
 feature "complaints index with multiple complaints", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecHelpers
 
   before(:context) do
     Webpacker.compile
@@ -28,6 +29,9 @@ feature "complaints index with multiple complaints", :js => true do
   it "shows only open complaints assigned to the current user" do
     expect(page.all('#complaints .complaint').length).to eq 1
     expect(page.find('#complaints .complaint .current_assignee').text).to eq @user.first_last_name
+    open_select_status_dropdown
+    debugger
+    expect(select_option('Open')[:class]).to include('selected')
   end
 end
 
@@ -876,5 +880,4 @@ feature "complaints cache expiration", :js => true do
       expect(communication_icon['data-count']).to eq "0"
     end
   end
-
 end

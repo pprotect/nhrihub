@@ -35,7 +35,7 @@
   .row(style = "margin-bottom:12px;")
     .col-md-2
       .btn-group.select
-        button.btn.btn-default.dropdown-toggle(type='button', 'data-toggle'='dropdown')
+        button.btn.btn-default.dropdown-toggle#status_select(type='button', 'data-toggle'='dropdown')
           span.filter-option.pull-left 
             | {{ t.select_status }}
           span.caret
@@ -131,6 +131,7 @@ script.
       assigneeFilterSelect : AssigneeFilterSelect,
       statusSelector : StatusSelector
     },
+    oninit : function(){console.log("filter controls")},
     data : function(){ return {
       t : translations.t('filter_controls')
     }},

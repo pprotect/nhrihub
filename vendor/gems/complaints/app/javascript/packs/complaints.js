@@ -37,7 +37,7 @@ _.extend(Ractive.defaults.data, {
   local : function(gmt_date){ return $.datepicker.formatDate("M d, yy", new Date(gmt_date)); }
 })
 
-window.start_page = () => window.complaints = new Ractive(complaints_options);
+window.start_page = () =>console.log("start_page"); window.complaints = new Ractive(complaints_options); console.log("after")
 
 $(function() {
   start_page();

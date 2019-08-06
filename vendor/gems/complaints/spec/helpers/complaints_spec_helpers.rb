@@ -79,6 +79,14 @@ module ComplaintsSpecHelpers
     page.find('.edit_cancel .fa-remove').click
   end
 
+  def open_select_status_dropdown
+    page.find('#complaints_controls button#status_select').click
+  end
+
+  def select_option(name)
+    page.find(:xpath, ".//li[contains(.,'Open')]")
+  end
+
   def current_status
     page.find('#current_status')
   end
