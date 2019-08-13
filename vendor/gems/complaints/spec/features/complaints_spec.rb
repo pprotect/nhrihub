@@ -1031,3 +1031,45 @@ feature "selects complaints by partial match of case reference", :js => true do
     expect(complaints.count).to eq 1
   end
 end
+
+feature "selects complaints by partial match of complainant", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecHelpers
+
+  before do
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, firstName: "Harry", lastName: "Harker")
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, firstName: "Harriet", lastName: "Harker")
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, firstName: "Adolph", lastName: "Champlin")
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, firstName: "Dawn", lastName: "Mills")
+    visit complaints_path(:en)
+  end
+
+  # in the tests below we set ractive values directly b/c setting the
+  # input values results in many ajax requests
+  it "should return partial matches when at least two digits are entered" do
+    expect(complaints.count).to eq 4
+    script = "complaints.set('filter_criteria.complainant','h')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 3
+    script = "complaints.set('filter_criteria.complainant','ha')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 3
+    script = "complaints.set('filter_criteria.complainant','harr')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 2
+    script = "complaints.set('filter_criteria.complainant','harry')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 1
+    clear_filter_fields
+    wait_for_ajax
+    expect(complaints.count).to eq 4
+    script = "complaints.set('filter_criteria.complainant','Mil')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 1
+  end
+end

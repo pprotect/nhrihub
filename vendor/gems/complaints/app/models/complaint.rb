@@ -29,7 +29,17 @@ class Complaint < ActiveRecord::Base
 
   def self.filtered(query)
     with_status(query[:selected_statuses]).
-      with_case_reference_match(query[:case_reference])
+      with_case_reference_match(query[:case_reference]).
+      with_complainant_match(query[:complainant])
+  end
+
+  def self.with_complainant_match(complainant_fragment)
+    if complainant_fragment.blank?
+      where("1=1")
+    else
+      sql = "\"complaints\".\"firstName\" || ' ' || \"complaints\".\"lastName\" ~* '.*#{complainant_fragment}.*'"
+      where(sql)
+    end
   end
 
   def self.index_page_associations(user, ids, query)

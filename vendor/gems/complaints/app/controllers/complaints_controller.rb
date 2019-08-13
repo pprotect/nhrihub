@@ -91,7 +91,7 @@ class ComplaintsController < ApplicationController
     params.
       permit(:complainant, :from, :to, :case_reference, :village, :phone_number, :phone, :current_assignee_id, :selected_assignee_id, :locale, :selected_statuses => [] ).
       with_defaults(default_params).
-      slice(:selected_assignee_id, :selected_statuses, :case_reference)
+      slice(:selected_assignee_id, :selected_statuses, :case_reference, :complainant)
   end
 
   def complaint_params

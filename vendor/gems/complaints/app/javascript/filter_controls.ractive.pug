@@ -4,13 +4,13 @@
       h4 
         | {{ t.search }}
   .row.labels
-    .col-md-2 
+    .col-md-2(class-active="@this.is_active('complainant')")
       | {{ t.complainant }}
     .col-md-2 
       | {{ t.village }}
     .col-md-2 
       | {{ t.phone }}
-    .col-md-2 
+    .col-md-2(class-active="@this.is_active('case_reference')")
       | {{ t.case_reference }}
   .row(style = "margin-bottom:12px;")
     .col-md-2
@@ -149,6 +149,13 @@ script.
             this.parent.load();
           }
         }
+      },
+      'filter_criteria.complainant': {
+        handler(value, old, path, idx){
+          if(!_.isEmpty(value)){
+            this.parent.load();
+          }
+        }
       }
     },
     clear_filter() {
@@ -168,6 +175,10 @@ script.
         return !_.isEmpty(this.get('filter_criteria.selected_statuses'))
       }else if(attr == 'assignee'){
         return _.isNumber(this.get('filter_criteria.selected_assignee_id'))
+      }else if(attr == 'case_reference'){
+        return !_.isEmpty(this.get('filter_criteria.case_reference'))
+      }else if(attr == 'complainant'){
+        return !_.isEmpty(this.get('filter_criteria.complainant'))
       }
     }
   });
