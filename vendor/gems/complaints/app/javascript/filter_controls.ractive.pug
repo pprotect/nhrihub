@@ -20,11 +20,11 @@
     .col-md-2
       input.form-control#phone(name='phone', value="{{filter_criteria.phone}}", placeholder ='{{ t.phone }}')
     .col-md-2
-      input.form-control#case_reference(name='case_reference', value="{{filter_criteria.case_reference}}", placeholder ='{{ t.case_reference }}')
+      input.form-control#case_reference( name='case_reference', value="{{filter_criteria.case_reference}}", placeholder ='{{ t.case_reference }}')
     .col-md-1(style = 'text-align:center')
       i.erase.fa.fa-refresh('on-click'='@this.clear_filter()', 'data-toggle'='tooltip', 'title' ='{{ t.clear }}')
   .row.labels
-    .col-md-2 
+    .col-md-2(class-active="@this.is_active('status')")
       | {{ t.status }}
     .col-md-2 
       | {{ t.date_from }}
@@ -41,7 +41,7 @@
           span.caret
         ul.dropdown-menu
           | {{#statuses}}
-          <statusSelector filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}' />
+          <statusFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}' />
           | {{/statuses}}
     .col-md-2
       input.form-control#from(type="text", name="from", placeholder ='{{ t.date_from }}', value = "{{filter_criteria.from}}", style = 'position:relative; z-index:12;')
@@ -62,7 +62,7 @@
       | {{ t.area }}
     .col-md-2 
       | {{ t.complaint_basis }}
-    .col-md-2 
+    .col-md-2(class-active="@this.is_active('assignee')")
       | {{ t.assignee }}
   .row(style = "margin-bottom:12px;")
     .col-md-2
@@ -99,7 +99,7 @@
           | {{/all_special_investigations_unit_complaint_bases}}
     .col-md-2
       .btn-group.select
-        button.btn.btn-default.dropdown-toggle(type='button', 'data-toggle'='dropdown')
+        button.btn.btn-default.dropdown-toggle#assignee_select(type='button', 'data-toggle'='dropdown')
           span.filter-option.pull-left 
             | {{ t.select_assignee }}
           span.caret
@@ -108,20 +108,28 @@
           <assigneeFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{first_last_name}}'/>
           | {{/all_staff}}
 
+style.
+  .active:after { 
+    content: "*";
+    color: #f55310;
+    font-size: 1.6em;
+    line-height: 12px;
+  }
+
 
 script.
-  //import Ractive from 'ractive'
   import GoodGovernanceComplaintBasisFilterSelect from './good_governance_complaint_basis_filter_select'
   import HumanRightsComplaintBasisFilterSelect from './human_rights_complaint_basis_filter_select'
   import SpecialInvestigationsUnitComplaintBasisFilterSelect from './special_investigations_unit_complaint_basis_filter_select'
   import AgencyFilterSelect from './agency_filter_select'
   import MandateFilterSelect from './mandate_filter_select'
   import AssigneeFilterSelect from './assignee_filter_select'
-  import StatusSelector from './status_selector'
+  import StatusFilterSelect from './status_filter_select'
   import translations from './translations.js'
 
   export default Ractive.extend({
     template : $TEMPLATE,
+    css: $CSS,
     components : {
       goodGovernanceComplaintBasisFilterSelect : GoodGovernanceComplaintBasisFilterSelect,
       humanRightsComplaintBasisFilterSelect : HumanRightsComplaintBasisFilterSelect,
@@ -129,20 +137,37 @@ script.
       agencyFilterSelect : AgencyFilterSelect,
       mandateFilterSelect : MandateFilterSelect,
       assigneeFilterSelect : AssigneeFilterSelect,
-      statusSelector : StatusSelector
+      statusFilterSelect : StatusFilterSelect
     },
-    oninit : function(){console.log("filter controls")},
     data : function(){ return {
       t : translations.t('filter_controls')
     }},
+    observe: {
+      'filter_criteria.case_reference': {
+        handler(value, old, path, idx){
+          if(!_.isEmpty(value)){
+            this.parent.load();
+          }
+        }
+      }
+    },
     clear_filter() {
+      complaints_page_data().filter_criteria.case_reference = null
       this.set('filter_criteria',$.extend(true,{},complaints_page_data().filter_criteria));
       window.history.pushState({foo: "bar"},"unused title string",window.location.origin + window.location.pathname);
-      return this.set_filter_from_query_string();
+      complaints.load();
+      //return this.set_filter_from_query_string();
     },
     set_filter_from_query_string() {
       const search_string = (_.isEmpty( window.location.search) || _.isNull( window.location.search)) ? '' : window.location.search.split("=")[1];
       const filter_criteria = _.extend(source_filter_criteria,{case_reference : search_string});
       return this.set('filter_criteria',filter_criteria);
+    },
+    is_active(attr){
+      if(attr == 'status'){
+        return !_.isEmpty(this.get('filter_criteria.selected_statuses'))
+      }else if(attr == 'assignee'){
+        return _.isNumber(this.get('filter_criteria.selected_assignee_id'))
+      }
     }
   });

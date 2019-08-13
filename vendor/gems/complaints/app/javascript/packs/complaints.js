@@ -7,13 +7,13 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
-window.complaints_page_data = () =>
-  ({
+window.complaints_page_data = function(){
+  return {
     complaints : source_complaints_data,
-    filter_criteria : source_filter_criteria,
-    next_case_reference : source_next_case_reference
-  })
-;
+    filter_criteria: source_filter_criteria,
+    next_case_reference : source_next_case_reference,
+  }
+};
 
 import complaints_options from '../complaints_page.ractive.pug'
 var filter_criteria_datepicker = require("exports-loader?filter_criteria_datepicker!filter_criteria_datepicker")
@@ -37,7 +37,7 @@ _.extend(Ractive.defaults.data, {
   local : function(gmt_date){ return $.datepicker.formatDate("M d, yy", new Date(gmt_date)); }
 })
 
-window.start_page = () =>console.log("start_page"); window.complaints = new Ractive(complaints_options); console.log("after")
+window.start_page = function(){ window.complaints = new Ractive(complaints_options) }
 
 $(function() {
   start_page();

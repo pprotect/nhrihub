@@ -62,3 +62,30 @@ describe "CaseReferenceCollection" do
     expect(@collection.next_ref).to eq next_ref
   end
 end
+
+describe "CaseReference.sql_match" do
+  let(:null_ref){ '1=1' }
+  it "should disregard nil fragment" do
+    expect(CaseReference.sql_match(nil)).to eq null_ref
+  end
+
+  it "should disregard blank string fragment" do
+    expect(CaseReference.sql_match("")).to eq null_ref
+  end
+
+  it "should construct sql query from digit strings of any length" do
+    year = "21"
+    sequence = "98764493215518124512343"
+    expect(CaseReference.sql_match(year+sequence)).to eq "complaints.case_reference ~* '^C#{year}-*#{sequence}'"
+  end
+
+  it "should construct sql query from very short digit strings" do
+    year = "2"
+    expect(CaseReference.sql_match(year)).to eq "complaints.case_reference ~* '^C#{year}-*'"
+    year = "19"
+    expect(CaseReference.sql_match(year)).to eq "complaints.case_reference ~* '^C#{year}-*'"
+    year = "19"
+    sequence = "3"
+    expect(CaseReference.sql_match(year+sequence)).to eq "complaints.case_reference ~* '^C#{year}-*#{sequence}'"
+  end
+end

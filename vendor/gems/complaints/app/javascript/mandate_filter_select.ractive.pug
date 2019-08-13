@@ -3,20 +3,7 @@ include filter_select_template.pug
 script.
   import Toggle from './toggle'
 
-  export default Ractive.extend(Toggle, {
+  export default Ractive.extend({
     template : $TEMPLATE,
-    source: 'filter_criteria.mandate_id',
-    computed : {
-      selected : {
-        get() {
-          return this.get(this.source) === this.get('id');
-        },
-        set(val){
-          if (val) {
-            return this.set(this.source,this.get('id'));
-          } else {
-            return this.set(this.source,null);
-          }
-        }
-      }
-    }})
+    source: 'filter_criteria.mandate_id'
+    }).extend(Toggle)

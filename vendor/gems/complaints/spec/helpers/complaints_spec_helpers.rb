@@ -79,12 +79,12 @@ module ComplaintsSpecHelpers
     page.find('.edit_cancel .fa-remove').click
   end
 
-  def open_select_status_dropdown
-    page.find('#complaints_controls button#status_select').click
+  def open_dropdown(name)
+    page.find("#complaints_controls button##{name}").click
   end
 
   def select_option(name)
-    page.find(:xpath, ".//li[contains(.,'Open')]")
+    page.find(:xpath, ".//li[contains(.,'#{name}')]")
   end
 
   def current_status
@@ -184,6 +184,10 @@ module ComplaintsSpecHelpers
     complaints[0]
   end
 
+  def last_complaint
+    complaints[-1]
+  end
+
   def complaint_documents
     page.find('#complaint_documents')
   end
@@ -192,20 +196,18 @@ module ComplaintsSpecHelpers
     page.all('#complaints .complaint')
   end
 
-  def number_of_rendered_complaints
-    complaints.length
-  end
-
-  def number_of_all_complaints
-    page.all('#complaints .complaint', :visible => false).length
-  end
-
   def documents
     page.all('#complaint_documents .complaint_document')
   end
 
   def assignee_history
     find('#assignees')
+  end
+
+  def select_assignee(name)
+    open_dropdown('assignee_select')
+    sleep(0.2) # javascript
+    select_option(name).click
   end
 
   def expand

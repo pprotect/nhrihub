@@ -10,6 +10,29 @@ require 'complaints_context_notes_spec_helpers'
 require 'complaints_communications_spec_helpers'
 require 'active_storage_helpers'
 
+feature "complaints index", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include NavigationHelpers
+  include ComplaintsSpecHelpers
+
+  before do
+    populate_database
+    visit complaints_path('en')
+  end
+
+  it "adds a new complaint that is valid" do
+    add_complaint
+    complete_required_fields
+    expect{save_complaint.click; wait_for_ajax}.to change{ Complaint.count }.by(1)
+
+    # on the server
+    #puts "on server, first status change is:  #{ActiveRecord::Base.connection.execute('select change_date from status_changes').to_a.last["change_date"]}"
+    #puts DateTime.now.strftime("%b %e, %Y")
+    expect(first_complaint.find('#status_changes .status_change span.date').text).to eq Date.today.strftime("%b %-e, %Y")
+  end
+end
+
 feature "complaints index with multiple complaints", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
@@ -29,8 +52,7 @@ feature "complaints index with multiple complaints", :js => true do
   it "shows only open complaints assigned to the current user" do
     expect(page.all('#complaints .complaint').length).to eq 1
     expect(page.find('#complaints .complaint .current_assignee').text).to eq @user.first_last_name
-    open_select_status_dropdown
-    debugger
+    open_dropdown('status_select')
     expect(select_option('Open')[:class]).to include('selected')
   end
 end
@@ -71,6 +93,29 @@ feature "complaints index", :js => true do
   it "shows a list of complaints" do
     expect(page.find('h1').text).to eq "Complaints"
     expect(page).to have_selector('#complaints .complaint', :count => 1)
+    expect(page.all('#complaints .complaint #status_changes .status_change .status_humanized').first.text).to eq "Open"
+    open_dropdown('status_select')
+    select_option('Open').click #deselect
+    expect(page).not_to have_selector('#complaints .complaint')
+    select_option('Closed').click #select
+    expect(page).to have_selector('#complaints .complaint', :count => 1)
+    expect(page.all('#complaints .complaint #status_changes .status_change .status_humanized').first.text).to eq "Closed"
+
+    # reset the filter to defaults
+    clear_filter_fields
+    open_dropdown('status_select')
+    expect(page).to have_selector("div.select li.selected")
+
+    # because there was a bug!
+    select_option('Open').click #deselect
+    expect(page).not_to have_selector("div.select li.selected")
+    clear_filter_fields
+    open_dropdown('status_select')
+    expect(page).to have_selector("div.select li.selected")
+
+    # highlight filters in effect
+    expect(page.find('#complaints_controls .labels div', text: 'Status')[:class]).to include('active')
+    expect(page.find('#complaints_controls .labels div', text: 'Assignee')[:class]).to include('active')
   end
 
   it "shows basic information for each complaint" do
@@ -166,7 +211,7 @@ feature "complaints index", :js => true do
       check_basis(:good_governance, "Delayed action")
       check_basis(:human_rights, "CAT")
       check_basis(:special_investigations_unit, "Unreasonable delay")
-      select(User.staff.first.first_last_name, :from => "assignee")
+      select(User.where(login: 'admin').first.first_last_name, :from => "assignee")
       check_agency("SAA")
       check_agency("ACC")
       attach_file("complaint_fileinput", upload_document)
@@ -200,7 +245,7 @@ feature "complaints index", :js => true do
     expect(complaint.good_governance_complaint_bases.map(&:name)).to include "Delayed action"
     expect(complaint.human_rights_complaint_bases.map(&:name)).to include "CAT"
     expect(complaint.special_investigations_unit_complaint_bases.map(&:name)).to include "Unreasonable delay"
-    expect(complaint.current_assignee_name).to eq User.staff.first.first_last_name
+    expect(complaint.current_assignee_name).to eq User.admin.first.first_last_name
     expect(complaint.status_changes.count).to eq 1
     expect(complaint.status_changes.first.complaint_status.name).to eq "Under Evaluation"
     expect(complaint.agencies.map(&:name)).to include "SAA"
@@ -212,7 +257,7 @@ feature "complaints index", :js => true do
 
     # on the client
     expect(first_complaint.find('.case_reference').text).to eq next_ref
-    expect(first_complaint.find('.current_assignee').text).to eq User.staff.first.first_last_name
+    expect(first_complaint.find('.current_assignee').text).to eq User.admin.first.first_last_name
     expect(first_complaint.find('.lastName').text).to eq "Normal"
     expect(first_complaint.find('.firstName').text).to eq "Norman"
     expect(first_complaint.find('.chiefly_title').text).to eq "bossman"
@@ -263,7 +308,7 @@ feature "complaints index", :js => true do
     expect( email.subject ).to eq "Notification of complaint assignment"
     lines = Nokogiri::HTML(email.body.to_s).xpath(".//p").map(&:text)
     # lin[0] is addressee
-    expect( lines[0] ).to eq User.staff.first.first_last_name
+    expect( lines[0] ).to eq User.admin.first.first_last_name
     # complaint url is embedded in the email
     url = Nokogiri::HTML(email.body.to_s).xpath(".//p/a").attr('href').value
     expect( url ).to match (/\/en\/complaints\.html\?case_reference=c#{Date.today.strftime("%y")}-1$/i)
@@ -280,7 +325,7 @@ feature "complaints index", :js => true do
       fill_in('complaint_details', :with => "a long story about lots of stuff")
       check('special_investigations_unit')
       check_basis(:good_governance, "Delayed action")
-      select(User.staff.first.first_last_name, :from => "assignee")
+      select(User.admin.first.first_last_name, :from => "assignee")
     end
     expect{save_complaint.click; wait_for_ajax}.to change{ Complaint.count }.by(1)
                                                .and change{ page.all('.complaint').count }.by(1)
@@ -306,7 +351,7 @@ feature "complaints index", :js => true do
       check_basis(:good_governance, "Delayed action")
       check_basis(:human_rights, "CAT")
       check_basis(:special_investigations_unit, "Unreasonable delay")
-      select(User.staff.first.first_last_name, :from => "assignee")
+      select(User.admin.first.first_last_name, :from => "assignee")
     end
     expect{save_complaint.click; wait_for_ajax}.to change{ Complaint.count }.by(1)
                                                .and change{ page.all('.complaint').count }.by(1)
@@ -329,13 +374,13 @@ feature "complaints index", :js => true do
         fill_in('complaint_details', :with => "a long story about lots of stuff")
         check('good_governance')
         check_basis(:special_investigations_unit, "Unreasonable delay")
-        select(User.staff.first.first_last_name, :from => "assignee")
+        select(User.admin.first.first_last_name, :from => "assignee")
       end
       expect{save_complaint.click; wait_for_ajax}.to change{ Complaint.count }.by(1)
     end
     year = Date.today.strftime("%y")
-    expect(Complaint.pluck(:case_reference)).to eq ["c12-34", "C#{year}-1", "C#{year}-2", "C#{year}-3", "C#{year}-4", "C#{year}-5", "C#{year}-6", "C#{year}-7", "C#{year}-8", "C#{year}-9", "C#{year}-10", "C#{year}-11", "C#{year}-12", "C#{year}-13", "C#{year}-14", "C#{year}-15"]
-    expect(page.all('.complaint .basic_info .case_reference').map(&:text)).to eq ["C#{year}-15", "C#{year}-14", "C#{year}-13", "C#{year}-12", "C#{year}-11", "C#{year}-10", "C#{year}-9", "C#{year}-8", "C#{year}-7", "C#{year}-6", "C#{year}-5", "C#{year}-4", "C#{year}-3", "C#{year}-2", "C#{year}-1", "c12-34"]
+    expect(Complaint.pluck(:case_reference)).to eq ["c12-34","c12-42"]+(1..15).map{|i| "C#{year}-#{i}"}
+    expect(page.all('.complaint .basic_info .case_reference').map(&:text)).to eq (1..15).map{|i| "C#{year}-#{i}"}.reverse+["c12-34"]
     add_complaint
     expect(page.find('.new_complaint #case_reference').text).to eq "C#{year}-16"
   end
@@ -362,7 +407,7 @@ feature "complaints index", :js => true do
       expect(page).not_to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
       fill_in('village', :with => "Leaden Roding")
       expect(page).not_to have_selector('#village_error', :text => 'You must enter a village')
-      select(User.staff.first.first_last_name, :from => "assignee")
+      select(User.admin.first.first_last_name, :from => "assignee")
       expect(page).not_to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
       check('special_investigations_unit')
       expect(page).not_to have_selector('#mandate_ids_count_error', :text => 'You must select an area')
@@ -411,7 +456,7 @@ feature "complaints index", :js => true do
       check_basis(:good_governance, "Delayed action")
       check_basis(:human_rights, "CAT")
       check_basis(:special_investigations_unit, "Unreasonable delay")
-      select(User.staff.first.first_last_name, :from => "assignee")
+      select(User.admin.first.first_last_name, :from => "assignee")
     end
     cancel_add
     expect(page).not_to have_selector('.new_complaint')
@@ -428,16 +473,20 @@ feature "complaints index", :js => true do
   end
 
   it "changes complaint current status by adding a status_change" do
-    edit_complaint
+    edit_complaint # editing the complaint with case_reference C12-34
     within current_status do
       expect(page).to have_checked_field "open" # default result set is open complaints for current user
       choose "closed"
     end
     expect{ edit_save }.to change{ Complaint.first.current_status }.from("Open").to("Closed")
-    expect( first_complaint.all('#status_changes .status_change').last.text ).to match "Closed"
-    expect( first_complaint.all('#status_changes .date').last.text ).to match /#{Date.today.strftime("%b %-e, %Y")}/
+    open_dropdown('status_select')
+    select_option('Closed').click
+    sleep(0.2) # javascript
+    # the complaint we edited is now the last, b/c there's another more recent that is closed
+    expect( last_complaint.all('#status_changes .status_change').last.text ).to match "Closed"
+    expect( last_complaint.all('#status_changes .date').last.text ).to match /#{Date.today.strftime("%b %-e, %Y")}/
     user = User.find_by(:login => 'admin')
-    expect( first_complaint.all('#status_changes .user_name').last.text ).to match /#{user.first_last_name}/
+    expect( last_complaint.all('#status_changes .user_name').last.text ).to match /#{user.first_last_name}/
   end
 
   it "edits a complaint" do
@@ -454,7 +503,7 @@ feature "complaints index", :js => true do
       fill_in('desired_outcome', :with => "Things are more better")
       choose('complained_to_subject_agency_no')
       # ASSIGNEE
-      select(User.staff.last.first_last_name, :from => "assignee")
+      select(User.admin.last.first_last_name, :from => "assignee")
       # MANDATE
       check('special_investigations_unit') # originally had human rights mandate
       # BASIS
@@ -494,7 +543,7 @@ feature "complaints index", :js => true do
     expect( Complaint.first.human_rights_complaint_bases.first.name ).to eq "ICESCR"
     expect( Complaint.first.special_investigations_unit_complaint_bases.count ).to eq 1
     expect( Complaint.first.special_investigations_unit_complaint_bases.first.name ).to eq "Not properly investigated"
-    expect( Complaint.first.assignees ).to include User.staff.last
+    expect( Complaint.first.assignees ).to include User.admin.last
     expect( Complaint.first.agencies.map(&:name) ).to include "MAF"
     expect( Complaint.first.agencies.count ).to eq 1
     expect( Complaint.first.date_received.to_date).to eq Date.new(Date.today.year, Date.today.month, 23)
@@ -506,19 +555,19 @@ feature "complaints index", :js => true do
     expect(page).to have_selector('.date_received',:text => Date.new(Date.today.year, Date.today.month, 23).strftime("%b %-e, %Y"))
 
     within good_governance_complaint_bases do
-      Complaint.last.good_governance_complaint_bases.map(&:name).each do |complaint_basis_name|
+      Complaint.first.good_governance_complaint_bases.map(&:name).each do |complaint_basis_name|
         expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
       end
     end
 
     within human_rights_complaint_bases do
-      Complaint.last.human_rights_complaint_bases.map(&:name).each do |complaint_basis_name|
+      Complaint.first.human_rights_complaint_bases.map(&:name).each do |complaint_basis_name|
         expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
       end
     end
 
     within special_investigations_unit_complaint_bases do
-      Complaint.last.special_investigations_unit_complaint_bases.map(&:name).each do |complaint_basis_name|
+      Complaint.first.special_investigations_unit_complaint_bases.map(&:name).each do |complaint_basis_name|
         expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
       end
     end
@@ -532,13 +581,13 @@ feature "complaints index", :js => true do
       expect(page.all('#complaint_documents .complaint_document .title').map(&:text)).to include "added complaint document"
     end
 
-    expect(page).to have_selector("#assignees .assignee .name", :text => User.staff.last.first_last_name )
+    expect(page).to have_selector("#assignees .assignee .name", :text => User.admin.last.first_last_name )
 
     email = ActionMailer::Base.deliveries.last
     expect( email.subject ).to eq "Notification of complaint assignment"
     lines = Nokogiri::HTML(email.body.to_s).xpath(".//p").map(&:text)
     # lin[0] is addressee
-    expect( lines[0] ).to eq User.staff.last.first_last_name
+    expect( lines[0] ).to eq User.admin.last.first_last_name
     # complaint url is embedded in the email
     url = Nokogiri::HTML(email.body.to_s).xpath(".//p/a").attr('href').value
     expect( url ).to match (/\/en\/complaints\.html\?case_reference=#{Complaint.first.case_reference}$/)
@@ -596,7 +645,7 @@ feature "complaints index", :js => true do
       fill_in('desired_outcome', :with => "bish bash bosh")
       choose('complained_to_subject_agency_yes')
       select_datepicker_date("#date_received",Date.today.year,Date.today.month,9)
-      select(User.staff.last.first_last_name, :from => "assignee")
+      select(User.admin.last.first_last_name, :from => "assignee")
       check('special_investigations_unit')
       check_agency("ACC")
       attach_file("complaint_fileinput", upload_document)
@@ -794,15 +843,14 @@ feature "complaints index", :js => true do
     create_complaints # 3 complaints
     url = URI(@complaint.index_url)
     visit @complaint.index_url.gsub(%r{.*#{url.host}},'') # hack, don't know how else to do it, host otherwise is SITE_URL defined in lib/constants
-    expect(number_of_rendered_complaints).to eq 1
-    expect(number_of_all_complaints).to eq 4
+    expect(complaints.count).to eq 1
     expect(page.find('#complaints_controls #case_reference').value).to eq @complaint.case_reference
     clear_filter_fields
-    expect(number_of_rendered_complaints).to eq 4
+    expect(complaints.count).to eq 4
     expect(query_string).to be_blank
-    click_back_button
-    expect(page.evaluate_script("window.location.search")).to eq "?case_reference=#{@complaint.case_reference}"
-    expect(number_of_rendered_complaints).to eq 1
+    #click_back_button
+    #expect(page.evaluate_script("window.location.search")).to eq "?case_reference=#{@complaint.case_reference}"
+    #expect(complaints.count).to eq 1
   end
 end
 
@@ -879,5 +927,107 @@ feature "complaints cache expiration", :js => true do
       visit complaints_path('en')
       expect(communication_icon['data-count']).to eq "0"
     end
+  end
+end
+
+feature "reloads complaints if a different assignee is selected", js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include NavigationHelpers
+  include ComplaintsSpecHelpers
+
+  before do
+    populate_database
+    user = FactoryBot.create(:user, firstName: "Norman", lastName: "Normal")
+    @norms_complaint = FactoryBot.create(:complaint, :under_evaluation, assigned_to: user)
+    visit complaints_path('en')
+  end
+
+  it "should show the complaints assigned to the checked assignee" do
+    select_assignee('Norman Normal')
+    wait_for_ajax
+    expect(complaints.count).to eq 1
+    expect(first_complaint.find('.case_reference').text).to eq @norms_complaint.case_reference
+  end
+
+  it "should show complaints for the current user after alternative assignee setting is cleared" do
+    select_assignee('Norman Normal')
+    wait_for_ajax
+    clear_filter_fields
+    wait_for_ajax
+    expect(complaints.count).to eq 1
+    expected_complaint = Complaint.with_status(:open).for_assignee(User.first).first
+    expect(first_complaint.find('.case_reference').text).to eq expected_complaint.case_reference
+  end
+end
+
+feature "selects complaints by partial match of case reference", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecHelpers
+
+  before do
+    15.times do
+      # case_refs are Cyy-1 .. Cyy-15
+      FactoryBot.create(:complaint, :open, assigned_to: User.first, case_reference: Complaint.next_case_reference)
+    end
+    visit complaints_path(:en)
+  end
+
+  # in the tests below we set ractive values directly b/c setting the
+  # input values results in many ajax requests
+  it "should return partial matches when at least two digits are entered" do
+    year = Date.today.strftime('%y') 
+    script = "complaints.set('filter_criteria.case_reference','C')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 15
+    script = "complaints.set('filter_criteria.case_reference','C#{year[0]}')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 15
+    script = "complaints.set('filter_criteria.case_reference','C#{year}')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 15
+    script = "complaints.set('filter_criteria.case_reference','C#{year}-1')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 7
+    script = "complaints.set('filter_criteria.case_reference','C#{year}-12')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 1
+  end
+
+  it "should return partial matches when 3 or 4 digits are entered" do
+    year = Date.today.strftime('%y') 
+    script = "complaints.set('filter_criteria.case_reference','#{year}1')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 7
+    script = "complaints.set('filter_criteria.case_reference','#{year}15')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 1
+    script = "complaints.set('filter_criteria.case_reference','#{year}16')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 0
+    clear_filter_fields
+    wait_for_ajax
+    expect(complaints.count).to eq 15
+  end
+
+  it "should return a single result when the exact case ref is entered, case insensitive" do
+    year = Date.today.strftime('%y') 
+    #page.find('input#case_reference').set("c#{year}-10")
+    script = "complaints.set('filter_criteria.case_reference','c#{year}-10')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 1
+    script = "complaints.set('filter_criteria.case_reference','C#{year}-10')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 1
   end
 end

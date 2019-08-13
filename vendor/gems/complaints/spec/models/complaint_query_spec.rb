@@ -15,7 +15,7 @@ describe "scope class methods" do
     it "returns complaints based on assignee" do
       expect(Complaint.for_assignee(@user.id)).to eq Complaint.all.select{|c| c.current_assignee_id == @user.id}
       expect(Complaint.for_assignee(@staff_user.id)).to eq Complaint.all.select{|c| c.current_assignee_id == @staff_user.id}
-      expect(Complaint.for_assignee.pluck(:id)).to match_array Complaint.pluck(:id)
+      expect(Complaint.for_assignee).to be_empty
     end
   end
 

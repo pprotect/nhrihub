@@ -180,7 +180,7 @@ script#new_complaint_template(type = 'text/ractive')
               | {{ t.form_error }}
 
 script#show_complaint_template(type = 'text/ractive')
-  .row.well.well-sm.expandable_well.complaint.editable_container( style-display = "{{display}}", 'as-inpage_edit'='id')
+  .row.well.well-sm.expandable_well.complaint.editable_container('as-inpage_edit'='id')
     .col-md-12('data-toggle' = 'edit')
       .fade.edit
         span.required_before 
@@ -364,123 +364,6 @@ script(type='text/javascript').
       }
     };
 
-  const FilterMatch = {
-    include() {
-      //console.log "call include()"
-      // console.log JSON.stringify "matches_complainant" : @matches_complainant(), "matches_case_reference" : @matches_case_reference(), "matches_village" : @matches_village(), "matches_date" : @matches_date(), "matches_phone" : @matches_phone(), "matches_agencies" : @matches_agencies(), "matches_assignee" : @matches_assignee(), "matches_status" : @matches_status(), "matches_basis" : @matches_basis
-      // console.log JSON.stringify "matches_good_governance_complaint_basis" : @matches_good_governance_complaint_basis(), "matches_human_rights_complaint_basis" : @matches_human_rights_complaint_basis(), "matches_special_investigations_unit_complaint_basis" : @matches_special_investigations_unit_complaint_basis(), "basis_rule" : @get('filter_criteria.basis_rule'), "matches_basis" : @matches_basis(), "basis_requirement_is_specified" : @basis_requirement_is_specified(), "good_governance_basis_requirement_is_specified" : @good_governance_basis_requirement_is_specified(), "human_rights_basis_requirement_is_specified" : @human_rights_basis_requirement_is_specified(), "special_investigations_unit_basis_requirement_is_specified" : @special_investigations_unit_basis_requirement_is_specified()
-      // console.log JSON.stringify "matches_area" : @matches_area()
-      return this.matches_complainant() &&
-      this.matches_case_reference() &&
-      this.matches_village() &&
-      this.matches_date() &&
-      this.matches_phone() &&
-      this.matches_agencies() &&
-      this.matches_basis() &&
-      this.matches_assignee() &&
-      this.matches_status() &&
-      this.matches_area();
-    },
-    matches_area() {
-      if (!_.isNumber(this.get('filter_criteria.mandate_id')) || _.isNull(this.get('filter_criteria.mandate_id'))) { return true; }
-      return parseInt(this.get('mandate_id')) === parseInt(this.get('filter_criteria.mandate_id'));
-    },
-    matches_complainant() {
-      if (_.isEmpty(this.get('filter_criteria.complainant'))) { return true; }
-      const flexible_space_match = this.get('filter_criteria.complainant').trim().replace(/\s+/g, "\\s+");
-      const re = new RegExp(flexible_space_match,"i");
-      const full_name = [this.get('chiefly_title'),this.get('firstName'),this.get('lastName')].join(' ');
-      return re.test(full_name);
-    },
-    matches_case_reference() {
-      if (_.isEmpty(this.get('filter_criteria.case_reference'))) { return true; }
-      const criterion_digits = this.get('filter_criteria.case_reference').replace(/\D/g,'');
-      const value_digits = this.get('case_reference').replace(/\D/g,'');
-      const re = new RegExp(criterion_digits);
-      return re.test(value_digits);
-    },
-    matches_village() {
-      if (_.isEmpty(this.get('filter_criteria.village'))) { return true; }
-      const re = new RegExp(this.get('filter_criteria.village').trim(),"i");
-      return re.test(this.get('village'));
-    },
-    matches_date() {
-      return this.matches_from() && this.matches_to();
-    },
-    matches_from() {
-      if (_.isNull(this.get('date')) || _.isEmpty(this.get('filter_criteria.from'))) { return true; }
-      return (new Date(this.get('date'))).valueOf() >= Date.parse(this.get('filter_criteria.from'));
-    },
-    matches_to() {
-      if (_.isNull(this.get('date')) || _.isEmpty(this.get('filter_criteria.to'))) { return true; }
-      return (new Date(this.get('date'))).valueOf() <= Date.parse(this.get('filter_criteria.to'));
-    },
-    matches_phone() {
-      if (_.isEmpty(this.get('filter_criteria.phone'))) { return true; }
-      const criterion_digits = this.get('filter_criteria.phone').replace(/\D/g,'');
-      const value_digits = this.get('phone').replace(/\D/g,'');
-      const re = new RegExp(criterion_digits);
-      return re.test(value_digits);
-    },
-    matches_agencies() {
-      if (_.isEmpty(this.get('filter_criteria.selected_agency_ids'))) { return true; }
-      return _.intersection(this.get('filter_criteria.selected_agency_ids'), this.get('agency_ids')).length > 0;
-    },
-    matches_basis() {
-      const match = this.matches_good_governance_complaint_basis() || // each val is undefined if no ids were selected
-              this.matches_human_rights_complaint_basis() || // if all of them are undefined, match is undefined
-              this.matches_special_investigations_unit_complaint_basis(); // if any is true, true is returned
-      if (_.isUndefined(match)) { return true; }
-      if (!this.basis_requirement_is_specified()) {
-        return true;
-      } else {
-        return match;
-      }
-    },
-    basis_requirement_is_specified() {
-      return this.good_governance_basis_requirement_is_specified() ||
-      this.human_rights_basis_requirement_is_specified() ||
-      this.special_investigations_unit_basis_requirement_is_specified();
-    },
-    good_governance_basis_requirement_is_specified() {
-      const selected = this.get('filter_criteria.selected_good_governance_complaint_basis_ids');
-      return !(_.isEmpty(selected) || _.isUndefined(selected));
-    },
-    human_rights_basis_requirement_is_specified() {
-      const selected = this.get('filter_criteria.selected_human_rights_complaint_basis_ids');
-      return !(_.isEmpty(selected) || _.isUndefined(selected));
-    },
-    special_investigations_unit_basis_requirement_is_specified() {
-      const selected = this.get('filter_criteria.selected_special_investigations_unit_complaint_basis_ids');
-      return !(_.isEmpty(selected) || _.isUndefined(selected));
-    },
-    matches_good_governance_complaint_basis() {
-      const selected = this.get('filter_criteria.selected_good_governance_complaint_basis_ids');
-      const attrs = this.get('good_governance_complaint_basis_ids');
-      return _.intersection(selected,attrs).length > 0;
-    },
-    matches_human_rights_complaint_basis() {
-      const selected = this.get('filter_criteria.selected_human_rights_complaint_basis_ids');
-      const attrs = this.get('human_rights_complaint_basis_ids');
-      return _.intersection(selected,attrs).length > 0;
-    },
-    matches_special_investigations_unit_complaint_basis() {
-      const selected = this.get('filter_criteria.selected_special_investigations_unit_complaint_basis_ids');
-      const attrs = this.get('special_investigations_unit_complaint_basis_ids');
-      return _.intersection(selected,attrs).length > 0;
-    },
-    matches_assignee() {
-      const selected_assignee_id = this.get('filter_criteria.selected_assignee_id');
-      const assignee_id = this.get('current_assignee_id');
-      return _.isNaN(parseInt(selected_assignee_id)) || (assignee_id === selected_assignee_id);
-    },
-    matches_status() {
-      const selected_statuses = this.get('filter_criteria.selected_statuses');
-      const status_name = this.get('current_status_humanized');
-      return _.isEmpty(selected_statuses) || (selected_statuses.indexOf(status_name) !== -1);
-    }
-  };
-
 
   const EditBackup = {
     stash() {
@@ -551,15 +434,6 @@ script(type='text/javascript').
     computed : {
       delete_confirmation_message() {
         return `${i18n.delete_complaint_confirmation_message} ${this.get('case_reference')}?`;
-      },
-      include() {
-        return this.include();
-      },
-      display() {
-        if(!this.get('include'))
-          {return 'none';}
-        else
-          {return 'block';}
       },
       reminders_count() {
         const reminders = this.get('reminders');
@@ -743,7 +617,6 @@ script(type='text/javascript').
     }}).extend(EditBackup)
   .extend(Persistence)
   .extend(ConfirmDeleteModal)
-  .extend(FilterMatch)
   .extend(Remindable)
   .extend(Notable)
   .extend(Communications)

@@ -15,12 +15,11 @@ def rand_filename
 end
 
 def admin_assigns(assignees)
+  assignees = [assignees] unless assignees.is_a?(Array)
   if assignees.empty?
     []
   else
-    first_assignee, second_assignee = assignees
-    [ Assign.new(created_at: 4.days.ago, assignee: first_assignee),
-      Assign.new(created_at: 20.days.ago, assignee: second_assignee) ]
+    assignees.each_with_index.map{|assignee, i| Assign.new(created_at: (5*i).days.ago, assignee: assignee) }
   end
 end
 

@@ -26,30 +26,46 @@ class Complaint < ActiveRecord::Base
   has_many :communications, :dependent => :destroy
 
   attr_accessor :witness_name
-  scope :filtered, ->(user){ with_status(:open).for_assignee(user.id) }
 
-  scope :index_page_associations, ->(user, ids){ filtered(user).
-                                                 includes({:assigns => :assignee},
-                                                   :mandates,
-                                                   {:status_changes => [:user, :complaint_status]},
-                                                   {:complaint_good_governance_complaint_bases=>:good_governance_complaint_basis},
-                                                   {:complaint_special_investigations_unit_complaint_bases => :special_investigations_unit_complaint_basis},
-                                                   {:complaint_human_rights_complaint_bases=>:human_rights_complaint_basis},
-                                                   {:complaint_agencies => :agency},
-                                                   {:communications => [:user, :communication_documents, :communicants]},
-                                                   :complaint_documents,
-                                                   {:reminders => :user},
-                                                   {:notes =>[:author, :editor]}).
-                                                 where(id: ids)
-                                          }
-  def self.with_status(status)
+  def self.filtered(query)
+    with_status(query[:selected_statuses]).
+      with_case_reference_match(query[:case_reference])
+  end
+
+  def self.index_page_associations(user, ids, query)
+    filtered(query).
+    for_assignee(query[:selected_assignee_id]).
+      includes({:assigns => :assignee},
+        :mandates,
+        {:status_changes => [:user, :complaint_status]},
+        {:complaint_good_governance_complaint_bases=>:good_governance_complaint_basis},
+        {:complaint_special_investigations_unit_complaint_bases => :special_investigations_unit_complaint_basis},
+        {:complaint_human_rights_complaint_bases=>:human_rights_complaint_basis},
+        {:complaint_agencies => :agency},
+        {:communications => [:user, :communication_documents, :communicants]},
+        :complaint_documents,
+        {:reminders => :user},
+        {:notes =>[:author, :editor]}).
+      where(id: ids)
+  end
+
+  def self.with_case_reference_match(case_ref_fragment)
+    sql = CaseReference.sql_match(case_ref_fragment)
+    where(sql)
+  end
+
+  # can take either an array of strings or symbols
+  # or cant take a single string or symbol
+  def self.with_status(status_name_array)
+    status_name_array = [status_name_array] unless status_name_array.is_a?(Array)
+    status_name_array = status_name_array.map{|s| s.to_s.titlecase }
     joins(:status_changes => :complaint_status).
       merge(StatusChange.most_recent_for_complaint).
-      merge(ComplaintStatus.send(status))
+      merge(ComplaintStatus.with_status(status_name_array))
   end
 
   def self.for_assignee(user_id = nil)
-    user_id ? joins(:assigns).merge(Assign.most_recent_for_assignee(user_id)) : unscoped
+    user_id && !user_id.blank? ? joins(:assigns).merge(Assign.most_recent_for_assignee(user_id)) : where("1 = 0")
   end
 
   def status_changes_attributes=(attrs)

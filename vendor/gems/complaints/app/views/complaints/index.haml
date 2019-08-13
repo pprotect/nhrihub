@@ -42,12 +42,12 @@
     phone_number : ""
     basis_ids : []
     selected_agency_ids : []
-    current_assignee_id : ""
-    selected_assignee_id : ""
+    current_assignee_id : 0
+    selected_assignee_id : #{@selected_assignee_id}
     selected_human_rights_complaint_basis_ids : []
     selected_special_investigations_unit_complaint_basis_ids : []
     selected_good_governance_complaint_basis_ids : []
-    selected_statuses : ["Open"]
+    selected_statuses : #{@selected_statuses.to_json.html_safe}
     mandate_ids : []
   @i18n =
     tooltip_messages:

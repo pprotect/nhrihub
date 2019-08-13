@@ -15,9 +15,14 @@ script.
     data() {
       return $.extend(true,{},complaints_page_data());
     },
-    oninit() {
-      console.log("initializing the page");
+    refresh : function(data, statusText, xhr){
+      complaints.set('complaints', data)
     },
+    load: function(){
+      var params = _.extend({},this.get('filter_criteria'))
+      if(_.isEmpty(params.selected_statuses)){params.selected_statuses = [""]} // hack to send "empty" array indicating no status was checked
+      $.get(window.url, params , this.refresh, 'json')
+      },
     components : {
       complaint : Complaint,
       filterControls : FilterControls

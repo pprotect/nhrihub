@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
 
   scope :active, ->{ where("status != 'deleted'") }
   scope :staff, ->{ joins(:roles).where("roles.name = 'staff'") }
+  scope :admin, ->{ joins(:roles).where("roles.name = 'admin'") }
 
   def lost_token?
     @lost_token

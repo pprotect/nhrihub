@@ -3,6 +3,20 @@ require 'rspec/core/shared_context'
 module ComplaintsSpecSetupHelpers
   extend RSpec::Core::SharedContext
 
+  def complete_required_fields
+    within new_complaint do
+      fill_in('lastName', :with => "Normal")
+      fill_in('firstName', :with => "Norman")
+      fill_in('dob', :with => "08/09/1950")
+      fill_in('village', :with => "Normaltown")
+      fill_in('complaint_details', :with => "a long story about lots of stuff")
+      check('special_investigations_unit')
+      choose('complained_to_subject_agency_yes')
+      check_basis(:good_governance, "Delayed action")
+      select(User.admin.first.first_last_name, :from => "assignee")
+    end
+  end
+
   def populate_database
     create_mandates
     create_agencies
@@ -13,6 +27,22 @@ module ComplaintsSpecSetupHelpers
     FactoryBot.create(:complaint, :open,
                       :assigned_to => [user, staff_user],
                       :case_reference => "c12-34",
+                      :date_received => DateTime.now.advance(:days => -100),
+                      :village => Faker::Address.city,
+                      :phone => Faker::PhoneNumber.phone_number,
+                      :dob => "19/08/1950",
+                      :human_rights_complaint_bases => hr_complaint_bases,
+                      :good_governance_complaint_bases => gg_complaint_bases,
+                      :special_investigations_unit_complaint_bases => siu_complaint_bases,
+                      :desired_outcome => Faker::Lorem.sentence,
+                      :details => Faker::Lorem.sentence,
+                      :complaint_documents => complaint_docs,
+                      :mandate_ids => [_mandate_id],
+                      :agencies => _agencies,
+                      :communications => _communications)
+    FactoryBot.create(:complaint, :closed,
+                      :case_reference => "c12-42",
+                      :assigned_to => [user, staff_user],
                       :date_received => DateTime.now.advance(:days => -100),
                       :village => Faker::Address.city,
                       :phone => Faker::PhoneNumber.phone_number,
@@ -47,7 +77,7 @@ module ComplaintsSpecSetupHelpers
 
   def create_staff
     2.times do
-      FactoryBot.create(:user, :staff, :firstName => Faker::Name.first_name, :lastName => Faker::Name.last_name)
+      FactoryBot.create(:user, :staff, :firstName => Faker::Name.unique.first_name, :lastName => Faker::Name.unique.last_name)
     end
   end
 

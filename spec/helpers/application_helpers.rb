@@ -102,7 +102,7 @@ module ApplicationHelpers
   end
 
   def clear_filter_fields
-    page.find('.fa-refresh').click
+    page.all('.fa-refresh').first.click
     sleep(0.2) #javascript
   end
 

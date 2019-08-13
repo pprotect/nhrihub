@@ -36,4 +36,14 @@ class CaseReference
       1
     end
   end
+
+  def self.sql_match(case_reference_fragment)
+    digits = case_reference_fragment&.delete('^0-9')
+    if digits.nil? || digits.empty?
+      "1=1"
+    else
+      match, year, sequence = digits.match(/^(\d{1,2})(\d*)/).to_a
+      "complaints.case_reference ~* '^C#{year}-*#{sequence}'" # postgres ~* operator is case-insensitive regex match
+    end
+  end
 end
