@@ -156,6 +156,20 @@ script.
             this.parent.load();
           }
         }
+      },
+      'filter_criteria.from': {
+        handler(value, old, path, idx){
+          if(!_.isEmpty(value)){
+            this.parent.load();
+          }
+        }
+      },
+      'filter_criteria.to': {
+        handler(value, old, path, idx){
+          if(!_.isEmpty(value)){
+            this.parent.load();
+          }
+        }
       }
     },
     clear_filter() {

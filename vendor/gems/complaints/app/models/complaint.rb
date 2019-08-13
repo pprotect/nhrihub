@@ -30,7 +30,25 @@ class Complaint < ActiveRecord::Base
   def self.filtered(query)
     with_status(query[:selected_statuses]).
       with_case_reference_match(query[:case_reference]).
-      with_complainant_match(query[:complainant])
+      with_complainant_match(query[:complainant]).
+      since_date(query[:from]).
+      before_date(query[:to])
+  end
+
+  def self.since_date(from)
+    if from.blank?
+      where('1=1')
+    else
+      where("complaints.date_received >= ?", Date.parse(from))
+    end
+  end
+
+  def self.before_date(to)
+    if to.blank?
+      where('1=1')
+    else
+      where("complaints.date_received >= ?", Date.parse(to))
+    end
   end
 
   def self.with_complainant_match(complainant_fragment)

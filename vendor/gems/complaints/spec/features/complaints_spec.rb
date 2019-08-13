@@ -1073,3 +1073,47 @@ feature "selects complaints by partial match of complainant", :js => true do
     expect(complaints.count).to eq 1
   end
 end
+
+feature "selects complaints by match of date ranges", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecHelpers
+
+  before do
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, date_received: 1.month.ago)
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, date_received: 2.months.ago)
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, date_received: 3.months.ago)
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, date_received: 4.months.ago)
+    visit complaints_path(:en)
+  end
+
+  it "should return complaints created since the 'since' date" do
+    expect(complaints.count).to eq 4
+    d = Date.today.advance(months: -3)
+    select_datepicker_date('#from',d.year,d.month,d.day)
+    wait_for_ajax
+    expect(complaints.count).to eq 3
+  end
+
+  it "should return complaints created since the 'to' date" do
+    expect(complaints.count).to eq 4
+    d = Date.today.advance(months: -2)
+    select_datepicker_date('#to',d.year,d.month,d.day)
+    wait_for_ajax
+    expect(complaints.count).to eq 2
+  end
+
+  it "should return complaints created within the date range" do
+    expect(complaints.count).to eq 4
+
+    d = Date.today.advance(months: -3)
+    select_datepicker_date('#from',d.year,d.month,d.day)
+    wait_for_ajax
+    expect(complaints.count).to eq 3
+
+    d = Date.today.advance(months: -2)
+    select_datepicker_date('#to',d.year,d.month,d.day)
+
+    wait_for_ajax
+    expect(complaints.count).to eq 2
+  end
+end
