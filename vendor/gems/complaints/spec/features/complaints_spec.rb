@@ -52,7 +52,7 @@ feature "complaints index with multiple complaints", :js => true do
   it "shows only open complaints assigned to the current user" do
     expect(page.all('#complaints .complaint').length).to eq 1
     expect(page.find('#complaints .complaint .current_assignee').text).to eq @user.first_last_name
-    open_dropdown('status_select')
+    open_dropdown('Select status')
     expect(select_option('Open')[:class]).to include('selected')
   end
 end
@@ -76,7 +76,7 @@ feature "complaints index", :js => true do
   end
 
   it "populates filter select dropdown selectors" do
-    page.find('button', :text => 'Select area').click
+    open_dropdown 'Select area'
     Mandate.all.each do |mandate|
       expect(page).to have_selector('#mandate_filter_select li a span', :text => mandate.name)
     end
@@ -94,23 +94,21 @@ feature "complaints index", :js => true do
     expect(page.find('h1').text).to eq "Complaints"
     expect(page).to have_selector('#complaints .complaint', :count => 1)
     expect(page.all('#complaints .complaint #status_changes .status_change .status_humanized').first.text).to eq "Open"
-    open_dropdown('status_select')
-    select_option('Open').click #deselect
-    expect(page).not_to have_selector('#complaints .complaint')
-    select_option('Closed').click #select
-    expect(page).to have_selector('#complaints .complaint', :count => 1)
+    open_dropdown('Select status')
+    expect{ select_option('Open').click; wait_for_ajax }.to change{ page.all('#complaints .complaint').count }.by(-1)
+    expect{ select_option('Closed').click; wait_for_ajax }.to change{ page.all('#complaints .complaint').count }.by(1)
     expect(page.all('#complaints .complaint #status_changes .status_change .status_humanized').first.text).to eq "Closed"
 
-    # reset the filter to defaults
+    ## reset the filter to defaults
     clear_filter_fields
-    open_dropdown('status_select')
+    open_dropdown('Select status')
     expect(page).to have_selector("div.select li.selected")
 
-    # because there was a bug!
+    ## because there was a bug!
     select_option('Open').click #deselect
     expect(page).not_to have_selector("div.select li.selected")
     clear_filter_fields
-    open_dropdown('status_select')
+    open_dropdown('Select status')
     expect(page).to have_selector("div.select li.selected")
 
     # highlight filters in effect
@@ -204,8 +202,7 @@ feature "complaints index", :js => true do
       fill_in('complaint_details', :with => "a long story about lots of stuff")
       fill_in('desired_outcome', :with => "Life gets better")
       fill_in('chiefly_title', :with => "bossman")
-      check('special_investigations_unit')
-      check('good_governance')
+      choose('special_investigations_unit')
       select_male_gender
       choose('complained_to_subject_agency_yes')
       check_basis(:good_governance, "Delayed action")
@@ -240,8 +237,7 @@ feature "complaints index", :js => true do
     expect(complaint.phone).to eq "555-1212"
     expect(complaint.details).to eq "a long story about lots of stuff"
     expect(complaint.desired_outcome).to eq "Life gets better"
-    expect(complaint.mandates.map(&:key)).to include 'special_investigations_unit'
-    expect(complaint.mandates.map(&:key)).to include 'good_governance'
+    expect(complaint.mandate.key).to eq 'special_investigations_unit'
     expect(complaint.good_governance_complaint_bases.map(&:name)).to include "Delayed action"
     expect(complaint.human_rights_complaint_bases.map(&:name)).to include "CAT"
     expect(complaint.special_investigations_unit_complaint_bases.map(&:name)).to include "Unreasonable delay"
@@ -303,7 +299,6 @@ feature "complaints index", :js => true do
     end
 
     expect(page.find('#mandate').text).to match /Special Investigations Unit/
-    expect(page.find('#mandate').text).to match /Good Governance/
     email = ActionMailer::Base.deliveries.last
     expect( email.subject ).to eq "Notification of complaint assignment"
     lines = Nokogiri::HTML(email.body.to_s).xpath(".//p").map(&:text)
@@ -323,7 +318,7 @@ feature "complaints index", :js => true do
       fill_in('dob', :with => "08/09/1950")
       fill_in('village', :with => "Normaltown")
       fill_in('complaint_details', :with => "a long story about lots of stuff")
-      check('special_investigations_unit')
+      choose('special_investigations_unit')
       check_basis(:good_governance, "Delayed action")
       select(User.admin.first.first_last_name, :from => "assignee")
     end
@@ -346,8 +341,7 @@ feature "complaints index", :js => true do
       fill_in('dob', :with => "08/09/1950")
       fill_in('village', :with => "Normaltown")
       fill_in('complaint_details', :with => "a long story about lots of stuff")
-      check('special_investigations_unit')
-      check('good_governance')
+      choose('special_investigations_unit')
       check_basis(:good_governance, "Delayed action")
       check_basis(:human_rights, "CAT")
       check_basis(:special_investigations_unit, "Unreasonable delay")
@@ -372,7 +366,7 @@ feature "complaints index", :js => true do
         fill_in('dob', :with => "08/09/1950")
         fill_in('village', :with => "Normaltown")
         fill_in('complaint_details', :with => "a long story about lots of stuff")
-        check('good_governance')
+        choose('good_governance')
         check_basis(:special_investigations_unit, "Unreasonable delay")
         select(User.admin.first.first_last_name, :from => "assignee")
       end
@@ -394,7 +388,7 @@ feature "complaints index", :js => true do
       expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
       expect(page).to have_selector('#village_error', :text => 'You must enter a village')
       expect(page).to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
-      expect(page).to have_selector('#mandate_id_count_error', :text => 'You must select at least one area')
+      expect(page).to have_selector('#mandate_id_error', :text => 'You must select an area')
       expect(page).to have_selector('#complaint_basis_id_count_error', :text => 'You must select at least one subarea')
       expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
       expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
@@ -409,7 +403,7 @@ feature "complaints index", :js => true do
       expect(page).not_to have_selector('#village_error', :text => 'You must enter a village')
       select(User.admin.first.first_last_name, :from => "assignee")
       expect(page).not_to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
-      check('special_investigations_unit')
+      choose('special_investigations_unit')
       expect(page).not_to have_selector('#mandate_ids_count_error', :text => 'You must select an area')
       check_basis(:special_investigations_unit, "Unreasonable delay")
       expect(page).not_to have_selector('#complaint_basis_id_count_error', :text => 'You must select at least one subarea')
@@ -452,7 +446,7 @@ feature "complaints index", :js => true do
       fill_in('firstName', :with => "Norman")
       fill_in('village', :with => "Normaltown")
       fill_in('phone', :with => "555-1212")
-      check('special_investigations_unit')
+      choose('special_investigations_unit')
       check_basis(:good_governance, "Delayed action")
       check_basis(:human_rights, "CAT")
       check_basis(:special_investigations_unit, "Unreasonable delay")
@@ -479,7 +473,7 @@ feature "complaints index", :js => true do
       choose "closed"
     end
     expect{ edit_save }.to change{ Complaint.first.current_status }.from("Open").to("Closed")
-    open_dropdown('status_select')
+    open_dropdown('Select status')
     select_option('Closed').click
     sleep(0.2) # javascript
     # the complaint we edited is now the last, b/c there's another more recent that is closed
@@ -505,7 +499,7 @@ feature "complaints index", :js => true do
       # ASSIGNEE
       select(User.admin.last.first_last_name, :from => "assignee")
       # MANDATE
-      check('special_investigations_unit') # originally had human rights mandate
+      choose('special_investigations_unit') # originally had human rights mandate
       # BASIS
       uncheck_basis(:good_governance, "Delayed action") # originally had "Delayed action" and "Failure to Act"
       uncheck_basis(:human_rights, "CAT") # originall had "CAT" "ICESCR"
@@ -536,7 +530,7 @@ feature "complaints index", :js => true do
     expect( Complaint.first.dob ).to eq "19/08/1950"
     expect( Complaint.first.details ).to eq "the boy stood on the burning deck"
     expect( Complaint.first.desired_outcome ).to eq "Things are more better"
-    expect( Complaint.first.mandates.map(&:key) ).to match_array [ "human_rights", "special_investigations_unit"]
+    expect( Complaint.first.mandate.key ).to eq "special_investigations_unit"
     expect( Complaint.first.good_governance_complaint_bases.count ).to eq 1
     expect( Complaint.first.good_governance_complaint_bases.first.name ).to eq "Failure to act"
     expect( Complaint.first.human_rights_complaint_bases.count ).to eq 1
@@ -646,7 +640,7 @@ feature "complaints index", :js => true do
       choose('complained_to_subject_agency_yes')
       select_datepicker_date("#date_received",Date.today.year,Date.today.month,9)
       select(User.admin.last.first_last_name, :from => "assignee")
-      check('special_investigations_unit')
+      choose('special_investigations_unit')
       check_agency("ACC")
       attach_file("complaint_fileinput", upload_document)
       fill_in("attached_document_title", :with => "some text any text")
@@ -679,7 +673,7 @@ feature "complaints index", :js => true do
       new_assignee_id = page.evaluate_script("complaints.findAllComponents('complaint')[0].get('new_assignee_id')")
       expect(new_assignee_id).to be_zero
       expect(find('.current_assignee').text).to eq original_complaint.assignees.first.first_last_name
-      expect(page.find(".mandate ##{original_complaint.mandates.first.key}")).to be_checked
+      expect(page.find(".mandate ##{original_complaint.mandate.key}")).to be_checked
       expect(page.find_field("ACC")).not_to be_checked
       expect(page.find_field("SAA")).to be_checked
       expect(page).not_to have_selector("#attached_document_title")
@@ -698,7 +692,7 @@ feature "complaints index", :js => true do
       fill_in('dob', :with => "")
       fill_in('complaint_details', :with => "")
       # MANDATE
-      check('special_investigations_unit') # originally had human rights mandate
+      choose('special_investigations_unit') # originally had human rights mandate
       # BASIS
       uncheck_basis(:good_governance, "Delayed action") # originally had "Delayed action" and "Failure to Act"
       uncheck_basis(:good_governance, "Failure to act") # originally had "Delayed action" and "Failure to Act"
@@ -798,8 +792,6 @@ feature "complaints index", :js => true do
       fill_in('phone', :with => "555-1212")
       fill_in('dob', :with => "")
       fill_in('complaint_details', :with => "")
-      # MANDATE
-      scroll_to_and_uncheck('human_rights')
       # BASIS
       uncheck_basis(:good_governance, "Delayed action") # originally had "Delayed action" and "Failure to Act"
       uncheck_basis(:good_governance, "Failure to act") # originally had "Delayed action" and "Failure to Act"
@@ -815,7 +807,6 @@ feature "complaints index", :js => true do
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
     expect(page).to have_selector('#lastName_error', :text => "You must enter a last name")
     expect(page).to have_selector('#village_error', :text => 'You must enter a village')
-    expect(page).to have_selector('#mandate_id_count_error', :text => 'You must select at least one area')
     expect(page).to have_selector('#complaint_basis_id_count_error', :text => 'You must select at least one subarea')
     expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
@@ -827,8 +818,8 @@ feature "complaints index", :js => true do
       expect(page).not_to have_selector('#firstName_error', :text => "You must enter a first name")
       fill_in('village', :with => "Leaden Roding")
       expect(page).not_to have_selector('#village_error', :text => 'You must enter a village')
-      check('special_investigations_unit')
-      expect(page).not_to have_selector('#mandate_id_count_error', :text => 'You must select at least one area')
+      choose('special_investigations_unit')
+      expect(page).not_to have_selector('#mandate_id_error', :text => 'You must select an area')
       check_basis(:special_investigations_unit, "Unreasonable delay")
       expect(page).not_to have_selector('#complaint_basis_id_count_error', :text => 'You must select at least one subarea')
       fill_in('dob', :with => "1950/08/19")
@@ -1094,12 +1085,12 @@ feature "selects complaints by match of date ranges", :js => true do
     expect(complaints.count).to eq 3
   end
 
-  it "should return complaints created since the 'to' date" do
+  it "should return complaints created before the 'to' date" do
     expect(complaints.count).to eq 4
     d = Date.today.advance(months: -2)
     select_datepicker_date('#to',d.year,d.month,d.day)
     wait_for_ajax
-    expect(complaints.count).to eq 2
+    expect(complaints.count).to eq 3
   end
 
   it "should return complaints created within the date range" do
@@ -1115,5 +1106,101 @@ feature "selects complaints by match of date ranges", :js => true do
 
     wait_for_ajax
     expect(complaints.count).to eq 2
+  end
+end
+
+feature "selects complaints by partial match of village", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecHelpers
+
+  before do
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, village: 'Newtown')
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, village: 'Someplace')
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, village: 'Amityville')
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, village: 'Sebastopol')
+    visit complaints_path(:en)
+  end
+
+  it "should return complaints with partial match for village" do
+    expect(complaints.count).to eq 4
+    script = "complaints.set('filter_criteria.village','s')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 2
+
+    script = "complaints.set('filter_criteria.village','st')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 1
+
+    clear_filter_fields
+    expect(complaints.count).to eq 4
+  end
+end
+
+feature "selects complaints by partial match of phone", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecHelpers
+
+  before do
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, phone: '1284235660ext99')
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, phone: '312988622x34')
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, phone: 'high3235')
+    FactoryBot.create(:complaint, :open, assigned_to: User.first, phone: '432')
+    visit complaints_path(:en)
+  end
+
+  it "should return complaints with partial match to phone" do
+    expect(complaints.count).to eq 4
+
+    script = "complaints.set('filter_criteria.phone','9')"
+    page.execute_script(script)
+    wait_for_ajax
+    expect(complaints.count).to eq 2
+
+    clear_filter_fields
+    expect(complaints.count).to eq 4
+  end
+end
+
+feature "selects complaints by partial match of area", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecHelpers
+
+  before do
+    FactoryBot.create(:mandate, key: 'strategic_plan')
+    FactoryBot.create(:mandate, key: 'good_governance')
+    FactoryBot.create(:mandate, key: 'human_rights')
+    FactoryBot.create(:mandate, key: 'special_investigations_unit')
+    FactoryBot.create(:complaint, :open, assigned_to: User.first)
+    FactoryBot.create(:complaint, :open, assigned_to: User.first)
+    FactoryBot.create(:complaint, :open, assigned_to: User.first)
+    FactoryBot.create(:complaint, :open, assigned_to: User.first)
+    visit complaints_path(:en)
+  end
+
+  it "should return complaints matching the selected areas" do
+    open_dropdown 'Select area'
+    Mandate.all.each do |mandate|
+      expect(page).to have_selector('#mandate_filter_select li.selected a span', :text => mandate.name)
+    end
+    expect(complaints.count).to eq 4
+  end
+end
+
+feature "selects complaints matching the selected subarea", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecHelpers
+
+  before do
+    FactoryBot.create(:complaint, :open, assigned_to: User.first)
+    FactoryBot.create(:complaint, :open, assigned_to: User.first)
+    FactoryBot.create(:complaint, :open, assigned_to: User.first)
+    FactoryBot.create(:complaint, :open, assigned_to: User.first)
+    visit complaints_path(:en)
+  end
+
+  it "should return complaints created since the 'since' date" do
+    expect(1).to eq 0
   end
 end

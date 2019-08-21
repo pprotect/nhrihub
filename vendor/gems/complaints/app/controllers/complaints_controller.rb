@@ -89,19 +89,19 @@ class ComplaintsController < ApplicationController
 
   def index_query_params
     params.
-      permit(:complainant, :from, :to, :case_reference, :village, :phone_number, :phone, :current_assignee_id, :selected_assignee_id, :locale, :selected_statuses => [] ).
+      permit(:complainant, :from, :to, :case_reference, :village, :phone_number, :phone, :current_assignee_id, :selected_assignee_id, :locale, :mandate_id, :selected_statuses => [] ).
       with_defaults(default_params).
-      slice(:selected_assignee_id, :selected_statuses, :case_reference, :complainant, :from, :to)
+      slice(:selected_assignee_id, :selected_statuses, :case_reference, :complainant, :from, :to, :village, :phone, :mandate_id)
   end
 
   def complaint_params
     params.require(:complaint).permit( :case_reference, :firstName, :lastName, :chiefly_title, :village, :phone, :new_assignee_id,
                                        :dob, :email, :complained_to_subject_agency, :desired_outcome, :gender, :details,
-                                       :date, :imported, :good_governance_complaint_basis_ids => [],
+                                       :date, :imported, :mandate_id, :good_governance_complaint_basis_ids => [],
                                        :special_investigations_unit_complaint_basis_ids => [],
                                        :human_rights_complaint_basis_ids => [],
                                        :status_changes_attributes => [:user_id, :name],
-                                       :agency_ids => [], :mandate_ids => [],
+                                       :agency_ids => [],
                                        :complaint_documents_attributes => [:file, :title, :original_filename, :original_type, :filesize, :lastModifiedDate],
                                      )
   end

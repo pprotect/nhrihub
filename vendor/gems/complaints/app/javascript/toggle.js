@@ -10,6 +10,7 @@ module.exports = {
     selected : {
       get() {
         if(this.get('array_source')){
+          console.log(this.get('name'));
           return this.get(this.source).indexOf(this.get('name')) !== -1;
         }else{
           return this.get(this.source) === this.get('id');
@@ -18,6 +19,7 @@ module.exports = {
       set(val){
         if (val) {
           if(this.get('array_source')){
+            console.log("push "+this.get('name'));
             return this.push(this.source, this.get('name'));
           }else{
             return this.set(this.source,this.get('id'));

@@ -120,15 +120,15 @@ script#new_complaint_template(type = 'text/ractive')
           <assigneeSelector editing=false new_assignee_id='{{new_assignee_id}}' all_staff='{{all_staff}}' />
           span.help-block.error#new_assignee_id_error 
             | {{ t.assignee_error_message }}
-      .row.form-group('class-has-error' = 'mandate_id_count_error')
+      .row.form-group('class-has-error' = 'mandate_id_error')
         .col-md-2
           label.required 
             | {{ t.mandate }}
         .col-md-10
           .row
-            <mandatesSelector mandate_ids='{{mandate_ids}}' />
-          span.help-block.error#mandate_id_count_error 
-            | {{ t.mandate_ids_error_message }}
+            <mandatesSelector mandate_id='{{mandate_id}}' />
+          span.help-block.error#mandate_id_error 
+            | {{ t.mandate_id_error_message }}
       .row.form-group('class-has-error' = 'complaint_basis_id_count_error')
         .col-md-2
           label.required 
@@ -397,10 +397,12 @@ script(type='text/javascript').
           contentType : false
         });
       }
-    }, // jQuery correctly sets the contentType and boundary values
+    },
+    // jQuery correctly sets the contentType and boundary values
     formData() {
       return this.asFormData(this.get('persistent_attributes'));
-    }, // in ractive_local_methods, returns a FormData instance
+    },
+    // in ractive_local_methods, returns a FormData instance
     save_complaint_callback(response, status, jqxhr){
       UserInput.reset();
       this.set(response);
@@ -425,7 +427,8 @@ script(type='text/javascript').
           contentType : false
         });
       }
-    } // jQuery correctly sets the contentType and boundary values
+    }
+    // jQuery correctly sets the contentType and boundary values
   }
 
   export default Ractive.extend({
@@ -451,7 +454,7 @@ script(type='text/javascript').
         return !(_.isNull(this.get('id')) || _.isUndefined(this.get('id')));
       },
       persistent_attributes() {
-        return ['case_reference','village','phone','mandate_ids',
+        return ['case_reference','village','phone','mandate_id',
           'good_governance_complaint_basis_ids', 'special_investigations_unit_complaint_basis_ids',
           'human_rights_complaint_basis_ids', 'current_status_humanized', 'new_assignee_id',
           'agency_ids', 'attached_documents_attributes', 'details',
@@ -477,10 +480,10 @@ script(type='text/javascript').
       has_errors() {
         return this.validator.has_errors();
       },
-      mandate_names() {
-        const mandates = _(this.get('all_mandates')).select(mandate=> _(this.get('mandate_ids')).include(mandate.id));
-        const names = _(mandates).map(mandate=> mandate.name);
-        return names.join(', ');
+      mandate_name() {
+        if(_.isNull(this.get('mandate_id'))){return null}
+        const mandate = _(this.get('all_mandates')).find(mandate=>mandate.id==this.get('mandate_id'))
+        return mandate.name;
       },
       create_reminder_url() {
         if (this.get('persisted')) { return Routes.complaint_reminders_path('en', this.get('id')); }
@@ -497,16 +500,12 @@ script(type='text/javascript').
         const hrl = _.isUndefined(hr) ? 0 : hr.length;
         return ggl + sil + hrl;
       },
-      mandate_id_count() { // aka 'areas'
-        const mandates = this.get('mandate_ids');
-        if (_.isUndefined(mandates)) { return 0; } else { return mandates.length; }
-      },
       validation_criteria() {
         return {
           firstName : ['notBlank'],
           lastName : ['notBlank'],
           village : ['notBlank'],
-          mandate_id_count : 'nonZero',
+          mandate_id : 'numeric',
           complaint_basis_id_count : 'nonZero',
           new_assignee_id : ['nonZero', {if : () => !this.get('editing')}],
           dob: () => {
@@ -526,7 +525,7 @@ script(type='text/javascript').
           lastName_error : this.get('lastName_error'),
           village_error : this.get('village_error'),
           new_assignee_id_error : this.get('new_assignee_id_error'),
-          mandate_id_count_error : this.get('mandate_id_count_error'),
+          mandate_id_error : this.get('mandate_id_error'),
           complaint_basis_id_count_error : this.get('complaint_basis_id_count_error'),
           dob_error : this.get('dob_error'),
           details_error : this.get('details_error')
@@ -588,14 +587,16 @@ script(type='text/javascript').
       return this.set(attribute+"_error",false);
     },
     remove_errors() {
-      this.compact(); //nothing to do with errors, but this method is called on edit_cancel
+      this.compact();
+      //nothing to do with errors, but this method is called on edit_cancel
       return this.restore();
     },
     cancel_add_complaint() {
       UserInput.reset();
       return this.parent.shift('complaints');
     },
-    remove(guid){ // required for Ractive 0.8.0, possibly can be removed in later revs
+    remove(guid){
+      // required for Ractive 0.8.0, possibly can be removed in later revs
       const guids = _(this.findAllComponents('attachedDocument')).pluck('_guid');
       const index = _(guids).indexOf(guid);
       return this.splice('attached_documents',index,1);

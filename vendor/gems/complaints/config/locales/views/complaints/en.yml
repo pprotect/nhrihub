@@ -80,7 +80,7 @@ en:
     lastName_error_message : "You must enter a last name"
     male : "Male"
     mandate: "Area(s)"
-    mandate_ids_error_message: "You must select at least one area"
+    mandate_id_error_message: "You must select an area"
     no : "No"
     notes : "Notes"
     'on': 'on' # b/c on is a keyword in yaml and the translation borks

@@ -6,9 +6,9 @@
   .row.labels
     .col-md-2(class-active="@this.is_active('complainant')")
       | {{ t.complainant }}
-    .col-md-2 
+    .col-md-2(class-active="@this.is_active('village')")
       | {{ t.village }}
-    .col-md-2 
+    .col-md-2(class-active="@this.is_active('phone')")
       | {{ t.phone }}
     .col-md-2(class-active="@this.is_active('case_reference')")
       | {{ t.case_reference }}
@@ -26,11 +26,11 @@
   .row.labels
     .col-md-2(class-active="@this.is_active('status')")
       | {{ t.status }}
-    .col-md-2 
+    .col-md-2(class-active="@this.is_active('from')")
       | {{ t.date_from }}
-    .col-md-2 
+    .col-md-2(class-active="@this.is_active('to')")
       | {{ t.date_to }}
-    .col-md-2 
+    .col-md-2(class-active="@this.is_active('agency')")
       | {{ t.agency }}
   .row(style = "margin-bottom:12px;")
     .col-md-2
@@ -44,9 +44,9 @@
           <statusFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}' />
           | {{/statuses}}
     .col-md-2
-      input.form-control#from(type="text", name="from", placeholder ='{{ t.date_from }}', value = "{{filter_criteria.from}}", style = 'position:relative; z-index:12;')
+      input.form-control#from(type="text", name="from", placeholder ='{{ t.date_from }}', autocomplete='off', value = "{{filter_criteria.from}}", style = 'position:relative; z-index:12;')
     .col-md-2
-      input.form-control#to(type="text", name="to", placeholder ='{{ t.date_to }}', value = "{{filter_criteria.to}}", style = 'position:relative; z-index:12;')
+      input.form-control#to(type="text", name="to", placeholder ='{{ t.date_to }}', autocomplete='off', value = "{{filter_criteria.to}}", style = 'position:relative; z-index:12;')
     .col-md-2
       .btn-group.select
         button.btn.btn-default.dropdown-toggle(type='button', 'data-toggle'='dropdown')
@@ -58,9 +58,9 @@
           <agencyFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}' />
           | {{/all_agencies}}
   .row.labels
-    .col-md-2 
+    .col-md-2(class-active="@this.is_active('area')")
       | {{ t.area }}
-    .col-md-2 
+    .col-md-2(class-active="@this.is_active('complaint_basis')")
       | {{ t.complaint_basis }}
     .col-md-2(class-active="@this.is_active('assignee')")
       | {{ t.assignee }}
@@ -143,28 +143,7 @@ script.
       t : translations.t('filter_controls')
     }},
     observe: {
-      'filter_criteria.case_reference': {
-        handler(value, old, path, idx){
-          if(!_.isEmpty(value)){
-            this.parent.load();
-          }
-        }
-      },
-      'filter_criteria.complainant': {
-        handler(value, old, path, idx){
-          if(!_.isEmpty(value)){
-            this.parent.load();
-          }
-        }
-      },
-      'filter_criteria.from': {
-        handler(value, old, path, idx){
-          if(!_.isEmpty(value)){
-            this.parent.load();
-          }
-        }
-      },
-      'filter_criteria.to': {
+      'filter_criteria.case_reference filter_criteria.complainant filter_criteria.from filter_criteria.to filter_criteria.village filter_criteria.phone': {
         handler(value, old, path, idx){
           if(!_.isEmpty(value)){
             this.parent.load();
@@ -193,6 +172,23 @@ script.
         return !_.isEmpty(this.get('filter_criteria.case_reference'))
       }else if(attr == 'complainant'){
         return !_.isEmpty(this.get('filter_criteria.complainant'))
+      }else if(attr == 'village'){
+        return !_.isEmpty(this.get('filter_criteria.village'))
+      }else if(attr == 'phone'){
+        return !_.isEmpty(this.get('filter_criteria.phone'))
+      }else if(attr == 'from'){
+        return !_.isEmpty(this.get('filter_criteria.from'))
+      }else if(attr == 'to'){
+        return !_.isEmpty(this.get('filter_criteria.to'))
+      }else if(attr == 'agency'){
+        return !_.isEmpty(this.get('filter_criteria.selecte_agency_ids'))
+      }else if(attr == 'agency'){
+        return !_.isEmpty(this.get('filter_criteria.basis_ids'))
+      }else if(attr == 'agency'){
+        gg = !_.isEmpty(this.get('filter_criteria.selected_good_governance_complaint_basis_ids'))
+        hr = !_.isEmpty(this.get('filter_criteria.selected_human_rights_complaint_basis_ids'))
+        siu = !_.isEmpty(this.get('filter_criteria.selected_special_investigations_unit_complaint_basis_ids'))
+        return gg && hr && siu
       }
     }
   });

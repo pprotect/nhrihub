@@ -153,16 +153,16 @@
   </div>
 </div>
 <div class="row collapse">
-  <div class="col-md-12 form-group" data-toggle="edit" class-has-error="mandate_id_count_error">
+  <div class="col-md-12 form-group" data-toggle="edit" class-has-error="mandate_id_error">
     <div class="row">
       <div class="col-md-2">
         <div class="no_edit in">{{ t.mandate }}</div>
         <div class="edit required">{{ t.mandate }}</div>
       </div>
       <div class="col-md-10">
-        <div class="no_edit in" id="mandate">{{ mandate_names }}</div>
+        <div class="no_edit in" id="mandate">{{ mandate_name }}</div>
         <div class="edit">
-          <div class="row"><mandatesSelector mandate_id='{{mandate_id}}' mandate_ids='{{mandate_ids}}' /></div><span class="help-block error" id="mandate_id_count_error">{{ t.mandate_ids_error_message }}</span>
+          <div class="row"><mandatesSelector mandate_id='{{mandate_id}}' /></div><span class="help-block error" id="mandate_id_error">{{ t.mandate_id_error_message }}</span>
         </div>
       </div>
     </div>

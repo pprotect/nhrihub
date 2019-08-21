@@ -38,6 +38,7 @@ FactoryBot.define do
     email { Faker::Internet.email }
     gender { ["m","f","o"].sample }
     dob { y=20+rand(40); m=rand(12); d=rand(31); Date.today.advance(:years => -y, :months => -m, :days => -d).to_s }
+    mandate_id { Mandate.pluck(:id).sample(1).first }
     transient do
       assigned_to {[]}
     end
@@ -50,8 +51,7 @@ FactoryBot.define do
         complaint.human_rights_complaint_bases << Nhri::ComplaintBasis.all.sample(2)
         complaint.special_investigations_unit_complaint_bases << Siu::ComplaintBasis.all.sample(2)
         complaint.status_changes << FactoryBot.create(:status_change, :open, :change_date => DateTime.now, :user_id => User.all.sample.id)
-        complaint.mandate_id = Mandate.pluck(:id).sample(1)
-        complaint.mandate_ids = Mandate.pluck(:id).sample(2)
+        #complaint.mandate_id = Mandate.pluck(:id).sample(1)
         complaint.agency_ids = Agency.pluck(:id).sample(2)
       end
     end
@@ -63,7 +63,6 @@ FactoryBot.define do
         complaint.special_investigations_unit_complaint_bases << Siu::ComplaintBasis.all
         complaint.status_changes << FactoryBot.create(:status_change, :open, :change_date => DateTime.now, :user_id => User.all.sample.id)
         complaint.mandate_id = Mandate.pluck(:id).sample(1)
-        complaint.mandate_ids = Mandate.pluck(:id).sample(2)
         complaint.agency_ids = Agency.pluck(:id).sample(2)
       end
     end

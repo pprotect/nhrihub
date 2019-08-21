@@ -48,7 +48,7 @@
     selected_special_investigations_unit_complaint_basis_ids : []
     selected_good_governance_complaint_basis_ids : []
     selected_statuses : #{@selected_statuses.to_json.html_safe}
-    mandate_ids : []
+    selected_mandate_ids : #{@mandates.map(&:name).to_json.html_safe}
   @i18n =
     tooltip_messages:
       face_to_face : "#{t('.face_to_face')}"

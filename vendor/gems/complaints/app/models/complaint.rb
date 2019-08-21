@@ -14,8 +14,7 @@ class Complaint < ActiveRecord::Base
   has_many :notes, :as => :notable, :autosave => true, :dependent => :destroy, :inverse_of => :notable
   has_many :assigns, :autosave => true, :dependent => :destroy
   has_many :assignees, :through => :assigns
-  has_many :complaint_mandates, :dependent => :destroy
-  has_many :mandates, :through => :complaint_mandates # == areas
+  belongs_to :mandate # == areas
   has_many :status_changes, :dependent => :destroy
   accepts_nested_attributes_for :status_changes
   has_many :complaint_statuses, :through => :status_changes
@@ -32,7 +31,26 @@ class Complaint < ActiveRecord::Base
       with_case_reference_match(query[:case_reference]).
       with_complainant_match(query[:complainant]).
       since_date(query[:from]).
-      before_date(query[:to])
+      before_date(query[:to]).
+      with_village(query[:village]).
+      with_phone(query[:phone])
+  end
+
+  def self.with_phone(phone_fragment)
+    digits = phone_fragment&.delete('^0-9')
+    if digits.nil? || digits.empty?
+      where("1=1")
+    else
+      where("complaints.phone ~ '.*#{digits}.*'")
+    end
+  end
+
+  def self.with_village(village_fragment)
+    if village_fragment.blank?
+      where("1=1")
+    else
+      where("\"complaints\".\"village\" ~* '.*#{village_fragment}.*'")
+    end
   end
 
   def self.since_date(from)
@@ -47,7 +65,7 @@ class Complaint < ActiveRecord::Base
     if to.blank?
       where('1=1')
     else
-      where("complaints.date_received >= ?", Date.parse(to))
+      where("complaints.date_received <= ?", Date.parse(to))
     end
   end
 
@@ -64,7 +82,7 @@ class Complaint < ActiveRecord::Base
     filtered(query).
     for_assignee(query[:selected_assignee_id]).
       includes({:assigns => :assignee},
-        :mandates,
+        :mandate,
         {:status_changes => [:user, :complaint_status]},
         {:complaint_good_governance_complaint_bases=>:good_governance_complaint_basis},
         {:complaint_special_investigations_unit_complaint_bases => :special_investigations_unit_complaint_basis},
@@ -152,18 +170,13 @@ class Complaint < ActiveRecord::Base
                         :dob,
                         :current_status_humanized,
                         :attached_documents,
-                        :mandate_ids,
+                        :mandate_id,
                         :good_governance_complaint_basis_ids,
                         :special_investigations_unit_complaint_basis_ids,
                         :human_rights_complaint_basis_ids,
                         :agency_ids,
                         :status_changes,
                         :communications])
-  end
-
-  # overwrite the built-in method, as this approach does not add extra sql queries
-  def mandate_ids
-    mandates.map(&:id)
   end
 
   def good_governance_complaint_basis_ids

@@ -79,10 +79,6 @@ module ComplaintsSpecHelpers
     page.find('.edit_cancel .fa-remove').click
   end
 
-  def open_dropdown(name)
-    page.find("#complaints_controls button##{name}").click
-  end
-
   def select_option(name)
     page.find(:xpath, ".//li[contains(.,'#{name}')]")
   end
@@ -205,7 +201,7 @@ module ComplaintsSpecHelpers
   end
 
   def select_assignee(name)
-    open_dropdown('assignee_select')
+    open_dropdown('Select assignee')
     sleep(0.2) # javascript
     select_option(name).click
   end
@@ -226,6 +222,10 @@ module ComplaintsSpecHelpers
 
   def select_datepicker_date(id,year,month,day)
     month = month -1 # js month  monthis 0-indexed
+    page.find(id)
+    # not sure why this is necessary, but it is!
+    page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
+    page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
     page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
     page.execute_script("$('.ui-datepicker-month').prop('selectedIndex',#{month}).trigger('change')")
     year_index = page.evaluate_script("_($('.ui-datepicker-year option')).map(function(o){return o.text})").map(&:to_i).find_index(year)
@@ -233,5 +233,9 @@ module ComplaintsSpecHelpers
     page.execute_script("target=$('#ui-datepicker-div td[data-month=#{month}][data-year=#{year}] a').filter(function(){return $(this).text()==#{day}})[0]")
     page.execute_script("$(target).trigger('click')")
     #page.evaluate_script %Q{ $('#{id}').datepicker('hide') } # trigger the onClose handler
+  end
+
+  def open_dropdown(name)
+    page.find("#complaints_controls button", :text => name).click
   end
 end
