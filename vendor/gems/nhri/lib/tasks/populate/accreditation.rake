@@ -32,7 +32,7 @@ namespace :nhri do
 
       task :populate => "nhri:accreditation:reference_documents:depopulate" do
         5.times do |i|
-          FactoryBot.create(:icc_reference_document)
+          FactoryBot.create(:icc_reference_document, :with_reminder)
         end
       end
     end

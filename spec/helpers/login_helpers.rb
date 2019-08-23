@@ -33,6 +33,69 @@ module RegisteredUserHelper
     page.execute_script(js)
   end
 
+private
+
+  def create_user(login, roles)
+    #user = User.create(:login => login,
+                #:email => Faker::Internet.email,
+                #:enabled => true,
+                #:firstName => Faker::Name.first_name,
+                #:lastName => Faker::Name.last_name,
+                #:organization => Organization.first,
+                #:public_key => "BMQ+Q7yItYnNYQpzXJm0Eu+esfIDl3PkxQDNK//f0IF1CybZyFYy2VrON8d4riV3hWYzlJQn/hRHw3mWFG9Nj3M=",
+                #:public_key_handle => "Ym9ndXNfMTQ3MjAxMTYxODU0OA")
+    #user.update_attribute(:salt, '1641b615ad281759adf85cd5fbf17fcb7a3f7e87')
+    #user.update_attribute(:activation_code, '9bb0db48971821563788e316b1fdd53dd99bc8ff')
+    #user.update_attribute(:activated_at, DateTime.new(2011,1,1))
+    #user.update_attribute(:crypted_password, '660030f1be7289571b0467b9195ff39471c60651')
+    #create_roles(user, user.login, roles) # in this case, the name of the role is the same as the user's login!
+    #user
+    # USE SQL FOR SLIGHTLY FASTER TEST TIMES
+    last_id = ActiveRecord::Base.connection.execute('select last_value from users_id_seq').first['last_value']
+    next_id = last_id.succ
+    sql = <<-SQL.squish
+    insert into users (id, login, email, enabled, "firstName", "lastName", organization_id, public_key, public_key_handle,
+                       salt, activation_code, activated_at, crypted_password, created_at, updated_at)
+                values (#{next_id},
+                        '#{login}', '#{Faker::Internet.email}', true, '#{Faker::Name.first_name}',
+                        '#{Faker::Name.last_name.gsub(/'/,"''")}', '#{Organization.first&.id || FactoryBot.create(:organization).id}',
+                        'BMQ+Q7yItYnNYQpzXJm0Eu+esfIDl3PkxQDNK//f0IF1CybZyFYy2VrON8d4riV3hWYzlJQn/hRHw3mWFG9Nj3M=',
+                        'Ym9ndXNfMTQ3MjAxMTYxODU0OA',
+                        '1641b615ad281759adf85cd5fbf17fcb7a3f7e87',
+                        '9bb0db48971821563788e316b1fdd53dd99bc8ff',
+                        timestamp '2011-01-01 01:01',
+                        '660030f1be7289571b0467b9195ff39471c60651',
+                        NOW()::timestamp,
+                        NOW()::timestamp);
+    SQL
+    ActiveRecord::Base.connection.execute(sql)
+    ActiveRecord::Base.connection.execute("alter sequence users_id_seq restart with #{next_id.succ};")
+    user = User.last
+    create_roles(user, user.login, roles) # in this case, the name of the role is the same as the user's login!
+    user
+  end
+
+  def create_roles(user, role, actions)
+    role = Role.create(:name => role)
+    #Controller.update_table
+    #actions.each { |a| role.actions << a  }
+    user.roles << role
+    user.save
+  end
+
+  def admin_roles
+    Action.all
+  end
+
+  def staff_roles
+    Action.
+      all.
+      reject{|a|
+        a.controller_name =~ /authengine/ && 
+          !(a.controller_name =~ /sessions/ && (a.action_name == "new" || a.action_name == "destroy")) # login/logout
+      }.
+      reject{|a| a.controller_name =~ /admin/}
+  end
 end
 
 module LoggedInEnAdminUserHelper

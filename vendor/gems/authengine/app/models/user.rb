@@ -47,6 +47,11 @@ class User < ActiveRecord::Base
     find_by!(:replacement_token_registration_code => replacement_token_registration_code)
   end
 
+  def refresh_unsubscribe_code
+    update_column(:unsubscribe_code, code = AccessNonce.create) # so as not to trigger callbacks
+    code
+  end
+
   def register_request
     return unless TwoFactorAuthentication.enabled?
     u2f = U2F::U2F.new(APPLICATION_ID)

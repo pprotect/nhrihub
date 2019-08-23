@@ -93,3 +93,20 @@ describe "password confirmation" do
     end
   end
 end
+
+describe "#refresh_unsubscribe_code" do
+  before do
+    @user = FactoryBot.create(:user)
+  end
+
+  it "should change the user's unsubscribe_code each time it's called" do
+    @user.refresh_unsubscribe_code
+    expect(first = @user.reload.unsubscribe_code).to match /^[a-z0-9]{40}$/
+    @user.refresh_unsubscribe_code
+    expect(second = @user.reload.unsubscribe_code).to match /^[a-z0-9]{40}$/
+    @user.refresh_unsubscribe_code
+    expect(third = @user.reload.unsubscribe_code).to match /^[a-z0-9]{40}$/
+    expect(second).not_to eq first
+    expect(third).not_to eq second
+  end
+end

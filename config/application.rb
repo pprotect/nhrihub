@@ -31,9 +31,9 @@ module Apf
     # config.time_zone = TIME_ZONE
 
     begin
-      config.action_mailer.default_url_options = {:host => SITE_URL}
+      config.action_mailer.default_url_options = {:host => SITE_URL, :protocol => :https}
     rescue NameError
-      config.action_mailer.default_url_options = {:host => "not_configured"}
+      config.action_mailer.default_url_options = {:host => "not_configured", :protocol => :https}
     end
     config.action_mailer.preview_path = "#{Rails.root}/spec/mailers/previews"
 

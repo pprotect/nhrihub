@@ -45,8 +45,8 @@ private
     visit("/") # else there's no current_session yet from which to derive the url
     url = find_url_in_email
     host, port = get_url_params
-    local_url = url.gsub(/^http:\/\/[^\/]*/,"#{host}:#{port}")
-    "http://"+local_url
+    local_url = url.gsub(/^https:\/\/[^\/]*/,"#{host}:#{port}")
+    "http://"+local_url # can't support https on localhost
   end
 
   def find_url_in_email

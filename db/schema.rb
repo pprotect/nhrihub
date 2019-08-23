@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_04_130630) do
+ActiveRecord::Schema.define(version: 2019_08_22_041757) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -659,6 +659,7 @@ ActiveRecord::Schema.define(version: 2019_08_04_130630) do
     t.string "public_key"
     t.string "public_key_handle"
     t.string "replacement_token_registration_code"
+    t.string "unsubscribe_code", limit: 40
     t.index ["login"], name: "index_users_on_login"
   end
 

@@ -37,6 +37,7 @@ Rails.application.routes.draw do
       post '/change_password(/:password_reset_code)' => "users#change_password", :as => :change_password
       get '/register_replacement_token_request/(/:replacement_token_registration_code)' => "users#register_new_token_request", :as => "register_new_token_request"
       post '/register_replacement_token_response/(/:replacement_token_registration_code)' => "users#register_new_token_response", :as => "register_new_token_response"
+      post '/unsubscribe/:user_id/:unsubscribe_code' => "users#unsubscribe", :as => "unsubscribe"
     end
 
     namespace :authengine do
