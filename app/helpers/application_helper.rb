@@ -10,7 +10,11 @@ module ApplicationHelper
   end
 
   def current_user_permitted?(path)
-    is_logout?(path) || user_is_developer? || permissions_granted?(path)
+    is_logout?(path) || mailer_preview?(path) || user_is_developer? || permissions_granted?(path)
+  end
+
+  def mailer_preview?(path)
+    path[:controller] == 'rails/mailers' && path[:action] == 'preview' && Rails.env.development?
   end
 
   # even user with no privileges can logout!

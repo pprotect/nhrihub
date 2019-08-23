@@ -9,6 +9,7 @@ require 'upload_file_helpers'
 require 'complaints_context_notes_spec_helpers'
 require 'complaints_communications_spec_helpers'
 require 'active_storage_helpers'
+require 'parse_email_helpers'
 
 feature "complaints index with multiple complaints", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
@@ -41,6 +42,7 @@ feature "complaints index", :js => true do
   include UploadFileHelpers
   include DownloadHelpers
   include ActiveStorageHelpers
+  include ParseEmailHelpers
 
   before(:context) do
     Webpacker.compile
@@ -255,17 +257,17 @@ feature "complaints index", :js => true do
       expect(page.all('#complaint_documents .complaint_document')[0].find('.title').text).to eq "Complaint Document"
     end
 
+    user = User.staff.first
     expect(page.find('#mandate').text).to match /Special Investigations Unit/
     expect(page.find('#mandate').text).to match /Good Governance/
-    email = ActionMailer::Base.deliveries.last
     expect( email.subject ).to eq "Notification of complaint assignment"
-    lines = Nokogiri::HTML(email.body.to_s).xpath(".//p").map(&:text)
-    # lin[0] is addressee
-    expect( lines[0] ).to eq User.staff.first.first_last_name
-    # complaint url is embedded in the email
-    url = Nokogiri::HTML(email.body.to_s).xpath(".//p/a").attr('href').value
-    expect( url ).to match (/\/en\/complaints\.html\?case_reference=c#{Date.today.strftime("%y")}-1$/i)
-    expect( url ).to match (/^http:\/\/#{SITE_URL}/)
+    expect( addressee ).to eq user.first_last_name
+    expect( complaint_url ).to match (/\/en\/complaints\.html\?case_reference=c#{Date.today.strftime("%y")}-1$/i)
+    expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
+    expect( header_field('From')).to eq "NHRI Hub Administrator<support@nhri-hub.com>"
+    expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
+    expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.unsubscribe_code, host: SITE_URL, protocol: :https)
+    expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/[0-9a-f]{40}$/) # unsubscribe code
   end
 
   it "sets date_received to today's date if it is not provided when adding" do
@@ -532,15 +534,15 @@ feature "complaints index", :js => true do
 
     expect(page).to have_selector("#assignees .assignee .name", :text => User.staff.last.first_last_name )
 
-    email = ActionMailer::Base.deliveries.last
+    user = User.staff.last
     expect( email.subject ).to eq "Notification of complaint assignment"
-    lines = Nokogiri::HTML(email.body.to_s).xpath(".//p").map(&:text)
-    # lin[0] is addressee
-    expect( lines[0] ).to eq User.staff.last.first_last_name
-    # complaint url is embedded in the email
-    url = Nokogiri::HTML(email.body.to_s).xpath(".//p/a").attr('href').value
-    expect( url ).to match (/\/en\/complaints\.html\?case_reference=#{Complaint.first.case_reference}$/)
-    expect( url ).to match (/^http:\/\/#{SITE_URL}/)
+    expect( addressee ).to eq user.first_last_name
+    expect( complaint_url ).to match (/\/en\/complaints\.html\?case_reference=#{Complaint.first.case_reference}$/)
+    expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
+    expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
+    expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.unsubscribe_code, host: SITE_URL, protocol: :https)
+    expect( header_field('From')).to eq "NHRI Hub Administrator<support@nhri-hub.com>"
+    expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/[0-9a-f]{40}$/) # unsubscribe code
   end
 
   it "edits a complaint with no changes to the status" do # b/c there was a bug

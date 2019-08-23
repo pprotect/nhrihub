@@ -53,6 +53,9 @@ class Admin::UsersController < ApplicationController
     render :template => 'users/edit'
   end
 
+  def unsubscribe
+  end
+
   # account was created by admin and now user has entered and submitted username/password, with u2f registration data,
   # here we capture the user's public_key and public_key_handle
   def activate

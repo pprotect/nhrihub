@@ -7,6 +7,7 @@ require 'unactivated_user_helpers'
 require 'async_helper'
 require 'role_presets_helper'
 require 'organization_presets_helper'
+require 'parse_email_helpers'
 
 feature "Manage users", :js => true do
   include ApplicationHelpers
@@ -16,6 +17,8 @@ feature "Manage users", :js => true do
   include NavigationHelpers
   include UserManagementHelpers
   include AsyncHelper
+  include ParseEmailHelpers
+
   before do
     visit '/en'
     toggle_navigation_dropdown("Admin")
@@ -37,42 +40,43 @@ feature "Manage users", :js => true do
     fill_in("Last name", :with => "Normal")
     fill_in("Email", :with => "norm@normco.com")
     # ensure that mail was actually sent
-    expect{click_button("Save")}.to change { ActionMailer::Base.deliveries.count }.by(1)
+    expect{click_button("Save")}.to change { email_count }.by(1)
     expect(page_heading).to eq "Manage users"
     expect(flash_message).to eq "a registration email has been sent to Norman Normal at norm@normco.com"
-    email = ActionMailer::Base.deliveries.last
+    user = User.where(firstName: 'Norman', lastName: 'Normal').first
 
     # check the email
-    email = ActionMailer::Base.deliveries.last
     expect( email.subject ).to eq "Please activate your #{ORGANIZATION_NAME} #{APPLICATION_NAME} account"
     expect( email.to.first ).to eq "norm@normco.com"
     expect( email.from.first ).to eq ADMIN_EMAIL
+    expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
+    expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.unsubscribe_code, host: SITE_URL, protocol: :https)
     lines = Nokogiri::HTML(email.body.to_s).xpath(".//p").map(&:text)
-    # lin[0] is addressee
-    expect( lines[0] ).to eq "Norman Normal"
+    expect( addressee ).to eq "Norman Normal"
     expect( lines[1] ).to match "#{APPLICATION_NAME}"
-    # activation url is embedded in the email
-    url = Nokogiri::HTML(email.body.to_s).xpath(".//p/a").attr('href').value
-    expect( url ).to match (/\/en\/authengine\/activate\/[\d|a|b|c|d|e|f]{40}$/) # activation code
-    expect( url ).to match (/^http:\/\/#{SITE_URL}/)
-    expect( lines[-1]).to match /#{APPLICATION_NAME} administrator/
+    expect( activate_url ).to match (/\/en\/authengine\/activate\/[0-9a-f]{40}$/) # activation code
+    expect( activate_url ).to match (/^https:\/\/#{SITE_URL}/)
+    expect( sender ).to match /#{APPLICATION_NAME} administrator/
     expect( norman_normal_to_be_in_the_database ).to eq true
     expect( norman_normal_account_is_activated ).to eq false
+    expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/[0-9a-f]{40}$/) # unsubscribe code
   end
 
   scenario "add a new user and reset password before user has first logged in" do
     user = FactoryBot.create(:user, :lastName => "D'Amore")
     ActiveRecord::Base.connection.execute("update users set salt = NULL, crypted_password = NULL where users.id = #{user.id}")
     visit admin_users_path(:en)
-    email_count = ActionMailer::Base.deliveries.length
     within user_record_for(user) do
-      click_link "resend registration"
+      expect{ click_link "resend registration" }.to change{ email_count }.by 1
     end
-    expect(flash_message).to match /a registration email has been resent to #{user.first_last_name} at #{user.email}/
-    expect(ActionMailer::Base.deliveries.length).to eq email_count+1
-    email = ActionMailer::Base.deliveries.last
+    expect( flash_message ).to match /a registration email has been resent to #{user.first_last_name} at #{user.email}/
     expect( email.subject ).to eq "Please activate your #{ORGANIZATION_NAME} #{APPLICATION_NAME} account"
     expect( email.to.first ).to eq user.email
+    expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
+    # during resend_registration_email, the user is deleted and recreated with the same attributes
+    user = User.find_by(:lastName => user.lastName, :firstName => user.firstName)
+    expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.unsubscribe_code, host: SITE_URL, protocol: :https)
+    expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/[0-9a-f]{40}$/) # unsubscribe code
   end
 
   scenario "show user information" do
@@ -184,6 +188,8 @@ end
 feature "user account activation", :js => true do
   include UnactivatedUserHelpers # creates unactivated user
   include UserManagementHelpers
+  include ParseEmailHelpers
+
   context "environment variable requires 2-factor authentication" do
     before do
       allow(ENV).to receive(:fetch)
@@ -204,8 +210,7 @@ feature "user account activation", :js => true do
                                                       and change{ User.last.salt }.from(nil).to(/[a-f0-9]{40}/).
                                                       and change{ User.last.public_key }.from(nil).to(base64_strict).
                                                       and change{ User.last.public_key_handle }.from(nil).to(base64_urlsafe).
-                                                      and change{ ActionMailer::Base.deliveries.count }.by 1
-      #email = ActionMailer::Base.deliveries.last
+                                                      and change{ email_count }.by 1
       expect(flash_message).to have_text("Your account has been activated")
       expect(page_heading).to eq 'Please log in'
       # not normal action, but we test it anyway, user clicks the activation link again
@@ -253,6 +258,7 @@ feature "user lost token replacement and registration", :js => true do
   include LoggedInEnAdminUserHelper # logs in as admin
   include NavigationHelpers
   include UserManagementHelpers
+  include ParseEmailHelpers
 
   before do
     visit '/en'
@@ -261,16 +267,21 @@ feature "user lost token replacement and registration", :js => true do
   end
 
   scenario "normal operation" do
+    user = User.staff.first
     within(:xpath, ".//tr[contains(td[3],'staff')]") do
-      expect{ click_link('lost access token') }.to change { ActionMailer::Base.deliveries.length }.by 1
+      expect{ click_link('lost access token') }.to change { email_count }.by 1
+      expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
+      user = user.reload # b/c a new unsubscribe_code is generated
+      expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.unsubscribe_code, host: SITE_URL, protocol: :https)
+      expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/#{user.unsubscribe_code}$/) # unsubscribe code
     end
     expect(page_heading).to eq "Manage users"
     expect(flash_message).to match /A token registration email has been sent to/
 
     # disable access by the lost token
-    expect( User.last.public_key ).to be_nil
-    expect( User.last.public_key_handle ).to be_nil
-    expect( User.last.replacement_token_registration_code ).not_to be_nil
+    expect( user.public_key ).to be_nil
+    expect( user.public_key_handle ).to be_nil
+    expect( user.replacement_token_registration_code ).not_to be_nil
     # b/c otherwise the login fields will not be rendered, as another mock simulates always logged-in
     allow_any_instance_of(Authengine::SessionsController).to receive(:logged_in?).and_return(false)
     click_link('Logout')
@@ -281,9 +292,10 @@ feature "user lost token replacement and registration", :js => true do
     fill_in "user_password", :with => "password"
     register_button.click
     expect(flash_message).to eq "Your new token has been registered, you may login below."
-    expect( User.last.public_key ).not_to be_nil
-    expect( User.last.public_key_handle ).not_to be_nil
-    expect( User.last.replacement_token_registration_code ).to be_nil
+    user.reload
+    expect( user.public_key ).not_to be_nil
+    expect( user.public_key_handle ).not_to be_nil
+    expect( user.replacement_token_registration_code ).to be_nil
     fill_in "User name", :with => "staff"
     fill_in "Password", :with => "password"
     login_button.click
