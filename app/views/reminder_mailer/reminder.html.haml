@@ -1,6 +1,6 @@
 %p= t('.greeting', :recipient => @recipient.first_last_name)
 %p= @text
 %p
-  %a{:href => "#{@link}"}= t('.click')
+  %a#source_link{:href => "#{@link}"}= t('.click')
   = t('.click_message', :remindable_name => @remindable_name)
 %p= t('.no_reply')

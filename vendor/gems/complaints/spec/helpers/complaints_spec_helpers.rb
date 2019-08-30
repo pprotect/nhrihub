@@ -10,6 +10,14 @@ module ComplaintsSpecHelpers
   include RemindersSpecCommonHelpers
   include NotesSpecCommonHelpers
 
+  def set_filter_controls_text_field(name,value)
+  # in the tests below we set ractive values directly b/c setting the
+  # input values results in an ajax request for each character typed
+    script = "complaints.set('filter_criteria.#{name}','#{value}')"
+    page.execute_script(script)
+    wait_for_ajax
+  end
+
   def add_a_communication
     add_communication
     expect(page).to have_selector('#new_communication')
@@ -203,6 +211,11 @@ module ComplaintsSpecHelpers
   def select_assignee(name)
     open_dropdown('Select assignee')
     sleep(0.2) # javascript
+    select_option(name).click
+  end
+
+  def select_subarea(name)
+    open_dropdown('Select complaint basis')
     select_option(name).click
   end
 

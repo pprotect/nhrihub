@@ -48,7 +48,7 @@ feature "Manage users", :js => true do
     # check the email
     expect( email.subject ).to eq "Please activate your #{ORGANIZATION_NAME} #{APPLICATION_NAME} account"
     expect( email.to.first ).to eq "norm@normco.com"
-    expect( email.from.first ).to eq ADMIN_EMAIL
+    expect( email.from.first ).to eq NO_REPLY_EMAIL
     expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
     expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.unsubscribe_code, host: SITE_URL, protocol: :https)
     lines = Nokogiri::HTML(email.body.to_s).xpath(".//p").map(&:text)

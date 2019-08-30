@@ -73,7 +73,7 @@
           span.caret
         ul.dropdown-menu#mandate_filter_select
           | {{#all_mandates}}
-          <mandateFilterSelect id='{{id}}' name='{{name}}' />
+          <mandateFilterSelect id='{{id}}' name='{{name}}' filter_criteria='{{filter_criteria}}' />
           | {{/all_mandates}}
     .col-md-2
       .btn-group.select
@@ -116,7 +116,6 @@ style.
     line-height: 12px;
   }
 
-
 script.
   import GoodGovernanceComplaintBasisFilterSelect from './good_governance_complaint_basis_filter_select'
   import HumanRightsComplaintBasisFilterSelect from './human_rights_complaint_basis_filter_select'
@@ -145,11 +144,32 @@ script.
     observe: {
       'filter_criteria.case_reference filter_criteria.complainant filter_criteria.from filter_criteria.to filter_criteria.village filter_criteria.phone': {
         handler(value, old, path, idx){
-          if(!_.isEmpty(value)){
+          if(!_.isUndefined(old)){ //this prevents a json reload when the page is first loaded
             this.parent.load();
           }
         }
-      }
+      },
+      'filter_criteria.selected_special_investigations_unit_complaint_basis_ids filter_criteria.selected_human_rights_complaint_basis_ids filter_criteria.selected_good_governance_complaint_basis_ids' : {
+        handler(value, old, path, idx){
+          if(!_.isUndefined(old)){
+            this.parent.load();
+          }
+        }
+      },
+      'filter_criteria.selected_assignee_id': {
+        handler(value, old, path, idx){
+          if(!_.isUndefined(old)){
+            this.parent.load();
+          }
+        }
+      },
+      'filter_criteria.selected_status_ids filter_criteria.selected_mandate_ids': {
+        handler(value, old, path, idx){
+          if(!_.isUndefined(old)){
+            this.parent.load();
+          }
+        }
+      },
     },
     clear_filter() {
       complaints_page_data().filter_criteria.case_reference = null
@@ -165,7 +185,7 @@ script.
     },
     is_active(attr){
       if(attr == 'status'){
-        return !_.isEmpty(this.get('filter_criteria.selected_statuses'))
+        return !_.isEmpty(this.get('filter_criteria.selected_status_ids'))
       }else if(attr == 'assignee'){
         return _.isNumber(this.get('filter_criteria.selected_assignee_id'))
       }else if(attr == 'case_reference'){

@@ -6,6 +6,8 @@ class Complaint < ActiveRecord::Base
   has_many :complaint_good_governance_complaint_bases, :dependent => :destroy
   has_many :complaint_special_investigations_unit_complaint_bases, :dependent => :destroy
   has_many :complaint_human_rights_complaint_bases, :dependent => :destroy
+  has_many :complaint_complaint_bases
+  has_many :complaint_bases, :through => :complaint_complaint_bases
   has_many :good_governance_complaint_bases, :class_name => 'GoodGovernance::ComplaintBasis', :through => :complaint_good_governance_complaint_bases
   has_many :special_investigations_unit_complaint_bases, :class_name => 'Siu::ComplaintBasis', :through => :complaint_special_investigations_unit_complaint_bases
   has_many :human_rights_complaint_bases, :class_name => 'Convention', :through => :complaint_human_rights_complaint_bases
@@ -27,13 +29,42 @@ class Complaint < ActiveRecord::Base
   attr_accessor :witness_name
 
   def self.filtered(query)
-    with_status(query[:selected_statuses]).
+    for_assignee(query[:selected_assignee_id]).
+      with_status(query[:selected_status_ids]).
+      with_mandates(query[:selected_mandate_ids]).
       with_case_reference_match(query[:case_reference]).
       with_complainant_match(query[:complainant]).
       since_date(query[:from]).
       before_date(query[:to]).
       with_village(query[:village]).
-      with_phone(query[:phone])
+      with_phone(query[:phone]).
+      with_subareas(query[:selected_special_investigations_unit_complaint_basis_ids],
+                    query[:selected_good_governance_complaint_basis_ids],
+                    query[:selected_human_rights_complaint_basis_ids])
+end
+
+  def self.with_subareas(selected_siu_subareas, selected_gg_subareas, selected_hr_subareas)
+    selected_siu_subareas = nil if  selected_siu_subareas.delete_if(&:blank?).empty?
+    selected_gg_subareas  = nil if  selected_gg_subareas.delete_if(&:blank?).empty?
+    selected_hr_subareas  = nil if  selected_hr_subareas.delete_if(&:blank?).empty?
+    sql_where = <<-SQL.squish
+      (complaint_complaint_bases.complaint_basis_id in (?) and complaint_complaint_bases.type = ?)
+      or
+      (complaint_complaint_bases.complaint_basis_id in (?) and complaint_complaint_bases.type = ?)
+      or
+      (complaint_complaint_bases.complaint_basis_id in (?) and complaint_complaint_bases.type = ?)
+    SQL
+
+    args = [selected_siu_subareas, 'ComplaintSpecialInvestigationsUnitComplaintBasis',
+            selected_gg_subareas, 'ComplaintGoodGovernanceComplaintBasis',
+            selected_hr_subareas, 'ComplaintHumanRightsComplaintBasis']
+
+    joins(:complaint_complaint_bases).
+      where(sql_where, *args)
+  end
+
+  def self.with_mandates(selected_mandate_ids)
+    where(mandate_id: selected_mandate_ids)
   end
 
   def self.with_phone(phone_fragment)
@@ -57,7 +88,7 @@ class Complaint < ActiveRecord::Base
     if from.blank?
       where('1=1')
     else
-      where("complaints.date_received >= ?", Date.parse(from))
+      where("complaints.date_received >= ?", Time.parse(from).beginning_of_day) # need to convert the argument to UTC
     end
   end
 
@@ -65,7 +96,7 @@ class Complaint < ActiveRecord::Base
     if to.blank?
       where('1=1')
     else
-      where("complaints.date_received <= ?", Date.parse(to))
+      where("complaints.date_received <= ?", Time.parse(to).end_of_day)
     end
   end
 
@@ -78,9 +109,8 @@ class Complaint < ActiveRecord::Base
     end
   end
 
-  def self.index_page_associations(user, ids, query)
+  def self.index_page_associations(ids, query)
     filtered(query).
-    for_assignee(query[:selected_assignee_id]).
       includes({:assigns => :assignee},
         :mandate,
         {:status_changes => [:user, :complaint_status]},
@@ -102,16 +132,16 @@ class Complaint < ActiveRecord::Base
 
   # can take either an array of strings or symbols
   # or cant take a single string or symbol
-  def self.with_status(status_name_array)
-    status_name_array = [status_name_array] unless status_name_array.is_a?(Array)
-    status_name_array = status_name_array.map{|s| s.to_s.titlecase }
+  def self.with_status(status_ids)
     joins(:status_changes => :complaint_status).
       merge(StatusChange.most_recent_for_complaint).
-      merge(ComplaintStatus.with_status(status_name_array))
+      merge(ComplaintStatus.with_status(status_ids))
   end
 
   def self.for_assignee(user_id = nil)
-    user_id && !user_id.blank? ? joins(:assigns).merge(Assign.most_recent_for_assignee(user_id)) : where("1 = 0")
+    user_id && !user_id.blank? ?
+      select('distinct complaints.id, complaints.*, assigns.created_at, assigns.user_id, assigns.complaint_id').joins(:assigns).merge(Assign.most_recent_for_assignee(user_id)) :
+      where("1=0")
   end
 
   def status_changes_attributes=(attrs)
@@ -151,7 +181,7 @@ class Complaint < ActiveRecord::Base
 
   before_create do |complaint|
     if complaint.date_received.nil? || complaint.date_received == "undefined" || complaint.date_received == "null"
-      complaint.date_received = DateTime.now
+      complaint.date_received = Time.current
     end
   end
 

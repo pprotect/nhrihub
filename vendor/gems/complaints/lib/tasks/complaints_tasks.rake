@@ -18,7 +18,7 @@ namespace :complaints do
   desc "populates status table"
   task :populate_statuses => :environment do
     ComplaintStatus.destroy_all
-    ["Open", "Suspended", "Closed"].each do |name|
+    ComplaintStatus::Names.each do |name|
       ComplaintStatus.create(:name => name)
     end
   end

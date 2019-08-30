@@ -1,3 +1,4 @@
+TIME_ZONE = "Pacific Time (US & Canada)"
 TWO_FACTOR_AUTHENTICATION = 'disabled'
 SITE_URL = "nhri-hub.com"
 SITE_NAME = "demo"

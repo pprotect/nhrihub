@@ -37,12 +37,10 @@ end
 feature "complaints index with multiple complaints", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
-
-  before(:context) do
-    Webpacker.compile
-  end
+  include ComplaintsSpecSetupHelpers
 
   before do
+    populate_database
     FactoryBot.create(:complaint, :open, :assigned_to => [@user, @staff_user])
     FactoryBot.create(:complaint, :closed, :assigned_to => [@user, @staff_user])
     FactoryBot.create(:complaint, :open, :assigned_to => [@staff_user, @user])
@@ -50,11 +48,12 @@ feature "complaints index with multiple complaints", :js => true do
     visit complaints_path('en')
   end
 
-  it "shows only open complaints assigned to the current user" do
+  it "shows only open and under evaluation complaints assigned to the current user" do
     expect(page.all('#complaints .complaint').length).to eq 1
     expect(page.find('#complaints .complaint .current_assignee').text).to eq @user.first_last_name
     open_dropdown('Select status')
     expect(select_option('Open')[:class]).to include('selected')
+    expect(select_option('Under Evaluation')[:class]).to include('selected')
   end
 end
 
@@ -108,10 +107,11 @@ feature "complaints index", :js => true do
 
     ## because there was a bug!
     select_option('Open').click #deselect
+    select_option('Under Evaluation').click #deselect
     expect(page).not_to have_selector("div.select li.selected")
     clear_filter_fields
     open_dropdown('Select status')
-    expect(page).to have_selector("div.select li.selected")
+    expect(page).to have_selector("div.select li.selected", count: 2)
 
     # highlight filters in effect
     expect(page.find('#complaints_controls .labels div', text: 'Status')[:class]).to include('active')
@@ -194,6 +194,7 @@ feature "complaints index", :js => true do
 
   it "adds a new complaint that is valid" do
     add_complaint
+    user = User.staff.first
     within new_complaint do
       fill_in('lastName', :with => "Normal")
       fill_in('firstName', :with => "Norman")
@@ -210,7 +211,7 @@ feature "complaints index", :js => true do
       check_basis(:good_governance, "Delayed action")
       check_basis(:human_rights, "CAT")
       check_basis(:special_investigations_unit, "Unreasonable delay")
-      select(User.where(login: 'admin').first.first_last_name, :from => "assignee")
+      select(user.first_last_name, :from => "assignee")
       check_agency("SAA")
       check_agency("ACC")
       attach_file("complaint_fileinput", upload_document)
@@ -243,7 +244,7 @@ feature "complaints index", :js => true do
     expect(complaint.good_governance_complaint_bases.map(&:name)).to include "Delayed action"
     expect(complaint.human_rights_complaint_bases.map(&:name)).to include "CAT"
     expect(complaint.special_investigations_unit_complaint_bases.map(&:name)).to include "Unreasonable delay"
-    expect(complaint.current_assignee_name).to eq User.admin.first.first_last_name
+    expect(complaint.current_assignee_name).to eq User.staff.first.first_last_name
     expect(complaint.status_changes.count).to eq 1
     expect(complaint.status_changes.first.complaint_status.name).to eq "Under Evaluation"
     expect(complaint.agencies.map(&:name)).to include "SAA"
@@ -255,7 +256,7 @@ feature "complaints index", :js => true do
 
     # on the client
     expect(first_complaint.find('.case_reference').text).to eq next_ref
-    expect(first_complaint.find('.current_assignee').text).to eq User.admin.first.first_last_name
+    expect(first_complaint.find('.current_assignee').text).to eq user.first_last_name
     expect(first_complaint.find('.lastName').text).to eq "Normal"
     expect(first_complaint.find('.firstName').text).to eq "Norman"
     expect(first_complaint.find('.chiefly_title').text).to eq "bossman"
@@ -273,19 +274,19 @@ feature "complaints index", :js => true do
     expect(first_complaint.find('.date_received').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
 
     within good_governance_complaint_bases do
-      Complaint.last.good_governance_complaint_bases.map(&:name).each do |complaint_basis_name|
+      complaint.good_governance_complaint_bases.map(&:name).each do |complaint_basis_name|
         expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
       end
     end
 
     within human_rights_complaint_bases do
-      Complaint.last.human_rights_complaint_bases.map(&:name).each do |complaint_basis_name|
+      complaint.human_rights_complaint_bases.map(&:name).each do |complaint_basis_name|
         expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
       end
     end
 
     within special_investigations_unit_complaint_bases do
-      Complaint.last.special_investigations_unit_complaint_bases.map(&:name).each do |complaint_basis_name|
+      complaint.special_investigations_unit_complaint_bases.map(&:name).each do |complaint_basis_name|
         expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
       end
     end
@@ -300,16 +301,14 @@ feature "complaints index", :js => true do
       expect(page.all('#complaint_documents .complaint_document')[0].find('.title').text).to eq "Complaint Document"
     end
 
-    user = User.staff.first
     expect(page.find('#mandate').text).to match /Special Investigations Unit/
-    expect(page.find('#mandate').text).to match /Good Governance/
     expect( email.subject ).to eq "Notification of complaint assignment"
     expect( addressee ).to eq user.first_last_name
     expect( complaint_url ).to match (/\/en\/complaints\.html\?case_reference=c#{Date.today.strftime("%y")}-1$/i)
     expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
-    expect( header_field('From')).to eq "NHRI Hub Administrator<support@nhri-hub.com>"
+    expect( header_field('From')).to eq "NHRI Hub Administrator<no_reply@nhri-hub.com>"
     expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
-    expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.unsubscribe_code, host: SITE_URL, protocol: :https)
+    expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.reload.unsubscribe_code, host: SITE_URL, protocol: :https)
     expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/[0-9a-f]{40}$/) # unsubscribe code
   end
 
@@ -500,7 +499,7 @@ feature "complaints index", :js => true do
       fill_in('desired_outcome', :with => "Things are more better")
       choose('complained_to_subject_agency_no')
       # ASSIGNEE
-      select(User.admin.last.first_last_name, :from => "assignee")
+      select(User.staff.last.first_last_name, :from => "assignee")
       # MANDATE
       choose('special_investigations_unit') # originally had human rights mandate
       # BASIS
@@ -586,8 +585,8 @@ feature "complaints index", :js => true do
     expect( complaint_url ).to match (/\/en\/complaints\.html\?case_reference=#{Complaint.first.case_reference}$/)
     expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
     expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
-    expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.unsubscribe_code, host: SITE_URL, protocol: :https)
-    expect( header_field('From')).to eq "NHRI Hub Administrator<support@nhri-hub.com>"
+    expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.reload.unsubscribe_code, host: SITE_URL, protocol: :https)
+    expect( header_field('From')).to eq "NHRI Hub Administrator<no_reply@nhri-hub.com>"
     expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/[0-9a-f]{40}$/) # unsubscribe code
   end
 
@@ -738,7 +737,7 @@ feature "complaints index", :js => true do
   end
 
   it "permits only one edit at a time" do
-    FactoryBot.create(:complaint, :open, :assigned_to=>[@user, @staff_user])
+    FactoryBot.create(:complaint, :open, :with_associations, :assigned_to=>[@user, @staff_user])
     visit complaints_path('en')
     edit_first_complaint
     edit_second_complaint
@@ -933,7 +932,7 @@ feature "reloads complaints if a different assignee is selected", js: true do
   before do
     populate_database
     user = FactoryBot.create(:user, firstName: "Norman", lastName: "Normal")
-    @norms_complaint = FactoryBot.create(:complaint, :under_evaluation, assigned_to: user)
+    @norms_complaint = FactoryBot.create(:complaint, :under_evaluation, :with_associations, :assigned_to => user)
     visit complaints_path('en')
   end
 
@@ -950,7 +949,8 @@ feature "reloads complaints if a different assignee is selected", js: true do
     clear_filter_fields
     wait_for_ajax
     expect(complaints.count).to eq 1
-    expected_complaint = Complaint.with_status(:open).for_assignee(User.first).first
+    open_status_id = ComplaintStatus.where(:name => 'Open').first.id
+    expected_complaint = Complaint.with_status(open_status_id).for_assignee(User.first).first
     expect(first_complaint.find('.case_reference').text).to eq expected_complaint.case_reference
   end
 end
@@ -958,54 +958,44 @@ end
 feature "selects complaints by partial match of case reference", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
+  include ComplaintsSpecSetupHelpers
 
   before do
+    create_mandates
+    create_agencies
+    create_complaint_statuses
+    create_subareas
     15.times do
       # case_refs are Cyy-1 .. Cyy-15
-      FactoryBot.create(:complaint, :open, assigned_to: User.first, case_reference: Complaint.next_case_reference)
+      FactoryBot.create(:complaint,
+                        :open,
+                        :with_associations,
+                        :assigned_to => User.first, case_reference: Complaint.next_case_reference)
     end
     visit complaints_path(:en)
   end
 
-  # in the tests below we set ractive values directly b/c setting the
-  # input values results in many ajax requests
   it "should return partial matches when at least two digits are entered" do
     year = Date.today.strftime('%y') 
-    script = "complaints.set('filter_criteria.case_reference','C')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('case_reference','C')
     expect(complaints.count).to eq 15
-    script = "complaints.set('filter_criteria.case_reference','C#{year[0]}')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('case_reference',"C#{year[0]}")
     expect(complaints.count).to eq 15
-    script = "complaints.set('filter_criteria.case_reference','C#{year}')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('case_reference',"C#{year}")
     expect(complaints.count).to eq 15
-    script = "complaints.set('filter_criteria.case_reference','C#{year}-1')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('case_reference',"C#{year}-1")
     expect(complaints.count).to eq 7
-    script = "complaints.set('filter_criteria.case_reference','C#{year}-12')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('case_reference',"C#{year}-12")
     expect(complaints.count).to eq 1
   end
 
   it "should return partial matches when 3 or 4 digits are entered" do
     year = Date.today.strftime('%y') 
-    script = "complaints.set('filter_criteria.case_reference','#{year}1')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('case_reference',"C#{year}1")
     expect(complaints.count).to eq 7
-    script = "complaints.set('filter_criteria.case_reference','#{year}15')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('case_reference',"C#{year}15")
     expect(complaints.count).to eq 1
-    script = "complaints.set('filter_criteria.case_reference','#{year}16')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('case_reference',"C#{year}16")
     expect(complaints.count).to eq 0
     clear_filter_fields
     wait_for_ajax
@@ -1014,14 +1004,9 @@ feature "selects complaints by partial match of case reference", :js => true do
 
   it "should return a single result when the exact case ref is entered, case insensitive" do
     year = Date.today.strftime('%y') 
-    #page.find('input#case_reference').set("c#{year}-10")
-    script = "complaints.set('filter_criteria.case_reference','c#{year}-10')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('case_reference',"c#{year}-10")
     expect(complaints.count).to eq 1
-    script = "complaints.set('filter_criteria.case_reference','C#{year}-10')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('case_reference',"C#{year}-10")
     expect(complaints.count).to eq 1
   end
 end
@@ -1029,41 +1014,40 @@ end
 feature "selects complaints by partial match of complainant", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
+  include ComplaintsSpecSetupHelpers
 
   before do
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, firstName: "Harry", lastName: "Harker")
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, firstName: "Harriet", lastName: "Harker")
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, firstName: "Adolph", lastName: "Champlin")
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, firstName: "Dawn", lastName: "Mills")
+    create_mandates
+    create_agencies
+    create_complaint_statuses
+    create_subareas
+    user = User.first
+    ["Harry Harker", "Harriet Harker", "Adolph Champlin", "Dawn Mills"].each do |full_name|
+      first, last = full_name.split
+      FactoryBot.create(:complaint,
+                        :open,
+                        :with_associations,
+                        assigned_to: user,
+                        firstName: first,
+                        lastName: last)
+    end
     visit complaints_path(:en)
   end
 
-  # in the tests below we set ractive values directly b/c setting the
-  # input values results in many ajax requests
   it "should return partial matches when at least two digits are entered" do
     expect(complaints.count).to eq 4
-    script = "complaints.set('filter_criteria.complainant','h')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('complainant','h')
     expect(complaints.count).to eq 3
-    script = "complaints.set('filter_criteria.complainant','ha')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('complainant','ha')
     expect(complaints.count).to eq 3
-    script = "complaints.set('filter_criteria.complainant','harr')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('complainant','harr')
     expect(complaints.count).to eq 2
-    script = "complaints.set('filter_criteria.complainant','harry')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('complainant','harry')
     expect(complaints.count).to eq 1
     clear_filter_fields
     wait_for_ajax
     expect(complaints.count).to eq 4
-    script = "complaints.set('filter_criteria.complainant','Mil')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('complainant','Mil')
     expect(complaints.count).to eq 1
   end
 end
@@ -1071,69 +1055,83 @@ end
 feature "selects complaints by match of date ranges", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
+  include ComplaintsSpecSetupHelpers
 
   before do
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, date_received: 1.month.ago)
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, date_received: 2.months.ago)
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, date_received: 3.months.ago)
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, date_received: 4.months.ago)
+    create_mandates
+    create_subareas
+    user = User.first
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, date_received: 1.month.ago)
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, date_received: 1.month.ago.end_of_day)
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, date_received: 1.month.ago.beginning_of_day)
+
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, date_received: 2.months.ago)
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, date_received: 2.months.ago.end_of_day)
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, date_received: 2.months.ago.beginning_of_day)
+
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, date_received: 3.months.ago)
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, date_received: 3.months.ago.end_of_day)
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, date_received: 3.months.ago.beginning_of_day)
+
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, date_received: 4.months.ago)
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, date_received: 4.months.ago.end_of_day)
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, date_received: 4.months.ago.beginning_of_day)
     visit complaints_path(:en)
   end
 
   it "should return complaints created since the 'since' date" do
-    expect(complaints.count).to eq 4
+    expect(complaints.count).to eq 12
     d = Date.today.advance(months: -3)
     select_datepicker_date('#from',d.year,d.month,d.day)
     wait_for_ajax
-    expect(complaints.count).to eq 3
+    expect(complaints.count).to eq 9
   end
 
   it "should return complaints created before the 'to' date" do
-    expect(complaints.count).to eq 4
+    expect(complaints.count).to eq 12
     d = Date.today.advance(months: -2)
     select_datepicker_date('#to',d.year,d.month,d.day)
     wait_for_ajax
-    expect(complaints.count).to eq 3
+    expect(complaints.count).to eq 9
   end
 
   it "should return complaints created within the date range" do
-    expect(complaints.count).to eq 4
+    expect(complaints.count).to eq 12
 
     d = Date.today.advance(months: -3)
     select_datepicker_date('#from',d.year,d.month,d.day)
     wait_for_ajax
-    expect(complaints.count).to eq 3
+    expect(complaints.count).to eq 9
 
     d = Date.today.advance(months: -2)
     select_datepicker_date('#to',d.year,d.month,d.day)
 
     wait_for_ajax
-    expect(complaints.count).to eq 2
+    expect(complaints.count).to eq 6
   end
 end
 
 feature "selects complaints by partial match of village", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
+  include ComplaintsSpecSetupHelpers
 
   before do
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, village: 'Newtown')
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, village: 'Someplace')
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, village: 'Amityville')
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, village: 'Sebastopol')
+    create_mandates
+    create_subareas
+    user = User.first
+    ['Newtown','Someplace','Amityville','Sebastopol'].each do |town|
+      FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, village: town)
+    end
     visit complaints_path(:en)
   end
 
   it "should return complaints with partial match for village" do
     expect(complaints.count).to eq 4
-    script = "complaints.set('filter_criteria.village','s')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('village','s')
     expect(complaints.count).to eq 2
 
-    script = "complaints.set('filter_criteria.village','st')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('village','st')
     expect(complaints.count).to eq 1
 
     clear_filter_fields
@@ -1144,21 +1142,23 @@ end
 feature "selects complaints by partial match of phone", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
+  include ComplaintsSpecSetupHelpers
 
   before do
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, phone: '1284235660ext99')
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, phone: '312988622x34')
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, phone: 'high3235')
-    FactoryBot.create(:complaint, :open, assigned_to: User.first, phone: '432')
+    create_mandates
+    create_subareas
+    user = User.first
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, phone: '1284235660ext99')
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, phone: '312988622x34')
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, phone: 'high3235')
+    FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, phone: '432')
     visit complaints_path(:en)
   end
 
   it "should return complaints with partial match to phone" do
     expect(complaints.count).to eq 4
 
-    script = "complaints.set('filter_criteria.phone','9')"
-    page.execute_script(script)
-    wait_for_ajax
+    set_filter_controls_text_field('phone','9')
     expect(complaints.count).to eq 2
 
     clear_filter_fields
@@ -1169,16 +1169,16 @@ end
 feature "selects complaints by partial match of area", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
+  include ComplaintsSpecSetupHelpers
 
   before do
-    FactoryBot.create(:mandate, key: 'strategic_plan')
-    FactoryBot.create(:mandate, key: 'good_governance')
-    FactoryBot.create(:mandate, key: 'human_rights')
-    FactoryBot.create(:mandate, key: 'special_investigations_unit')
-    FactoryBot.create(:complaint, :open, assigned_to: User.first)
-    FactoryBot.create(:complaint, :open, assigned_to: User.first)
-    FactoryBot.create(:complaint, :open, assigned_to: User.first)
-    FactoryBot.create(:complaint, :open, assigned_to: User.first)
+    create_mandates
+    create_subareas
+    user = User.first
+    FactoryBot.create(:complaint, :open, :with_associations, :human_rights, assigned_to: user)
+    FactoryBot.create(:complaint, :open, :with_associations, :good_governance, assigned_to: user)
+    FactoryBot.create(:complaint, :open, :with_associations, :special_investigations_unit, assigned_to: user)
+    FactoryBot.create(:complaint, :open, :with_associations, :corporate_services, assigned_to: user)
     visit complaints_path(:en)
   end
 
@@ -1188,22 +1188,46 @@ feature "selects complaints by partial match of area", :js => true do
       expect(page).to have_selector('#mandate_filter_select li.selected a span', :text => mandate.name)
     end
     expect(complaints.count).to eq 4
+    select_option('Corporate Services').click #deselect
+    wait_for_ajax
+    expect(complaints.count).to eq 3
+    select_option('Human Rights').click #deselect
+    wait_for_ajax
+    expect(complaints.count).to eq 2
+    select_option('Special Investigations Unit').click #deselect
+    wait_for_ajax
+    expect(complaints.count).to eq 1
+    select_option('Good Governance').click #deselect
+    wait_for_ajax
+    expect(complaints.count).to eq 0
   end
 end
 
 feature "selects complaints matching the selected subarea", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
+  include ComplaintsSpecSetupHelpers
 
   before do
-    FactoryBot.create(:complaint, :open, assigned_to: User.first)
-    FactoryBot.create(:complaint, :open, assigned_to: User.first)
-    FactoryBot.create(:complaint, :open, assigned_to: User.first)
-    FactoryBot.create(:complaint, :open, assigned_to: User.first)
+    create_mandates
+    user = User.first
+    siu_cb = FactoryBot.create(:siu_complaint_basis, name: 'foo')
+    gg_cb  = FactoryBot.create(:good_governance_complaint_basis, name: 'bar')
+    hr_cb  = FactoryBot.create(:hr_complaint_basis, name: 'baz')
+    #cs_cb  = FactoryBot.create(:cs_complaint_basis)
+    FactoryBot.create(:complaint, :open, good_governance_complaint_bases: [gg_cb], assigned_to: user)
+    FactoryBot.create(:complaint, :open, special_investigations_unit_complaint_bases: [siu_cb],  assigned_to: user)
+    FactoryBot.create(:complaint, :open, human_rights_complaint_bases: [hr_cb],  assigned_to: user)
+    #FactoryBot.create(:complaint, :open, strategic_plan_complaint_bases: [cs_cb],  assigned_to: user)
     visit complaints_path(:en)
   end
 
   it "should return complaints created since the 'since' date" do
-    expect(1).to eq 0
+    open_dropdown('Select status')
+    expect(select_option('Open')[:class]).to include('selected')
+    expect(complaints.count).to eq 3
+    select_subarea('foo') # deselect
+    wait_for_ajax
+    expect(complaints.count).to eq 2
   end
 end

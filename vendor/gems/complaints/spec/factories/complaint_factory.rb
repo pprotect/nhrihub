@@ -44,6 +44,21 @@ FactoryBot.define do
     end
     assigns { admin_assigns(assigned_to) }
 
+    trait :corporate_services do
+      mandate_id { Mandate.where(:key => 'strategic_plan').first.id }
+    end
+
+    trait :human_rights do
+      mandate_id { Mandate.where(:key => 'human_rights').first.id }
+    end
+
+    trait :special_investigations_unit do
+      mandate_id { Mandate.where(:key => 'special_investigations_unit').first.id }
+    end
+
+    trait :good_governance do
+      mandate_id { Mandate.where(:key => 'good_governance').first.id }
+    end
 
     trait :with_associations do
       after :build do |complaint|
@@ -51,7 +66,6 @@ FactoryBot.define do
         complaint.human_rights_complaint_bases << Nhri::ComplaintBasis.all.sample(2)
         complaint.special_investigations_unit_complaint_bases << Siu::ComplaintBasis.all.sample(2)
         complaint.status_changes << FactoryBot.create(:status_change, :open, :change_date => DateTime.now, :user_id => User.all.sample.id)
-        #complaint.mandate_id = Mandate.pluck(:id).sample(1)
         complaint.agency_ids = Agency.pluck(:id).sample(2)
       end
     end

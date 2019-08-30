@@ -38,6 +38,7 @@ _.extend(Ractive.defaults.data, {
 })
 
 window.start_page = function(){ window.complaints = new Ractive(complaints_options) }
+window.page_ready = false;
 
 $(function() {
   start_page();

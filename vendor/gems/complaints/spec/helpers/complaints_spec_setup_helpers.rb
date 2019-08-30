@@ -62,12 +62,26 @@ module ComplaintsSpecSetupHelpers
   def create_complaints
     admin = User.where(:login => 'admin').first
     assignees = [admin, admin]
-    FactoryBot.create(:complaint, :open, :assigned_to => assignees, :case_reference => "c12-22")
-    FactoryBot.create(:complaint, :open, :assigned_to => assignees, :case_reference => "c12-33")
-    @complaint = FactoryBot.create(:complaint, :open, :assigned_to => assignees, :case_reference => "c12-55")
+    FactoryBot.create(:complaint, :open, :assigned_to => assignees,
+                      :case_reference => "c12-22",
+                      :human_rights_complaint_bases => hr_complaint_bases,
+                      :good_governance_complaint_bases => gg_complaint_bases,
+                      :special_investigations_unit_complaint_bases => siu_complaint_bases
+                     )
+    FactoryBot.create(:complaint, :open, :assigned_to => assignees,
+                      :case_reference => "c12-33",
+                      :human_rights_complaint_bases => hr_complaint_bases,
+                      :good_governance_complaint_bases => gg_complaint_bases,
+                      :special_investigations_unit_complaint_bases => siu_complaint_bases
+                     )
+    @complaint = FactoryBot.create(:complaint, :open, :assigned_to => assignees,
+                                   :case_reference => "c12-55",
+                                   :human_rights_complaint_bases => hr_complaint_bases,
+                                   :good_governance_complaint_bases => gg_complaint_bases,
+                                   :special_investigations_unit_complaint_bases => siu_complaint_bases
+                                  )
   end
 
-  private
   def set_file_defaults
     SiteConfig["complaint_document.filetypes"]=["pdf"]
     SiteConfig["complaint_document.filesize"]= 5
@@ -82,13 +96,19 @@ module ComplaintsSpecSetupHelpers
   end
 
   def create_mandates
-    [:good_governance, :human_rights, :special_investigations_unit, :strategic_plan].each do |key|
+    Mandate::Keys.each do |key|
       FactoryBot.create(:mandate, :key => key)
     end
   end
 
+  def create_subareas
+    hr_complaint_bases
+    gg_complaint_bases
+    siu_complaint_bases
+  end
+
   def create_complaint_statuses
-    ["Open", "Incomplete", "Closed"].each do |status_name|
+    ComplaintStatus::Names.each do |status_name|
       FactoryBot.create(:complaint_status, :name => status_name)
     end
   end
@@ -129,6 +149,22 @@ module ComplaintsSpecSetupHelpers
   def create_agencies
     AGENCIES.each do |name,full_name|
       Agency.create(:name => name, :full_name => full_name)
+    end
+  end
+
+  def populate_complaint_bases
+    # GoodGovernance::ComplaintBasis::DefaultNames.length = 8
+    # Nhri::ComplaintBasis::DefaultNames.length = 9
+    # Siu::ComplaintBasis::DefaultNames.length = 3
+    ["GoodGovernance", "Nhri", "Siu"].each do |type_prefix|
+      klass = type_prefix+"::ComplaintBasis"
+      klass.constantize::DefaultNames.each do |name|
+        if klass.constantize.send(:where, "\"#{klass.constantize.table_name}\".\"name\"='#{name}'").length > 0
+          complaint_basis = klass.constantize.send(:where, "\"#{klass.constantize.table_name}\".\"name\"='#{name}'").first
+        else
+          klass.constantize.create(:name => name)
+        end
+      end
     end
   end
 end

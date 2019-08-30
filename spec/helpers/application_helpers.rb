@@ -103,7 +103,7 @@ module ApplicationHelpers
 
   def clear_filter_fields
     page.all('.fa-refresh').first.click
-    sleep(0.2) #javascript
+    wait_for_ajax
   end
 
   def click_back_button

@@ -23,7 +23,7 @@ feature "Manage users -- French translation", :js => true do
     email = ActionMailer::Base.deliveries.last
     expect( email.subject ).to eq "S'il vous plaît activer votre compte #{ORGANIZATION_NAME} #{APPLICATION_NAME}"
     expect( email.to.first ).to eq "norm@normco.com"
-    expect( email.from.first ).to eq "support@#{SITE_URL}"
+    expect( email.from.first ).to eq NO_REPLY_EMAIL
     lines = Nokogiri::HTML(email.body.to_s).xpath(".//p").map(&:text)
     expect( addressee ).to eq "Norman Normal"
     expect( lines[1] ).to match "#{APPLICATION_NAME}"

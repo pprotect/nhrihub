@@ -20,7 +20,7 @@ class ApplicationMailer < ActionMailer::Base
                :user_id => @recipient.id,
                :unsubscribe_code => @recipient.refresh_unsubscribe_code,
                :protocol => :https }
-    admin_unsubscribe_url( params )
+    @unsubscribe_url = admin_unsubscribe_url( params )
   end
 end
 

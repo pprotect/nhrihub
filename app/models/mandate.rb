@@ -1,10 +1,12 @@
 class Mandate < ActiveRecord::Base
+  Names = ["Corporate Services", "Good Governance", "Human Rights", "Special Investigations Unit"]
+  Keys = ['strategic_plan', 'good_governance', 'human_rights', 'special_investigations_unit']
+
   has_many :project_mandates, :dependent => :destroy
   has_many :projects, :through => :project_mandates
   has_many :project_types, :dependent => :destroy
 
-  #has_many :complaint_mandates, :dependent => :destroy
-  has_many :complaints #, :through => :complaint_mandates
+  has_many :complaints
 
   scope :good_governance,    ->{ where(:key => "good_governance") }
   scope :human_rights,       ->{ where(:key => "human_rights") }

@@ -6,13 +6,30 @@ class ComplaintsController < ApplicationController
       #ids = uncached_keys_and_ids.values
       #Complaint.index_page_associations(current_user, ids).map(&:to_json)
     #end
-    complaints = Complaint.index_page_associations(current_user, Complaint.pluck(:id), index_query_params)
+    complaints = Complaint.index_page_associations(Complaint.pluck(:id), index_query_params)
 
-    @selected_statuses = index_query_params[:selected_statuses]
+    @selected_status_ids = index_query_params[:selected_status_ids]
     @selected_assignee_id = index_query_params[:selected_assignee_id]
+    @mandates = Mandate.all.sort_by(&:name)
+    @filter_criteria = {
+      complainant: "",
+      from: nil,
+      to: nil,
+      case_reference: params[:case_reference],
+      village: nil,
+      phone_number: "",
+      basis_ids: [],
+      selected_agency_ids: [],
+      current_assignee_id: 0,
+      selected_assignee_id: @selected_assignee_id,
+      selected_human_rights_complaint_basis_ids: index_query_params[:selected_human_rights_complaint_basis_ids],
+      selected_special_investigations_unit_complaint_basis_ids: index_query_params[:selected_special_investigations_unit_complaint_basis_ids],
+      selected_good_governance_complaint_basis_ids: index_query_params[:selected_good_governance_complaint_basis_ids],
+      selected_status_ids: @selected_status_ids,
+      selected_mandate_ids: @mandates.pluck(:id)
+    }
     @complaints = "[#{complaints.map(&:to_json).join(", ").html_safe}]".html_safe
 
-    @mandates = Mandate.all.sort_by(&:name)
     @agencies = Agency.all
     @complaint_bases = [ StrategicPlans::ComplaintBasis.named_list,
                          GoodGovernance::ComplaintBasis.named_list,
@@ -84,14 +101,27 @@ class ComplaintsController < ApplicationController
   private
   def default_params
     {selected_assignee_id: current_user.id,
-     selected_statuses: ["Open", "Under Evaluation"]}
+     selected_status_ids: ComplaintStatus.default.map(&:id),
+     selected_mandate_ids: Mandate.pluck(:id),
+     selected_special_investigations_unit_complaint_basis_ids: Siu::ComplaintBasis.pluck(:id),
+     selected_human_rights_complaint_basis_ids: Nhri::ComplaintBasis.pluck(:id),
+     selected_good_governance_complaint_basis_ids: GoodGovernance::ComplaintBasis.pluck(:id)}
   end
 
   def index_query_params
     params.
-      permit(:complainant, :from, :to, :case_reference, :village, :phone_number, :phone, :current_assignee_id, :selected_assignee_id, :locale, :mandate_id, :selected_statuses => [] ).
+      permit(:complainant, :from, :to, :case_reference, :village, :phone_number, :phone,
+             :current_assignee_id, :selected_assignee_id, :locale, :mandate_id,
+             :selected_status_ids => [], :selected_mandate_ids => [],
+             :selected_special_investigations_unit_complaint_basis_ids => [],
+             :selected_human_rights_complaint_basis_ids => [],
+             :selected_good_governance_complaint_basis_ids => [] ).
       with_defaults(default_params).
-      slice(:selected_assignee_id, :selected_statuses, :case_reference, :complainant, :from, :to, :village, :phone, :mandate_id)
+      slice(:selected_assignee_id, :selected_status_ids, :case_reference, :complainant,
+            :from, :to, :village, :phone, :selected_mandate_ids,
+            :selected_special_investigations_unit_complaint_basis_ids,
+            :selected_human_rights_complaint_basis_ids,
+            :selected_good_governance_complaint_basis_ids)
   end
 
   def complaint_params

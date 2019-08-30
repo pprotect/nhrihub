@@ -35,7 +35,7 @@ module RegisteredUserHelper
 
 private
 
-  def create_user(login, roles)
+  def create_user(login)
     #user = User.create(:login => login,
                 #:email => Faker::Internet.email,
                 #:enabled => true,
@@ -71,11 +71,11 @@ private
     ActiveRecord::Base.connection.execute(sql)
     ActiveRecord::Base.connection.execute("alter sequence users_id_seq restart with #{next_id.succ};")
     user = User.last
-    create_roles(user, user.login, roles) # in this case, the name of the role is the same as the user's login!
+    create_role(user, user.login) # in this case, the name of the role is the same as the user's login!
     user
   end
 
-  def create_roles(user, role, actions)
+  def create_role(user, role)
     role = Role.create(:name => role)
     #Controller.update_table
     #actions.each { |a| role.actions << a  }

@@ -18,7 +18,7 @@
 
 :coffeescript
   @source_complaints_data = #{@complaints}
-  case_reference = "#{params[:case_reference] ? params[:case_reference] : ''}"
+  #case_reference = "#{params[:case_reference] ? params[:case_reference] : ''}"
   @source_all_good_governance_complaint_bases = #{@good_governance_complaint_bases.to_json.html_safe}
   @source_all_human_rights_complaint_bases = #{@human_rights_complaint_bases.to_json.html_safe}
   @source_all_special_investigations_unit_complaint_bases = #{@special_investigations_unit_complaint_bases.to_json.html_safe}
@@ -33,22 +33,7 @@
   @source_communication_permitted_filetypes = #{@communication_permitted_filetypes.to_json.html_safe}
   @source_communication_maximum_filesize = #{@communication_maximum_filesize}
   @source_statuses = #{@statuses.to_json.html_safe}
-  @source_filter_criteria =
-    complainant : ""
-    from : null
-    to : null
-    case_reference : case_reference
-    village : null
-    phone_number : ""
-    basis_ids : []
-    selected_agency_ids : []
-    current_assignee_id : 0
-    selected_assignee_id : #{@selected_assignee_id}
-    selected_human_rights_complaint_basis_ids : []
-    selected_special_investigations_unit_complaint_basis_ids : []
-    selected_good_governance_complaint_basis_ids : []
-    selected_statuses : #{@selected_statuses.to_json.html_safe}
-    selected_mandate_ids : #{@mandates.map(&:name).to_json.html_safe}
+  @source_filter_criteria = #{@filter_criteria.to_json.html_safe}
   @i18n =
     tooltip_messages:
       face_to_face : "#{t('.face_to_face')}"

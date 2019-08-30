@@ -193,17 +193,17 @@ describe "#as_json" do
       @complaints = JSON.parse(Complaint.all.to_json)
       expect(@complaints).to be_an Array
       expect(@complaints.length).to be 2
-      expect(@complaints.first.keys).to match_array ["id", "case_reference", "village", "phone", "created_at", "updated_at", "desired_outcome", "complained_to_subject_agency", "date_received", "imported", "mandate_id", "mandate_ids", "email", "gender", "dob", "details", "firstName", "lastName", "chiefly_title", "occupation", "employer", "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name", "date", "date_of_birth", "current_status_humanized", "attached_documents", "good_governance_complaint_basis_ids", "special_investigations_unit_complaint_basis_ids", "human_rights_complaint_basis_ids", "status_changes", "agency_ids", "communications"]
+      expect(@complaints.first.keys).to match_array ["id", "case_reference", "village", "phone", "created_at", "updated_at", "desired_outcome", "complained_to_subject_agency", "date_received", "imported", "mandate_id", "email", "gender", "dob", "details", "firstName", "lastName", "chiefly_title", "occupation", "employer", "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name", "date", "date_of_birth", "current_status_humanized", "attached_documents", "good_governance_complaint_basis_ids", "special_investigations_unit_complaint_basis_ids", "human_rights_complaint_basis_ids", "status_changes", "agency_ids", "communications"]
       expect(@complaints.first["id"]).to eq Complaint.first.id
       expect(@complaints.first["case_reference"]).to eq Complaint.first.case_reference
       expect(@complaints.first["village"]).to eq Complaint.first.village
       expect(@complaints.first["phone"]).to eq Complaint.first.phone
       # compare millisecond values, due to different precision in each value being compared
-      expect(DateTime.parse(@complaints.first["created_at"]).strftime("%Q")).to eq Complaint.first.created_at.to_datetime.strftime("%Q")
-      expect(DateTime.parse(@complaints.first["updated_at"]).strftime("%Q")).to eq Complaint.first.updated_at.to_datetime.strftime("%Q")
+      expect(DateTime.parse(@complaints.first["created_at"]).strftime("%s")).to eq Complaint.first.created_at.to_datetime.strftime("%s")
+      expect(DateTime.parse(@complaints.first["updated_at"]).strftime("%s")).to eq Complaint.first.updated_at.to_datetime.strftime("%s")
       expect(@complaints.first["desired_outcome"]).to eq Complaint.first.desired_outcome
       expect(@complaints.first["complained_to_subject_agency"]).to eq Complaint.first.complained_to_subject_agency
-      expect(@complaints.first["date_received"]).to eq Complaint.first.date_received.strftime
+      expect(DateTime.parse(@complaints.first["date_received"]).strftime("%s")).to eq Complaint.first.date_received.strftime('%s')
       expect(@complaints.first["imported"]).to eq Complaint.first.imported
       expect(@complaints.first["mandate_id"]).to eq Complaint.first.mandate_id
       expect(@complaints.first["email"]).to eq Complaint.first.email
@@ -240,7 +240,7 @@ describe "#as_json" do
       expect(@complaints.first["human_rights_complaint_basis_ids"]).to be_an Array
       expect(@complaints.first["current_assignee_id"]).to eq Complaint.first.current_assignee_id
       expect(@complaints.first["status_changes"].first.keys).to match_array ["date", "status_humanized", "user_name"]
-      expect(DateTime.parse(@complaints.first["status_changes"].first["date"]).strftime("%Q")).to eq Complaint.first.status_changes.first.date.to_datetime.strftime("%Q")
+      expect(DateTime.parse(@complaints.first["status_changes"].first["date"]).strftime("%s")).to eq Complaint.first.status_changes.first.date.to_datetime.strftime("%s")
       expect(@complaints.first["status_changes"].first["status_humanized"]).to eq Complaint.first.status_changes.first.status_humanized
       expect(@complaints.first["status_changes"].first["user_name"]).to eq Complaint.first.status_changes.first.user_name
       expect(@complaints.first["agency_ids"]).to be_an Array
@@ -261,7 +261,7 @@ describe "#as_json" do
       @complaints = JSON.parse(Complaint.all.to_json)
       expect(@complaints).to be_an Array
       expect(@complaints.length).to be 2
-      expect(@complaints.first.keys).to match_array ["id", "case_reference", "village", "phone", "created_at", "updated_at", "desired_outcome", "complained_to_subject_agency", "date_received", "imported", "mandate_id", "mandate_ids", "email", "gender", "dob", "details", "firstName", "lastName", "chiefly_title", "occupation", "employer", "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name", "date", "date_of_birth", "current_status_humanized", "attached_documents", "good_governance_complaint_basis_ids", "special_investigations_unit_complaint_basis_ids", "human_rights_complaint_basis_ids", "status_changes", "agency_ids", "communications"]
+      expect(@complaints.first.keys).to match_array ["id", "case_reference", "village", "phone", "created_at", "updated_at", "desired_outcome", "complained_to_subject_agency", "date_received", "imported", "mandate_id", "email", "gender", "dob", "details", "firstName", "lastName", "chiefly_title", "occupation", "employer", "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name", "date", "date_of_birth", "current_status_humanized", "attached_documents", "good_governance_complaint_basis_ids", "special_investigations_unit_complaint_basis_ids", "human_rights_complaint_basis_ids", "status_changes", "agency_ids", "communications"]
       expect(@complaints.first["reminders"]).to be_empty
       expect(@complaints.first["notes"]).to be_empty
       expect(@complaints.first["assigns"]).to be_empty
