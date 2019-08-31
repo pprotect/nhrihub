@@ -8,9 +8,7 @@ module ComplaintsContextNotesSpecHelpers
   before do
     create_mandates
     create_subareas
-    ComplaintStatus::Names.each do |name|
-      FactoryBot.create(:complaint_status, :name => name)
-    end
+    create_complaint_statuses
     FactoryBot.create( :complaint,
                        :open,
                        :with_associations,
