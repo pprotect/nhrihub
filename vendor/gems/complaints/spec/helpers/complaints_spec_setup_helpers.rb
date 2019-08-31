@@ -66,19 +66,22 @@ module ComplaintsSpecSetupHelpers
                       :case_reference => "c12-22",
                       :human_rights_complaint_bases => hr_complaint_bases,
                       :good_governance_complaint_bases => gg_complaint_bases,
-                      :special_investigations_unit_complaint_bases => siu_complaint_bases
+                      :special_investigations_unit_complaint_bases => siu_complaint_bases,
+                      :agencies => [Agency.first]
                      )
     FactoryBot.create(:complaint, :open, :assigned_to => assignees,
                       :case_reference => "c12-33",
                       :human_rights_complaint_bases => hr_complaint_bases,
                       :good_governance_complaint_bases => gg_complaint_bases,
-                      :special_investigations_unit_complaint_bases => siu_complaint_bases
+                      :special_investigations_unit_complaint_bases => siu_complaint_bases,
+                      :agencies => [Agency.first]
                      )
     @complaint = FactoryBot.create(:complaint, :open, :assigned_to => assignees,
                                    :case_reference => "c12-55",
                                    :human_rights_complaint_bases => hr_complaint_bases,
                                    :good_governance_complaint_bases => gg_complaint_bases,
-                                   :special_investigations_unit_complaint_bases => siu_complaint_bases
+                                   :special_investigations_unit_complaint_bases => siu_complaint_bases,
+                                   :agencies => [Agency.first]
                                   )
   end
 

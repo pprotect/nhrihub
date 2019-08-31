@@ -40,8 +40,13 @@ class Complaint < ActiveRecord::Base
       with_phone(query[:phone]).
       with_subareas(query[:selected_special_investigations_unit_complaint_basis_ids],
                     query[:selected_good_governance_complaint_basis_ids],
-                    query[:selected_human_rights_complaint_basis_ids])
+                    query[:selected_human_rights_complaint_basis_ids]).
+      with_agencies(query[:selected_agency_ids])
 end
+
+  def self.with_agencies(selected_agency_ids)
+    joins(:complaint_agencies).where("complaint_agencies.agency_id in (?)", selected_agency_ids)
+  end
 
   def self.with_subareas(selected_siu_subareas, selected_gg_subareas, selected_hr_subareas)
     selected_siu_subareas = nil if  selected_siu_subareas.delete_if(&:blank?).empty?

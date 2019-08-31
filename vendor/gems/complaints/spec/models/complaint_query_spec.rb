@@ -96,6 +96,7 @@ describe "scope class methods" do
       {:selected_assignee_id=>user.id,
        :selected_status_ids=>ComplaintStatus.pluck(:id),
        :selected_mandate_ids=>Mandate.pluck(:id),
+       :selected_agency_ids => Agency.pluck(:id),
        :selected_special_investigations_unit_complaint_basis_ids=>Siu::ComplaintBasis.pluck(:id),
        :selected_human_rights_complaint_basis_ids=>[1, 2, 3, 4, 5, 6, 7, 8, 9],
        :selected_good_governance_complaint_basis_ids=>GoodGovernance::ComplaintBasis.pluck(:id)}
@@ -104,11 +105,13 @@ describe "scope class methods" do
 
     before do
       create_mandates
+      create_agencies
       populate_complaint_bases
       FactoryBot.create(:complaint,
                         :open,
                         assigned_to: user,
                         mandate_id: mandate.id,
+                        agencies: [Agency.first],
                         good_governance_complaint_bases: GoodGovernance::ComplaintBasis.all[0..3],
                         special_investigations_unit_complaint_bases: Siu::ComplaintBasis.all[0..2])
     end
@@ -147,6 +150,7 @@ describe "selects complaints matching the selected subarea" do
     {:selected_assignee_id=>user.id,
      :selected_status_ids=>ComplaintStatus.pluck(:id),
      :selected_mandate_ids=>Mandate.pluck(:id),
+     :selected_agency_ids=>Agency.pluck(:id),
      :selected_special_investigations_unit_complaint_basis_ids=>[siu_cb.id],
      :selected_human_rights_complaint_basis_ids=>[],
      :selected_good_governance_complaint_basis_ids=>[gg_cb.id]}
@@ -157,12 +161,13 @@ describe "selects complaints matching the selected subarea" do
   let(:hr_cb)  { FactoryBot.create(:hr_complaint_basis, name: 'baz')}
 
   before do
+    create_agencies
     create_mandates
     #cs_cb  = FactoryBot.create(:cs_complaint_basis)
     mandate_id = Mandate.first.id
-    @gg_complaint = FactoryBot.create(:complaint, :open, mandate_id: mandate_id, good_governance_complaint_bases: [gg_cb], assigned_to: user)
-    @siu_complaint = FactoryBot.create(:complaint, :open, mandate_id: mandate_id, special_investigations_unit_complaint_bases: [siu_cb],  assigned_to: user)
-    @hr_complaint = FactoryBot.create(:complaint, :open, mandate_id: mandate_id, human_rights_complaint_bases: [hr_cb],  assigned_to: user)
+    @gg_complaint = FactoryBot.create(:complaint, :open, agencies: [Agency.first], mandate_id: mandate_id, good_governance_complaint_bases: [gg_cb], assigned_to: user)
+    @siu_complaint = FactoryBot.create(:complaint,:open, agencies: [Agency.first], mandate_id: mandate_id, special_investigations_unit_complaint_bases: [siu_cb],  assigned_to: user)
+    @hr_complaint = FactoryBot.create(:complaint, :open, agencies: [Agency.first], mandate_id: mandate_id, human_rights_complaint_bases: [hr_cb],  assigned_to: user)
     #FactoryBot.create(:complaint, :open, strategic_plan_complaint_bases: [cs_cb],  assigned_to: user)
   end
 

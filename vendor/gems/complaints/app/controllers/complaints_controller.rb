@@ -105,7 +105,8 @@ class ComplaintsController < ApplicationController
      selected_mandate_ids: Mandate.pluck(:id),
      selected_special_investigations_unit_complaint_basis_ids: Siu::ComplaintBasis.pluck(:id),
      selected_human_rights_complaint_basis_ids: Nhri::ComplaintBasis.pluck(:id),
-     selected_good_governance_complaint_basis_ids: GoodGovernance::ComplaintBasis.pluck(:id)}
+     selected_good_governance_complaint_basis_ids: GoodGovernance::ComplaintBasis.pluck(:id),
+     selected_agency_ids: Agency.pluck(:id)}
   end
 
   def index_query_params
@@ -115,13 +116,15 @@ class ComplaintsController < ApplicationController
              :selected_status_ids => [], :selected_mandate_ids => [],
              :selected_special_investigations_unit_complaint_basis_ids => [],
              :selected_human_rights_complaint_basis_ids => [],
-             :selected_good_governance_complaint_basis_ids => [] ).
+             :selected_good_governance_complaint_basis_ids => [],
+             :selected_agency_ids => [] ).
       with_defaults(default_params).
       slice(:selected_assignee_id, :selected_status_ids, :case_reference, :complainant,
             :from, :to, :village, :phone, :selected_mandate_ids,
             :selected_special_investigations_unit_complaint_basis_ids,
             :selected_human_rights_complaint_basis_ids,
-            :selected_good_governance_complaint_basis_ids)
+            :selected_good_governance_complaint_basis_ids,
+            :selected_agency_ids )
   end
 
   def complaint_params

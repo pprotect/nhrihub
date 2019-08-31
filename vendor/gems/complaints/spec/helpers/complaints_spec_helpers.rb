@@ -214,10 +214,10 @@ module ComplaintsSpecHelpers
     select_option(name).click
   end
 
-  def select_subarea(name)
-    open_dropdown('Select complaint basis')
-    select_option(name).click
-  end
+  #def select_subarea(name)
+    #open_dropdown('Select complaint basis')
+    #select_option(name).click
+  #end
 
   def expand
     sleep(0.4)

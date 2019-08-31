@@ -15,11 +15,13 @@ module ComplaintsRemindersSetupHelpers
   def populate_database
     create_mandates
     create_subareas
+    create_agencies
     create_complaint_statuses
     FactoryBot.create( :complaint,
                        :open,
                        :with_associations,
                        :assigned_to => [User.where(:login => 'admin').first, User.where(:login => 'admin').first],
+                       :agencies => [Agency.first],
                        :reminders=>[FactoryBot.create(:reminder,
                                                       :complaint,
                                                       :reminder_type => 'weekly',

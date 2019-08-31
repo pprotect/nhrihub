@@ -25,6 +25,7 @@ script.
       if(_.isEmpty(params.selected_good_governance_complaint_basis_ids)){params.selected_good_governance_complaint_basis_ids = [""]} // hack to send "empty" array indicating no status was checked
       if(_.isEmpty(params.selected_human_rights_complaint_basis_ids)){params.selected_human_rights_complaint_basis_ids = [""]} // hack to send "empty" array indicating no status was checked
       if(_.isEmpty(params.selected_special_investigations_unit_complaint_basis_ids)){params.selected_special_investigations_unit_complaint_basis_ids = [""]} // hack to send "empty" array indicating no status was checked
+      if(_.isEmpty(params.selected_agency_ids)){params.selected_agency_ids = [""]} // hack to send "empty" array indicating no status was checked
       $.get(window.url, params , this.refresh, 'json')
       },
     components : {
