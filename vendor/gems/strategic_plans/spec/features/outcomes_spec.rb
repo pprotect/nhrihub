@@ -148,7 +148,6 @@ feature "actions on existing multiple outcomes", :js => true do
     pr = PlannedResult.create(:strategic_priority_id => spl.id, :description => "Something profound")
     o1 = Outcome.create(:planned_result_id => pr.id, :description => "whirled peas")
     o2 = Outcome.create(:planned_result_id => pr.id, :description => "cosmic harmony")
-    page.driver.resize_window(1224,768) if page.driver.is_a? Capybara::Poltergeist::Driver
     visit strategic_plans_strategic_plan_path(:en, StrategicPlan.most_recent.id)
     open_accordion_for_strategic_priority_one
   end

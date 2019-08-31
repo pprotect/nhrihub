@@ -461,17 +461,12 @@ feature "view attachments", :js => true do
   end
 
   scenario "visit link" do # headless chrome can't handle switching windows, try again with chrome 62 when it's available
-    if page.driver.is_a?(Capybara::Poltergeist::Driver)
-      # b/c triggering a reload of another page triggers a phantomjs bug/error
-      expect(1).to eq 1
-    else
-      setup_database(:media_appearance_with_link)
-      visit media_appearances_path(:en)
-      click_the_link_icon
-      page.switch_to_window(page.windows[-1])
-      page.find('h1',:text => "Example Domain") # better than sleep to await the page load
-      expect( page.evaluate_script('window.location.href')).to include first_article_link
-    end
+    setup_database(:media_appearance_with_link)
+    visit media_appearances_path(:en)
+    click_the_link_icon
+    page.switch_to_window(page.windows[-1])
+    page.find('h1',:text => "Example Domain") # better than sleep to await the page load
+    expect( page.evaluate_script('window.location.href')).to include first_article_link
   end
 
 end

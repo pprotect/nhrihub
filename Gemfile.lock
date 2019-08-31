@@ -226,7 +226,6 @@ GEM
     childprocess (1.0.1)
       rake (< 13.0)
     chronic (0.10.2)
-    cliver (0.3.2)
     coffee-rails (5.0.0)
       coffee-script (>= 2.2.0)
       railties (>= 5.2.0)
@@ -365,10 +364,6 @@ GEM
     pathutil (0.16.2)
       forwardable-extended (~> 2.6)
     pg (1.1.4)
-    poltergeist (1.18.1)
-      capybara (>= 2.1, < 4)
-      cliver (~> 0.3.1)
-      websocket-driver (>= 0.2.0)
     public_suffix (3.1.1)
     puma (4.0.0)
       nio4r (~> 2.0)
@@ -582,7 +577,6 @@ DEPENDENCIES
   message_block!
   nhri!
   pg
-  poltergeist
   projects!
   puma
   rack!

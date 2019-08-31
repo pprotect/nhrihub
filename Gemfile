@@ -69,7 +69,6 @@ gem 'haml', '~> 5.1.0'
 gem 'html2haml', '~> 2.2.0'
 
 group :development, :test, :jstest do
-  gem 'irb'
   gem 'rspec-rails'
   gem 'capybara'
   gem 'selenium-webdriver'
@@ -78,6 +77,8 @@ group :development, :test, :jstest do
   gem 'teaspoon'
   gem 'teaspoon-mocha'
   gem 'magic_lamp'
+  gem 'simplecov', :require => false
+  gem 'irb'
   gem 'launchy'
   gem 'byebug'
   gem 'puma'
@@ -89,8 +90,6 @@ gem 'simple-navigation-bootstrap'
 gem 'font-awesome-sass', '=4.7.0'
 #gem 'simple-navigation', '~> 4.0.3' seems to have some problems with simple-navigation-bootstrap
 gem 'simple-navigation', '~> 3.14.0'
-gem 'simplecov', :require => false, :group => [:test, :jstest]
-gem 'poltergeist', group: [:test, :jstest]
 gem 'factory_bot_rails', '~> 4.0'
 gem 'faker'
 

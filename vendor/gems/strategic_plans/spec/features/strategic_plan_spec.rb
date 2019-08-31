@@ -41,11 +41,7 @@ feature "select strategic plan from prior years", :js => true do
   scenario "add priorities disabled for prior years" do
     visit strategic_plans_strategic_plan_path(:en, @sp1.id)
     expect(page).to have_selector(".strategic_priority_title .description .no_edit", :text => "Gonna do things betta")
-    if page.driver.browser.is_a? Capybara::Poltergeist::Browser
-      expect(add_priority_button['disabled']).to eq "disabled"
-    else
-      expect(add_priority_button['disabled']).to eq "disabled"
-    end
+    expect(add_priority_button['disabled']).to eq "disabled"
     add_priority_button.click
     expect(flash_message).to eq "Strategic priorities can only be added to the current strategic plan"
     click_anywhere

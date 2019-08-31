@@ -19,7 +19,7 @@ require 'database_cleaner'
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 require 'faker'
 require 'capybara_remote'
-require 'capybara/poltergeist'
+require 'capybara'
 require 'selenium-webdriver'
 require_relative './support/wait_for_ajax'
 require_relative './support/wait_for_authentication'
@@ -86,15 +86,6 @@ Capybara.register_driver :chrome do |app|
   Capybara::Selenium::Driver.new(app, :browser => :chrome, :options => chrome_options)
 end
 
-Capybara.register_driver :poltergeist do |app|
-# use this configuration to show the messages between poltergeist and phantomjs
-  #Capybara::Poltergeist::Driver.new(app, :debug => true)
-# use this configuration to enable the page.driver.debug interface
-# see https://github.com/teampoltergeist/poltergeist
-  #Capybara::Poltergeist::Driver.new(app, :inspector => true, :timeout => 300)
-  Capybara::Poltergeist::Driver.new(:window_size => [1600,900])
-end
-
 url = CapybaraRemote.url # it's in lib directory
 capabilities = Selenium::WebDriver::Remote::Capabilities.internet_explorer
 capabilities.version = "11"
@@ -114,11 +105,6 @@ elsif ENV["client"] =~ /^chrome$/i
   puts "Browser: Chrome"
 
   Capybara.javascript_driver = :chrome
-  Capybara.server = :puma, { Silent: true }
-elsif ENV["client"] =~ /phantom/i
-  puts "Browser: Phantomjs via Poltergeist"
-
-  Capybara.javascript_driver = :poltergeist
   Capybara.server = :puma, { Silent: true }
 elsif ENV["client"] =~ /ie/i
   puts "Browser: IE"

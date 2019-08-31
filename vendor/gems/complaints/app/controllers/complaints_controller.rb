@@ -19,7 +19,7 @@ class ComplaintsController < ApplicationController
       village: nil,
       phone_number: "",
       basis_ids: [],
-      selected_agency_ids: [],
+      selected_agency_ids: Agency.pluck(:id),
       current_assignee_id: 0,
       selected_assignee_id: @selected_assignee_id,
       selected_human_rights_complaint_basis_ids: index_query_params[:selected_human_rights_complaint_basis_ids],
