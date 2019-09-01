@@ -68,7 +68,11 @@ gem 'haml-rails'
 gem 'haml', '~> 5.1.0'
 gem 'html2haml', '~> 2.2.0'
 
-group :development, :test, :jstest do
+# putting rspec-rails in the test group, vs. test and development
+# is the workaround for the suite running twice!
+# don't know why, but others have suggested this on stack overflow
+# rspec docs say put it in the test development group
+group :test, :jstest do
   gem 'rspec-rails'
   gem 'capybara'
   gem 'selenium-webdriver'
@@ -78,6 +82,9 @@ group :development, :test, :jstest do
   gem 'teaspoon-mocha'
   gem 'magic_lamp'
   gem 'simplecov', :require => false
+end
+
+group :development, :test, :jstest do
   gem 'irb'
   gem 'launchy'
   gem 'byebug'
