@@ -82,17 +82,18 @@
             | {{ t.select_basis }}
           span.caret
         ul.dropdown-menu
-          li.dropdown-header 
+          <selectClear collection='{{['selected_good_governance_complaint_basis_ids','selected_human_rights_complaint_basis_ids','selected_special_investigations_unit_complaint_basis_ids']}}'/>
+          li.dropdown-header
             | {{ t.good_governance }}
           | {{#all_good_governance_complaint_bases}}
           <goodGovernanceComplaintBasisFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}'/>
           | {{/all_good_governance_complaint_bases}}
-          li.dropdown-header 
+          li.dropdown-header
             | {{ t.human_rights }}
           | {{#all_human_rights_complaint_bases}}
           <humanRightsComplaintBasisFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}'/>
           | {{/all_human_rights_complaint_bases}}
-          li.dropdown-header 
+          li.dropdown-header
             | {{ t.special_investigations_unit }}
           | {{#all_special_investigations_unit_complaint_bases}}
           <specialInvestigationsUnitComplaintBasisFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}'/>
@@ -125,6 +126,7 @@ script.
   import AssigneeFilterSelect from './assignee_filter_select'
   import StatusFilterSelect from './status_filter_select'
   import translations from './translations.js'
+  import SelectClear from './select_clear'
 
   export default Ractive.extend({
     template : $TEMPLATE,
@@ -136,47 +138,23 @@ script.
       agencyFilterSelect : AgencyFilterSelect,
       mandateFilterSelect : MandateFilterSelect,
       assigneeFilterSelect : AssigneeFilterSelect,
-      statusFilterSelect : StatusFilterSelect
+      statusFilterSelect : StatusFilterSelect,
+      selectClear : SelectClear,
     },
     data : function(){ return {
-      t : translations.t('filter_controls')
+      t : translations.t('filter_controls'),
+      default_good_governance_complaint_basis_ids :  _.map(complaints_page_data().all_good_governance_complaint_bases,function(d){return d.id }),
+      default_human_rights_complaint_basis_ids :  _.map(complaints_page_data().all_human_rights_complaint_bases,function(d){return d.id}),
+      default_special_investigations_unit_complaint_basis_ids :  _.map(complaints_page_data().all_special_investigations_unit_complaint_bases,function(d){return d.id})
     }},
     observe: {
-      //'filter_criteria.case_reference filter_criteria.complainant filter_criteria.from filter_criteria.to filter_criteria.village filter_criteria.phone': {
-        //handler(value, old, path, idx){
-          //if(!_.isUndefined(old)){ //this prevents a json reload when the page is first loaded
-            //this.parent.load();
-          //}
-        //}
-      //},
-      //'filter_criteria.selected_special_investigations_unit_complaint_basis_ids filter_criteria.selected_human_rights_complaint_basis_ids filter_criteria.selected_good_governance_complaint_basis_ids' : {
-        //handler(value, old, path, idx){
-          //if(!_.isUndefined(old)){
-            //this.parent.load();
-          //}
-        //}
-      //},
-      //'filter_criteria.selected_assignee_id': {
-        //handler(value, old, path, idx){
-          //if(!_.isUndefined(old)){
-            //this.parent.load();
-          //}
-        //}
-      //},
-      //'filter_criteria.selected_status_ids filter_criteria.selected_mandate_ids filter_criteria.selected_agency_ids': {
-        //handler(value, old, path, idx){
-          //if(!_.isUndefined(old)){
-            //this.parent.load();
-          //}
-        //}
-      //},
       'filter_criteria': {
         handler(value, old, path, idx){
           if(!_.isUndefined(old)){
             this.parent.load();
           }
         }
-      },
+      }
     },
     clear_filter() {
       complaints_page_data().filter_criteria.case_reference = null
@@ -189,6 +167,26 @@ script.
       const search_string = (_.isEmpty( window.location.search) || _.isNull( window.location.search)) ? '' : window.location.search.split("=")[1];
       const filter_criteria = _.extend(source_filter_criteria,{case_reference : search_string});
       return this.set('filter_criteria',filter_criteria);
+    },
+    clear_all(name){
+      if(_.isArray(name)){
+        var params = {};
+        name.forEach(function(n){ 
+          params['filter_criteria.'+n] = [""];
+        })
+        this.set(params);
+      }
+    },
+    select_all(name){
+      if(_.isArray(name)){
+        var params = {};
+        var that = this;
+        name.forEach(function(n){ 
+          var defaults = that.get(n.replace(/selected/,'default'));
+          params['filter_criteria.'+n] = defaults;
+        })
+        this.set(params);
+      }
     },
     is_active(attr){
       if(attr == 'status'){

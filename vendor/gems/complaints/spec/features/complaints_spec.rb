@@ -1224,5 +1224,9 @@ feature "selects complaints matching the selected subarea", :js => true do
     select_option('foo').click # deselect
     wait_for_ajax
     expect(complaints.count).to eq 2
+    clear_options('Select complaint basis')
+    expect(complaints.count).to eq 0
+    select_all_options('Select complaint basis')
+    expect(complaints.count).to eq 3
   end
 end

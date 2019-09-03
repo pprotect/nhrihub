@@ -3,7 +3,6 @@ module.exports = {
     this.event.original.preventDefault();
     this.event.original.stopPropagation();
     this.set('selected',!this.get('selected'));
-    //return complaints.load();
   },
   computed : {
     // array source is like checkboxes, multiple selections possible

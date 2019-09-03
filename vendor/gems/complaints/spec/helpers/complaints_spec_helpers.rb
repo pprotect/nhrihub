@@ -251,4 +251,21 @@ module ComplaintsSpecHelpers
   def open_dropdown(name)
     page.find("#complaints_controls button", :text => name).click
   end
+
+  def clear_options(name)
+    unless page.has_selector?('#clear_all')
+      open_dropdown(name)
+    end
+    page.find('#clear_all', visible: true).click
+    wait_for_ajax
+  end
+
+  def select_all_options(name)
+    unless page.has_selector?('#select_all')
+      open_dropdown(name)
+    end
+    page.find('#select_all', visible: true).click
+    wait_for_ajax
+  end
+
 end
