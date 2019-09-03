@@ -88,7 +88,7 @@ module ComplaintsSpecHelpers
   end
 
   def select_option(name)
-    page.find(:xpath, ".//li[contains(.,'#{name}')]")
+    page.find(:xpath, ".//li[./a/span/text()='#{name}']")
   end
 
   def current_status

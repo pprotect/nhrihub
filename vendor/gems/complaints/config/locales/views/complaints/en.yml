@@ -101,6 +101,7 @@ en:
     assignee: 'Assignee'
     case_reference: "Case reference"
     clear: "reset"
+    clear_all: 'Clear all'
     compact_all: 'Compact all'
     complainant: 'Complainant'
     complaint_basis: "Subarea(s)"
@@ -114,6 +115,7 @@ en:
     phone: "phone"
     search: "Search for complaints by:"
     select_agency: 'Select agency'
+    select_all: 'Select all'
     select_area : "Select area"
     select_assignee: 'Select assignee'
     select_basis: 'Select complaint basis'

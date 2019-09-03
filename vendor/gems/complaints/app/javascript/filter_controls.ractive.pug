@@ -54,6 +54,7 @@
             | {{ t.select_agency }}
           span.caret
         ul.dropdown-menu#agency_filter_select
+          <selectClear t='{{t}}' collection='{{'selected_agency_ids'}}'/>
           | {{#all_agencies}}
           <agencyFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}' />
           | {{/all_agencies}}
@@ -82,7 +83,7 @@
             | {{ t.select_basis }}
           span.caret
         ul.dropdown-menu
-          <selectClear collection='{{['selected_good_governance_complaint_basis_ids','selected_human_rights_complaint_basis_ids','selected_special_investigations_unit_complaint_basis_ids']}}'/>
+          <selectClear t='{{t}}' collection='{{['selected_good_governance_complaint_basis_ids','selected_human_rights_complaint_basis_ids','selected_special_investigations_unit_complaint_basis_ids']}}'/>
           li.dropdown-header
             | {{ t.good_governance }}
           | {{#all_good_governance_complaint_bases}}
@@ -145,7 +146,8 @@ script.
       t : translations.t('filter_controls'),
       default_good_governance_complaint_basis_ids :  _.map(complaints_page_data().all_good_governance_complaint_bases,function(d){return d.id }),
       default_human_rights_complaint_basis_ids :  _.map(complaints_page_data().all_human_rights_complaint_bases,function(d){return d.id}),
-      default_special_investigations_unit_complaint_basis_ids :  _.map(complaints_page_data().all_special_investigations_unit_complaint_bases,function(d){return d.id})
+      default_special_investigations_unit_complaint_basis_ids :  _.map(complaints_page_data().all_special_investigations_unit_complaint_bases,function(d){return d.id}),
+      default_agency_ids :  _.map(complaints_page_data().all_agencies,function(d){return d.id})
     }},
     observe: {
       'filter_criteria': {
@@ -169,24 +171,29 @@ script.
       return this.set('filter_criteria',filter_criteria);
     },
     clear_all(name){
+      var params = {};
       if(_.isArray(name)){
-        var params = {};
         name.forEach(function(n){ 
           params['filter_criteria.'+n] = [""];
         })
-        this.set(params);
+      }else{
+        params['filter_criteria.'+name] = [""];
       }
+      this.set(params);
     },
     select_all(name){
+      var params = {};
+      var that = this;
       if(_.isArray(name)){
-        var params = {};
-        var that = this;
         name.forEach(function(n){ 
           var defaults = that.get(n.replace(/selected/,'default'));
           params['filter_criteria.'+n] = defaults;
         })
-        this.set(params);
+      }else{
+        var defaults = that.get(name.replace(/selected/,'default'));
+        params['filter_criteria.'+name] = defaults;
       }
+      this.set(params);
     },
     is_active(attr){
       if(attr == 'status'){

@@ -45,6 +45,7 @@ class Complaint < ActiveRecord::Base
 end
 
   def self.with_agencies(selected_agency_ids)
+    selected_agency_ids = nil if selected_agency_ids.delete_if(&:blank?).empty?
     joins(:complaint_agencies).where("complaint_agencies.agency_id in (?)", selected_agency_ids)
   end
 

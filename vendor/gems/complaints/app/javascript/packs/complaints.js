@@ -12,9 +12,10 @@ window.complaints_page_data = function(){
     complaints : source_complaints_data,
     filter_criteria: source_filter_criteria,
     next_case_reference : source_next_case_reference,
-  all_good_governance_complaint_bases : source_all_good_governance_complaint_bases,
-  all_human_rights_complaint_bases : source_all_human_rights_complaint_bases,
-  all_special_investigations_unit_complaint_bases : source_all_special_investigations_unit_complaint_bases
+    all_good_governance_complaint_bases : source_all_good_governance_complaint_bases,
+    all_human_rights_complaint_bases : source_all_human_rights_complaint_bases,
+    all_special_investigations_unit_complaint_bases : source_all_special_investigations_unit_complaint_bases,
+    all_agencies : source_all_agencies
   }
 };
 

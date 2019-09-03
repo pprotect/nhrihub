@@ -1,6 +1,6 @@
 li.select_clear(style='margin-left:20px')
-  button.btn.btn-default.btn-xs#clear_all('on-click'='@this.clear_all()') Clear all
-  button.btn.btn-default.btn-xs#select_all('on-click'='@this.select_all()' style='margin-left:36px') Select all
+  button.btn.btn-default.btn-xs#clear_all('on-click'='@this.clear_all()') {{ t.clear_all }}
+  button.btn.btn-default.btn-xs#select_all('on-click'='@this.select_all()' style='margin-left:36px') {{ t.select_all }}
 
 script.
   export default Ractive.extend({ 

@@ -1230,3 +1230,38 @@ feature "selects complaints matching the selected subarea", :js => true do
     expect(complaints.count).to eq 3
   end
 end
+
+feature "selects complaints matching selected agency(-ies)", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecHelpers
+  include ComplaintsSpecSetupHelpers
+
+  before do
+    create_mandates
+    create_agencies
+    create_subareas
+    user = User.first
+    cc = FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user)
+    cc.agencies = [Agency.first]
+    cc = FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user)
+    cc.agencies = [Agency.second]
+    cc = FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user)
+    cc.agencies = [Agency.third]
+    visit complaints_path(:en)
+  end
+
+  it "should return complaints based on selected agencies" do
+    expect(complaints.count).to eq 3
+    open_dropdown('Select agency')
+    Agency.pluck(:name).each do |name|
+      expect(select_option(name)[:class]).to include('selected')
+    end
+    select_option(Agency.first.name).click # deselect
+    wait_for_ajax
+    expect(complaints.count).to eq 2
+    clear_options('Select agency')
+    expect(complaints.count).to eq 0
+    select_all_options('Select agency')
+    expect(complaints.count).to eq 3
+  end
+end
