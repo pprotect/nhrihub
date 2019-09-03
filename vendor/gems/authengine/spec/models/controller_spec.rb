@@ -57,6 +57,7 @@ end
 describe "update_from_file" do
   context "when a method is added" do
     before do
+      `ulimit -n 1024`
       @file = Rails.root.join("app/controllers/testfile_controller.rb")
       file = File.open(@file, "w+")
       file.write "class TestfileController < ApplicationController; def index; end; end"
@@ -81,6 +82,7 @@ describe "update_from_file" do
 
   context "when a method is removed" do
     before do
+      `ulimit -n 1024`
       @file = Rails.root.join("app/controllers/testfile_controller.rb")
       file = File.open(@file, "w+")
       file.write "class TestfileController < ApplicationController; def index; end; def show; end; end"
