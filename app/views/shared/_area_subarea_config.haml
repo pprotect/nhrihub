@@ -23,7 +23,7 @@
     .row.panel-collapse.collapse{:id => 'collapse_{{ id }}', :style => 'margin-left:0px; margin-right:0px; background-color: #D8D0AA'}
       .col-md-12{:style => "margin-left:15px"}
         {{#subareas}}
-        <subarea id='{{id}}' name='{{name}}' />
+        <subarea url='{{url}}' id='{{id}}' name='{{name}}' />
         {{/subareas}}
 
 %script#new_area_template{:type => 'ractive/template'}
@@ -36,7 +36,7 @@
 
 %script#areas_template{:type => 'ractive/template'}
   {{#areas}}
-  <area id='{{id}}' name='{{name}}' subareas='{{subareas}}' />
+  <area url='{{url}}' id='{{id}}' name='{{name}}' subareas='{{subareas}}' />
   {{/areas}}
 
 %script#subarea_template{:type => 'ractive/template'}
@@ -66,6 +66,8 @@
     Ractive.DEBUG = false
 
     areas_data =  #{@areas.to_json.html_safe}
+    create_subarea_url = "#{ @create_subarea_url}"
+    create_area_url = "#{ @create_area_url }"
 
     Subarea = Ractive.extend
       template : '#subarea_template'
@@ -73,7 +75,7 @@
         persisted : ->
           !isNaN(parseInt(@get('id')))
       create: ->
-        create_subarea_url = Routes.media_appearance_area_subareas_path(current_locale, @parent.get('id'))
+        create_subarea_url = create_subarea_url.replace(/area_id/, @parent.get('id'))
         if @valid()
           $.ajax
             type : 'post'
@@ -95,10 +97,10 @@
         @set("subarea_error",false)
       delete_subarea : ->
         @event.original.preventDefault()
-        url = Routes.media_appearance_area_subarea_path(current_locale, @parent.get('id'), @get('id'))
+        delete_subarea_url = @get('url')
         $.ajax
           type : 'post'
-          url : url
+          url : delete_subarea_url
           data : {'_method' : 'delete'}
           dataType : 'json'
           success : @delete_subarea_callback
@@ -118,10 +120,9 @@
           @add_new_subarea_form()
       create: ->
         if @valid()
-          url = Routes.media_appearance_areas_path(current_locale)
           $.ajax
             type : 'post'
-            url : url
+            url : create_area_url
             data : {area : {name : @get('name')}}
             dataType : 'json'
             success : @update
@@ -139,10 +140,10 @@
         @set("area_error",false)
       delete_area : ->
         @event.original.preventDefault()
-        url = Routes.media_appearance_area_path(current_locale, @get('id'))
+        delete_area_url = @get('url')
         $.ajax
           type : 'post'
-          url : url
+          url : delete_area_url
           data : {'_method' : 'delete'}
           dataType : 'json'
           success : @delete_area_callback

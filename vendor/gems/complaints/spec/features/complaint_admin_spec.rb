@@ -18,6 +18,11 @@ feature "complaint bases admin", :js => true do
     expect(page).not_to have_selector('h4',text: "Corporate Services Subareas")
   end
 
+  scenario "in with the new" do
+    visit complaint_admin_path('en')
+    expect(page).to have_selector('h4', text: "Areas and subareas")
+  end
+
   scenario "no complaint bases configured" do
     visit complaint_admin_path('en')
     sleep(0.1)

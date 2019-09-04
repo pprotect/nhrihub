@@ -14,14 +14,6 @@ en:
       media_filetypes:
         add: "Add"
         empty: "none configured"
-      media_areas:
-        add_area: "Add area"
-        add_subarea: "Add subarea"
-        areas: "Areas/subareas"
-        enter_area_text: "Enter area name"
-        enter_subarea_text: "Enter subarea name"
-        area_error_message: "Area can't be blank"
-        subarea_error_message: "Subarea can't be blank"
 
   media_appearances:
     index:

@@ -1,18 +1,6 @@
 .message_block
 %h1=t('.heading')
 
--["good_governance", "siu", "strategic_plan"].each do |name|
-  %h4= t(".#{name}_subareas")
-  %div{:id => "#{name}_subareas"}
-    = render :partial => 'admin/collection_configuration',
-      :locals => { :new_item => instance_variable_get("@#{name}_complaint_basis"),
-                   :create_url => Rails.application.routes.url_helpers.send("#{name}_complaint_bases_path",'en'),
-                   :delete_url => Rails.application.routes.url_helpers.send("#{name}_complaint_basis_path",'en','id'),
-                   :collection => instance_variable_get("@#{name}_complaint_bases"),
-                   :item_name => "#{name}_subarea",
-                   :param_name => 'name',
-                   :placeholder => 'e.g. delayed action'}
-
 - ["complaint", "communication"].each do |name|
   %h4= t(".#{name}_filetypes")
   %div{:id => "#{name}_filetypes"}
