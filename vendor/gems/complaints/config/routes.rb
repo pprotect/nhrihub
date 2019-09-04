@@ -15,5 +15,10 @@ Rails.application.routes.draw do
     resources :siu_complaint_bases, :only => [:create, :destroy], :controller => 'siu/complaint_bases'
     resources :strategic_plan_complaint_bases, :only => [:create, :destroy], :controller => 'strategic_plans/complaint_bases'
     resources :agencies, :only => [:create, :destroy]
+    namespace :complaint do
+      resources :areas do
+        resources :subareas
+      end
+    end
   end
 end

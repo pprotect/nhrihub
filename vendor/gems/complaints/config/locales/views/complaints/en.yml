@@ -39,6 +39,7 @@ en:
       empty: "None configured"
       abbrev: "abbreviation"
       full_name: "full name"
+      areas: "Areas and subareas"
 
   complaint:
     add_file: "Add file"

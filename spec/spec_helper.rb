@@ -221,10 +221,6 @@ RSpec.configure do |config| # rspec-expectations config goes here. You can use a
 
     begin
       DatabaseCleaner.clean_with(:truncation)
-      #Controller.update_table
-      #%w[developer, admin, staff].each do |role|
-        #Role.create(:name => role)
-      #end
     rescue DatabaseCleaner::NoORMDetected
     end
   end

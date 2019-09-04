@@ -3,8 +3,4 @@ class Area < ActiveRecord::Base
   def as_json(opts = {})
     super(:except => [:created_at, :updated_at], :methods => [:subareas, :url])
   end
-
-  def url
-    Rails.application.routes.url_helpers.media_appearance_area_path(:en,id) if persisted?
-  end
 end

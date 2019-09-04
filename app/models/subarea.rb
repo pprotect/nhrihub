@@ -4,10 +4,6 @@ class Subarea < ActiveRecord::Base
     super(:except => [:created_at, :updated_at, :area_id], :methods => [:url])
   end
 
-  def url
-    Rails.application.routes.url_helpers.media_appearance_area_subarea_path(:en,area_id,id) if persisted?
-  end
-
   def extended_name
     [area.name,name].join(" ")
   end

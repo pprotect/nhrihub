@@ -14,5 +14,8 @@ class ComplaintAdminController < ApplicationController
     @siu_complaint_bases = Siu::ComplaintBasis.pluck(:name)
     @strategic_plan_complaint_basis = StrategicPlans::ComplaintBasis.new
     @strategic_plan_complaint_bases = StrategicPlans::ComplaintBasis.pluck(:name)
+    @areas = ComplaintArea.all
+    @create_subarea_url = complaint_area_subareas_path(I18n.locale, "area_id")
+    @create_area_url = complaint_areas_path(I18n.locale)
   end
 end
