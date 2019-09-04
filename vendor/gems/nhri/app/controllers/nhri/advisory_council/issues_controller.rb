@@ -3,8 +3,8 @@ class Nhri::AdvisoryCouncil::IssuesController < ApplicationController
 
   def index
     @advisory_council_issues = Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.includes(:subareas, :notes, :reminders, :areas => :subareas).all
-    @areas = Area.includes(:subareas).all
-    @subareas = Subarea.extended
+    @areas = MediaIssueArea.includes(:subareas).all
+    @subareas = MediaIssueSubarea.extended
     @advisory_council_issue = Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.new
     respond_to do |format|
       format.html

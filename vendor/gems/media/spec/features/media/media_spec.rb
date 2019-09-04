@@ -62,13 +62,21 @@ feature "create a new article", :js => true do
   before do
     setup_strategic_plan
     setup_areas
+    setup_complaint_areas # should not appear in views
     setup_file_constraints
-    setup_strategic_plan
     visit media_appearances_path(:en)
     add_article_button.click
   end
 
   scenario "without file and without errors" do
+    ["Bish", "Bash", "Bosh"].each do |area|
+      expect(page).not_to have_selector('.area', text: area)
+    end
+
+    ["Hello", "World", "Good", "Times", "Roll"].each do |subarea|
+      expect(page).not_to have_selector('.subarea', text: subarea)
+    end
+
     fill_in("media_appearance_title", :with => "My new article title")
     expect(chars_remaining).to eq "You have 80 characters left"
     check("Human Rights")
@@ -90,6 +98,7 @@ feature "create a new article", :js => true do
     expect(areas).to include "Human Rights"
     expect(areas).to include "Good Governance"
     expect(subareas).to include "CRC"
+    expect(subareas).to include "Violation"
   end
 
   scenario "upload article from file" do

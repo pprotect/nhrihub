@@ -1,0 +1,2 @@
+class MediaIssueArea < Area
+end

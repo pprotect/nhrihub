@@ -1,0 +1,2 @@
+class ComplaintSubarea < Subarea
+end

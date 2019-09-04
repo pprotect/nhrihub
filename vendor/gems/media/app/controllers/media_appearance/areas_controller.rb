@@ -1,17 +1,17 @@
 class MediaAppearance::AreasController < ApplicationController
   def create
-    area = Area.new(area_params)
+    area = MediaIssueArea.new(area_params)
     if area.save
-      render :json => Area.all, :status => 200
+      render :json => MediaIssueArea.all, :status => 200
     else
       head :internal_server_error
     end
   end
 
   def destroy
-    area = Area.find(params[:id])
+    area = MediaIssueArea.find(params[:id])
     if area.destroy
-      render :json => Area.all, :status => 200
+      render :json => MediaIssueArea.all, :status => 200
     else
       head :internal_server_error
     end

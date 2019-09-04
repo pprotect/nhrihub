@@ -52,12 +52,21 @@ feature "create a new article", :js => true do
 
   before do
     setup_areas
+    setup_complaint_areas # should not appear in views
     setup_file_constraints
     visit nhri_advisory_council_issues_path(:en)
     add_article_button.click
   end
 
   scenario "without errors" do
+    ["Bish", "Bash", "Bosh"].each do |area|
+      expect(page).not_to have_selector('.area', text: area)
+    end
+
+    ["Hello", "World", "Good", "Times", "Roll"].each do |subarea|
+      expect(page).not_to have_selector('.subarea', text: subarea)
+    end
+
     fill_in("advisory_council_issue_title", :with => "My new article title")
     expect(chars_remaining).to eq "You have 80 characters left"
     check("Human Rights")
@@ -72,6 +81,7 @@ feature "create a new article", :js => true do
     expect(areas).to include "Human Rights"
     expect(areas).to include "Good Governance"
     expect(subareas).to include "CRC"
+    expect(subareas).to include "Violation"
   end
 
   scenario "upload article from file" do

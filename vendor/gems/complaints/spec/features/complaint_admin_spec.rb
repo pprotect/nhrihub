@@ -11,6 +11,13 @@ feature "complaint bases admin", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintAdminSpecHelpers
 
+  scenario "out with the old" do
+    visit complaint_admin_path('en')
+    expect(page).not_to have_selector('h4',text: "Good Governance Subareas")
+    expect(page).not_to have_selector('h4',text: "Special Investigations Unit Subareas")
+    expect(page).not_to have_selector('h4',text: "Corporate Services Subareas")
+  end
+
   scenario "no complaint bases configured" do
     visit complaint_admin_path('en')
     sleep(0.1)

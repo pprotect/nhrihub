@@ -1,0 +1,2 @@
+class MediaIssueSubarea < Subarea
+end

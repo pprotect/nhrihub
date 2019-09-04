@@ -4,8 +4,8 @@ class MediaAppearancesController < ApplicationController
   def index
     @media_appearances = MediaAppearance.includes(:subareas, :performance_indicators, :notes, :reminders, :areas => :subareas).all
     @media_appearance = MediaAppearance.new
-    @areas = Area.includes(:subareas).all
-    @subareas = Subarea.extended
+    @areas = MediaIssueArea.includes(:subareas).all
+    @subareas = MediaIssueSubarea.extended
     @planned_results = PlannedResult.all_with_associations
   end
 

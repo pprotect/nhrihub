@@ -3,7 +3,7 @@ class MediaAppearance::AdminController < ApplicationController
     @media_filetypes = MediaAppearance.permitted_filetypes
     @media_filetype = Filetype.new
     @media_filesize = MediaAppearance.maximum_filesize
-    @areas = Area.all
-    @subarea = Subarea.new
+    @areas = MediaIssueArea.all
+    @subarea = MediaIssueSubarea.new
   end
 end

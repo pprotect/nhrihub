@@ -27,7 +27,6 @@ FactoryBot.define do
 
     trait :with_performance_indicators do
       after(:build) do |media_appearance|
-        #media_appearance.performance_indicator_ids = PerformanceIndicator.in_current_strategic_plan.pluck(:id).last(3)
         media_appearance.performance_indicator_ids = PerformanceIndicator.in_current_strategic_plan.pluck(:id).sample(3)
       end
     end
@@ -46,10 +45,10 @@ FactoryBot.define do
 
     trait :hr_area do
       after(:build) do |ma|
-        hr_area = Area.where(:name => "Human Rights").first
+        hr_area = Area.find_or_create_by(:name => "Human Rights")
         ma.areas << hr_area
-        subareas = Subarea.where(:area_id => hr_area.id).where.not(:name => "Violation")
-        ma.subareas = subareas.sample(rand(6))
+        subareas = Subarea.find_or_create_by(:area_id => hr_area.id, :name =>'CEDAW')
+        ma.subareas = [subareas]
       end
     end
 
