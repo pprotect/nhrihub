@@ -10,6 +10,8 @@ require 'area_subarea_admin'
 feature "complaint bases admin", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintAdminSpecHelpers
+  let(:area_model){ ComplaintArea }
+  let(:subarea_model){ ComplaintSubarea }
   it_behaves_like "area subarea admin"
 end
 

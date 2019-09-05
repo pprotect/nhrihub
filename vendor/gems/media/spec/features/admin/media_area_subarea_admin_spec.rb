@@ -7,6 +7,8 @@ require 'area_subarea_admin'
 feature "configure description areas and subareas", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include MediaAdminSpecHelpers
+  let(:area_model){ MediaIssueArea }
+  let(:subarea_model){ MediaIssueSubarea }
 
   it_behaves_like "area subarea admin"
 end

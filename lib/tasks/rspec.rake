@@ -1,6 +1,8 @@
 require "rspec/core/rake_task"
 
-RSpec::Core::RakeTask.new(:spec)
+RSpec::Core::RakeTask.new(:default) do |spec|
+  spec.pattern = "{,vendor/gems/*/}spec/{features,models,mailers}/**/*_spec.rb"
+end
 
 # because rails must be reloaded between specs
 # as the specs depend on rails configuration
@@ -16,14 +18,6 @@ task :models => :spec
 RSpec::Core::RakeTask.module_eval do
   def pattern
     "{,vendor/gems/*/}spec/models/**/*_spec.rb"
-  end
-end
-
-desc "run the entire test suite except request specs"
-task :default => :spec
-RSpec::Core::RakeTask.module_eval do
-  def pattern
-    "{,vendor/gems/*/}spec/{features,models,mailers}/**/*_spec.rb"
   end
 end
 
