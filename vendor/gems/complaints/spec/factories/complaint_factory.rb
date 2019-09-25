@@ -62,9 +62,8 @@ FactoryBot.define do
 
     trait :with_associations do
       after :build do |complaint|
-        complaint.good_governance_complaint_bases << GoodGovernance::ComplaintBasis.all.sample(2)
-        complaint.human_rights_complaint_bases << Nhri::ComplaintBasis.all.sample(2)
-        complaint.special_investigations_unit_complaint_bases << Siu::ComplaintBasis.all.sample(2)
+        complaint.complaint_areas << ComplaintArea.all.sample(2)
+        complaint.complaint_subareas << ComplaintSubarea.all.sample(2)
         complaint.status_changes << FactoryBot.create(:status_change, :open, :change_date => DateTime.now, :user_id => User.all.sample.id)
         complaint.agency_ids = Agency.pluck(:id).sample(2)
       end
@@ -72,9 +71,8 @@ FactoryBot.define do
 
     trait :with_fixed_associations do
       after :build do |complaint|
-        complaint.good_governance_complaint_bases << GoodGovernance::ComplaintBasis.all
-        complaint.human_rights_complaint_bases << Nhri::ComplaintBasis.all
-        complaint.special_investigations_unit_complaint_bases << Siu::ComplaintBasis.all
+        complaint.complaint_areas << ComplaintArea.all
+        complaint.complaint_subareas << ComplaintSubarea.all
         complaint.status_changes << FactoryBot.create(:status_change, :open, :change_date => DateTime.now, :user_id => User.all.sample.id)
         complaint.mandate_id = Mandate.pluck(:id).sample(1)
         complaint.agency_ids = Agency.pluck(:id).sample(2)

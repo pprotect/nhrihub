@@ -46,14 +46,6 @@ module ProjectsSpecHelpers
     upload_file_path('first_upload_image_file.png')
   end
 
-  def good_governance_types
-    page.find('#good_governance_types')
-  end
-
-  def human_rights_types
-    page.find('#human_rights_types')
-  end
-
   def single_item_selector
     "#projects .project"
   end
@@ -95,12 +87,22 @@ module ProjectsSpecHelpers
     find('.documents .edit')
   end
 
-  def project_types
-    find('#area_project_types')
+  def subareas
+    find('#subareas')
   end
 
-  def good_governance_area
-    find(:xpath, ".//div[contains(@class,'area_project_type')][div[contains(.,'Good Governance')]]")
+  def good_governance_subareas
+    subarea_names("Good Governance")
+  end
+
+  def human_rights_subareas
+    subarea_names("Human Rights")
+  end
+
+  def check_subarea(area, subarea)
+  area_key = area.gsub(/\s/,'').underscore
+  checkbox = page.find("##{area_key}_subareas .subarea", :text => subarea).find('input')
+  checkbox.click
   end
 
   def agencies
@@ -158,7 +160,11 @@ module ProjectsSpecHelpers
   end
 
   def performance_indicators
-    find('#performance_indicators')
+    find('.performance_indicators')
+  end
+
+  def performance_indicator_descriptions
+    all('.performance_indicator').map(&:text)
   end
 
   def remove_first_indicator
@@ -184,11 +190,20 @@ module ProjectsSpecHelpers
     find(:xpath, "//input[@type='checkbox'][@id='#{id}']")
   end
 
+  def radio(id)
+    find(:xpath, "//input[@type='radio'][@id='#{id}']")
+  end
+
   def click_the_download_icon
     scroll_to(page.all("#projects .project .project_document .fa-cloud-download")[0]).click
   end
 
   def project_documents
     page.find('#project_documents')
+  end
+
+  private
+  def subarea_names(area)
+    all(:xpath, ".//div[@class='area'][contains(./div[@class='name'],'#{area}')]/div[contains(@class,'subareas')]/span[@class='subarea']").map(&:text)
   end
 end

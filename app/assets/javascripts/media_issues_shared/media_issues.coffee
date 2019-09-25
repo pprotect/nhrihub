@@ -40,9 +40,9 @@ $ ->
     template : '#collection_item_area_template'
     computed :
       name : ->
-        _(areas).findWhere({id : @get('area_id')}).name
+        _(areas).findWhere({id : @get('area_id')}).name unless @get('area_id') == 0
     components :
-      collectionitemsubarea : Collection.CollectionItemSubarea
+      collectionItemSubarea : Collection.CollectionItemSubarea
 
   Selectable =
     oninit : ->
@@ -72,7 +72,7 @@ $ ->
   , Selectable
 
   Collection.SubareaFilter = Ractive.extend
-    template : '#subarea_template'
+    template : '#subarea_filter_template'
   .extend SelectableSubarea
 
   Collection.AreaFilter = Ractive.extend
@@ -130,10 +130,23 @@ $ ->
     restore : ->
       @set(@stashed_instance)
 
+  Collection.SubareaSelect = Ractive.extend
+    template: "#subarea_select_template"
+    computed:
+      area_id: -> @parent.get('area_id')
+
+  Collection.AreaSelect = Ractive.extend
+    template: "#area_select_template"
+    computed:
+      name: -> _(areas).findWhere({id : @get('area_id')}).name
+    components:
+      subareaSelect: Collection.SubareaSelect
+
   Collection.CollectionItem = Ractive.extend
     template : '#collection_item_template'
     components :
       collectionItemArea : Collection.CollectionItemArea
+      areaSelect: Collection.AreaSelect
       file : Collection.File
     oninit : ->
       @set
@@ -200,12 +213,20 @@ $ ->
         matches_area : @_matches_area()
         matches_subarea: @_matches_subarea()
         matches_title: @_matches_title()
+      mandate_name :
+        get: ->
+          return null if _.isNull(@get('mandate_id'))
+          mandate = _(@get('all_mandates')).findWhere({id : @get('mandate_id')})
+          mandate.name
+        set: (val)->
+          return 'foo'
     _matches_from : ->
       $.datepicker.parseDate("yy, M d",@get('date')) >= new Date(@get('filter_criteria.from'))
     _matches_to : ->
       $.datepicker.parseDate("yy, M d",@get('date')) <= new Date(@get('filter_criteria.to'))
     _matches_area_subarea : ->
-      return (@_matches_area() || @_matches_subarea())
+      (@_matches_area() || @_matches_subarea())
+      return true
     _matches_area : ->
       return true if _.isEmpty(@get('area_ids'))
       matches = _.intersection(@get('area_ids'), @get('filter_criteria.areas'))
@@ -256,8 +277,12 @@ $ ->
     remove_errors : ->
       @compact() #nothing to do with errors, but this method is called on edit_cancel
       @restore()
+    remove_mandate_error: ->
+      console.log('error be gone')
+    remove_subarea_error: ->
+      console.log('subarea error be gone')
     persistent_attributes : ->
-      attrs = ['title', 'article_link', 'lastModifiedDate', 'area_ids', 'subarea_ids' ]
+      attrs = ['title', 'article_link', 'lastModifiedDate', 'area_ids', 'subarea_ids' , 'mandate_id']
       attrs.push('file', 'lastModifiedDate', 'filesize', 'original_filename', 'original_type') unless typeof(@get('file')) == 'undefined'
       attrs.push('selected_performance_indicators_attributes') if item_name == "media_appearance"
       attrs
@@ -322,6 +347,7 @@ $ ->
       subareas : []
     permitted_filetypes : permitted_filetypes
     maximum_filesize : maximum_filesize
+    all_mandates: all_mandates
 
   window.options =
     el : '#collection_container'
@@ -429,8 +455,3 @@ $ ->
   window.onpopstate = (event)->
     if event.state # to ensure that it doesn't trigger on page load, it's a problem with phantomjs but not with chrome
       collection.set_filter_from_query_string()
-
-
-
-
-

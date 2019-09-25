@@ -5,6 +5,6 @@ li.select_clear(style='margin-left:20px')
 script.
   export default Ractive.extend({ 
     template : $TEMPLATE,
-    clear_all(){this.parent.clear_all(this.get('collection'))},
-    select_all(){this.parent.select_all(this.get('collection'))}
+    clear_all(){event.stopPropagation(); this.parent.clear_all(this.get('collection'))},
+    select_all(){event.stopPropagation(); this.parent.select_all(this.get('collection'))}
     });

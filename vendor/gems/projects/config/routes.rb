@@ -10,9 +10,9 @@ Rails.application.routes.draw do
     end
     resources :project_documents, :only => [:destroy, :show]
     resource :project_admin, :only => :show, :to => 'project_admin#show'
-    [:good_governance, :siu, :human_rights, :strategic_plan].each do |namespace|
-      namespace namespace do
-        resources :project_types, :only => [:create, :destroy]
+    namespace :project do
+      resources :areas, :only => [:create, :destroy] do
+        resources :subareas, :only => [:create, :destroy]
       end
     end
   end

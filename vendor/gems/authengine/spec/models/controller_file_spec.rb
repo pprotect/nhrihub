@@ -38,6 +38,10 @@ describe "actions" do
 end
 
 describe ".all" do
+  before do
+    `ulimit -n 1024`
+  end
+
   it "should be an array of ControllerFile objects" do
     expect(ControllerFile.all).to be_a Array
     expect(ControllerFile.all.first).to be_a ControllerFile

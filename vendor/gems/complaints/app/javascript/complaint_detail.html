@@ -169,17 +169,21 @@
   </div>
 </div>
 <div class="row collapse">
-  <div class="col-md-12 form-group" data-toggle="edit" class-has-error="complaint_basis_id_count_error">
+  <div class="col-md-12 form-group" data-toggle="edit" class-has-error="subarea_id_count_error">
     <div class="row">
       <div class="col-md-2">
         <div class="no_edit in">{{ t.complaint_basis }}</div>
         <div class="edit required">{{ t.complaint_basis }}</div>
       </div>
       <div class="col-md-10">
-        <div class="no_edit in"><complaintBases good_governance_complaint_basis_ids='{{good_governance_complaint_basis_ids}}' human_rights_complaint_basis_ids='{{human_rights_complaint_basis_ids}}' special_investigations_unit_complaint_basis_ids='{{special_investigations_unit_complaint_basis_ids}}' /></div>
+        <div class="no_edit in">
+        {{#area_subarea_ids:id}}
+        <area id='{{parseInt(id)}}' area_subarea_ids='{{area_subarea_ids}}' subareas='{{subareas}}' areas='{{areas}}' area_ids='{{area_ids}}' subarea_ids='{{this}}' area_subarea_ids='{{area_subarea_ids}}' />
+        {{/area_subarea_ids}}
+        </div>
         <div class="edit">
-          <div class="row"><complaintBasesSelector special_investigations_unit_complaint_basis_ids='{{special_investigations_unit_complaint_basis_ids}}' strategic_plan_complaint_basis_ids='{{strategic_plan_complaint_basis_ids}}' human_rights_complaint_basis_ids='{{human_rights_complaint_basis_ids}}' good_governance_complaint_basis_ids='{{good_governance_complaint_basis_ids}}' /></div>
-        </div><span class="help-block error" id="complaint_basis_id_count_error">{{ t.complaint_basis_error_message }}</span>
+          <div class="row"> <subareaSelector subarea_ids='{{subarea_ids}}' areas='{{areas}}' /> </div>
+        </div><span class="help-block error" id="subarea_id_count_error">{{ t.complaint_basis_error_message }}</span>
       </div>
     </div>
   </div>

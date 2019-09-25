@@ -146,30 +146,24 @@ module ComplaintsSpecHelpers
     uncheck(text)
   end
 
-  def check_basis(group, text)
-    basis_checkbox(group, text).set(true)
+  def check_subarea(group, text)
+    subarea_checkbox(group, text).set(true)
   end
 
-  def uncheck_basis(group, text)
-    basis_checkbox(group, text).set(false)
+  def uncheck_subarea(group, text)
+    subarea_checkbox(group, text).set(false)
   end
 
-  def basis_checkbox(group, text)
-    within "##{group}_bases" do
-      find(:xpath, ".//div[@class='row complaint_basis'][.//span[contains(.,'#{text}')]]").find('input')
-    end
+  def good_governance_area
+    page.find('.area', text: "Good Governance")
   end
 
-  def good_governance_complaint_bases
-    page.find('#good_governance_complaint_bases')
+  def human_rights_area
+    page.find('.area', text: "Human Rights")
   end
 
-  def human_rights_complaint_bases
-    page.find('#human_rights_complaint_bases')
-  end
-
-  def special_investigations_unit_complaint_bases
-    page.find('#special_investigations_unit_complaint_bases')
+  def special_investigations_unit_area
+    page.find('.area', text: "Special Investigations Unit")
   end
 
   def save_complaint

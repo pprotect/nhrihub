@@ -1,0 +1,23 @@
+// the display of areas and subareas for a media appearance, advisory council issues, complaints, projects
+.area{
+  //margin-left: 15px;
+
+  &:not(:first-child){
+    margin-top : 6px;
+  }
+
+  .name:after{
+    content : ":";
+  }
+  .subareas{
+    margin-left : 20px;
+  }
+}
+
+
+//.checkbox label {
+  //padding-left : 70px;
+//}
+//.checkbox.subarea {
+  //padding-left: 60px;
+//}

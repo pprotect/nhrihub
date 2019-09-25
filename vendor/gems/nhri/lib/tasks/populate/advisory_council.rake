@@ -39,15 +39,32 @@ namespace :nhri do
       end
     end
 
+    desc "populates complaint areas and subareas"
+    task :populate_areas_subareas => :environment do
+      Nhri::AdvisoryCouncil::AdvisoryCouncilIssueArea.destroy_all
+      Nhri::AdvisoryCouncil::AdvisoryCouncilIssueSubarea.destroy_all
+      Subarea::DefaultNames.each do |name,subareas|
+        area = FactoryBot.create(:issue_area, name: name)
+
+        subareas.each do |subarea_name|
+          FactoryBot.create(:issue_subarea, area_id: area.id, name: subarea_name)
+        end
+      end
+    end
+
     namespace :issues do
       task :depopulate => :environment do
         Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.destroy_all
       end
 
       desc "populates advisory council issues"
-      task :populate => "nhri:advisory_council:issues:depopulate" do
+      task :populate => ["nhri:advisory_council:issues:depopulate","nhri:advisory_council:populate_areas_subareas"] do
         20.times do
-          ma = FactoryBot.create(:advisory_council_issue, :with_reminders, :with_notes, [:hr_area, :si_area, :gg_area, :hr_violation_subarea].sample, :created_at => Date.today.advance(:days => -(rand(365))).to_datetime)
+          ma = FactoryBot.create(:advisory_council_issue,
+                                 :with_reminders,
+                                 :with_notes,
+                                 [:hr_area, :si_area, :gg_area, :hr_violation_subarea].sample,
+                                 :created_at => Date.today.advance(:days => -(rand(365))).to_datetime)
         end
       end
     end

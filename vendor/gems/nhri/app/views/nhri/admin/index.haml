@@ -1,5 +1,9 @@
+= stylesheet_link_tag 'form_errors'
 .message_block
 %h1=t('.heading')
+
+%h4=t('.areas')
+= render :partial => 'shared/area_subarea_config'
 
 %h4=t('.accreditation.required_files_titles')
 = render :partial => 'admin/collection_configuration',

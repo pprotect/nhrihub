@@ -30,15 +30,13 @@ FactoryBot.define do
       end
     end
 
-    trait :with_mandates do 
-      after(:build) do |project|
-        project.mandate_ids = Mandate.pluck(:id)
-      end
+    trait :with_mandate do 
+      mandate_id { Mandate.pluck(:id).sample }
     end
 
-    trait :with_project_types do 
+    trait :with_subareas do 
       after(:build) do |project|
-        project.project_type_ids = ProjectType.pluck(:id)
+        project.project_subarea_ids = ProjectSubarea.pluck(:id).sample(4)
       end
     end
 

@@ -30,6 +30,11 @@ Rails.application.routes.draw do
             file_attachment_concern
           end
         end
+        namespace :advisory_council_issue do
+          resources :areas, :only => [:create, :destroy] do
+            resources :subareas, :only => [:create, :destroy]
+          end
+        end
       end
       resources :hr_protection
       resources :icc

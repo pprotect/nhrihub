@@ -1,11 +1,11 @@
 class ProjectsController < ApplicationController
   def index
+    @areas = ProjectArea.all
+    @subareas = ProjectSubarea.all
+    @mandates = Mandate.all.sort_by(&:name)
     @projects = Project.all
-    @areas = Mandate.all
     @agencies = Agency.all
-    @conventions = Convention.all
     @planned_results = PlannedResult.all_with_associations
-    @project_types = ProjectType.mandate_groups
     @project_named_documents_titles = ProjectDocument::NamedProjectDocumentTitles
     @maximum_filesize = ProjectDocument.maximum_filesize * 1000000
     @permitted_filetypes = ProjectDocument.permitted_filetypes
@@ -43,11 +43,10 @@ class ProjectsController < ApplicationController
                         :description,
                         :type,
                         :file,
+                        :mandate_id,
                         :project_documents_attributes => [:file, :title, :original_filename, :original_type],
-                        :area_ids => [],
-                        :project_type_ids => [],
+                        :subarea_ids => [],
                         :agency_ids => [],
-                        :convention_ids => [],
                         :performance_indicator_associations_attributes => [:association_id, :performance_indicator_id]]
     params.require(:project).permit(*permitted_params)
   end

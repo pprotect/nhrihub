@@ -7,19 +7,20 @@ module MediaSetupHelper
     if type == :media_appearance_with_file
       FactoryBot.create(:media_appearance,
                         :with_performance_indicators,
-                        :hr_area,
+                        :hr_subareas,
+                        :gg_mandate,
                         :file,
                         :reminders=>[] )
     elsif type == :media_appearance_with_link
       FactoryBot.create(:media_appearance,
                          :with_performance_indicators,
-                         :hr_area,
+                         :hr_subareas,
                          :article_link => example_dot_com,
                          :reminders=>[] )
     else
       FactoryBot.create(:media_appearance,
                          :with_performance_indicators,
-                         :hr_area,
+                         :hr_subareas,
                          :reminders=>[] )
     end
     add_reminder
@@ -27,7 +28,7 @@ module MediaSetupHelper
 
   def add_a_second_article
     FactoryBot.create(:media_appearance,
-                       :hr_area,
+                       :hr_subareas,
                        :reminders=>[] )
   end
 
@@ -42,22 +43,26 @@ module MediaSetupHelper
   end
 
   def setup_areas
-    areas = ["Human Rights", "Good Governance", "Special Investigations Unit", "Corporate Services"]
-    human_rights_subareas = ["Violation", "Education activities", "Office reports", "Universal periodic review", "CEDAW", "CRC", "CRPD"]
-    good_governance_subareas = ["Violation", "Office report", "Office consultations"]
+    areas = Area::DefaultNames
+    human_rights_subareas = Subarea::DefaultNames[:"Human Rights"]
+    good_governance_subareas = Subarea::DefaultNames[:"Good Governance"]
 
     areas.each do |a|
-      MediaIssueArea.create(:name => a) unless MediaIssueArea.where(:name => a).exists?
+      MediaArea.create(:name => a) unless MediaArea.where(:name => a).exists?
     end
 
-    human_rights_id = MediaIssueArea.where(:name => "Human Rights").first.id
+    human_rights_id = MediaArea.where(:name => "Human Rights").first.id
     human_rights_subareas.each do |hrsa|
-      MediaIssueSubarea.create(:name => hrsa, :area_id => human_rights_id) unless MediaIssueSubarea.where(:name => hrsa, :area_id => human_rights_id).exists?
+      MediaSubarea.create(:name => hrsa, :area_id => human_rights_id) unless MediaSubarea.where(:name => hrsa, :area_id => human_rights_id).exists?
     end
 
     good_governance_id = Area.where(:name => "Good Governance").first.id
     good_governance_subareas.each do |ggsa|
-      MediaIssueSubarea.create(:name => ggsa, :area_id => good_governance_id) unless MediaIssueSubarea.where(:name => ggsa, :area_id => good_governance_id).exists?
+      MediaSubarea.create(:name => ggsa, :area_id => good_governance_id) unless MediaSubarea.where(:name => ggsa, :area_id => good_governance_id).exists?
+    end
+
+    Mandate::Keys.each do |key|
+      Mandate.find_or_create_by(key: key)
     end
   end
 

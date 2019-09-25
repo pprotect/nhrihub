@@ -6,7 +6,7 @@ module AdvisoryCouncilIssuesContextNotesSpecHelpers
   before do
     setup_areas
     FactoryBot.create(:advisory_council_issue,
-                       :hr_area,
+                       :hr_subareas,
                        :reminders=>[FactoryBot.create(:reminder, :advisory_council_issue)],
                        :notes => [FactoryBot.create(:note, :advisory_council_issue, :created_at => 3.days.ago.to_datetime),FactoryBot.create(:note, :advisory_council_issue, :created_at => 4.days.ago.to_datetime)])
     #resize_browser_window

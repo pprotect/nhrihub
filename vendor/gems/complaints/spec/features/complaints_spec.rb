@@ -10,12 +10,14 @@ require 'complaints_context_notes_spec_helpers'
 require 'complaints_communications_spec_helpers'
 require 'active_storage_helpers'
 require 'parse_email_helpers'
+require 'area_subarea_common_helpers'
 
 feature "complaints index", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecSetupHelpers
   include NavigationHelpers
   include ComplaintsSpecHelpers
+  include AreaSubareaCommonHelpers
 
   before do
     populate_database
@@ -66,6 +68,7 @@ feature "complaints index", :js => true do
   include DownloadHelpers
   include ActiveStorageHelpers
   include ParseEmailHelpers
+  include AreaSubareaCommonHelpers
 
   before do
     populate_database
@@ -161,21 +164,21 @@ feature "complaints index", :js => true do
         end
       end
 
-      within good_governance_complaint_bases do
-        Complaint.first.good_governance_complaint_bases.map(&:name).each do |complaint_basis_name|
-          expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
+      within good_governance_area do
+        Complaint.first.complaint_subareas.good_governance.map(&:name).each do |subarea_name|
+          expect(page).to have_selector('.subarea', :text => subarea_name)
         end
       end
 
-      within human_rights_complaint_bases do
-        Complaint.first.human_rights_complaint_bases.map(&:name).each do |complaint_basis_name|
-          expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
+      within human_rights_area do
+        Complaint.first.complaint_subareas.human_rights.map(&:name).each do |subarea_name|
+          expect(page).to have_selector('.subarea', :text => subarea_name)
         end
       end
 
-      within special_investigations_unit_complaint_bases do
-        Complaint.first.special_investigations_unit_complaint_bases.map(&:name).each do |complaint_basis_name|
-          expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
+      within special_investigations_unit_area do
+        Complaint.first.complaint_subareas.special_investigations_unit.map(&:name).each do |subarea_name|
+          expect(page).to have_selector('.subarea', :text => subarea_name)
         end
       end
 
@@ -204,9 +207,9 @@ feature "complaints index", :js => true do
       choose('special_investigations_unit')
       select_male_gender
       choose('complained_to_subject_agency_yes')
-      check_basis(:good_governance, "Delayed action")
-      check_basis(:human_rights, "CAT")
-      check_basis(:special_investigations_unit, "Unreasonable delay")
+      check_subarea(:good_governance, "Delayed action")
+      check_subarea(:human_rights, "CAT")
+      check_subarea(:special_investigations_unit, "Unreasonable delay")
       select(user.first_last_name, :from => "assignee")
       check_agency("SAA")
       check_agency("ACC")
@@ -219,6 +222,8 @@ feature "complaints index", :js => true do
     next_ref = Complaint.next_case_reference
     expect(new_complaint_case_reference).to eq next_ref
     expect{save_complaint.click; wait_for_ajax}.to change{ Complaint.count }.by(1)
+                                               .and change{ ComplaintComplaintSubarea.count }.by(3)
+                                               .and change{ ComplaintAgency.count }.by(2)
                                                .and change{ page.all('.complaint').count }.by(1)
                                                .and change{ page.all('.new_complaint').count }.by(-1)
                                                .and change { ActionMailer::Base.deliveries.count }.by(1)
@@ -237,9 +242,7 @@ feature "complaints index", :js => true do
     expect(complaint.details).to eq "a long story about lots of stuff"
     expect(complaint.desired_outcome).to eq "Life gets better"
     expect(complaint.mandate.key).to eq 'special_investigations_unit'
-    expect(complaint.good_governance_complaint_bases.map(&:name)).to include "Delayed action"
-    expect(complaint.human_rights_complaint_bases.map(&:name)).to include "CAT"
-    expect(complaint.special_investigations_unit_complaint_bases.map(&:name)).to include "Unreasonable delay"
+    expect(complaint.complaint_subareas.map(&:name)).to match_array ["Delayed action", "CAT", "Unreasonable delay"]
     expect(complaint.current_assignee_name).to eq User.staff.first.first_last_name
     expect(complaint.status_changes.count).to eq 1
     expect(complaint.status_changes.first.complaint_status.name).to eq "Under Evaluation"
@@ -269,27 +272,27 @@ feature "complaints index", :js => true do
     expect(first_complaint.find('.complained_to_subject_agency').text).to eq "yes"
     expect(first_complaint.find('.date_received').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
 
-    within good_governance_complaint_bases do
-      complaint.good_governance_complaint_bases.map(&:name).each do |complaint_basis_name|
-        expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
+    within good_governance_area do
+      Complaint.last.complaint_subareas.good_governance.map(&:name).each do |subarea_name|
+        expect(page).to have_selector('.subarea', :text => subarea_name)
       end
     end
 
-    within human_rights_complaint_bases do
-      complaint.human_rights_complaint_bases.map(&:name).each do |complaint_basis_name|
-        expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
+    within human_rights_area do
+      Complaint.last.complaint_subareas.human_rights.map(&:name).each do |subarea_name|
+        expect(page).to have_selector('.subarea', :text => subarea_name)
       end
     end
 
-    within special_investigations_unit_complaint_bases do
-      complaint.special_investigations_unit_complaint_bases.map(&:name).each do |complaint_basis_name|
-        expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
+    within special_investigations_unit_area do
+      Complaint.last.complaint_subareas.special_investigations_unit.map(&:name).each do |subarea_name|
+        expect(page).to have_selector('.subarea', :text => subarea_name)
       end
     end
+
 
     within agencies do
-      expect(all('.agency').map(&:text)).to include "SAA"
-      expect(all('.agency').map(&:text)).to include "ACC"
+      expect(all('.agency').map(&:text)).to match_array ["SAA", "ACC" ]
     end
 
     within complaint_documents do
@@ -317,7 +320,7 @@ feature "complaints index", :js => true do
       fill_in('village', :with => "Normaltown")
       fill_in('complaint_details', :with => "a long story about lots of stuff")
       choose('special_investigations_unit')
-      check_basis(:good_governance, "Delayed action")
+      check_subarea(:good_governance, "Delayed action")
       select(User.admin.first.first_last_name, :from => "assignee")
     end
     expect{save_complaint.click; wait_for_ajax}.to change{ Complaint.count }.by(1)
@@ -340,9 +343,9 @@ feature "complaints index", :js => true do
       fill_in('village', :with => "Normaltown")
       fill_in('complaint_details', :with => "a long story about lots of stuff")
       choose('special_investigations_unit')
-      check_basis(:good_governance, "Delayed action")
-      check_basis(:human_rights, "CAT")
-      check_basis(:special_investigations_unit, "Unreasonable delay")
+      check_subarea(:good_governance, "Delayed action")
+      check_subarea(:human_rights, "CAT")
+      check_subarea(:special_investigations_unit, "Unreasonable delay")
       select(User.admin.first.first_last_name, :from => "assignee")
     end
     expect{save_complaint.click; wait_for_ajax}.to change{ Complaint.count }.by(1)
@@ -365,7 +368,7 @@ feature "complaints index", :js => true do
         fill_in('village', :with => "Normaltown")
         fill_in('complaint_details', :with => "a long story about lots of stuff")
         choose('good_governance')
-        check_basis(:special_investigations_unit, "Unreasonable delay")
+        check_subarea(:special_investigations_unit, "Unreasonable delay")
         select(User.admin.first.first_last_name, :from => "assignee")
       end
       expect{save_complaint.click; wait_for_ajax}.to change{ Complaint.count }.by(1)
@@ -387,7 +390,7 @@ feature "complaints index", :js => true do
       expect(page).to have_selector('#village_error', :text => 'You must enter a village')
       expect(page).to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
       expect(page).to have_selector('#mandate_id_error', :text => 'You must select an area')
-      expect(page).to have_selector('#complaint_basis_id_count_error', :text => 'You must select at least one subarea')
+      expect(page).to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
       expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
       expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
       expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
@@ -403,8 +406,8 @@ feature "complaints index", :js => true do
       expect(page).not_to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
       choose('special_investigations_unit')
       expect(page).not_to have_selector('#mandate_ids_count_error', :text => 'You must select an area')
-      check_basis(:special_investigations_unit, "Unreasonable delay")
-      expect(page).not_to have_selector('#complaint_basis_id_count_error', :text => 'You must select at least one subarea')
+      check_subarea(:special_investigations_unit, "Unreasonable delay")
+      expect(page).not_to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
       fill_in('complaint_details', :with => "random text")
       expect(page).not_to have_selector('#details_error', :text => "You must enter the complaint details")
       expect(page).not_to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
@@ -445,9 +448,9 @@ feature "complaints index", :js => true do
       fill_in('village', :with => "Normaltown")
       fill_in('phone', :with => "555-1212")
       choose('special_investigations_unit')
-      check_basis(:good_governance, "Delayed action")
-      check_basis(:human_rights, "CAT")
-      check_basis(:special_investigations_unit, "Unreasonable delay")
+      check_subarea(:good_governance, "Delayed action")
+      check_subarea(:human_rights, "CAT")
+      check_subarea(:special_investigations_unit, "Unreasonable delay")
       select(User.admin.first.first_last_name, :from => "assignee")
     end
     cancel_add
@@ -458,9 +461,9 @@ feature "complaints index", :js => true do
       expect(page.find('#firstName').value).to be_blank
       expect(page.find('#village').value).to be_blank
       expect(page.find('#phone').value).to be_blank
-      expect(basis_checkbox(:good_governance, "Delayed action")).not_to be_checked
-      expect(basis_checkbox(:human_rights, "CAT")).not_to be_checked
-      expect(basis_checkbox(:special_investigations_unit, "Unreasonable delay")).not_to be_checked
+      expect(subarea_checkbox(:good_governance, "Delayed action")).not_to be_checked
+      expect(subarea_checkbox(:human_rights, "CAT")).not_to be_checked
+      expect(subarea_checkbox(:special_investigations_unit, "Unreasonable delay")).not_to be_checked
     end
   end
 
@@ -499,9 +502,9 @@ feature "complaints index", :js => true do
       # MANDATE
       choose('special_investigations_unit') # originally had human rights mandate
       # BASIS
-      uncheck_basis(:good_governance, "Delayed action") # originally had "Delayed action" and "Failure to Act"
-      uncheck_basis(:human_rights, "CAT") # originall had "CAT" "ICESCR"
-      uncheck_basis(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
+      uncheck_subarea(:good_governance, "Delayed action") # originally had "Delayed action", "Failure to act", "Contrary to Law", "Oppressive", "Private"
+      uncheck_subarea(:human_rights, "CAT") # originall had "CAT" "ICESCR"
+      uncheck_subarea(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
       # AGENCY
       uncheck_agency("SAA")
       check_agency("MAF")
@@ -529,12 +532,12 @@ feature "complaints index", :js => true do
     expect( Complaint.first.details ).to eq "the boy stood on the burning deck"
     expect( Complaint.first.desired_outcome ).to eq "Things are more better"
     expect( Complaint.first.mandate.key ).to eq "special_investigations_unit"
-    expect( Complaint.first.good_governance_complaint_bases.count ).to eq 1
-    expect( Complaint.first.good_governance_complaint_bases.first.name ).to eq "Failure to act"
-    expect( Complaint.first.human_rights_complaint_bases.count ).to eq 1
-    expect( Complaint.first.human_rights_complaint_bases.first.name ).to eq "ICESCR"
-    expect( Complaint.first.special_investigations_unit_complaint_bases.count ).to eq 1
-    expect( Complaint.first.special_investigations_unit_complaint_bases.first.name ).to eq "Not properly investigated"
+    expect( Complaint.first.good_governance_subareas.map(&:name) ).to match_array [ "Failure to act", "Contrary to Law", "Oppressive", "Private"]
+    expect( Complaint.first.good_governance_subareas.first.name ).to eq "Failure to act"
+    expect( Complaint.first.human_rights_subareas.count ).to eq 1
+    expect( Complaint.first.human_rights_subareas.first.name ).to eq "ICESCR"
+    expect( Complaint.first.special_investigations_unit_subareas.count ).to eq 1
+    expect( Complaint.first.special_investigations_unit_subareas.first.name ).to eq "Not properly investigated"
     expect( Complaint.first.assignees ).to include User.admin.last
     expect( Complaint.first.agencies.map(&:name) ).to include "MAF"
     expect( Complaint.first.agencies.count ).to eq 1
@@ -546,21 +549,21 @@ feature "complaints index", :js => true do
     expect(page).to have_selector('.complained_to_subject_agency', :text => "no")
     expect(page).to have_selector('.date_received',:text => Date.new(Date.today.year, Date.today.month, 23).strftime("%b %-e, %Y"))
 
-    within good_governance_complaint_bases do
-      Complaint.first.good_governance_complaint_bases.map(&:name).each do |complaint_basis_name|
-        expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
+    within good_governance_area do
+      Complaint.first.complaint_subareas.good_governance.map(&:name).each do |subarea_name|
+        expect(page).to have_selector('.subarea', :text => subarea_name)
       end
     end
 
-    within human_rights_complaint_bases do
-      Complaint.first.human_rights_complaint_bases.map(&:name).each do |complaint_basis_name|
-        expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
+    within human_rights_area do
+      Complaint.first.complaint_subareas.human_rights.map(&:name).each do |subarea_name|
+        expect(page).to have_selector('.subarea', :text => subarea_name)
       end
     end
 
-    within special_investigations_unit_complaint_bases do
-      Complaint.first.special_investigations_unit_complaint_bases.map(&:name).each do |complaint_basis_name|
-        expect(page).to have_selector('.complaint_basis', :text => complaint_basis_name)
+    within special_investigations_unit_area do
+      Complaint.first.complaint_subareas.special_investigations_unit.map(&:name).each do |subarea_name|
+        expect(page).to have_selector('.subarea', :text => subarea_name)
       end
     end
 
@@ -628,8 +631,8 @@ feature "complaints index", :js => true do
       fill_in('chiefly_title', :with => "barista")
       fill_in('village', :with => "Normaltown")
       fill_in('phone', :with => "555-1212")
-      check_basis(:good_governance, "Private")
-      check_basis(:good_governance, "Contrary to Law")
+      check_subarea(:good_governance, "Private")
+      check_subarea(:good_governance, "Contrary to Law")
       fill_in('dob', :with => "11/11/1820")
       fill_in('email', :with => "harry@haricot.net")
       select_male_gender
@@ -653,14 +656,9 @@ feature "complaints index", :js => true do
       expect(page.find('#chiefly_title').value).to eq original_complaint.chiefly_title
       expect(page.find('#village').value).to eq original_complaint.village
       expect(page.find('#phone').value).to eq original_complaint.phone
-      expect(page.find('#good_governance_bases .complaint_basis', :text => 'Private').find('input')).not_to be_checked
-      expect(page.find('#good_governance_bases .complaint_basis', :text => 'Contrary to Law').find('input')).not_to be_checked
-      expect(page.find('#human_rights_bases .complaint_basis', :text => 'CAT').find('input')).to be_checked
-      expect(page.find('#human_rights_bases .complaint_basis', :text => 'ICESCR').find('input')).to be_checked
-      expect(page.find('#special_investigations_unit_bases .complaint_basis', :text => 'Unreasonable delay').find('input')).to be_checked
-      expect(page.find('#special_investigations_unit_bases .complaint_basis', :text => 'Not properly investigated').find('input')).to be_checked
-      expect(page.find('#good_governance_bases .complaint_basis', :text => 'Delayed action').find('input')).to be_checked
-      expect(page.find('#good_governance_bases .complaint_basis', :text => 'Failure to act').find('input')).to be_checked
+      ["Delayed action", "Failure to act", "Contrary to Law", "Oppressive", "Private", "CAT", "ICESCR", "Unreasonable delay", "Not properly investigated"].each do |subarea_name|
+        expect(page.find('.subarea', :text => subarea_name).find('input')).to be_checked
+      end
       expect(page.find('#dob').value).to eq original_complaint.dob
       expect(page.find('#email').value).to eq original_complaint.email.to_s
       expect(page.find('#m')).not_to be_checked
@@ -692,12 +690,13 @@ feature "complaints index", :js => true do
       # MANDATE
       choose('special_investigations_unit') # originally had human rights mandate
       # BASIS
-      uncheck_basis(:good_governance, "Delayed action") # originally had "Delayed action" and "Failure to Act"
-      uncheck_basis(:good_governance, "Failure to act") # originally had "Delayed action" and "Failure to Act"
-      uncheck_basis(:human_rights, "CAT") # originall had "CAT" "ICESCR"
-      uncheck_basis(:human_rights, "ICESCR") # originall had "CAT" "ICESCR"
-      uncheck_basis(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
-      uncheck_basis(:special_investigations_unit, "Not properly investigated") #originally had "Unreasonable delay" "Not properly investigated"
+      ["Delayed action", "Failure to act", "Contrary to Law", "Oppressive", "Private"].each do |subarea_name|
+        uncheck_subarea(:good_governance, subarea_name )
+      end
+      uncheck_subarea(:human_rights, "CAT") # originall had "CAT" "ICESCR"
+      uncheck_subarea(:human_rights, "ICESCR") # originall had "CAT" "ICESCR"
+      uncheck_subarea(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
+      uncheck_subarea(:special_investigations_unit, "Not properly investigated") #originally had "Unreasonable delay" "Not properly investigated"
       # AGENCY
       uncheck_agency("SAA")
     end
@@ -706,7 +705,7 @@ feature "complaints index", :js => true do
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
     expect(page).to have_selector('#lastName_error', :text => "You must enter a last name")
     expect(page).to have_selector('#village_error', :text => 'You must enter a village')
-    expect(page).to have_selector('#complaint_basis_id_count_error', :text => 'You must select at least one subarea')
+    expect(page).to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
     expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
     expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
@@ -719,7 +718,7 @@ feature "complaints index", :js => true do
       expect(page).not_to have_selector('#lastName_error', :text => "You must enter a last name")
       expect(page).not_to have_selector('#village_error', :text => 'You must enter a village')
       expect(page).not_to have_selector('#mandate_name_error', :text => 'You must select an area')
-      expect(page).not_to have_selector('#complaint_basis_id_count_error', :text => 'You must select at least one subarea')
+      expect(page).not_to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
       expect(page).not_to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
       expect(page).not_to have_selector('#details_error', :text => "You must enter the complaint details")
       expect(page).not_to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
@@ -791,12 +790,13 @@ feature "complaints index", :js => true do
       fill_in('dob', :with => "")
       fill_in('complaint_details', :with => "")
       # BASIS
-      uncheck_basis(:good_governance, "Delayed action") # originally had "Delayed action" and "Failure to Act"
-      uncheck_basis(:good_governance, "Failure to act") # originally had "Delayed action" and "Failure to Act"
-      uncheck_basis(:human_rights, "CAT") # originall had "CAT" "ICESCR"
-      uncheck_basis(:human_rights, "ICESCR") # originall had "CAT" "ICESCR"
-      uncheck_basis(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
-      uncheck_basis(:special_investigations_unit, "Not properly investigated") #originally had "Unreasonable delay" "Not properly investigated"
+      ["Delayed action", "Failure to act", "Contrary to Law", "Oppressive", "Private"].each do |subarea_name|
+        uncheck_subarea(:good_governance, subarea_name )
+      end
+      uncheck_subarea(:human_rights, "CAT") # originall had "CAT" "ICESCR"
+      uncheck_subarea(:human_rights, "ICESCR") # originall had "CAT" "ICESCR"
+      uncheck_subarea(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
+      uncheck_subarea(:special_investigations_unit, "Not properly investigated") #originally had "Unreasonable delay" "Not properly investigated"
       # AGENCY
       uncheck_agency("SAA")
     end
@@ -805,7 +805,7 @@ feature "complaints index", :js => true do
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
     expect(page).to have_selector('#lastName_error', :text => "You must enter a last name")
     expect(page).to have_selector('#village_error', :text => 'You must enter a village')
-    expect(page).to have_selector('#complaint_basis_id_count_error', :text => 'You must select at least one subarea')
+    expect(page).to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
     expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
     expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
@@ -818,8 +818,8 @@ feature "complaints index", :js => true do
       expect(page).not_to have_selector('#village_error', :text => 'You must enter a village')
       choose('special_investigations_unit')
       expect(page).not_to have_selector('#mandate_id_error', :text => 'You must select an area')
-      check_basis(:special_investigations_unit, "Unreasonable delay")
-      expect(page).not_to have_selector('#complaint_basis_id_count_error', :text => 'You must select at least one subarea')
+      check_subarea(:special_investigations_unit, "Unreasonable delay")
+      expect(page).not_to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
       fill_in('dob', :with => "1950/08/19")
       expect(page).not_to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
       fill_in('complaint_details', :with => "bish bash bosh")
@@ -1208,12 +1208,12 @@ feature "selects complaints matching the selected subarea", :js => true do
     create_mandates
     create_agencies
     user = User.first
-    siu_cb = FactoryBot.create(:siu_complaint_basis, name: 'foo')
-    gg_cb  = FactoryBot.create(:good_governance_complaint_basis, name: 'bar')
-    hr_cb  = FactoryBot.create(:hr_complaint_basis, name: 'baz')
-    FactoryBot.create(:complaint, :open, good_governance_complaint_bases: [gg_cb], assigned_to: user, agencies: [Agency.first])
-    FactoryBot.create(:complaint, :open, special_investigations_unit_complaint_bases: [siu_cb],  assigned_to: user, agencies: [Agency.first])
-    FactoryBot.create(:complaint, :open, human_rights_complaint_bases: [hr_cb],  assigned_to: user, agencies: [Agency.first])
+    siu_cb = FactoryBot.create(:complaint_subarea, :siu, name: 'foo')
+    gg_cb  = FactoryBot.create(:complaint_subarea, :good_governance, name: 'bar')
+    hr_cb  = FactoryBot.create(:complaint_subarea, :human_rights, name: 'baz')
+    FactoryBot.create(:complaint, :open, complaint_subareas: [gg_cb], assigned_to: user, agencies: [Agency.first])
+    FactoryBot.create(:complaint, :open, complaint_subareas: [siu_cb],  assigned_to: user, agencies: [Agency.first])
+    FactoryBot.create(:complaint, :open, complaint_subareas: [hr_cb],  assigned_to: user, agencies: [Agency.first])
     visit complaints_path(:en)
   end
 

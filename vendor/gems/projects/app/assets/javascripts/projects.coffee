@@ -16,6 +16,20 @@
 
 Ractive.DEBUG = false
 
+Ractive.defaults.data =
+  performance_indicator_url : Routes.project_performance_indicator_path(current_locale,'id')
+  all_mandates : all_mandates
+  subareas : subareas
+  planned_results : planned_results
+  all_areas : areas
+  areas : areas 
+  agencies : agencies
+  all_agencies_in_threes : all_agencies_in_threes
+  project_named_documents_titles : project_named_documents_titles
+  permitted_filetypes : permitted_filetypes
+  maximum_filesize : maximum_filesize
+  performance_indicators : performance_indicators
+
 EditInPlace = (node,id)->
   ractive = @
   edit = new InpageEdit
@@ -38,36 +52,44 @@ EditInPlace = (node,id)->
     update : (id)=>
     }
 
-AreasSelector = Ractive.extend
-  template : '#areas_selector_template'
+AreaSelector = Ractive.extend
+  template : '#area_selector_template'
 
-ProjectTypesSelector = Ractive.extend
-  template : '#project_types_selector_template'
+SubareasSelector = Ractive.extend
+  template : '#subareas_selector_template'
 
-Areas = Ractive.extend
-  template : '#areas_template'
+Subarea = Ractive.extend
+  template : '#subarea_template'
+  computed :
+    name : ->
+      _(@get('subareas')).findWhere({id : @get('id')}).name unless @get('id') == 0
 
-ProjectTypes = Ractive.extend
-  template : '#project_types_template'
+Area = Ractive.extend
+  template : '#area_template'
+  computed :
+    name : ->
+      _(@get('areas')).findWhere({id : @get('area_id')}).name unless @get('area_id') == 0
+  components :
+    subarea : Subarea
 
 EditBackup =
   stash : ->
     stashed_attributes = _(@get()).omit('performance_indicator_ids', 'expanded', 'editing', 'performance_indicator_required', 'persistent_attributes', 'url', 'truncated_title', 'delete_confirmation_message', 'reminders_count', 'notes_count', 'count', 'persisted', 'type', 'include', 'create_note_url', 'create_reminder_url', 'has_errors', 'validation_criteria')
     @stashed_instance = $.extend(true,{},stashed_attributes)
   restore : ->
-    @restore_checkboxes()
+    #@restore_checkboxes()
     @set(@stashed_instance)
-  restore_checkboxes : ->
-    # major hack to circumvent ractive bug,
-    # it will not be necessary in ractive 0.8.0
-    _(['area','project_type']).
-      each (association)=>
-        @restore_checkboxes_for(association)
-  restore_checkboxes_for : (association)->
-    ids = @get("#{association}_ids")
-    _(@findAll(".edit .#{association} input")).each (checkbox)->
-      is_checked = ids.indexOf(parseInt($(checkbox).attr('value'))) != -1
-      $(checkbox).prop('checked',is_checked)
+  #restore_checkboxes : ->
+    ## major hack to circumvent ractive bug,
+    ## it will not be necessary in ractive 0.8.0
+    #_(['area','project_type']).
+      #each (association)=>
+        #@restore_checkboxes_for(association)
+  #restore_checkboxes_for : (association)->
+    #ids = @get("#{association}_ids")
+    #_(@findAll(".edit .#{association} input")).each (checkbox)->
+      #is_checked = ids.indexOf(parseInt($(checkbox).attr('value'))) != -1
+      #$(checkbox).prop('checked',is_checked)
 
 ProjectDocumentValidator = _.extend
   initialize_validator: ->
@@ -170,7 +192,7 @@ FilterMatch =
   include : ->
     @matches_title() &&
     @matches_area() &&
-    @matches_project_type() &&
+    @matches_subarea() &&
     @matches_performance_indicator()
   matches_title : ->
     escaped_title = @get('filter_criteria.title').
@@ -180,19 +202,26 @@ FilterMatch =
     re.test @get('title')
   matches_area : ->
     criterion = @get('filter_criteria.area_ids')
-    value = @get('area_ids')
-    @contains(criterion,value)
-  matches_project_type : ->
-    criterion = @get('filter_criteria.project_type_ids')
-    value = @get('project_type_ids')
-    @contains(criterion,value)
+    value = @get('mandate_id')
+    select_undesignated = _(criterion).include(0) # 0 means undesignated area
+    undesignated = _.isNull(value) || _.isUndefined(value)
+    match_undesignated = select_undesignated && undesignated
+    match_value = _(criterion).include(value)
+    match_value || match_undesignated
+  matches_subarea : ->
+    criterion = @get('filter_criteria.subarea_ids')
+    value = @get('subarea_ids')
+    select_undesignated = _(criterion).include(0) # 0 means undesignated subarea
+    undesignated = _.isEmpty(value)
+    match_undesignated = select_undesignated && undesignated
+    @contains(criterion,value) || match_undesignated
   matches_performance_indicator : ->
     criterion = parseInt(@get('filter_criteria.performance_indicator_id'))
     values = @get('performance_indicator_ids')
     return true if _.isUndefined(criterion) || _.isNaN(criterion)
     _(values).indexOf(criterion) != -1
   contains : ( criterion, value) ->
-    return true if _.isEmpty(criterion)
+    #return true if _.isEmpty(criterion)
     common_elements = _.intersection(criterion, value)
     # must have some common elements
     !_.isEmpty(common_elements)
@@ -216,7 +245,7 @@ Project = Ractive.extend
       _(@get('performance_indicator_associations')).map (pia)->pia.performance_indicator.id
     persistent_attributes : ->
       # the asFormData method knows how to interpret 'project_documents_attributes'
-      ['title', 'description', 'area_ids', 'project_type_ids',
+      ['title', 'description', 'mandate_id', 'subarea_ids',
        'selected_performance_indicators_attributes', 'project_documents_attributes']
     url : ->
       Routes.project_path(current_locale,@get('id'))
@@ -249,11 +278,18 @@ Project = Ractive.extend
       title : 'notBlank'
       description : 'notBlank'
       performance_indicator_associations : ['nonEmpty', @get('performance_indicator_associations')]
+    mandate_name :
+      get: ->
+        return null if _.isNull(@get('mandate_id'))
+        mandate = _(@get('all_mandates')).findWhere({id : @get('mandate_id')})
+        mandate.name
+      set: (val)->
+        return 'foo'
   components :
-    areasSelector : AreasSelector
-    projectTypesSelector : ProjectTypesSelector
-    areas : Areas
-    projectTypes : ProjectTypes
+    areaSelector : AreaSelector
+    subareasSelector : SubareasSelector
+    area : Area
+    subarea : Subarea
     projectDocuments : ProjectDocuments
     progressBar : ProgressBar
   cancel_project : ->
@@ -313,11 +349,17 @@ AreaFilterSelect = FilterSelect.extend
     collection : ->
       "area_ids"
 
-ProjectTypeFilterSelect = FilterSelect.extend
-  template : "#project_type_filter_select_template"
+UndesignatedAreaFilterSelect = AreaFilterSelect.extend({})
+
+SubareaFilterSelect = FilterSelect.extend
+  template : "#subarea_filter_select_template"
   computed :
     collection : ->
-      "project_type_ids"
+      "subarea_ids"
+
+UndesignatedSubareaFilterSelect = SubareaFilterSelect.extend({
+  css: ".subarea_filter{padding-left: 19px; padding-top:8px;}"
+})
 
 PerformanceIndicatorFilterSelect = Ractive.extend
   template: "#performance_indicator_filter_select_template"
@@ -327,12 +369,30 @@ PerformanceIndicatorFilterSelect = Ractive.extend
     else
       @set('filter_criteria.performance_indicator_id',id)
 
+SelectClear = Ractive.extend
+  template : "#select_clear_template"
+  clear_all: ->
+    event.stopPropagation()
+    @parent.clear_all(@get('collection'))
+  select_all: ->
+    event.stopPropagation()
+    @parent.select_all(@get('collection'))
+
 FilterControls = Ractive.extend
   template : "#filter_controls_template"
   components :
+    undesignatedSubareaFilterSelect : UndesignatedSubareaFilterSelect 
+    undesignatedAreaFilterSelect : UndesignatedAreaFilterSelect
     areaFilterSelect : AreaFilterSelect
-    projectTypeFilterSelect : ProjectTypeFilterSelect
+    subareaFilterSelect : SubareaFilterSelect
+    selectClear : SelectClear
     performanceIndicatorFilterSelect : PerformanceIndicatorFilterSelect
+  select_all : (collection)->
+    subarea_ids = _(subareas).map (s)-> s.id
+    subarea_ids.push(0) # the 'undesignated' subarea
+    @set('filter_criteria.'+collection, subarea_ids)
+  clear_all : (collection)->
+    @set('filter_criteria.'+collection, [])
   expand : ->
     @parent.expand()
   compact : ->
@@ -346,16 +406,8 @@ FilterControls = Ractive.extend
     @set('filter_criteria',filter_criteria)
 
 window.projects_page_data = ->
-  performance_indicator_url : Routes.project_performance_indicator_path(current_locale,'id')
   expanded : false
   projects : projects_data
-  all_areas : areas
-  planned_results : planned_results
-  performance_indicators : performance_indicators
-  all_area_project_types : project_types
-  project_named_documents_titles : project_named_documents_titles
-  permitted_filetypes : permitted_filetypes
-  maximum_filesize : maximum_filesize
   filter_criteria : filter_criteria
 
 projects_options = ->
@@ -371,7 +423,7 @@ projects_options = ->
         id : null
         title : ""
         description : ""
-        area_ids : []
+        mandate_id : null
         project_type_ids : []
         performance_indicator_associations : []
         project_documents : []

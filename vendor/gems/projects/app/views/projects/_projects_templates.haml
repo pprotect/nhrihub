@@ -1,7 +1,7 @@
 %script#projects_template{:type => 'template/ractive'}
-  <filterControls planned_results='{{planned_results}}' all_areas='{{all_areas}}' all_area_project_types='{{all_area_project_types}}' filter_criteria='{{filter_criteria}}' />
+  <filterControls planned_results='{{planned_results}}' all_areas='{{all_areas}}' subareas='{{subareas}}' filter_criteria='{{filter_criteria}}' />
   {{#projects}}
-  <project performance_indicator_url='{{performance_indicator_url}}' project_types='{{project_types}}' planned_results='{{planned_results}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' filter_criteria='{{filter_criteria}}' maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' id='{{id}}' title='{{title}}' description='{{description}}' area_ids='{{area_ids}}'  performance_indicator_associations='{{performance_indicator_associations}}' project_type_ids='{{project_type_ids}}' all_areas='{{all_areas}}'  project_types='{{project_types}}' areas='{{areas}}'  reminders='{{reminders}}' notes='{{notes}}' project_documents='{{project_documents}}' expanded='false' project_named_documents_titles='{{ project_named_documents_titles}}' />
+  <project subarea_ids='{{subarea_ids}}' area_subarea_ids='{{area_subarea_ids}}' mandate_id='{{mandate_id}}' performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' filter_criteria='{{filter_criteria}}' maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' id='{{id}}' title='{{title}}' description='{{description}}' area_ids='{{area_ids}}'  performance_indicator_associations='{{performance_indicator_associations}}' project_type_ids='{{project_type_ids}}' reminders='{{reminders}}' notes='{{notes}}' project_documents='{{project_documents}}' expanded='false' />
   {{/projects}}
 
 %script#project_template{:type => 'template/ractive'}
@@ -29,9 +29,9 @@
         .col-md-7
           %textarea.form-control#project_description{:value => '{{description}}', 'on-keydown'=>"@this.remove_attribute_error('description')".html_safe}
           %span.help-block.error#description_error= t('.description_error_message')
-      <areasSelector area_ids='{{area_ids}}' areas='{{all_areas}}' />
-      <projectTypesSelector project_type_ids='{{project_type_ids}}' all_areas='{{all_areas}}' />
-      <performanceIndicators performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations_error='{{performance_indicator_associations_error}}' serialization_key='{{serialization_key}}' persisted='{{persisted}}' planned_results='{{planned_results}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' />
+      <areaSelector mandate_id='{{mandate_id}}' areas='{{all_areas}}' />
+      <subareasSelector subarea_ids='{{subarea_ids}}' />
+      <performanceIndicators performance_indicator_url='{{performance_indicator_url}}' serialization_key='{{serialization_key}}' persisted='{{persisted}}' planned_results='{{planned_results}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' performance_indicator_associations_error='{{performance_indicator_associations_error}}' />
       .panel.panel-default#documents
         .panel-heading= t('.project_documents')
         .panel-body
@@ -95,40 +95,39 @@
     .col-md-2
       %i.fa.fa-remove.remove{'on-click' => '@this.remove_file()'.html_safe}
 
-%script#project_types_selector_template{:type => 'template/ractive'}
-  .row
+%script#subareas_selector_template{:type => 'template/ractive'}
+  .form-group
     .col-md-2
       %label=t('.project_type')
     .col-md-10
       .row
         {{#all_areas}}
-        .col-md-3{:id => '{{key}}_types', :style => "padding-top:0;"}
+        .col-md-3{:id => '{{name.underscore()}}_subareas', :style => "padding-top:0;"}
           %label {{name}}:
-          {{#project_types}}
-          .row.project_type
-            .col-md-9
-              %label{:for => 'project_type_{{id}}'}
+          {{#subareas}}
+          .row.subarea
+            .col-md-8
+              %label{:for => 'subarea_{{id}}'}
                 %span {{name}}
-            .col-md-3
-              %input{:id=>'project_type_{{id}}', :type => :checkbox, :name => '{{project_type_ids}}', :value => '{{id}}'}
-          {{/project_types}}
+            .col-md-4
+              %input{:id=>'subarea_{{id}}', :type => :checkbox, :name => '{{subarea_ids}}', :value => '{{id}}'}
+          {{/subareas}}
         {{/all_areas}}
 
-%script#areas_selector_template{:type => 'template/ractive'}
-  .row
+%script#area_selector_template{:type => 'template/ractive'}
+  .form-group
     .col-md-2
       %label=t('.area')
     .col-md-10
       .row
-        {{#areas}}
-        .col-md-3.area{:style => "padding-top:0;"}
-          .row
-            .col-md-9
-              %label{:for => '{{key}}'}
-                %span {{name}}
-            .col-md-3
-              %input{:id=>'{{key}}', :type => :checkbox, :name => '{{area_ids}}', :value => '{{id}}'}
-        {{/areas}}
+        %form.mandates
+          {{#all_mandates}}
+          .col-md-2{:style => "padding-top:0;"}
+            %label{:for => '{{name.underscore()}}'}
+              %span {{name}}
+          .col-md-1{:style => "padding-top:0;"}
+            %input{:id=>'{{name.underscore()}}', :type => :radio, :name => '{{mandate_id}}', :value => '{{id}}'}
+          {{/all_mandates}}
 
 %script#edit_title{:type => 'template/ractive'}
   .row.form-group{'class-has-error' => 'title_error'}
@@ -194,14 +193,22 @@
               %textarea.form-control#project_description{:value => '{{description}}', 'on-keydown'=>"@this.remove_attribute_error('description')".html_safe}
               %span.help-block.error#description_error= t('.description_error_message')
         <performanceIndicators performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations_error='{{performance_indicator_associations_error}}' serialization_key='{{serialization_key}}' persisted='{{persisted}}' planned_results='{{planned_results}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' />
-        .panel.panel-default
-          .panel-body{'data-toggle'=>'edit'}
-            .fade.no_edit.in
-              <areas areas='{{areas}}' />
-              <projectTypes project_types='{{project_types}}' />
-            .fade.edit
-              <areasSelector area_ids='{{area_ids}}' areas='{{all_areas}}' />
-              <projectTypesSelector project_type_ids='{{project_type_ids}}' all_areas='{{all_areas}}'/>
+        .row#mandate{'data-toggle'=>'edit'}
+          .fade.no_edit.in
+            .col-md-2.description{style: 'font-weight: 700'}=t('.area')
+            .col-md-10#name
+              {{ mandate_name }}
+          .div.edit
+            <areaSelector mandate_id='{{mandate_id}}' areas='{{all_areas}}' />
+        .row#subareas{'data-toggle' => :edit}
+          .no_edit.in
+            .col-md-2.description{style: 'font-weight: 700'}=t('.subareas')
+            .col-md-10
+              {{#area_subarea_ids:i}}
+              <area area_id='{{parseInt(i)}}' subarea_ids='{{this}}' />
+              {{/area_subarea_ids}}
+          .edit
+            <subareasSelector subarea_ids='{{subarea_ids}}' />
         .panel.panel-default.documents
           .panel-heading
             .row
@@ -223,27 +230,16 @@
             .form-group{'class-has-error' => 'has_errors'}
               %span#project_error.help-block.error= t("error_messages.form_error")
 
-%script#project_types_template{:type => 'template/ractive'}
-  .row#area_project_types{:style => "margin-left:0px;"}
-    .col-md-2=t('.project_types')
-    .col-md-10
-      .row
-        {{#project_types}}
-        .col-md-12.area_project_type
-          .area_name {{name}}
-          #project_types.comma-list{:style => "padding-left:1.5em;"}
-            {{#types}}
-            %span.project_type {{name}}
-            {{/types}}
-        {{/project_types}}
+%script#subarea_template{:type => 'template/ractive'}
+  %span.subarea {{ name }}
 
-%script#areas_template{:type => 'template/ractive'}
-  .row#areas{:style => "margin-left:0px;"}
-    .col-md-2=t('.areas')
-    .col-md-10.comma-list
-      {{#areas}}
-      %span.area {{name}}
-      {{/areas}}
+%script#area_template{:type => 'template/ractive'}
+  .area
+    .name {{ name }}
+    .subareas.comma-list
+      {{#subarea_ids}}
+      <subarea id='{{this}}' />
+      {{/subarea_ids}}
 
 %script#area_filter_select_template{:type => 'template/ractive'}
   %li{:class => 'dropdown-header area_filter {{#if selected}}selected{{/if}}'}
@@ -251,11 +247,16 @@
       %span {{name}}
       %span.fa.fa-check
 
-%script#project_type_filter_select_template{:type => 'template/ractive'}
-  %li.project_type_filter{'class-selected' => 'selected'}
+%script#subarea_filter_select_template{:type => 'template/ractive'}
+  %li.subarea_filter{'class-selected' => 'selected'}
     %a{'on-click'=>'@this.toggle(id)'.html_safe}
-      %span {{name}}
+      %span.name {{name}}
       %span.fa.fa-check
+
+%script#select_clear_template{:type => 'template/ractive'}
+  %li.select_clear{ :style=>'margin-left:20px' }
+    %button.btn.btn-default.btn-xs#clear_all{ 'on-click'=>'@this.clear_all()' }= t('.clear_all')
+    %button.btn.btn-default.btn-xs#select_all{ 'on-click'=>'@this.select_all()', :style=>'margin-left:36px' }= t('.select_all')
 
 %script#filter_controls_template{:type => 'template/ractive'}
   .row.filter_control_box#projects_controls
@@ -274,23 +275,26 @@
             %span.filter-option.pull-left= t('.select_area')
             %span.caret
           %ul.dropdown-menu#area_filter_select
-            {{#all_areas}}
-            <areaFilterSelect id='{{id}}' name='{{name}}'/>
-            {{/all_areas}}
+            <undesignatedAreaFilterSelect filter_criteria='{{filter_criteria}}' id='0' name='Undesignated'/>
+            {{#all_mandates}}
+            <areaFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}'/>
+            {{/all_mandates}}
       .col-md-3
         .btn-group.select{:style=>"width:240px;"}
           %button.btn.btn-default.dropdown-toggle{:type=>:button, 'data-toggle'=>'dropdown'}
             %span.filter-option.pull-left= t('.select_project_type')
             %span.caret
-          %ul.dropdown-menu#project_type_filter_select
-            {{#all_area_project_types:area_name}}
+          %ul.dropdown-menu#subarea_filter_select
+            <selectClear t='{{t}}' collection='{{'subarea_ids'}}'/>
+            <undesignatedSubareaFilterSelect filter_criteria='{{filter_criteria}}' id='0' name='Undesignated'/>
+            {{#areas}}
             %li.dropdown-header{:style => "padding: 3px 0px 3px 20px;"}
-              {{area_name}}
+              {{name}}
               %ul{:style => "list-style:none; padding-left:18px;"}
-                {{#.}}
-                <projectTypeFilterSelect name='{{name}}'/>
-                {{/.}}
-            {{/all_area_project_types}}
+                {{#subareas}}
+                <subareaFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}'/>
+                {{/subareas}}
+            {{/areas}}
       .col-md-1.col-md-offset-1
         %i.erase.fa.fa-refresh{'on-click'=>'@this.clear_filter()'.html_safe, 'data-toggle'=>'tooltip', 'title' => t('.clear')}
       .col-md-1

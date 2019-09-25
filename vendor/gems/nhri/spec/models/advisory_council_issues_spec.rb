@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'advisory_council_issues_setup_helper'
 
 describe "article_link" do
   it "should convert 'null' string to nil value" do
@@ -30,5 +31,20 @@ describe "#index_url" do
     params = CGI.parse(url.query)
     expect(params.keys.first).to eq "selection"
     expect(params.values.first).to eq [@issue.title]
+  end
+end
+
+describe "#area_subarea_ids" do
+  include AdvisoryCouncilIssueSetupHelper
+
+  let(:issue){ FactoryBot.create(:advisory_council_issue, :hr_subareas) }
+  let(:hr_area){ Nhri::AdvisoryCouncil::AdvisoryCouncilIssueArea.where(name: "Human Rights" ).first }
+
+  before do
+    setup_areas
+  end
+
+  it "should return hash of subarea id arrays" do
+    expect(issue.area_subarea_ids[hr_area.id]).to match_array issue.advisory_council_issue_subareas.pluck(:id)
   end
 end

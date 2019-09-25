@@ -3,6 +3,14 @@ require 'rspec/core/shared_context'
 module MediaIssuesCommonHelpers
   extend RSpec::Core::SharedContext
 
+  def human_rights_subareas
+    page.find('#human_rights_area')
+  end
+
+  def human_rights_area
+    Area.find_by(:name => "Human Rights")
+  end
+
   def remove_first_indicator
     page.all('.selected_performance_indicator .remove')[0]
   end
@@ -34,11 +42,11 @@ module MediaIssuesCommonHelpers
   end
 
   def areas
-    page.all("#{single_item_selector} .expanded_info .description .area .name").map(&:text)
+    page.all("#{single_item_selector} .expanded_info #mandate #name").map(&:text)
   end
 
   def subareas
-    page.all("#{single_item_selector} .expanded_info .description .subareas .subarea").map(&:text)
+    page.all("#{single_item_selector} .expanded_info .area .subareas .subarea").map(&:text)
   end
 
   def add_cancel

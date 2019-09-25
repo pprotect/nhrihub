@@ -12,7 +12,7 @@ module ComplaintsSpecSetupHelpers
       fill_in('complaint_details', :with => "a long story about lots of stuff")
       choose('special_investigations_unit')
       choose('complained_to_subject_agency_yes')
-      check_basis(:good_governance, "Delayed action")
+      check_subarea(:good_governance, "Delayed action")
       select(User.admin.first.first_last_name, :from => "assignee")
     end
   end
@@ -22,6 +22,7 @@ module ComplaintsSpecSetupHelpers
     create_agencies
     create_staff
     create_complaint_statuses
+    populate_areas_subareas
     user = User.where(:login => 'admin').first
     staff_user = User.where(:login => 'staff').first
     FactoryBot.create(:complaint, :open,
@@ -31,9 +32,8 @@ module ComplaintsSpecSetupHelpers
                       :village => Faker::Address.city,
                       :phone => Faker::PhoneNumber.phone_number,
                       :dob => "19/08/1950",
-                      :human_rights_complaint_bases => hr_complaint_bases,
-                      :good_governance_complaint_bases => gg_complaint_bases,
-                      :special_investigations_unit_complaint_bases => siu_complaint_bases,
+                      :complaint_areas => [gg_area],
+                      :complaint_subareas => gg_subareas + hr_subareas + siu_subareas,
                       :desired_outcome => Faker::Lorem.sentence,
                       :details => Faker::Lorem.sentence,
                       :complaint_documents => complaint_docs,
@@ -47,9 +47,8 @@ module ComplaintsSpecSetupHelpers
                       :village => Faker::Address.city,
                       :phone => Faker::PhoneNumber.phone_number,
                       :dob => "19/08/1950",
-                      :human_rights_complaint_bases => hr_complaint_bases,
-                      :good_governance_complaint_bases => gg_complaint_bases,
-                      :special_investigations_unit_complaint_bases => siu_complaint_bases,
+                      :complaint_areas => [hr_area],
+                      :complaint_subareas => hr_subareas,
                       :desired_outcome => Faker::Lorem.sentence,
                       :details => Faker::Lorem.sentence,
                       :complaint_documents => complaint_docs,
@@ -64,23 +63,20 @@ module ComplaintsSpecSetupHelpers
     assignees = [admin, admin]
     FactoryBot.create(:complaint, :open, :assigned_to => assignees,
                       :case_reference => "c12-22",
-                      :human_rights_complaint_bases => hr_complaint_bases,
-                      :good_governance_complaint_bases => gg_complaint_bases,
-                      :special_investigations_unit_complaint_bases => siu_complaint_bases,
+                      :complaint_areas => [hr_area],
+                      :complaint_subareas => hr_subareas,
                       :agencies => [Agency.first]
                      )
     FactoryBot.create(:complaint, :open, :assigned_to => assignees,
                       :case_reference => "c12-33",
-                      :human_rights_complaint_bases => hr_complaint_bases,
-                      :good_governance_complaint_bases => gg_complaint_bases,
-                      :special_investigations_unit_complaint_bases => siu_complaint_bases,
+                      :complaint_areas => [hr_area],
+                      :complaint_subareas => hr_subareas,
                       :agencies => [Agency.first]
                      )
     @complaint = FactoryBot.create(:complaint, :open, :assigned_to => assignees,
                                    :case_reference => "c12-55",
-                                   :human_rights_complaint_bases => hr_complaint_bases,
-                                   :good_governance_complaint_bases => gg_complaint_bases,
-                                   :special_investigations_unit_complaint_bases => siu_complaint_bases,
+                                   :complaint_areas => [hr_area],
+                                   :complaint_subareas => hr_subareas,
                                    :agencies => [Agency.first]
                                   )
   end
@@ -105,9 +101,9 @@ module ComplaintsSpecSetupHelpers
   end
 
   def create_subareas
-    hr_complaint_bases
-    gg_complaint_bases
-    siu_complaint_bases
+    hr_subareas
+    gg_subareas
+    siu_subareas
   end
 
   def create_complaint_statuses
@@ -132,42 +128,45 @@ module ComplaintsSpecSetupHelpers
     Array.new(2) { FactoryBot.create(:complaint_document) }
   end
 
-  def hr_complaint_bases
-    names = ["CAT", "ICESCR"]
-    @hr_complaint_bases ||= names.collect{|name| FactoryBot.create(:convention, :name => name)}
-  end
-
-  def gg_complaint_bases
-    names = ["Delayed action", "Failure to act", "Contrary to Law", "Oppressive", "Private"]
-    @gg_complaint_bases ||= names.collect{|name| FactoryBot.create(:good_governance_complaint_basis, :name => name) }
-    names = ["Delayed action", "Failure to act"]
-    GoodGovernance::ComplaintBasis.where(:name => names)
-  end
-
-  def siu_complaint_bases
-    names = ["Unreasonable delay", "Not properly investigated"]
-    @siu_complaint_bases ||= names.collect{|name| FactoryBot.create(:siu_complaint_basis, :name => name) }
-  end
-
   def create_agencies
     AGENCIES.each do |name,full_name|
       Agency.create(:name => name, :full_name => full_name)
     end
   end
 
-  def populate_complaint_bases
-    # GoodGovernance::ComplaintBasis::DefaultNames.length = 8
-    # Nhri::ComplaintBasis::DefaultNames.length = 9
-    # Siu::ComplaintBasis::DefaultNames.length = 3
-    ["GoodGovernance", "Nhri", "Siu"].each do |type_prefix|
-      klass = type_prefix+"::ComplaintBasis"
-      klass.constantize::DefaultNames.each do |name|
-        if klass.constantize.send(:where, "\"#{klass.constantize.table_name}\".\"name\"='#{name}'").length > 0
-          complaint_basis = klass.constantize.send(:where, "\"#{klass.constantize.table_name}\".\"name\"='#{name}'").first
-        else
-          klass.constantize.create(:name => name)
-        end
-      end
+  def gg_area
+    ComplaintArea.find_or_create_by( :name => "Good Governance")
+  end
+
+  def gg_subareas
+    ["Delayed action", "Failure to act", "Contrary to Law", "Oppressive", "Private"].collect do |name|
+      ComplaintSubarea.find_or_create_by(name: name, area_id: gg_area.id)
     end
+  end
+
+  def hr_area
+    ComplaintArea.find_or_create_by(:name => "Human Rights")
+  end
+
+  def hr_subareas
+    ["CAT", "ICESCR"].collect do |name|
+      ComplaintSubarea.find_or_create_by(name: name, area_id: hr_area.id)
+    end
+  end
+
+  def siu_area
+    ComplaintArea.find_or_create_by(:name => "Special Investigations Unit")
+  end
+
+  def siu_subareas
+    ["Unreasonable delay", "Not properly investigated"].collect do |name|
+      ComplaintSubarea.find_or_create_by(name: name, area_id: siu_area.id)
+    end
+  end
+
+  def populate_areas_subareas
+    gg_subareas
+    hr_subareas
+    siu_subareas
   end
 end

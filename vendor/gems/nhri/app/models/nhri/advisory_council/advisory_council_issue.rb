@@ -7,12 +7,13 @@ class Nhri::AdvisoryCouncil::AdvisoryCouncilIssue < ActiveRecord::Base
   has_one_attached :file
 
   belongs_to :user
+  belongs_to :mandate
   has_many :reminders, :as => :remindable, :dependent => :destroy
   has_many :notes, :as => :notable, :dependent => :destroy
-  has_many :issue_areas, :dependent => :destroy
-  has_many :areas, :through => :issue_areas
-  has_many :issue_subareas, :dependent => :destroy
-  has_many :subareas, :through => :issue_subareas
+  has_many :advisory_council_issue_issue_areas, :dependent => :destroy
+  has_many :advisory_council_issue_areas, :through => :advisory_council_issue_issue_areas
+  has_many :advisory_council_issue_issue_subareas, :dependent => :destroy
+  has_many :advisory_council_issue_subareas, :through => :advisory_council_issue_issue_subareas
 
   default_scope {order(:created_at => :desc)}
 
@@ -24,9 +25,9 @@ class Nhri::AdvisoryCouncil::AdvisoryCouncilIssue < ActiveRecord::Base
            :methods=> [:date,
                        :has_link,
                        :has_scanned_doc,
-                       :collection_item_areas,
                        :area_ids,
                        :subarea_ids,
+                       :area_subarea_ids,
                        :reminders,
                        :notes,
                        :url,
@@ -35,10 +36,20 @@ class Nhri::AdvisoryCouncil::AdvisoryCouncilIssue < ActiveRecord::Base
                        :create_note_url]})
   end
 
-  alias_method :collection_item_areas, :issue_areas
+  alias_method :area_ids, :advisory_council_issue_area_ids
+  alias_method :subarea_ids, :advisory_council_issue_subarea_ids
 
   # value comes in from shared js and is ignored
   attr_writer :performance_indicator_ids
+
+  def area_subarea_ids
+    advisory_council_issue_subareas.inject({}) do |hash, subarea|
+      area_id = subarea.area_id
+      hash[area_id] = hash[area_id] || []
+      hash[area_id] << subarea.id
+      hash
+    end
+  end
 
   def initiator
     user.first_last_name if user

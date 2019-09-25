@@ -6,24 +6,28 @@ module AdvisoryCouncilIssueSetupHelper
     setup_areas
     if type == :advisory_council_issue_with_file
       FactoryBot.create(:advisory_council_issue,
-                         :hr_area,
+                         :hr_subareas,
+                         :gg_mandate,
                          :file,
                          :reminders=>[] )
     elsif type == :advisory_council_issue_with_link
       FactoryBot.create(:advisory_council_issue,
-                         :hr_area,
+                         :hr_subareas,
+                         :gg_mandate,
                          :link,
                          :reminders=>[] )
     else
       FactoryBot.create(:advisory_council_issue,
-                         :hr_area,
+                         :hr_subareas,
+                         :gg_mandate,
                          :reminders=>[] )
     end
   end
 
   def add_a_second_article
     FactoryBot.create(:advisory_council_issue,
-                       :hr_area,
+                       :hr_subareas,
+                       :gg_mandate,
                        :reminders=>[] )
   end
 
@@ -38,22 +42,26 @@ module AdvisoryCouncilIssueSetupHelper
   end
 
   def setup_areas
-    areas = ["Human Rights", "Good Governance", "Special Investigations Unit", "Corporate Services"]
-    human_rights_subareas = ["Violation", "Education activities", "Office reports", "Universal periodic review", "CEDAW", "CRC", "CRPD"]
-    good_governance_subareas = ["Violation", "Office report", "Office consultations"]
+    areas = Area::DefaultNames
+    human_rights_subareas = Subarea::DefaultNames[:"Human Rights"]
+    good_governance_subareas = Subarea::DefaultNames[:"Good Governance"]
 
     areas.each do |a|
-      MediaIssueArea.create(:name => a) unless MediaIssueArea.where(:name => a).exists?
+      Nhri::AdvisoryCouncil::AdvisoryCouncilIssueArea.create(:name => a) unless Nhri::AdvisoryCouncil::AdvisoryCouncilIssueArea.where(:name => a).exists?
     end
 
-    human_rights_id = MediaIssueArea.where(:name => "Human Rights").first.id
+    human_rights_id = Nhri::AdvisoryCouncil::AdvisoryCouncilIssueArea.where(:name => "Human Rights").first.id
     human_rights_subareas.each do |hrsa|
-      MediaIssueSubarea.create(:name => hrsa, :area_id => human_rights_id) unless MediaIssueSubarea.where(:name => hrsa, :area_id => human_rights_id).exists?
+      Nhri::AdvisoryCouncil::AdvisoryCouncilIssueSubarea.create(:name => hrsa, :area_id => human_rights_id) unless Nhri::AdvisoryCouncil::AdvisoryCouncilIssueSubarea.where(:name => hrsa, :area_id => human_rights_id).exists?
     end
 
-    good_governance_id = MediaIssueArea.where(:name => "Good Governance").first.id
+    good_governance_id = Nhri::AdvisoryCouncil::AdvisoryCouncilIssueArea.where(:name => "Good Governance").first.id
     good_governance_subareas.each do |ggsa|
-      MediaIssueSubarea.create(:name => ggsa, :area_id => good_governance_id) unless MediaIssueSubarea.where(:name => ggsa, :area_id => good_governance_id).exists?
+      Nhri::AdvisoryCouncil::AdvisoryCouncilIssueSubarea.create(:name => ggsa, :area_id => good_governance_id) unless Nhri::AdvisoryCouncil::AdvisoryCouncilIssueSubarea.where(:name => ggsa, :area_id => good_governance_id).exists?
+    end
+
+    Mandate::Keys.each do |key|
+      Mandate.find_or_create_by(key: key)
     end
   end
 

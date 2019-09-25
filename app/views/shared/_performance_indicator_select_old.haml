@@ -1,0 +1,70 @@
+%script#performance_indicators_template{:type => 'template/ractive'}
+  .panel.panel-default.performance_indicators
+    .panel-heading{'data-toggle' => :edit}
+      .row
+        .col-md-2.no_edit.in= t('.performance_indicators')
+        .col-md-2.edit{:class=>"{{#performance_indicator_required}}required{{/}}"}= t('.performance_indicators')
+    .panel-content{'data-toggle' => :edit}
+      %div.fade.no_edit{:class => "{{#persisted}}in{{/persisted}}"}
+        {{> performance_indicator_show }}
+      %div.fade.edit{:class => '{{^persisted}}in{{/persisted}}'}
+        {{> performance_indicator_edit }}
+
+%script#selected_performance_indicator_template{:type => 'template/ractive'}
+  .row.selected_performance_indicator
+    .col-md-8 {{indexed_description}}
+    .col-md-4
+      %i.fa.fa-remove.remove{'on-click' => '@this.remove_indicator(association_id,id)'.html_safe}
+
+%script#performance_indicator_edit{:type => 'template/ractive'}
+  .form-group.row#performance_indicator
+    .col-md-4{:style => 'padding-left:40px;'}
+      .dropdown.performance_indicator_select
+        %a.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
+          =t('.select_performance_indicator')
+          %span.caret
+        {{> performance_indicator_filter_select_template }}
+    .col-md-8#performance_indicators
+      {{#sorted_performance_indicator_associations}}
+      <selectedPerformanceIndicator performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations='{{performance_indicator_associations}}' planned_results='{{planned_results}}' performance_indicator_id='{{performance_indicator.id}}' association_id='{{association_id}}' indexed_description='{{performance_indicator.indexed_description}}' id='{{id}}' />
+      {{/sorted_performance_indicator_associations}}
+      {{^sorted_performance_indicator_associations}}
+      %div.selected_performance_indicator=t('.none_assigned')
+      {{/sorted_performance_indicator_associations}}
+  .form-group
+    %span.help-block#performance_indicator_associations_error.error{:class => "{{#performance_indicator_associations_error}}has-error{{/}}"} There must be at least one performance indicator
+
+%script#performance_indicator_filter_select_template{:type => 'template/ractive'}
+  %ul.dropdown-menu#performance_indicator_filter_select{:style => "width: 450px;"}
+    {{#planned_results }}
+    %li.dropdown-submenu.planned_result
+      %div {{ indexed_description }}
+      %ul
+        {{#outcomes }}
+        %li.dropdown-submenu.outcome
+          %div {{ indexed_description }}
+          %ul
+            {{#activities}}
+            %li.dropdown-submenu.activity
+              %div {{ indexed_description }}
+              %ul
+                {{#performance_indicators}}
+                %li.performance_indicator
+                  %a.opt{ 'on-click'=>'@this.select(id)'.html_safe}
+                    %span.text {{ indexed_description }}
+                    %span.fa.fa-check
+                {{/performance_indicators}}
+            {{/activities}}
+        {{/outcomes }}
+    {{/planned_results }}
+
+%script#performance_indicator_show{:type => 'template/ractive'}
+  .row
+    .col-md-11.col-md-offset-1#performance_indicators{:style => "display:flex; flex-direction:column"}
+      {{#sorted_performance_indicator_associations}}
+      .row.performance_indicator
+        .col-md-6 {{performance_indicators[performance_indicator.id]}}
+      {{/sorted_performance_indicator_associations}}
+      {{^sorted_performance_indicator_associations}}
+      %div.performance_indicator=t('.none_assigned')
+      {{/sorted_performance_indicator_associations}}

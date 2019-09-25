@@ -129,14 +129,14 @@ script#new_complaint_template(type = 'text/ractive')
             <mandatesSelector mandate_id='{{mandate_id}}' />
           span.help-block.error#mandate_id_error 
             | {{ t.mandate_id_error_message }}
-      .row.form-group('class-has-error' = 'complaint_basis_id_count_error')
+      .row.form-group('class-has-error' = 'subarea_id_count_error')
         .col-md-2
           label.required 
             | {{ t.complaint_basis }}
         .col-md-10
           .row
-            <complaintBasesSelector special_investigations_unit_complaint_basis_ids='{{special_investigations_unit_complaint_basis_ids}}' strategic_plan_complaint_basis_ids='{{strategic_plan_complaint_basis_ids}}' human_rights_complaint_basis_ids='{{human_rights_complaint_basis_ids}}' good_governance_complaint_basis_ids='{{good_governance_complaint_basis_ids}}' />
-          span.help-block.error#complaint_basis_id_count_error 
+            <subareaSelector subarea_ids='{{subarea_ids}}' areas='{{areas}}' />
+          span.help-block.error#subarea_id_count_error 
             | {{ t.complaint_basis_error_message }}
       .row
         .col-md-2
@@ -319,8 +319,7 @@ style.
 script(type='text/javascript').
   import Mandates from './mandates'
   import MandatesSelector from './mandates_selector'
-  import ComplaintBases from './complaint_bases'
-  import ComplaintBasesSelector from './complaint_bases_selector'
+  import Area from './area'
   import Agencies from './agencies'
   import AgenciesSelector from './agencies_selector'
   import Assignees from './assignees'
@@ -339,6 +338,7 @@ script(type='text/javascript').
   import csrf_header from '../../../../../app/javascript/csrf'
   import reminders from '../../../../../app/javascript/reminders.ractive.pug'
   import notes from '../../../../../app/javascript/notes.ractive.pug'
+  import SubareaSelector from './subarea_selector.ractive.pug'
   import 'bootstrap'
 
   var Notable = {
@@ -455,8 +455,7 @@ script(type='text/javascript').
       },
       persistent_attributes() {
         return ['case_reference','village','phone','mandate_id',
-          'good_governance_complaint_basis_ids', 'special_investigations_unit_complaint_basis_ids',
-          'human_rights_complaint_basis_ids', 'current_status_humanized', 'new_assignee_id',
+          'current_status_humanized', 'new_assignee_id', 'subarea_ids',
           'agency_ids', 'attached_documents_attributes', 'details',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
           'firstName', 'lastName', 'chiefly_title'];
@@ -491,14 +490,10 @@ script(type='text/javascript').
       create_note_url() {
         if (this.get('persisted')) { return Routes.complaint_notes_path('en', this.get('id')); }
       },
-      complaint_basis_id_count() { // aka subareas
-        const gg = this.get('good_governance_complaint_basis_ids');
-        const ggl = _.isUndefined(gg) ? 0 : gg.length;
-        const si = this.get('special_investigations_unit_complaint_basis_ids');
-        const sil = _.isUndefined(si) ? 0 : si.length;
-        const hr = this.get('human_rights_complaint_basis_ids');
-        const hrl = _.isUndefined(hr) ? 0 : hr.length;
-        return ggl + sil + hrl;
+      subarea_id_count() { // aka subareas
+        const sa = this.get('subarea_ids');
+        const sal = _.isUndefined(sa) ? 0 : sa.length;
+        return sal;
       },
       validation_criteria() {
         return {
@@ -506,7 +501,7 @@ script(type='text/javascript').
           lastName : ['notBlank'],
           village : ['notBlank'],
           mandate_id : 'numeric',
-          complaint_basis_id_count : 'nonZero',
+          subarea_id_count : 'nonZero',
           new_assignee_id : ['nonZero', {if : () => !this.get('editing')}],
           dob: () => {
             const date_regex = new RegExp(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); // dd/mm/yyyy
@@ -526,7 +521,7 @@ script(type='text/javascript').
           village_error : this.get('village_error'),
           new_assignee_id_error : this.get('new_assignee_id_error'),
           mandate_id_error : this.get('mandate_id_error'),
-          complaint_basis_id_count_error : this.get('complaint_basis_id_count_error'),
+          subarea_id_count_error : this.get('subarea_id_count_error'),
           dob_error : this.get('dob_error'),
           details_error : this.get('details_error')
         };
@@ -556,14 +551,14 @@ script(type='text/javascript').
     components : {
       mandates : Mandates,
       mandatesSelector : MandatesSelector,
-      complaintBases : ComplaintBases,
-      complaintBasesSelector : ComplaintBasesSelector, 
       agencies : Agencies,
       agenciesSelector : AgenciesSelector,
+      area : Area,
       assignees : Assignees,
       assigneeSelector : AssigneeSelector,
       attachedDocuments : ComplaintDocuments,
       statusChange : StatusChange,
+      subareaSelector: SubareaSelector,
       //progressBar : ProgressBar
     },
     generate_word_doc() {

@@ -43,30 +43,49 @@ FactoryBot.define do
         new_str = (str.dup.slice(0,i-1)+'f'+str.dup.slice(i-l,1000)).dup }
     end
 
-    trait :hr_area do
+    trait :hr_subareas do
       after(:build) do |ma|
-        hr_area = Area.find_or_create_by(:name => "Human Rights")
-        ma.areas << hr_area
-        subareas = Subarea.find_or_create_by(:area_id => hr_area.id, :name =>'CEDAW')
-        ma.subareas = [subareas]
+        hr_area = MediaArea.find_or_create_by(:name => "Human Rights")
+        ma.media_areas << hr_area
+        subareas = Subarea::DefaultNames[:"Human Rights"][0..1].collect do |subarea_name|
+          MediaSubarea.find_or_create_by(:area_id => hr_area.id, :name => subarea_name)
+        end
+        ma.media_subareas << subareas
       end
     end
 
     trait :si_area do
       after(:build) do |ma|
-        ma.areas << Area.where(:name => "Special Investigations Unit").first
+        si_area = MediaArea.find_or_create_by(:name => "Special Investigations Unit")
+        ma.media_areas << si_area
+        subareas = Subarea::DefaultNames[:"Special Investigations Unit"].sample(2).collect do |subarea_name|
+          MediaSubarea.find_or_create_by(:area_id => si_area.id, :name => subarea_name)
+        end
+        ma.media_subareas << subareas
       end
     end
 
     trait :gg_area do
       after(:build) do |ma|
-        ma.areas << Area.where(:name => "Good Governance").first
+        gg_area = MediaArea.find_or_create_by(:name => "Good Governance")
+        ma.media_areas << gg_area
+        subareas = Subarea::DefaultNames[:"Good Governance"].sample(2).collect do |subarea_name|
+          MediaSubarea.find_or_create_by(:area_id => gg_area.id, :name => subarea_name)
+        end
+        ma.media_subareas << subareas
+      end
+    end
+
+    trait :gg_mandate do
+      after(:build) do |ma|
+        gg_mandate = Mandate.find_or_create_by(:key => 'good_governance')
+        ma.mandate_id = gg_mandate.id
       end
     end
 
     trait :crc_subarea do
       after(:build) do |ma|
-        ma.subareas << Subarea.where(:name => "CRC").first
+        ma.media_subareas << MediaSubarea.find_or_create_by(:name => "CRC")
       end
     end
 
@@ -88,9 +107,9 @@ FactoryBot.define do
 
     trait :hr_violation_subarea do
       after(:build) do |ma|
-        hr_area = Area.where(:name => "Human Rights").first
-        ma.areas << hr_area
-        ma.subareas << Subarea.where(:name => "Violation", :area_id => hr_area.id).first
+        hr_area = MediaArea.find_or_create_by(:name => "Human Rights")
+        ma.media_areas << hr_area
+        ma.media_subareas << MediaSubarea.find_or_create_by(:name => "Violation", :area_id => hr_area.id)
       end
     end
   end

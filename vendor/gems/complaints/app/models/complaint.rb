@@ -3,15 +3,10 @@ require Complaints::Engine.root.join('app', 'domain_models', 'cache')
 class Complaint < ActiveRecord::Base
   include Cache
   include Rails.application.routes.url_helpers
-  has_many :complaint_good_governance_complaint_bases, :dependent => :destroy
-  has_many :complaint_special_investigations_unit_complaint_bases, :dependent => :destroy
-  has_many :complaint_human_rights_complaint_bases, :dependent => :destroy
-  has_many :complaint_complaint_bases
-  has_many :complaint_bases, :through => :complaint_complaint_bases
-  has_many :good_governance_complaint_bases, :class_name => 'GoodGovernance::ComplaintBasis', :through => :complaint_good_governance_complaint_bases
-  has_many :special_investigations_unit_complaint_bases, :class_name => 'Siu::ComplaintBasis', :through => :complaint_special_investigations_unit_complaint_bases
-  has_many :human_rights_complaint_bases, :class_name => 'Convention', :through => :complaint_human_rights_complaint_bases
-  has_many :strategic_plan_complaint_bases, :class_name => 'StrategicPlans::ComplaintBasis', :through => :complaint_strategic_plan_complaint_bases
+  has_many :complaint_complaint_areas, :dependent => :destroy
+  has_many :complaint_areas, :through => :complaint_complaint_areas
+  has_many :complaint_complaint_subareas, :dependent => :destroy
+  has_many :complaint_subareas, :through => :complaint_complaint_subareas
   has_many :reminders, :as => :remindable, :autosave => true, :dependent => :destroy, :inverse_of => :remindable
   has_many :notes, :as => :notable, :autosave => true, :dependent => :destroy, :inverse_of => :notable
   has_many :assigns, :autosave => true, :dependent => :destroy
@@ -38,35 +33,20 @@ class Complaint < ActiveRecord::Base
       before_date(query[:to]).
       with_village(query[:village]).
       with_phone(query[:phone]).
-      with_subareas(query[:selected_special_investigations_unit_complaint_basis_ids],
-                    query[:selected_good_governance_complaint_basis_ids],
-                    query[:selected_human_rights_complaint_basis_ids]).
+      with_subareas(query[:selected_subarea_ids]).
       with_agencies(query[:selected_agency_ids])
-end
+  end
 
   def self.with_agencies(selected_agency_ids)
     selected_agency_ids = nil if selected_agency_ids.delete_if(&:blank?).empty?
     joins(:complaint_agencies).where("complaint_agencies.agency_id in (?)", selected_agency_ids)
   end
 
-  def self.with_subareas(selected_siu_subareas, selected_gg_subareas, selected_hr_subareas)
-    selected_siu_subareas = nil if  selected_siu_subareas.delete_if(&:blank?).empty?
-    selected_gg_subareas  = nil if  selected_gg_subareas.delete_if(&:blank?).empty?
-    selected_hr_subareas  = nil if  selected_hr_subareas.delete_if(&:blank?).empty?
-    sql_where = <<-SQL.squish
-      (complaint_complaint_bases.complaint_basis_id in (?) and complaint_complaint_bases.type = ?)
-      or
-      (complaint_complaint_bases.complaint_basis_id in (?) and complaint_complaint_bases.type = ?)
-      or
-      (complaint_complaint_bases.complaint_basis_id in (?) and complaint_complaint_bases.type = ?)
-    SQL
+  def self.with_subareas(selected_subarea_ids)
+    selected_subarea_ids = nil if selected_subarea_ids.delete_if(&:blank?).empty?
 
-    args = [selected_siu_subareas, 'ComplaintSpecialInvestigationsUnitComplaintBasis',
-            selected_gg_subareas, 'ComplaintGoodGovernanceComplaintBasis',
-            selected_hr_subareas, 'ComplaintHumanRightsComplaintBasis']
-
-    joins(:complaint_complaint_bases).
-      where(sql_where, *args)
+    joins(:complaint_complaint_subareas).
+      where( "complaint_complaint_subareas.subarea_id in (?)", selected_subarea_ids)
   end
 
   def self.with_mandates(selected_mandate_ids)
@@ -120,9 +100,7 @@ end
       includes({:assigns => :assignee},
         :mandate,
         {:status_changes => [:user, :complaint_status]},
-        {:complaint_good_governance_complaint_bases=>:good_governance_complaint_basis},
-        {:complaint_special_investigations_unit_complaint_bases => :special_investigations_unit_complaint_basis},
-        {:complaint_human_rights_complaint_bases=>:human_rights_complaint_basis},
+        {:complaint_complaint_areas=>:complaint_area},
         {:complaint_agencies => :agency},
         {:communications => [:user, :communication_documents, :communicants]},
         :complaint_documents,
@@ -207,24 +185,41 @@ end
                         :current_status_humanized,
                         :attached_documents,
                         :mandate_id,
-                        :good_governance_complaint_basis_ids,
-                        :special_investigations_unit_complaint_basis_ids,
-                        :human_rights_complaint_basis_ids,
+                        :area_ids,
+                        :subarea_ids,
+                        :area_subarea_ids,
                         :agency_ids,
                         :status_changes,
                         :communications])
   end
 
-  def good_governance_complaint_basis_ids
-    complaint_good_governance_complaint_bases.map(&:complaint_basis_id)
+
+  # supports the checkbox selectors for areas and subareas
+  alias_method :area_ids, :complaint_area_ids
+  alias_method :subarea_ids, :complaint_subarea_ids
+  alias_method :subarea_ids=, :complaint_subarea_ids=
+
+  #used for testing
+  def good_governance_subareas
+    complaint_subareas.good_governance
+  end
+  #used for testing
+  def human_rights_subareas
+    complaint_subareas.human_rights
+  end
+  #used for testing
+  def special_investigations_unit_subareas
+    complaint_subareas.special_investigations_unit
   end
 
-  def special_investigations_unit_complaint_basis_ids
-    complaint_special_investigations_unit_complaint_bases.map(&:complaint_basis_id)
-  end
-
-  def human_rights_complaint_basis_ids
-    complaint_human_rights_complaint_bases.map(&:complaint_basis_id)
+  # facilitates rendering of areas/subareas for a single complaint
+  def area_subarea_ids
+    complaint_subareas.inject({}) do |hash, subarea|
+      area_id = subarea.area_id
+      hash[area_id] = hash[area_id] || []
+      hash[area_id] << subarea.id
+      hash
+    end
   end
 
   def agency_ids

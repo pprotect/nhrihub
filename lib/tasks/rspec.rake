@@ -1,7 +1,10 @@
 require "rspec/core/rake_task"
 
-RSpec::Core::RakeTask.new(:default) do |spec|
-  spec.pattern = "{,vendor/gems/*/}spec/{features,models,mailers}/**/*_spec.rb"
+task :default do
+  RSpec::Core::RakeTask.new(:spec) do |spec|
+    spec.pattern = "{,vendor/gems/*/}spec/{features,models,mailers}/**/*_spec.rb"
+  end
+  Rake::Task["spec"].execute
 end
 
 # because rails must be reloaded between specs
@@ -14,11 +17,11 @@ task :requests do
 end
 
 desc "run all model specs"
-task :models => :spec
-RSpec::Core::RakeTask.module_eval do
-  def pattern
-    "{,vendor/gems/*/}spec/models/**/*_spec.rb"
+task :models => :spec do
+  RSpec::Core::RakeTask.new(:spec) do |spec|
+    spec.pattern = "{,vendor/gems/*/}spec/models/**/*_spec.rb"
   end
+  Rake::Task["spec"].execute
 end
 
 desc "javascript test shortcut"

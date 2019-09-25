@@ -1,8 +1,8 @@
 namespace :projects do
   desc "populates all projects-related tables"
-  task :populate => ["projects:populate_mandates", "projects:populate_types", "projects:populate_projects"]
+  task :populate => ["projects:populate_mandates", "projects:populate_areas_subareas", "projects:populate_projects"]
 
-  desc "depopulates projects, leaving mandates and types untouched"
+  desc "depopulates projects, leaving mandates untouched"
   task :depopulate => :environment do
     Project.destroy_all
   end
@@ -10,41 +10,27 @@ namespace :projects do
   desc "populates the projects table"
   task "populate_projects" => "projects:depopulate" do
     5.times do
-      FactoryBot.create(:project, :with_reminders, :with_performance_indicators, :with_documents, :with_mandates, :with_project_types)
+      FactoryBot.create(:project, :with_reminders, :with_performance_indicators, :with_documents, :with_mandate, :with_subareas)
     end
   end
 
   desc "populates the mandates table"
   task :populate_mandates => :environment do
-    Mandate.destroy_all
     ["good_governance", "human_rights", "special_investigations_unit", "strategic_plan"].each do |key|
-      Mandate.create(:key => key)
+      Mandate.find_or_create_by(:key => key)
     end
   end
 
-  desc "populates types for each mandate"
-  task :populate_types => :environment do
-    ProjectType.destroy_all
-    gg = Mandate.find_or_create_by(:key => 'good_governance')
-    hr = Mandate.find_or_create_by(:key => 'human_rights')
-    siu = Mandate.find_or_create_by(:key => 'special_investigations_unit')
-    corp = Mandate.find_or_create_by(:key => 'strategic_plan')
+  desc "populates areas and subareas"
+  task :populate_areas_subareas => :environment do
+    ProjectSubarea.destroy_all
+    ProjectArea.destroy_all
 
-    gg_types = ["Own motion investigation", "Consultation", "Awareness raising", "Other"]
-    gg_types.each do |type|
-      ProjectType.create(:name => type, :mandate_id => gg.id)
-    end
-
-    hr_types = ["Schools", "Report or Inquiry", "Awareness Raising", "Legislative Review",
-                "Amicus Curiae", "Convention Implementation", "UN Reporting", "Detention Facilities Inspection",
-                "State of Human Rights Report", "Other"]
-    hr_types.each do |type|
-      ProjectType.create(:name => type, :mandate_id => hr.id)
-    end
-
-    siu_types = ["PSU Review", "Report", "Inquiry", "Other"]
-    siu_types.each do |type|
-      ProjectType.create(:name => type, :mandate_id => siu.id)
+    Area::DefaultNames.each do |name|
+      area = ProjectArea.create(:name => name)
+      ProjectSubarea::DefaultNames["#{name}"].each do |subarea_name|
+        ProjectSubarea.create(:name => subarea_name, :area_id => area.id)
+      end
     end
   end
 
@@ -57,12 +43,4 @@ namespace :projects do
     end
   end
 
-  #desc "populates conventions"
-  #task :populate_conv => :environment do
-    #Convention.destroy_all
-    ## CONVENTIONS defined in lib/constants
-    #conventions = CONVENTIONS.each do |short,full|
-      #Convention.create(:name => short, :full_name => full)
-    #end
-  #end
 end

@@ -12,6 +12,10 @@ module ProjectsContextPerformanceIndicatorSpecHelpers
     @association = ProjectPerformanceIndicator
   end
 
+  def open_first_item
+    page.all('i#expand').first.click
+  end
+
   def edit_first_item
     edit_first_project.click
   end

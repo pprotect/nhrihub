@@ -2,11 +2,12 @@ class MediaAppearancesController < ApplicationController
   include AttachedFile
 
   def index
-    @media_appearances = MediaAppearance.includes(:subareas, :performance_indicators, :notes, :reminders, :areas => :subareas).all
+    @media_appearances = MediaAppearance.includes(:media_subareas, :performance_indicators, :notes, :reminders, :media_areas => :subareas).all
     @media_appearance = MediaAppearance.new
-    @areas = MediaIssueArea.includes(:subareas).all
-    @subareas = MediaIssueSubarea.extended
+    @areas = MediaArea.includes(:media_subareas).all
+    @subareas = MediaSubarea.extended
     @planned_results = PlannedResult.all_with_associations
+    @mandates = Mandate.all
   end
 
   def create
@@ -55,6 +56,7 @@ class MediaAppearancesController < ApplicationController
              :lastModifiedDate,
              :article_link,
              :user_id,
+             :mandate_id,
              :performance_indicator_associations_attributes => [:association_id, :performance_indicator_id],
              :area_ids => [],
              :subarea_ids => [])

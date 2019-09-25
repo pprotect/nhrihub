@@ -1,9 +1,16 @@
 require 'area_subarea_admin_common_helpers'
+require 'login_helpers'
 
 RSpec.shared_examples "area subarea admin" do
 
   feature "configure description areas and subareas", :js => true do
+    include LoggedInEnAdminUserHelper # sets up logged in admin user
     include AreaSubareaAdminCommonHelpers
+
+    before do
+      create_default_areas
+      visit admin_page
+    end
 
     scenario 'default areas and subareas' do
       areas = [ "Human Rights", "Good Governance", "Special Investigations Unit", "Corporate Services"]

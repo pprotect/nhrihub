@@ -2,6 +2,12 @@ require 'reminders_spec_common_helpers'
 RSpec.shared_examples "has performance indicator association" do
   include PerformanceIndicatorHelpers
 
+  scenario "show the item's performance indicators" do
+    open_first_item
+    descriptors = @model.first.performance_indicators.map(&:indexed_description)
+    expect(page.all('.performance_indicator').map(&:text)).to match_array descriptors
+  end
+
   scenario "add a performance indicator link" do
     edit_first_item
     pi = add_a_unique_performance_indicator

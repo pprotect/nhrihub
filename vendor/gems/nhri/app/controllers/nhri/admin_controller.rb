@@ -17,5 +17,8 @@ class Nhri::AdminController < ApplicationController
     @file_monitors_filetype = Filetype.new
     @file_monitors_filetypes = Nhri::FileMonitor.permitted_filetypes
     @file_monitors_filesize =  Nhri::FileMonitor.maximum_filesize
+    @areas = Nhri::AdvisoryCouncil::AdvisoryCouncilIssueArea.all
+    @create_subarea_url = nhri_advisory_council_advisory_council_issue_area_subareas_path(I18n.locale, "area_id")
+    @create_area_url = nhri_advisory_council_advisory_council_issue_areas_path(I18n.locale)
   end
 end

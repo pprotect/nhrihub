@@ -5,16 +5,25 @@ class MediaAppearance < ActiveRecord::Base
   ConfigPrefix = 'media_appearance'
 
   belongs_to :user
+  belongs_to :mandate
   has_many :reminders, :as => :remindable, :dependent => :destroy
   has_many :notes, :as => :notable, :dependent => :destroy
-  has_many :media_areas, :dependent => :destroy
-  has_many :areas, ->{ where(:type => 'MediaIssueArea') }, :through => :media_areas
-  has_many :media_subareas, :dependent => :destroy
-  has_many :subareas, ->{ where(:type => 'MediaIssueSubarea') }, :through => :media_subareas
+  has_many :media_media_areas, :dependent => :destroy
+  has_many :media_areas, :through => :media_media_areas
+  has_many :media_media_subareas, :dependent => :destroy
+  has_many :media_subareas, :through => :media_media_subareas
   has_many :media_appearance_performance_indicators, :dependent => :destroy
   has_many :performance_indicators, :through => :media_appearance_performance_indicators
   accepts_nested_attributes_for :media_appearance_performance_indicators
   alias_method :performance_indicator_associations_attributes=, :media_appearance_performance_indicators_attributes=
+
+  # supports the checkbox selectors for areas and subareas
+  alias_method :area_ids, :media_area_ids
+  alias_method :area_ids=, :media_area_ids=
+  alias_method :areas, :media_areas
+  alias_method :subarea_ids, :media_subarea_ids
+  alias_method :subareas, :media_subareas
+  alias_method :subarea_ids=, :media_subarea_ids=
 
   has_one_attached :file
 
@@ -29,8 +38,10 @@ class MediaAppearance < ActiveRecord::Base
                        :has_link,
                        :has_scanned_doc,
                        :collection_item_areas,
+                       :mandate_id,
                        :area_ids,
                        :subarea_ids,
+                       :area_subarea_ids,
                        :performance_indicator_associations,
                        :reminders,
                        :notes,
@@ -40,6 +51,15 @@ class MediaAppearance < ActiveRecord::Base
 
   # assign a generic name so that javascript is reusable for different collections
   alias_method :collection_item_areas, :media_areas
+
+  def area_subarea_ids
+    media_subareas.inject({}) do |hash, subarea|
+      area_id = subarea.area_id
+      hash[area_id] = hash[area_id] || []
+      hash[area_id] << subarea.id
+      hash
+    end
+  end
 
   def performance_indicator_associations
     media_appearance_performance_indicators

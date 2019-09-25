@@ -87,8 +87,10 @@ describe "scope class methods" do
   end
 
   describe "query by complaint_basis" do
-    let(:gg_complaint_basis_ids){  GoodGovernance::ComplaintBasis.pluck(:id)[0..1] }
-    let(:siu_complaint_basis_ids){ Siu::ComplaintBasis.pluck(:id)[0..1] }
+    let(:gg_area_id){ComplaintArea.find_or_create_by(:name => "Good Governance").id}
+    let(:gg_subarea_ids){ ComplaintSubarea.where(:area_id => gg_area_id).pluck(:id) }
+    let(:siu_area_id){ComplaintArea.find_or_create_by(:name => "Special Investigations Unit").id}
+    let(:siu_subarea_ids){ ComplaintSubarea.where(:area_id => siu_area_id).pluck(:id) }
     let(:user){ FactoryBot.create(:user) }
     let(:mandate){ Mandate.first }
     let(:ids){ Complaint.pluck(:id) }
@@ -97,39 +99,41 @@ describe "scope class methods" do
        :selected_status_ids=>ComplaintStatus.pluck(:id),
        :selected_mandate_ids=>Mandate.pluck(:id),
        :selected_agency_ids => Agency.pluck(:id),
-       :selected_special_investigations_unit_complaint_basis_ids=>Siu::ComplaintBasis.pluck(:id),
-       :selected_human_rights_complaint_basis_ids=>[1, 2, 3, 4, 5, 6, 7, 8, 9],
-       :selected_good_governance_complaint_basis_ids=>GoodGovernance::ComplaintBasis.pluck(:id)}
+       :selected_area_ids => ComplaintArea.pluck(:id),
+       :selected_subarea_ids => ComplaintSubarea.pluck(:id)
+      }
     }
     let(:complaints){ Complaint.index_page_associations(Complaint.pluck(:id), query) }
 
     before do
       create_mandates
       create_agencies
-      populate_complaint_bases
+      populate_areas_subareas
+      complaint_area = ComplaintArea.first
+      complaint_subarea = ComplaintSubarea.where(area_id: complaint_area.id).first
       FactoryBot.create(:complaint,
                         :open,
                         assigned_to: user,
                         mandate_id: mandate.id,
                         agencies: [Agency.first],
-                        good_governance_complaint_bases: GoodGovernance::ComplaintBasis.all[0..3],
-                        special_investigations_unit_complaint_bases: Siu::ComplaintBasis.all[0..2])
+                        complaint_areas: [complaint_area],
+                        complaint_subareas: [complaint_subarea] )
     end
 
     it "should return unique matching complaints" do
-      expect(Complaint.with_subareas( siu_complaint_basis_ids, gg_complaint_basis_ids, []).distinct.count).to eq 1
+      expect(Complaint.with_subareas( gg_subarea_ids + siu_subarea_ids ).distinct.count).to eq 1
     end
 
     it "should return unique matching complaints when combined with for_assignee scope" do
       compound_scope = Complaint.for_assignee(user.id).
-                                 with_subareas(siu_complaint_basis_ids, gg_complaint_basis_ids, []).
+                                 with_subareas(siu_subarea_ids + gg_subarea_ids).
                                  length
       expect(compound_scope).to eq 1
     end
 
     it "should return single matching complaints when combined with with_mandates scope" do
       compound_scope = Complaint.
-                         with_subareas(siu_complaint_basis_ids, gg_complaint_basis_ids, []).
+                         with_subareas(siu_subarea_ids + gg_subarea_ids).
                          with_mandates([mandate.id]).
                          distinct.
                          count
@@ -140,6 +144,7 @@ describe "scope class methods" do
       expect(complaints.length).to eq 1
     end
   end
+
 end
 
 describe "selects complaints matching the selected subarea" do
@@ -151,37 +156,34 @@ describe "selects complaints matching the selected subarea" do
      :selected_status_ids=>ComplaintStatus.pluck(:id),
      :selected_mandate_ids=>Mandate.pluck(:id),
      :selected_agency_ids=>Agency.pluck(:id),
-     :selected_special_investigations_unit_complaint_basis_ids=>[siu_cb.id],
-     :selected_human_rights_complaint_basis_ids=>[],
-     :selected_good_governance_complaint_basis_ids=>[gg_cb.id]}
+     :selected_subarea_ids => [foo_subarea.id, bar_subarea.id] }
   }
   let(:complaints){ Complaint.index_page_associations(Complaint.pluck(:id), query) }
-  let(:siu_cb) { FactoryBot.create(:siu_complaint_basis, name: 'foo')}
-  let(:gg_cb)  { FactoryBot.create(:good_governance_complaint_basis, name: 'bar')}
-  let(:hr_cb)  { FactoryBot.create(:hr_complaint_basis, name: 'baz')}
+  let(:area){ FactoryBot.create(:complaint_area) }
+  let(:foo_subarea) { FactoryBot.create(:complaint_subarea, area_id: area.id, name: 'foo')}
+  let(:bar_subarea)  { FactoryBot.create(:complaint_subarea, area_id: area.id, name: 'bar')}
+  let(:baz_subarea)  { FactoryBot.create(:complaint_subarea, area_id: area.id, name: 'baz')}
 
   before do
     create_agencies
     create_mandates
-    #cs_cb  = FactoryBot.create(:cs_complaint_basis)
     mandate_id = Mandate.first.id
-    @gg_complaint = FactoryBot.create(:complaint, :open, agencies: [Agency.first], mandate_id: mandate_id, good_governance_complaint_bases: [gg_cb], assigned_to: user)
-    @siu_complaint = FactoryBot.create(:complaint,:open, agencies: [Agency.first], mandate_id: mandate_id, special_investigations_unit_complaint_bases: [siu_cb],  assigned_to: user)
-    @hr_complaint = FactoryBot.create(:complaint, :open, agencies: [Agency.first], mandate_id: mandate_id, human_rights_complaint_bases: [hr_cb],  assigned_to: user)
-    #FactoryBot.create(:complaint, :open, strategic_plan_complaint_bases: [cs_cb],  assigned_to: user)
+    @foo_complaint = FactoryBot.create(:complaint, :open, agencies: [Agency.first], mandate_id: mandate_id, complaint_subareas: [foo_subarea], assigned_to: user)
+    @bar_complaint = FactoryBot.create(:complaint,:open, agencies: [Agency.first], mandate_id: mandate_id, complaint_subareas: [bar_subarea],  assigned_to: user)
+    @baz_complaint = FactoryBot.create(:complaint, :open, agencies: [Agency.first], mandate_id: mandate_id, complaint_subareas: [baz_subarea],  assigned_to: user)
   end
 
   it "should return complaints with subareas indicated by the query" do
-    expect(complaints).to match_array [@gg_complaint, @siu_complaint]
+    expect(complaints).to match_array [@foo_complaint, @bar_complaint]
   end
 
   it "should return complaints with subareas requested by the query" do
-    query[:selected_human_rights_complaint_basis_ids] = Convention.pluck(:id)
-    expect(complaints).to match_array [@gg_complaint, @siu_complaint, @hr_complaint]
+    query[:selected_subarea_ids] = ComplaintSubarea.pluck(:id)
+    expect(complaints).to match_array [@foo_complaint, @bar_complaint, @baz_complaint]
   end
 
   it "should return complaints with subareas requested by the query" do
-    query[:selected_human_rights_complaint_basis_ids] = query[:selected_good_governance_complaint_basis_ids] = query[:selected_special_investigations_unit_complaint_basis_ids] = []
+    query[:selected_subarea_ids] = []
     expect(complaints).to eq []
   end
 end

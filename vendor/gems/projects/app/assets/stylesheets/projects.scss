@@ -3,7 +3,12 @@
 @import "bootstrap-select";
 @import 'multilevel_select';
 @import 'form_errors';
+@import 'area_subarea';
 
-label>span {
-  font-weight : normal;
+.performance_indicators #description {
+  font-weight: 700;
+}
+
+.mandates label, .subarea label {
+  font-weight: 400;
 }

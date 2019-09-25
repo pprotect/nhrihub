@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_03_222518) do
+ActiveRecord::Schema.define(version: 2019_09_19_154052) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,6 +94,20 @@ ActiveRecord::Schema.define(version: 2019_09_03_222518) do
     t.datetime "date"
   end
 
+  create_table "advisory_council_issue_issue_areas", id: :serial, force: :cascade do |t|
+    t.integer "advisory_council_issue_id"
+    t.integer "area_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "advisory_council_issue_issue_subareas", id: :serial, force: :cascade do |t|
+    t.integer "advisory_council_issue_id"
+    t.integer "subarea_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "advisory_council_issues", id: :serial, force: :cascade do |t|
     t.integer "filesize"
     t.string "original_filename", limit: 255
@@ -104,6 +118,7 @@ ActiveRecord::Schema.define(version: 2019_09_03_222518) do
     t.text "article_link"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer "mandate_id"
   end
 
   create_table "advisory_council_members", id: :serial, force: :cascade do |t|
@@ -208,12 +223,26 @@ ActiveRecord::Schema.define(version: 2019_09_03_222518) do
     t.datetime "updated_at"
   end
 
+  create_table "complaint_complaint_areas", force: :cascade do |t|
+    t.integer "complaint_id"
+    t.integer "area_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "complaint_complaint_bases", id: :serial, force: :cascade do |t|
     t.integer "complaint_id"
     t.integer "complaint_basis_id"
     t.string "type"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "complaint_complaint_subareas", force: :cascade do |t|
+    t.integer "complaint_id"
+    t.integer "subarea_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "complaint_conventions", id: :serial, force: :cascade do |t|
@@ -362,20 +391,6 @@ ActiveRecord::Schema.define(version: 2019_09_03_222518) do
     t.string "type", limit: 60
   end
 
-  create_table "issue_areas", id: :serial, force: :cascade do |t|
-    t.integer "advisory_council_issue_id"
-    t.integer "area_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "issue_subareas", id: :serial, force: :cascade do |t|
-    t.integer "advisory_council_issue_id"
-    t.integer "subarea_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "mandates", id: :serial, force: :cascade do |t|
     t.string "key"
     t.datetime "created_at"
@@ -401,20 +416,21 @@ ActiveRecord::Schema.define(version: 2019_09_03_222518) do
     t.datetime "updated_at"
     t.datetime "lastModifiedDate"
     t.text "article_link"
+    t.integer "mandate_id"
   end
 
-  create_table "media_areas", id: :serial, force: :cascade do |t|
+  create_table "media_media_areas", force: :cascade do |t|
     t.integer "media_appearance_id"
     t.integer "area_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "media_subareas", force: :cascade do |t|
+  create_table "media_media_subareas", force: :cascade do |t|
     t.integer "media_appearance_id"
     t.integer "subarea_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "notes", id: :serial, force: :cascade do |t|
@@ -486,13 +502,6 @@ ActiveRecord::Schema.define(version: 2019_09_03_222518) do
     t.datetime "updated_at"
   end
 
-  create_table "project_mandates", id: :serial, force: :cascade do |t|
-    t.integer "project_id"
-    t.integer "mandate_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "project_named_documents", id: :serial, force: :cascade do |t|
   end
 
@@ -503,18 +512,18 @@ ActiveRecord::Schema.define(version: 2019_09_03_222518) do
     t.datetime "updated_at"
   end
 
-  create_table "project_project_types", id: :serial, force: :cascade do |t|
+  create_table "project_project_areas", force: :cascade do |t|
     t.integer "project_id"
-    t.integer "project_type_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer "area_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "project_types", id: :serial, force: :cascade do |t|
-    t.string "name"
-    t.integer "mandate_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "project_project_subareas", force: :cascade do |t|
+    t.integer "project_id"
+    t.integer "subarea_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "projects", id: :serial, force: :cascade do |t|
@@ -522,6 +531,7 @@ ActiveRecord::Schema.define(version: 2019_09_03_222518) do
     t.text "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer "mandate_id"
   end
 
   create_table "reminders", id: :serial, force: :cascade do |t|

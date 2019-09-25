@@ -83,22 +83,14 @@
             | {{ t.select_basis }}
           span.caret
         ul.dropdown-menu
-          <selectClear t='{{t}}' collection='{{['selected_good_governance_complaint_basis_ids','selected_human_rights_complaint_basis_ids','selected_special_investigations_unit_complaint_basis_ids']}}'/>
+          <selectClear t='{{t}}' collection='{{['selected_subarea_ids']}}'/>
+          | {{#areas}}
           li.dropdown-header
-            | {{ t.good_governance }}
-          | {{#all_good_governance_complaint_bases}}
-          <goodGovernanceComplaintBasisFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}'/>
-          | {{/all_good_governance_complaint_bases}}
-          li.dropdown-header
-            | {{ t.human_rights }}
-          | {{#all_human_rights_complaint_bases}}
-          <humanRightsComplaintBasisFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}'/>
-          | {{/all_human_rights_complaint_bases}}
-          li.dropdown-header
-            | {{ t.special_investigations_unit }}
-          | {{#all_special_investigations_unit_complaint_bases}}
-          <specialInvestigationsUnitComplaintBasisFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}'/>
-          | {{/all_special_investigations_unit_complaint_bases}}
+            | {{ name }}
+          | {{#subareas}}
+          <subareaFilterSelect name='{{name}}' id='{{id}}' filter_criteria='{{filter_criteria}}' />
+          | {{/subareas}}
+          | {{/areas}}
     .col-md-2
       .btn-group.select
         button.btn.btn-default.dropdown-toggle#assignee_select(type='button', 'data-toggle'='dropdown')
@@ -119,9 +111,10 @@ style.
   }
 
 script.
-  import GoodGovernanceComplaintBasisFilterSelect from './good_governance_complaint_basis_filter_select'
-  import HumanRightsComplaintBasisFilterSelect from './human_rights_complaint_basis_filter_select'
-  import SpecialInvestigationsUnitComplaintBasisFilterSelect from './special_investigations_unit_complaint_basis_filter_select'
+  //import GoodGovernanceComplaintBasisFilterSelect from './good_governance_complaint_basis_filter_select'
+  //import HumanRightsComplaintBasisFilterSelect from './human_rights_complaint_basis_filter_select'
+  //import SpecialInvestigationsUnitComplaintBasisFilterSelect from './special_investigations_unit_complaint_basis_filter_select'
+  import SubareaFilterSelect from './subarea_filter_select'
   import AgencyFilterSelect from './agency_filter_select'
   import MandateFilterSelect from './mandate_filter_select'
   import AssigneeFilterSelect from './assignee_filter_select'
@@ -133,9 +126,7 @@ script.
     template : $TEMPLATE,
     css: $CSS,
     components : {
-      goodGovernanceComplaintBasisFilterSelect : GoodGovernanceComplaintBasisFilterSelect,
-      humanRightsComplaintBasisFilterSelect : HumanRightsComplaintBasisFilterSelect,
-      specialInvestigationsUnitComplaintBasisFilterSelect : SpecialInvestigationsUnitComplaintBasisFilterSelect,
+      subareaFilterSelect: SubareaFilterSelect,
       agencyFilterSelect : AgencyFilterSelect,
       mandateFilterSelect : MandateFilterSelect,
       assigneeFilterSelect : AssigneeFilterSelect,
@@ -144,9 +135,7 @@ script.
     },
     data : function(){ return {
       t : translations.t('filter_controls'),
-      default_good_governance_complaint_basis_ids :  _.map(complaints_page_data().all_good_governance_complaint_bases,function(d){return d.id }),
-      default_human_rights_complaint_basis_ids :  _.map(complaints_page_data().all_human_rights_complaint_bases,function(d){return d.id}),
-      default_special_investigations_unit_complaint_basis_ids :  _.map(complaints_page_data().all_special_investigations_unit_complaint_bases,function(d){return d.id}),
+      default_subarea_ids :  _.map(complaints_page_data().all_subareas,function(d){return d.id }),
       default_agency_ids :  _.map(complaints_page_data().all_agencies,function(d){return d.id})
     }},
     observe: {
@@ -217,10 +206,7 @@ script.
       }else if(attr == 'agency'){
         return !_.isEmpty(this.get('filter_criteria.basis_ids'))
       }else if(attr == 'agency'){
-        gg = !_.isEmpty(this.get('filter_criteria.selected_good_governance_complaint_basis_ids'))
-        hr = !_.isEmpty(this.get('filter_criteria.selected_human_rights_complaint_basis_ids'))
-        siu = !_.isEmpty(this.get('filter_criteria.selected_special_investigations_unit_complaint_basis_ids'))
-        return gg && hr && siu
+        return !_.isEmpty(this.get('filter_criteria.selected_subarea_ids'))
       }
     }
   });

@@ -12,10 +12,8 @@ window.complaints_page_data = function(){
     complaints : source_complaints_data,
     filter_criteria: source_filter_criteria,
     next_case_reference : source_next_case_reference,
-    all_good_governance_complaint_bases : source_all_good_governance_complaint_bases,
-    all_human_rights_complaint_bases : source_all_human_rights_complaint_bases,
-    all_special_investigations_unit_complaint_bases : source_all_special_investigations_unit_complaint_bases,
-    all_agencies : source_all_agencies
+    all_agencies : source_all_agencies,
+    all_subareas : source_subareas
   }
 };
 
@@ -26,11 +24,10 @@ _.extend(Ractive.defaults.data, {
   fade: window.env!='test',
   all_users : source_all_users,
   all_mandates : source_all_mandates,
+  areas : source_areas,
+  subareas : source_subareas,
   complaint_bases : source_complaint_bases,
   all_agencies : source_all_agencies,
-  all_good_governance_complaint_bases : source_all_good_governance_complaint_bases,
-  all_human_rights_complaint_bases : source_all_human_rights_complaint_bases,
-  all_special_investigations_unit_complaint_bases : source_all_special_investigations_unit_complaint_bases,
   all_agencies_in_sixes : _.chain(source_all_agencies).groupBy(function(el,i){return Math.floor(i/6)}).toArray().value(),
   all_staff : source_all_staff,
   permitted_filetypes : source_permitted_filetypes,

@@ -6,7 +6,6 @@ require 'active_storage_helpers'
 require 'media_issues_common_helpers'
 require 'performance_indicator_helpers'
 require 'performance_indicator_association'
-$:.unshift Media::Engine.root.join('spec', 'helpers')
 require 'media_spec_helper'
 require 'media_setup_helper'
 require 'media_appearance_context_performance_indicator_spec_helpers'
@@ -23,11 +22,11 @@ feature "show media archive", :js => true do
     setup_areas
     3.times do
       @media_appearance = FactoryBot.create(:media_appearance,
-                                             :hr_area,
+                                             :hr_subareas,
                                              :reminders=>[FactoryBot.create(:reminder, :media_appearance)])
     end
     @media_appearance = FactoryBot.create(:media_appearance,
-                                           :hr_area,
+                                           :hr_subareas,
                                            :reminders=>[FactoryBot.create(:reminder, :media_appearance)],
                                            :title => '" all? the<>\ [] ){} ({)888.,# weird // @;:characters &')
     visit media_appearances_path(:en)
@@ -79,9 +78,8 @@ feature "create a new article", :js => true do
 
     fill_in("media_appearance_title", :with => "My new article title")
     expect(chars_remaining).to eq "You have 80 characters left"
-    check("Human Rights")
-    check("media_appearance_subarea_ids_1")
-    check("Good Governance")
+    choose("Good Governance")
+    check("Violation")
     check("CRC")
     fill_in('media_appearance_article_link', :with => "http://www.example.com")
     select_performance_indicators.click
@@ -95,7 +93,6 @@ feature "create a new article", :js => true do
     expect(page).to have_selector("#media_appearances .media_appearance", :count => 1)
     expect(page.find("#media_appearances .media_appearance .basic_info .title").text).to eq "My new article title"
     expand_all_panels
-    expect(areas).to include "Human Rights"
     expect(areas).to include "Good Governance"
     expect(subareas).to include "CRC"
     expect(subareas).to include "Violation"
@@ -258,16 +255,15 @@ feature "when there are existing articles", :js => true do
       scroll_to(edit_article[0]).click
       fill_in("media_appearance_title", :with => "My new article title")
       expect(chars_remaining).to eq "You have 80 characters left"
-      uncheck("Human Rights")
-      check("media_appearance_subarea_ids_1")
-      check("Good Governance")
+      choose("Human Rights")
+      check("Violation")
       check("CRC")
       expect{edit_save}.to change{MediaAppearance.first.title}
-      expect(MediaAppearance.first.area_ids).to eql [2]
+      expect(MediaAppearance.first.area_ids).to eql [human_rights_area.id]
       sleep(0.4)
       expect(page.all("#media_appearances .media_appearance .basic_info .title").first.text).to eq "My new article title"
-      expect(areas).not_to include "Human Rights"
-      expect(areas).to include "Good Governance"
+      expect(areas).to include "Human Rights"
+      expect(areas).not_to include "Good Governance"
       expect(page).not_to have_selector("#media_appearance_error", :text => "Form has errors, cannot be saved")
     end
 
@@ -342,16 +338,17 @@ feature "when there are existing articles", :js => true do
       scroll_to(edit_article[0]).click
       fill_in("media_appearance_title", :with => "My new article title")
       expect(chars_remaining).to eq "You have 80 characters left"
-      uncheck("Human Rights")
-      check("media_appearance_subarea_ids_1")
-      check("Good Governance")
-      check("CRC")
+      choose("Human Rights")
+      check("ICERD")
+      check("ICCPR")
       expect{edit_cancel}.not_to change{MediaAppearance.first.title}
       expect(page.all("#media_appearances .media_appearance .basic_info .title").first.text).to eq original_media_appearance.title
       sleep(0.3) # seems to be required for test passing in chrome
       expand_all_panels
-      expect(areas).to include "Human Rights"
-      expect(areas).not_to include "Good Governance"
+      expect(areas).not_to include "Human Rights"
+      expect(areas).to include "Good Governance"
+      expect(subareas).to include "Violation"
+      expect(subareas).to include "Education activities"
     end
 
     scenario "title is blank, error propagates" do # b/c there was a bug!

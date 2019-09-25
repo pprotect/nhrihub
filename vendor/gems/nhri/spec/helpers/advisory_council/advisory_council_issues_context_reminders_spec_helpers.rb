@@ -6,7 +6,7 @@ module AdvisoryCouncilIssuesContextRemindersSpecHelpers
   before do
     setup_areas
     FactoryBot.create(:advisory_council_issue,
-                       :hr_area,
+                       :hr_subareas,
                        :reminders=>[FactoryBot.create(:reminder,
                                                        :advisory_council_issue,
                                                        :reminder_type => :weekly,

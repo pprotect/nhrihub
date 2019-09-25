@@ -7,9 +7,22 @@ module ProjectsSpecSetupHelpers
     setup_strategic_plan
     populate_mandates
     populate_types
-    populate_database
+    populate_database(context)
     set_file_defaults
     visit projects_path(:en)
+  end
+
+  def context
+    value =
+      case self.class.name
+      when /Reminder/
+        'reminders'
+      when /Notes/
+        'notes'
+      else
+        'project'
+      end
+    ActiveSupport::StringInquirer.new(value)
   end
 
   def set_file_defaults
@@ -17,41 +30,52 @@ module ProjectsSpecSetupHelpers
     SiteConfig['project_document.filesize'] = 5
   end
 
-  def populate_database
-    # project_reminders_spec needs 1 project
-    # projects_spec needs 2
-    unless self.class.name =~ /Reminder/
+  def populate_database(context)
+    if context.project?
+      # projects_spec needs 2
       FactoryBot.create(:project,
                          :with_documents,
                          :with_performance_indicators)
+      @project = FactoryBot.create(:project,
+                               :with_named_documents,
+                               :with_performance_indicators,
+                               :with_mandate,
+                               :with_subareas,
+                               :title => '" all? the<>\ [] ){} ({)888.,# weird // @;:characters &')
+    elsif context.reminders?
+      # project_reminders_spec needs 1 project
+      @project = FactoryBot.create(:project,
+                               :with_named_documents,
+                               :with_performance_indicators,
+                               :with_mandate,
+                               :with_subareas,
+                               :title => '" all? the<>\ [] ){} ({)888.,# weird // @;:characters &')
+    elsif context.notes?
+      FactoryBot.create(:project,
+                       :reminders=>[FactoryBot.create(:reminder, :project)],
+                       :notes =>   [FactoryBot.create(:note, :project, :created_at => 3.days.ago.to_datetime),FactoryBot.create(:note, :advisory_council_issue, :created_at => 4.days.ago.to_datetime)])
     end
-
-    @project = FactoryBot.create(:project,
-                             :with_named_documents,
-                             :with_performance_indicators,
-                             :with_mandates,
-                             :with_project_types,
-                             :title => '" all? the<>\ [] ){} ({)888.,# weird // @;:characters &')
   end
+
 
   def populate_mandates
     ["good_governance", "human_rights", "special_investigations_unit", "strategic_plan"].each do |key|
-      Mandate.create(:key => key)
+      Mandate.find_or_create_by(:key => key)
     end
   end
 
   def populate_types
-    gg = Mandate.find_or_create_by(:key => 'good_governance')
-    hr = Mandate.find_or_create_by(:key => 'human_rights')
+    gg = ProjectArea.find_or_create_by(:name => 'Good Governance')
+    hr = ProjectArea.find_or_create_by(:name => 'Human Rights')
 
-    gg_types = [ "Consultation", "Awareness Raising"]
-    gg_types.each do |type|
-      ProjectType.create(:name => type, :mandate_id => gg.id)
+    gg_subareas = [ "Consultation", "Awareness Raising"]
+    gg_subareas.each do |type|
+      ProjectSubarea.create(:name => type, :area_id => gg.id)
     end
 
-    hr_types = ["Schools", "Amicus Curiae", "State of Human Rights Report"]
-    hr_types.each do |type|
-      ProjectType.create(:name => type, :mandate_id => hr.id)
+    hr_subareas = ["Schools", "Amicus Curiae", "State of Human Rights Report"]
+    hr_subareas.each do |type|
+      ProjectSubarea.create(:name => type, :area_id => hr.id)
     end
   end
 

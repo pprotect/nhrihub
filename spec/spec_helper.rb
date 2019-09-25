@@ -207,7 +207,13 @@ RSpec.configure do |config| # rspec-expectations config goes here. You can use a
 =end
 
   config.backtrace_exclusion_patterns = [
-    /rspec-(core|expectations|matchers|mocks|rails)/
+    /rspec-(core|expectations|matchers|mocks|rails)/,
+    /rspec/, /factory_bot/, /activesupport/, /active_model/,
+    /observer/, /ruby_executable_hooks/, /capybara/
+  ]
+
+  config.backtrace_inclusion_patterns = [
+    /Code\/ppsa/
   ]
 
   config.before(:suite) do

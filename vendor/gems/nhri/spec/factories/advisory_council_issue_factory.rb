@@ -24,7 +24,6 @@ FactoryBot.define do
       end
     end
 
-
     trait :no_f_in_title do
       title { Faker::Lorem.sentence(5).gsub(/f/i,"b") }
     end
@@ -37,30 +36,40 @@ FactoryBot.define do
         new_str = (str.dup.slice(0,i-1)+'f'+str.dup.slice(i-l,1000)).dup }
     end
 
-    trait :hr_area do
+    trait :hr_subareas do
       after(:build) do |aci|
-        hr_area = Area.where(:name => "Human Rights").first
-        aci.areas << hr_area
-        subareas = Subarea.where(:area_id => hr_area.id).where.not(:name => "Violation")
-        aci.subareas = subareas.sample(rand(6))
+        hr_area = Nhri::AdvisoryCouncil::AdvisoryCouncilIssueArea.where(:name => "Human Rights").first
+        aci.advisory_council_issue_areas << hr_area
+        subareas = Nhri::AdvisoryCouncil::AdvisoryCouncilIssueSubarea.where(:area_id => hr_area.id).where.not(:name => "Violation")
+        aci.advisory_council_issue_subareas << subareas.sample(sample_size = 1+rand(5))
       end
     end
 
     trait :si_area do
       after(:build) do |aci|
-        aci.areas << Area.where(:name => "Special Investigations Unit").first
+        aci.advisory_council_issue_areas << Nhri::AdvisoryCouncil::AdvisoryCouncilIssueArea.where(:name => "Special Investigations Unit").first
       end
     end
 
     trait :gg_area do
       after(:build) do |aci|
-        aci.areas << Area.where(:name => "Good Governance").first
+        gg_area = Nhri::AdvisoryCouncil::AdvisoryCouncilIssueArea.where(:name => "Good Governance").first
+        aci.advisory_council_issue_areas << gg_area
+        subareas = Nhri::AdvisoryCouncil::AdvisoryCouncilIssueSubarea.where(:area_id => gg_area.id)
+        aci.advisory_council_issue_subareas = subareas.sample(rand(6))
+      end
+    end
+
+    trait :gg_mandate do
+      after(:build) do |aci|
+        mandate=Mandate.find_or_create_by(:key => 'good_governance')
+        aci.mandate_id = mandate.id
       end
     end
 
     trait :crc_subarea do
       after(:build) do |aci|
-        aci.subareas << Subarea.where(:name => "CRC").first
+        aci.advisory_council_issue_subareas << Nhri::AdvisoryCouncil::AdvisoryCouncilIssueSubarea.where(:name => "CRC").first
       end
     end
 
@@ -82,9 +91,9 @@ FactoryBot.define do
 
     trait :hr_violation_subarea do
       after(:build) do |aci|
-        hr_area = Area.where(:name => "Human Rights").first
-        aci.areas << hr_area
-        aci.subareas << Subarea.where(:name => "Violation", :area_id => hr_area.id).first
+        hr_area = Nhri::AdvisoryCouncil::AdvisoryCouncilIssueArea.where(:name => "Human Rights").first
+        aci.advisory_council_issue_areas << hr_area
+        aci.advisory_council_issue_subareas << Nhri::AdvisoryCouncil::AdvisoryCouncilIssueSubarea.where(:name => "Violation", :area_id => hr_area.id).first
       end
     end
   end

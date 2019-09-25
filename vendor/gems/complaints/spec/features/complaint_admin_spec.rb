@@ -1,6 +1,5 @@
 require 'rails_helper'
 require 'login_helpers'
-require 'complaint_admin_spec_helpers'
 require 'navigation_helpers'
 require 'complaint_context_file_admin_spec_helpers'
 require 'communication_context_file_admin_spec_helpers'
@@ -8,28 +7,24 @@ require 'file_admin_behaviour'
 require 'area_subarea_admin'
 
 feature "complaint bases admin", :js => true do
-  include LoggedInEnAdminUserHelper # sets up logged in admin user
-  include ComplaintAdminSpecHelpers
   let(:area_model){ ComplaintArea }
   let(:subarea_model){ ComplaintSubarea }
+  let(:admin_page){ complaint_admin_path('en') }
   it_behaves_like "area subarea admin"
 end
 
 feature "complaint file admin", :js => true do
-  include ComplaintAdminSpecHelpers
   include ComplaintContextFileAdminSpecHelpers
-  it_should_behave_like "file admin"
+  it_behaves_like "file admin"
 end
 
 feature "communication file admin", :js => true do
-  include ComplaintAdminSpecHelpers
   include CommunicationContextFileAdminSpecHelpers
-  it_should_behave_like "file admin"
+  it_behaves_like "file admin"
 end
 
 feature "agency admin", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
-  include ComplaintAdminSpecHelpers
   scenario "none configured yet" do
     visit complaint_admin_path('en')
     expect(page).to have_selector("h4",:text=>"Agencies")

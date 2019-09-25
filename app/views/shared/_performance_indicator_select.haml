@@ -1,14 +1,31 @@
 %script#performance_indicators_template{:type => 'template/ractive'}
-  .panel.panel-default.performance_indicators
-    .panel-heading{'data-toggle' => :edit}
-      .row
-        .col-md-2.no_edit.in= t('.performance_indicators')
-        .col-md-2.edit{:class=>"{{#performance_indicator_required}}required{{/}}"}= t('.performance_indicators')
-    .panel-content{'data-toggle' => :edit}
-      %div.fade.no_edit{:class => "{{#persisted}}in{{/persisted}}"}
-        {{> performance_indicator_show }}
-      %div.fade.edit{:class => '{{^persisted}}in{{/persisted}}'}
+  {{^persisted}}
+  .row.performance_indicators
+    .div#description
+      .col-md-2{:class=>"{{#performance_indicator_required}}required{{/}}"}= t('.performance_indicators')
+    .div
+      .col-md-10
         {{> performance_indicator_edit }}
+  {{/persisted}}
+  {{#persisted}}
+  .row.performance_indicators{'data-toggle' => :edit}
+    .div#description
+      .col-md-2.no_edit.in= t('.performance_indicators')
+      .col-md-2.edit{:class=>"{{#performance_indicator_required}}required{{/}}"}= t('.performance_indicators')
+    .div
+      .col-md-10
+        .fade.no_edit.in
+          {{> performance_indicator_show }}
+        .fade.edit
+          {{> performance_indicator_edit }}
+  {{/persisted}}
+
+%script#new_performance_indicator{:type => 'template/ractive'}
+  .row.performance_indicators{'data-toggle' => :edit}
+    .div#description
+      .col-md-2{:class=>"{{#performance_indicator_required}}required{{/}}"}= t('.performance_indicators')
+    .div
+      .col-md-10 {{> performance_indicator_edit }}
 
 %script#selected_performance_indicator_template{:type => 'template/ractive'}
   .row.selected_performance_indicator
@@ -18,7 +35,7 @@
 
 %script#performance_indicator_edit{:type => 'template/ractive'}
   .form-group.row#performance_indicator
-    .col-md-4{:style => 'padding-left:40px;'}
+    .col-md-4
       .dropdown.performance_indicator_select
         %a.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
           =t('.select_performance_indicator')
@@ -59,12 +76,10 @@
     {{/planned_results }}
 
 %script#performance_indicator_show{:type => 'template/ractive'}
-  .row
-    .col-md-11.col-md-offset-1#performance_indicators{:style => "display:flex; flex-direction:column"}
-      {{#sorted_performance_indicator_associations}}
-      .row.performance_indicator
-        .col-md-6 {{performance_indicators[performance_indicator.id]}}
-      {{/sorted_performance_indicator_associations}}
-      {{^sorted_performance_indicator_associations}}
-      %div.performance_indicator=t('.none_assigned')
-      {{/sorted_performance_indicator_associations}}
+  {{#sorted_performance_indicator_associations}}
+  .row.performance_indicator
+    .col-md-6 {{performance_indicators[performance_indicator.id]}}
+  {{/sorted_performance_indicator_associations}}
+  {{^sorted_performance_indicator_associations}}
+  .performance_indicator=t('.none_assigned')
+  {{/sorted_performance_indicator_associations}}

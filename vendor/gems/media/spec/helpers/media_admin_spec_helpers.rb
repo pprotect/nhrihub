@@ -3,10 +3,10 @@ require 'rspec/core/shared_context'
 module MediaAdminSpecHelpers
   extend RSpec::Core::SharedContext
 
-  before do
-    create_default_areas
-    visit media_appearance_admin_path('en')
-  end
+  #before do
+    #create_default_areas
+    #visit media_appearance_admin_path('en')
+  #end
 
   def setup_default_audience_types
     AudienceType::DefaultValues.each do |at|

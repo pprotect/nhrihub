@@ -1,3 +1,4 @@
+= stylesheet_link_tag 'form_errors'
 .message_block
 %h1=t('.heading')
 
@@ -19,57 +20,8 @@
                         :param => @filesize,
                         :context => "project_document_filesize"}
 
-%h4
-  = t('.good_governance')
-  = t('.project_types')
-#good_governance_project_types
-  = render :partial => 'admin/collection_configuration',
-   :locals => { :new_item => @good_governance_project_type,
-                :create_url => good_governance_project_types_path('en'),
-                :delete_url => good_governance_project_type_path('en','id'),
-                :collection => @good_governance_project_types,
-                :item_name => 'good_governance_project_type',
-                :param_name => 'name',
-                :placeholder => ''}
-
-%h4
-  = t('.human_rights')
-  = t('.project_types')
-#human_rights_project_types
-  = render :partial => 'admin/collection_configuration',
-   :locals => { :new_item => @human_rights_project_type,
-                :create_url => human_rights_project_types_path('en'),
-                :delete_url => human_rights_project_type_path('en','id'),
-                :collection => @human_rights_project_types,
-                :item_name => 'human_rights_project_type',
-                :param_name => 'name',
-                :placeholder => ''}
-
-%h4
-  = t('.siu')
-  = t('.project_types')
-#siu_project_types
-  = render :partial => 'admin/collection_configuration',
-   :locals => { :new_item => @special_investigations_unit_project_type,
-                :create_url => siu_project_types_path('en'),
-                :delete_url => siu_project_type_path('en','id'),
-                :collection => @special_investigations_unit_project_types,
-                :item_name => 'special_investigations_unit_project_type',
-                :param_name => 'name',
-                :placeholder => ''}
-
-%h4
-  = t('.strategic_plan')
-  = t('.project_types')
-#strategic_plan_project_types
-  = render :partial => 'admin/collection_configuration',
-   :locals => { :new_item => @strategic_plan_project_type,
-                :create_url => strategic_plan_project_types_path('en'),
-                :delete_url => strategic_plan_project_type_path('en','id'),
-                :collection => @strategic_plan_project_types,
-                :item_name => 'strategic_plan_project_type',
-                :param_name => 'name',
-                :placeholder => ''}
+%h4=t('.areas')
+= render :partial => 'shared/area_subarea_config'
 
 :coffeescript
   $ ->

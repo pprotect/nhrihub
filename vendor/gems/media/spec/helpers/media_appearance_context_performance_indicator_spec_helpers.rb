@@ -16,6 +16,10 @@ module MediaAppearanceContextPerformanceIndicatorSpecHelper
     sleep(0.4)
   end
 
+  def open_first_item
+    page.find('i#expand').click
+  end
+
   def edit_first_item
     edit_article[0].click
   end

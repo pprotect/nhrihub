@@ -8,6 +8,8 @@ class ComplaintsController < ApplicationController
     #end
     complaints = Complaint.index_page_associations(Complaint.pluck(:id), index_query_params)
 
+    @areas = ComplaintArea.all
+    @subareas = ComplaintSubarea.all
     @selected_status_ids = index_query_params[:selected_status_ids]
     @selected_assignee_id = index_query_params[:selected_assignee_id]
     @mandates = Mandate.all.sort_by(&:name)
@@ -22,9 +24,7 @@ class ComplaintsController < ApplicationController
       selected_agency_ids: Agency.pluck(:id),
       current_assignee_id: 0,
       selected_assignee_id: @selected_assignee_id,
-      selected_human_rights_complaint_basis_ids: index_query_params[:selected_human_rights_complaint_basis_ids],
-      selected_special_investigations_unit_complaint_basis_ids: index_query_params[:selected_special_investigations_unit_complaint_basis_ids],
-      selected_good_governance_complaint_basis_ids: index_query_params[:selected_good_governance_complaint_basis_ids],
+      selected_subarea_ids: index_query_params[:selected_subarea_ids],
       selected_status_ids: @selected_status_ids,
       selected_mandate_ids: @mandates.pluck(:id)
     }
@@ -103,9 +103,7 @@ class ComplaintsController < ApplicationController
     {selected_assignee_id: current_user.id,
      selected_status_ids: ComplaintStatus.default.map(&:id),
      selected_mandate_ids: Mandate.pluck(:id),
-     selected_special_investigations_unit_complaint_basis_ids: Siu::ComplaintBasis.pluck(:id),
-     selected_human_rights_complaint_basis_ids: Nhri::ComplaintBasis.pluck(:id),
-     selected_good_governance_complaint_basis_ids: GoodGovernance::ComplaintBasis.pluck(:id),
+     selected_subarea_ids: ComplaintSubarea.pluck(:id),
      selected_agency_ids: Agency.pluck(:id)}
   end
 
@@ -114,25 +112,20 @@ class ComplaintsController < ApplicationController
       permit(:complainant, :from, :to, :case_reference, :village, :phone_number, :phone,
              :current_assignee_id, :selected_assignee_id, :locale, :mandate_id,
              :selected_status_ids => [], :selected_mandate_ids => [],
-             :selected_special_investigations_unit_complaint_basis_ids => [],
-             :selected_human_rights_complaint_basis_ids => [],
-             :selected_good_governance_complaint_basis_ids => [],
+             :selected_subarea_ids => [],
              :selected_agency_ids => [] ).
       with_defaults(default_params).
       slice(:selected_assignee_id, :selected_status_ids, :case_reference, :complainant,
             :from, :to, :village, :phone, :selected_mandate_ids,
-            :selected_special_investigations_unit_complaint_basis_ids,
-            :selected_human_rights_complaint_basis_ids,
-            :selected_good_governance_complaint_basis_ids,
+            :selected_subarea_ids,
             :selected_agency_ids )
   end
 
   def complaint_params
     params.require(:complaint).permit( :case_reference, :firstName, :lastName, :chiefly_title, :village, :phone, :new_assignee_id,
                                        :dob, :email, :complained_to_subject_agency, :desired_outcome, :gender, :details,
-                                       :date, :imported, :mandate_id, :good_governance_complaint_basis_ids => [],
-                                       :special_investigations_unit_complaint_basis_ids => [],
-                                       :human_rights_complaint_basis_ids => [],
+                                       :date, :imported, :mandate_id,
+                                       :subarea_ids => [],
                                        :status_changes_attributes => [:user_id, :name],
                                        :agency_ids => [],
                                        :complaint_documents_attributes => [:file, :title, :original_filename, :original_type, :filesize, :lastModifiedDate],

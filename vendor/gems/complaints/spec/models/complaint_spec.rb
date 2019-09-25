@@ -40,57 +40,43 @@ describe "complaint" do
   end
 end
 
-# just confirming here that the unusual associations work as expected
-describe "Complaint with siu complaint basis" do
-  before do
-    @complaint = Complaint.create
-    @siu_complaint_basis = Siu::ComplaintBasis.create(:name => "A thing")
-    @complaint.special_investigations_unit_complaint_bases << @siu_complaint_basis
-    @complaint.save
-  end
-
-  it "should be saved with the associations" do
-    expect(@complaint.special_investigations_unit_complaint_bases.count).to eq 1
-    expect(@complaint.special_investigations_unit_complaint_bases.first.name).to eq "A thing"
-    expect(Siu::ComplaintBasis.count).to eq 1
-    expect(ComplaintComplaintBasis.count).to eq 1
-    expect(@complaint.special_investigations_unit_complaint_bases.first.type).to eq "Siu::ComplaintBasis"
-  end
-end
-
 describe "Complaint with gg complaint basis" do
   before do
     @complaint = Complaint.create
-    @good_governance_complaint_basis = GoodGovernance::ComplaintBasis.create(:name => "A thing")
-    @complaint.good_governance_complaint_bases << @good_governance_complaint_basis
+    @good_governance_area = ComplaintArea.create(name: "Good Governance")
+    good_governance_subarea = ComplaintSubarea.create(name: "A thing", area_id: @good_governance_area.id)
+
+    @complaint.complaint_areas << @good_governance_area
+    @complaint.complaint_subareas << good_governance_subarea
     @complaint.save
   end
 
   it "should be saved with the associations" do
-    expect(@complaint.good_governance_complaint_bases.count).to eq 1
-    expect(@complaint.good_governance_complaint_bases.first.name).to eq "A thing"
-    expect(GoodGovernance::ComplaintBasis.count).to eq 1
-    expect(ComplaintComplaintBasis.count).to eq 1
-    expect(@complaint.good_governance_complaint_bases.first.type).to eq "GoodGovernance::ComplaintBasis"
+    expect(@complaint.complaint_areas.count).to eq 1
+    expect(@complaint.complaint_subareas.where(area_id: @good_governance_area.id).first.name).to eq "A thing"
+    expect(ComplaintArea.count).to eq 1
+    expect(ComplaintSubarea.count).to eq 1
   end
 end
 
-describe "Complaint with hr complaint basis" do
-  before do
-    @complaint = Complaint.create
-    @human_rights_complaint_basis = Nhri::ComplaintBasis.create(:name => "A thing")
-    @complaint.human_rights_complaint_bases << @human_rights_complaint_basis
-    @complaint.save
-  end
+#describe "Complaint with hr complaint basis" do
+  #before do
+    #@complaint = Complaint.create
+    #@human_rights_area = ComplaintArea.create(:name => "Human Rights")
+    #@human_rights_subarea = ComplaintSubarea.create(:name => "A thing")
+    #@complaint.complaint_areas << @human_rights_area
+    #@complaint.complaint_subareas << @human_rights_subarea
+    #@complaint.save
+  #end
 
-  it "should be saved with the associations" do
-    expect(@complaint.human_rights_complaint_bases.count).to eq 1
-    expect(@complaint.human_rights_complaint_bases.first.name).to eq "A thing"
-    expect(Nhri::ComplaintBasis.count).to eq 1
-    expect(Convention.count).to eq 1
-    expect(ComplaintComplaintBasis.count).to eq 1
-  end
-end
+  #it "should be saved with the associations" do
+    #expect(@complaint.human_rights_complaint_bases.count).to eq 1
+    #expect(@complaint.human_rights_complaint_bases.first.name).to eq "A thing"
+    #expect(Nhri::ComplaintBasis.count).to eq 1
+    #expect(Convention.count).to eq 1
+    #expect(ComplaintComplaintBasis.count).to eq 1
+  #end
+#end
 
 describe "next case reference" do
   let(:current_year){ Date.today.strftime('%y') }
@@ -157,6 +143,22 @@ describe "#index_url" do
   end
 end
 
+describe '#area_subarea_ids' do
+  before do
+    @complaint = FactoryBot.create(:complaint)
+    @foo_area = FactoryBot.create(:complaint_area, name: 'foo')
+    @bar_area = FactoryBot.create(:complaint_area, name: 'bar')
+    @bish_subarea = FactoryBot.create(:complaint_subarea, area_id: @foo_area.id, name: 'bish')
+    @bash_subarea = FactoryBot.create(:complaint_subarea, area_id: @foo_area.id, name: 'bash')
+    @complaint.complaint_areas = [@foo_area, @bar_area]
+    @complaint.complaint_subareas = [@bish_subarea, @bash_subarea]
+  end
+
+  it "should create hash of area and subarea ids" do
+    expect(@complaint.area_subarea_ids).to eq({ @foo_area.id => [@bish_subarea.id, @bash_subarea.id]})
+  end
+end
+
 # verify that this survives performance improvements
 describe "#as_json" do
   context "with a full complement of associations" do
@@ -193,7 +195,14 @@ describe "#as_json" do
       @complaints = JSON.parse(Complaint.all.to_json)
       expect(@complaints).to be_an Array
       expect(@complaints.length).to be 2
-      expect(@complaints.first.keys).to match_array ["id", "case_reference", "village", "phone", "created_at", "updated_at", "desired_outcome", "complained_to_subject_agency", "date_received", "imported", "mandate_id", "email", "gender", "dob", "details", "firstName", "lastName", "chiefly_title", "occupation", "employer", "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name", "date", "date_of_birth", "current_status_humanized", "attached_documents", "good_governance_complaint_basis_ids", "special_investigations_unit_complaint_basis_ids", "human_rights_complaint_basis_ids", "status_changes", "agency_ids", "communications"]
+      expect(@complaints.first.keys).to match_array ["id", "case_reference", "village", "phone", "created_at", "updated_at",
+                                                     "desired_outcome", "complained_to_subject_agency", "date_received",
+                                                     "imported", "mandate_id", "email", "gender", "dob", "details",
+                                                     "firstName", "lastName", "chiefly_title", "occupation", "employer",
+                                                     "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name",
+                                                     "date", "date_of_birth", "current_status_humanized", "attached_documents",
+                                                     "status_changes", "agency_ids", "communications", "area_ids", "subarea_ids", "area_subarea_ids"]
+
       expect(@complaints.first["id"]).to eq Complaint.first.id
       expect(@complaints.first["case_reference"]).to eq Complaint.first.case_reference
       expect(@complaints.first["village"]).to eq Complaint.first.village
@@ -234,10 +243,9 @@ describe "#as_json" do
       expect(@complaints.first["assigns"].first["name"]).to eq Complaint.first.assigns.first.name
       expect(@complaints.first["attached_documents"].first.keys).to match_array ["complaint_id", "original_filename", "filesize", "id", "lastModifiedDate", "original_type", "serialization_key", "title", "url", "user_id"]
       expect(@complaints.first["attached_documents"].first["url"]).to eq Complaint.first.attached_documents.first.url
-      expect(@complaints.first["good_governance_complaint_basis_ids"]).to be_an Array
-      expect(@complaints.first["good_governance_complaint_basis_ids"]).to match_array Complaint.first.good_governance_complaint_basis_ids
-      expect(@complaints.first["special_investigations_unit_complaint_basis_ids"]).to be_an Array
-      expect(@complaints.first["human_rights_complaint_basis_ids"]).to be_an Array
+      expect(@complaints.first["subarea_ids"]).to be_an Array
+      expect(@complaints.first["area_ids"]).to be_an Array
+      expect(@complaints.first["area_subarea_ids"]).to be_an Hash
       expect(@complaints.first["current_assignee_id"]).to eq Complaint.first.current_assignee_id
       expect(@complaints.first["status_changes"].first.keys).to match_array ["date", "status_humanized", "user_name"]
       expect(DateTime.parse(@complaints.first["status_changes"].first["date"]).strftime("%s")).to eq Complaint.first.status_changes.first.date.to_datetime.strftime("%s")
@@ -261,14 +269,20 @@ describe "#as_json" do
       @complaints = JSON.parse(Complaint.all.to_json)
       expect(@complaints).to be_an Array
       expect(@complaints.length).to be 2
-      expect(@complaints.first.keys).to match_array ["id", "case_reference", "village", "phone", "created_at", "updated_at", "desired_outcome", "complained_to_subject_agency", "date_received", "imported", "mandate_id", "email", "gender", "dob", "details", "firstName", "lastName", "chiefly_title", "occupation", "employer", "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name", "date", "date_of_birth", "current_status_humanized", "attached_documents", "good_governance_complaint_basis_ids", "special_investigations_unit_complaint_basis_ids", "human_rights_complaint_basis_ids", "status_changes", "agency_ids", "communications"]
+      expect(@complaints.first.keys).to match_array ["id", "case_reference", "village", "phone", "created_at", "updated_at",
+                                                     "desired_outcome", "complained_to_subject_agency", "date_received",
+                                                     "imported", "mandate_id", "email", "gender", "dob", "details",
+                                                     "firstName", "lastName", "chiefly_title", "occupation", "employer",
+                                                     "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name",
+                                                     "date", "date_of_birth", "current_status_humanized", "attached_documents",
+                                                     "status_changes", "agency_ids", "communications", "area_ids", "subarea_ids", "area_subarea_ids"]
       expect(@complaints.first["reminders"]).to be_empty
       expect(@complaints.first["notes"]).to be_empty
       expect(@complaints.first["assigns"]).to be_empty
       expect(@complaints.first["attached_documents"]).to be_empty
-      expect(@complaints.first["good_governance_complaint_basis_ids"]).to be_empty
-      expect(@complaints.first["special_investigations_unit_complaint_basis_ids"]).to be_empty
-      expect(@complaints.first["human_rights_complaint_basis_ids"]).to be_empty
+      expect(@complaints.first["subarea_ids"]).to be_empty
+      expect(@complaints.first["area_ids"]).to be_empty
+      expect(@complaints.first["area_subarea_ids"]).to be_empty
       expect(@complaints.first["status_changes"]).to be_empty
       expect(@complaints.first["agency_ids"]).to be_empty
       expect(@complaints.first["communications"]).to be_empty

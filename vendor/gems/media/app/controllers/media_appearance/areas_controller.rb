@@ -1,5 +1,5 @@
 class MediaAppearance::AreasController < AreasController
   def subject_area
-    MediaIssueArea
+    MediaArea
   end
 end

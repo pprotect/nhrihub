@@ -12,3 +12,4 @@ en:
         file_monitor: "Indicator monitor files"
         filetypes: "Permitted file types"
         filesize_max: "Maximum permitted file size"
+        areas: "Areas and subareas"

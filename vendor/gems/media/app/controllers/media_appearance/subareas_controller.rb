@@ -1,9 +1,9 @@
 class MediaAppearance::SubareasController < SubareasController
   def subject_area
-    MediaIssueArea
+    MediaArea
   end
 
   def subject_subarea
-    MediaIssueSubarea
+    MediaSubarea
   end
 end

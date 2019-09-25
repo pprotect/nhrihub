@@ -45,20 +45,13 @@ feature "projects index", :js => true do
         last_project = Project.find(2)
         expect(find('.basic_info .title').text).to eq last_project.title
         expect(find('.description .col-md-10 .no_edit span').text).to eq last_project.description
-        last_project.mandates.each do |mandate|
-          expect(all('#areas .area').map(&:text)).to include mandate.name
-        end
-        within project_types do
-          within good_governance_area do
-            last_project.good_governance_project_types.each do |project_type|
-              expect(all('.project_type').map(&:text)).to include project_type.name
-            end
-          end
+        expect(find('#mandate #name').text).to eq last_project.mandate.name
+        within subareas do
+          expect(good_governance_subareas).to match_array last_project.project_subareas.good_governance.map(&:name)
+          expect(human_rights_subareas).to match_array last_project.project_subareas.human_rights.map(&:name)
         end
         within performance_indicators do
-          last_project.performance_indicators.each do |performance_indicator|
-            expect(all('.performance_indicator').map(&:text)).to include performance_indicator.indexed_description
-          end
+          expect(performance_indicator_descriptions).to match_array last_project.performance_indicators.map(&:indexed_description)
         end
         within project_documents do
           last_project.project_documents.each do |project_document|
@@ -74,12 +67,9 @@ feature "projects index", :js => true do
       add_project.click
       fill_in('project_title', :with => "new project title")
       fill_in('project_description', :with => "new project description")
-      check('Good Governance')
-      check('Corporate Services')
+      choose('Good Governance')
 
-      within good_governance_types do
-        check('Consultation')
-      end
+      check_subarea("Good Governance", "Consultation")
 
       add_a_performance_indicator
 
@@ -95,24 +85,19 @@ feature "projects index", :js => true do
       expect(project.title).to eq "new project title"
       expect(project.description).to eq "new project description"
       mandate = Mandate.find_by(:key => "good_governance")
-      expect(project.area_ids).to include mandate.id
-      mandate = Mandate.find_by(:key => "strategic_plan")
-      expect(project.area_ids).to include mandate.id
+      expect(project.mandate_id).to eq mandate.id
 
       # CHECK CLIENT
       expand_first_project
       within first_project do
         expect(find('.project .basic_info .title').text).to eq "new project title"
         expect(find('.description .col-md-10 .no_edit span').text).to eq "new project description"
-        expect(all('#areas .area').map(&:text)).to include 'Good Governance'
-        expect(all('#areas .area').map(&:text)).to include 'Corporate Services'
-        within project_types do
-          within good_governance_area do
-            expect(all('.project_type').map(&:text)).to include 'Consultation'
-          end
+        expect(find('#mandate #name').text).to eq 'Good Governance'
+        within subareas do
+          expect(good_governance_subareas).to eq ['Consultation']
         end
         within performance_indicators do
-          expect(find('.performance_indicator').text).to eq pi.indexed_description
+          expect(performance_indicator_descriptions).to eq [pi.indexed_description]
         end
       end
     end
@@ -121,11 +106,9 @@ feature "projects index", :js => true do
       add_project.click
       fill_in('project_title', :with => "new project title")
       fill_in('project_description', :with => "new project description")
-      check('Good Governance')
+      choose('Good Governance')
 
-      within good_governance_types do
-        check('Consultation')
-      end
+      check_subarea("Good Governance", "Consultation")
 
       add_a_performance_indicator
 
@@ -154,7 +137,7 @@ feature "projects index", :js => true do
       expect(project.title).to eq "new project title"
       expect(project.description).to eq "new project description"
       mandate = Mandate.find_by(:key => "good_governance")
-      expect(project.area_ids).to include mandate.id
+      expect(project.mandate_id).to eq mandate.id
 
       expect(project.project_documents.count).to eq 2
       expect(project.project_documents.map(&:title)).to include "Project Document"
@@ -165,11 +148,9 @@ feature "projects index", :js => true do
       within first_project do
         expect(find('.basic_info .title').text).to eq "new project title"
         expect(find('.description .col-md-10 .no_edit span').text).to eq "new project description"
-        expect(all('#areas .area').map(&:text)).to include 'Good Governance'
-        within project_types do
-          within good_governance_area do
-            expect(all('.project_type').map(&:text)).to include 'Consultation'
-          end
+        expect(find('#mandate #name').text).to eq 'Good Governance'
+        within subareas do
+          expect(good_governance_subareas).to eq ['Consultation']
         end
         within performance_indicators do
           expect(find('.performance_indicator').text).to eq pi.indexed_description
@@ -298,16 +279,10 @@ feature "projects index", :js => true do
       edit_first_project.click
       fill_in('project_title', :with => "new project title")
       fill_in('project_description', :with => "new project description")
-      check('Good Governance')
-      check('Human Rights')
+      choose('Good Governance')
 
-      within good_governance_types do
-        check('Consultation')
-      end
-
-      within human_rights_types do
-        check('Amicus Curiae')
-      end
+      check_subarea("Good Governance", "Consultation")
+      check_subarea("Human Rights", "Amicus Curiae")
 
       pi = add_a_performance_indicator
 
@@ -321,10 +296,10 @@ feature "projects index", :js => true do
 
       expect{ edit_save}.to change{ Project.find(1).title }.to("new project title")
       project = Project.find(1)
-      consultation_project_type = ProjectType.find_by(:name => "Consultation")
-      expect( project.project_type_ids ).to include consultation_project_type.id
-      amicus_project_type = ProjectType.find_by(:name => "Amicus Curiae")
-      expect( project.project_type_ids ).to include amicus_project_type.id
+      consultation_project_type = ProjectSubarea.find_by(:name => "Consultation")
+      expect( project.subarea_ids ).to include consultation_project_type.id
+      amicus_project_type = ProjectSubarea.find_by(:name => "Amicus Curiae")
+      expect( project.subarea_ids ).to include amicus_project_type.id
       expect( project.project_documents.count ).to eq 4
 
       expand_first_project
@@ -332,11 +307,9 @@ feature "projects index", :js => true do
       within first_project do
         expect(find('.basic_info .title').text).to eq "new project title"
         expect(find('.description .col-md-10 .no_edit span').text).to eq "new project description"
-        expect(all('.area').map(&:text)).to include 'Good Governance'
-        within project_types do
-          within good_governance_area do
-            expect(all('.project_type').map(&:text)).to include 'Consultation'
-          end
+        expect(find('#mandate #name').text).to eq 'Good Governance'
+        within subareas do
+          expect(good_governance_subareas).to eq ['Consultation']
         end
         within performance_indicators do
           expect(all('.performance_indicator').map(&:text)).to include pi.indexed_description
@@ -352,24 +325,16 @@ feature "projects index", :js => true do
     it "should edit a project and save when all checkboxes are unchecked" do
       edit_last_project.click # has all associations checked
       uncheck_all_checkboxes
-      expect{ edit_save }.to change{Project.last.project_type_ids}.to([]).
-                                            and change{Project.last.area_ids}.to([])
+      expect{ edit_save }.to change{Project.last.subarea_ids}.to([])
     end
 
     it "should restore prior values if editing is cancelled" do
       edit_first_project.click
       fill_in('project_title', :with => "new project title")
       fill_in('project_description', :with => "new project description")
-      check('Good Governance')
-      check('Human Rights')
+      choose('Good Governance')
 
-      within good_governance_types do
-        check('Consultation')
-      end
-
-      within human_rights_types do
-        check('Amicus Curiae')
-      end
+      check_subarea("Human Rights", "Amicus Curiae")
 
       add_a_performance_indicator
 
@@ -381,8 +346,8 @@ feature "projects index", :js => true do
       within first_project do
         expect(find('.basic_info .title').text).to eq project.title
         expect(find('.description .col-md-10 .no_edit span').text).to eq project.description
-        expect(all('.area .name').count).to eq 0
-        expect(all('#project_types .project_type').count).to eq 0
+        expect(find('#mandate #name').text).to be_blank
+        expect(all('.subarea').count).to eq 0
         expect(all('.performance_indicator').count).to eq project.performance_indicator_ids.count
       end
 
@@ -390,14 +355,14 @@ feature "projects index", :js => true do
 
       expect(page.find('#project_title').value).to eq project.title
       expect(page.find('#project_description').value).to eq project.description
-      expect(checkbox('good_governance')).not_to be_checked
-      expect(checkbox('human_rights')).not_to be_checked
-      expect(checkbox('strategic_plan')).not_to be_checked
-      expect(checkbox('project_type_1')).not_to be_checked
-      expect(checkbox('project_type_2')).not_to be_checked
-      expect(checkbox('project_type_3')).not_to be_checked
-      expect(checkbox('project_type_4')).not_to be_checked
-      expect(checkbox('project_type_5')).not_to be_checked
+      ['good_governance', 'human_rights', 'corporate_services', 'special_investigations_unit'].each do |id|
+        expect(radio(id)).not_to be_checked
+      end
+      expect(checkbox('subarea_1')).not_to be_checked
+      expect(checkbox('subarea_2')).not_to be_checked
+      expect(checkbox('subarea_3')).not_to be_checked
+      expect(checkbox('subarea_4')).not_to be_checked
+      expect(checkbox('subarea_5')).not_to be_checked
     end
 
     it "should show warning and not save when editing and title is blank" do
@@ -485,23 +450,39 @@ end
 
 feature "filter controls dropdown options", :js => true do # b/c there was a bug
   include LoggedInEnAdminUserHelper # sets up logged in admin user
-  include IERemoteDetector
-  include NavigationHelpers
   include ProjectsSpecHelpers
 
   # all_areas (areas) Mandate.all, all_area_project_types (project_types) ProjectTypes.mandate_groups, planned_results (planned_results) PlannedResult.all_with_associations
-  it "populates area, project_type, and performance_indicator dropdowns" do
+  it "populates area, subarea, and performance_indicator dropdowns" do
     page.find('button', :text => 'Select area').click
     Mandate.all.each do |area|
       expect(page).to have_selector('#area_filter_select li a span', :text => area.name)
     end
     page.find('button', :text => 'Select project type').click
-    ProjectType.mandate_groups.values.flatten.map(&:name).each do |name|
-      expect(page).to have_selector('#project_type_filter_select li a span', :text => name)
+    ProjectSubarea.pluck(:name).each do |name|
+      expect(page).to have_selector('#subarea_filter_select li a span', :text => name)
     end
     page.find('button', :text => 'Select performance indicators').click
     PerformanceIndicator.in_current_strategic_plan.all.each do |pi|
       expect(page).to have_selector('#performance_indicator_filter_select .planned_result .outcome .activity li.performance_indicator a span.text', :text => pi.indexed_description)
     end
   end
+end
+
+feature "default area subarea filters", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ProjectsSpecHelpers
+
+  before do
+    project_without_areas = FactoryBot.create(:project, :with_subareas, :title => 'no areas')
+    project_without_subareas = FactoryBot.create(:project, :with_mandate, :title => 'no subareas')
+    project_without_areas_or_subareas = FactoryBot.create(:project, :title => 'no areas or subareas')
+    project_with_areas_and_subareas = FactoryBot.create(:project, :with_mandate, :with_subareas, :title => 'has areas and subareas')
+  end
+
+  it "should show all projects, including those with no area or subarea designation by default" do
+    visit projects_path(:en)
+    expect(number_of_rendered_projects).to eq 6
+  end
+
 end

@@ -1,0 +1,23 @@
+| {{#areas}}
+.col-md-3(id='{{name.underscore()}}_area', style="padding-top:0;")
+  label
+    | {{name}}:
+  | {{#subareas}}
+  .row.subarea
+    .col-md-8
+      label(style='font-weight: 400',  for= "subarea_{{id}}")
+        | {{name}}
+    .col-md-4
+      input(id="subarea_{{id}}",  type='checkbox', name="{{subarea_ids}}", value='{{id}}', 'on-change'="@this.remove_error()")
+  | {{/subareas}}
+| {{/areas}}
+
+script.
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    remove_error() {
+      if (this.parent.get('subarea_id_count') !== 0) {
+        return this.parent.remove_attribute_error('subarea_id_count');
+      }
+    },
+  })

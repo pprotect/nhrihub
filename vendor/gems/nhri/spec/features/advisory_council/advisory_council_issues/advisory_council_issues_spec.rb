@@ -3,9 +3,10 @@ require 'login_helpers'
 require 'navigation_helpers'
 require 'download_helpers'
 require 'active_storage_helpers'
-require_relative '../../../helpers/advisory_council/advisory_council_issues_spec_helper'
-require_relative '../../../helpers/advisory_council/advisory_council_issues_setup_helper'
+require 'advisory_council_issues_spec_helper'
+require 'advisory_council_issues_setup_helper'
 require 'media_issues_common_helpers'
+require 'area_subarea_common_helpers'
 
 
 feature "show advisory council issue archive", :js => true do
@@ -18,7 +19,7 @@ feature "show advisory council issue archive", :js => true do
     setup_areas
     2.times do
       @issue = FactoryBot.create(:advisory_council_issue,
-                         :hr_area,
+                         :hr_subareas,
                          :reminders=>[FactoryBot.create(:reminder, :advisory_council_issue)] )
     end
     visit nhri_advisory_council_issues_path(:en)
@@ -69,19 +70,18 @@ feature "create a new article", :js => true do
 
     fill_in("advisory_council_issue_title", :with => "My new article title")
     expect(chars_remaining).to eq "You have 80 characters left"
-    check("Human Rights")
-    check("advisory_council_issue_subarea_ids_1")
-    check("Good Governance")
-    check("CRC")
+    choose("Human Rights")
+    within(human_rights_subareas) do
+      check("Violation")
+      check("CRC")
+    end
     fill_in('advisory_council_issue_article_link', :with => "http://www.example.com")
     expect{add_save}.to change{Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.count}.from(0).to(1)
     expect(page).to have_selector("#advisory_council_issues .advisory_council_issue", :count => 1)
     expect(page.find("#advisory_council_issues .advisory_council_issue .basic_info .title").text).to eq "My new article title"
     expand_all_panels
-    expect(areas).to include "Human Rights"
-    expect(areas).to include "Good Governance"
-    expect(subareas).to include "CRC"
-    expect(subareas).to include "Violation"
+    expect(areas).to match_array [ "Human Rights"]
+    expect(subareas).to match_array [ "CRC", "Violation" ]
   end
 
   scenario "upload article from file" do
@@ -196,6 +196,7 @@ feature "when there are existing articles", :js => true do
   include AdvisoryCouncilIssueSpecHelper
   include AdvisoryCouncilIssueSetupHelper
   include ActiveStorageHelpers
+  include AreaSubareaCommonHelpers
 
   feature "and existing article has file attachment" do
     before do
@@ -207,8 +208,10 @@ feature "when there are existing articles", :js => true do
     # b/c there was a bug!
     scenario "start creating and cancel" do
       add_article_button.click
-      check("Human Rights")
-      check("advisory_council_issue_subarea_ids_1") # violation
+      choose("Human Rights")
+      within(human_rights_subareas) do
+        check("Violation")
+      end
       add_cancel
       expect(page).not_to have_selector('.form #advisory_council_issue_title')
       scroll_to(edit_article[0]).click
@@ -224,17 +227,22 @@ feature "when there are existing articles", :js => true do
 
     scenario "edit an article without introducing errors" do
       scroll_to(edit_article[0]).click
+      expect(page.find_field("Good Governance")).to be_checked
+      Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.advisory_council_issue_subareas.map{|i| [i.area.name.gsub(/\s/,'').underscore, i.name]}.each do |area,subarea|
+        expect(subarea_checkbox(area,subarea)).to be_checked
+      end
       fill_in("advisory_council_issue_title", :with => "My new article title")
       expect(chars_remaining).to eq "You have 80 characters left"
-      uncheck("Human Rights")
-      check("advisory_council_issue_subarea_ids_1")
-      check("Good Governance")
+      choose("Human Rights")
+      check("Violation")
       check("CRC")
       expect{edit_save}.to change{Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.title}
-      expect(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.area_ids).to eql [2]
+      expect(Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.area_ids).to eql [human_rights_area.id]
       expect(page.all("#advisory_council_issues .advisory_council_issue .basic_info .title").first.text).to eq "My new article title"
-      expect(areas).not_to include "Human Rights"
-      expect(areas).to include "Good Governance"
+      expect(areas).to include "Human Rights"
+      expect(areas).not_to include "Good Governance"
+      expect(subareas).to include "CRC"
+      expect(subareas).to include "Violation"
     end
 
     scenario "edit an article and upload a different file" do
@@ -317,16 +325,15 @@ feature "when there are existing articles", :js => true do
       scroll_to(edit_article[0]).click
       fill_in("advisory_council_issue_title", :with => "My new article title")
       expect(chars_remaining).to eq "You have 80 characters left"
-      uncheck("Human Rights")
-      check("advisory_council_issue_subarea_ids_1")
-      check("Good Governance")
+      choose ("Good Governance")
+      check("Violation")
       check("CRC")
       expect{edit_cancel}.not_to change{Nhri::AdvisoryCouncil::AdvisoryCouncilIssue.first.title}
       expect(page.all("#advisory_council_issues .advisory_council_issue .basic_info .title").first.text).to eq original_advisory_council_issue.title
       sleep(0.3) # seems to be required for proper operation in chrome
       expand_all_panels
-      expect(areas).to include "Human Rights"
-      expect(areas).not_to include "Good Governance"
+      expect(areas).not_to include "Human Rights"
+      expect(areas).to include "Good Governance"
     end
 
     scenario "title is blank, error should not propagate" do # b/c there was a bug!
