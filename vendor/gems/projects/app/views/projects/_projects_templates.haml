@@ -96,7 +96,7 @@
       %i.fa.fa-remove.remove{'on-click' => '@this.remove_file()'.html_safe}
 
 %script#subareas_selector_template{:type => 'template/ractive'}
-  .form-group
+  .row.form-group
     .col-md-2
       %label=t('.project_type')
     .col-md-10
@@ -115,7 +115,7 @@
         {{/all_areas}}
 
 %script#area_selector_template{:type => 'template/ractive'}
-  .form-group
+  .row.form-group
     .col-md-2
       %label=t('.area')
     .col-md-10
