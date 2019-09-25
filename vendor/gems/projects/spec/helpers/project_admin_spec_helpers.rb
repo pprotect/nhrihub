@@ -3,8 +3,8 @@ require 'rspec/core/shared_context'
 module ProjectAdminSpecHelpers
   extend RSpec::Core::SharedContext
   before do
-    ['good_governance', 'human_rights', 'special_investigations_unit', 'strategic_plan'].each do |key|
-      Mandate.create(:key => key)
+    Mandate::DefaultNames.each do |name|
+      Mandate.create(:name => name)
     end
   end
 

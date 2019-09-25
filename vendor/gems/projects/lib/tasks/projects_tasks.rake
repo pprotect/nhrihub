@@ -16,8 +16,8 @@ namespace :projects do
 
   desc "populates the mandates table"
   task :populate_mandates => :environment do
-    ["good_governance", "human_rights", "special_investigations_unit", "strategic_plan"].each do |key|
-      Mandate.find_or_create_by(:key => key)
+    Mandate::DefaultNames.each do |name|
+      Mandate.find_or_create_by(:name => name)
     end
   end
 

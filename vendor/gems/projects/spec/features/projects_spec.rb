@@ -84,7 +84,7 @@ feature "projects index", :js => true do
       expect(projects_count).to eq 3
       expect(project.title).to eq "new project title"
       expect(project.description).to eq "new project description"
-      mandate = Mandate.find_by(:key => "good_governance")
+      mandate = Mandate.good_governance.first
       expect(project.mandate_id).to eq mandate.id
 
       # CHECK CLIENT
@@ -136,7 +136,7 @@ feature "projects index", :js => true do
       expect(projects_count).to eq 3
       expect(project.title).to eq "new project title"
       expect(project.description).to eq "new project description"
-      mandate = Mandate.find_by(:key => "good_governance")
+      mandate = Mandate.good_governance.first
       expect(project.mandate_id).to eq mandate.id
 
       expect(project.project_documents.count).to eq 2

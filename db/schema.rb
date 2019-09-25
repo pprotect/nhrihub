@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_19_154052) do
+ActiveRecord::Schema.define(version: 2019_09_25_140442) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -392,7 +392,7 @@ ActiveRecord::Schema.define(version: 2019_09_19_154052) do
   end
 
   create_table "mandates", id: :serial, force: :cascade do |t|
-    t.string "key"
+    t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

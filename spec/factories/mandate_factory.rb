@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :mandate do
-    key { [:human_rights, :good_governance, :special_investigations_unit].sample }
+    name { ["Human Rights", "Good Governance", "Special Investigations Unit"].sample }
   end
 end

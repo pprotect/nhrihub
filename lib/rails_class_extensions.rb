@@ -69,3 +69,9 @@ module ActionView
     end
   end
 end
+
+class String
+  def unspaced
+    self.gsub(/\s*/,'')
+  end
+end

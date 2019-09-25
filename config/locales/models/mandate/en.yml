@@ -1,9 +1,0 @@
-en:
-  activerecord:
-    models:
-      mandate:
-        keys:
-          good_governance: "Good Governance"
-          human_rights: "Human Rights"
-          special_investigations_unit: "Special Investigations Unit"
-          strategic_plan: "Corporate Services"

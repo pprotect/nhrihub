@@ -1,21 +1,20 @@
 class Mandate < ActiveRecord::Base
-  Names = ["Corporate Services", "Good Governance", "Human Rights", "Special Investigations Unit"]
-  Keys = ['strategic_plan', 'good_governance', 'human_rights', 'special_investigations_unit']
+  DefaultNames = ["Corporate Services", "Good Governance", "Human Rights", "Special Investigations Unit"]
 
   has_many :projects
   has_many :complaints
 
-  scope :good_governance,    ->{ where(:key => "good_governance") }
-  scope :human_rights,       ->{ where(:key => "human_rights") }
-  scope :siu,                ->{ where(:key => "special_investigations_unit") }
-  scope :strategic_plan, ->{ where(:key => "strategic_plan") }
+  scope :good_governance,    ->{ where(:name => "Good Governance") }
+  scope :human_rights,       ->{ where(:name => "Human Rights") }
+  scope :siu,                ->{ where(:name => "Special Investigations Unit") }
+  scope :strategic_plan, ->{ where(:name => "Corporate Services") }
 
   def as_json(options = {})
-    options = {:only => [:id, :key], :methods => [:name]} if options.blank?
+    options = {:only => [:id, :name], :methods => [:key]} if options.blank?
     super(options)
   end
 
-  def name
-    I18n.t("activerecord.models.mandate.keys.#{key}")
+  def key
+    name.titlecase.unspaced.underscore
   end
 end

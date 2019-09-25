@@ -60,8 +60,8 @@ module AdvisoryCouncilIssueSetupHelper
       Nhri::AdvisoryCouncil::AdvisoryCouncilIssueSubarea.create(:name => ggsa, :area_id => good_governance_id) unless Nhri::AdvisoryCouncil::AdvisoryCouncilIssueSubarea.where(:name => ggsa, :area_id => good_governance_id).exists?
     end
 
-    Mandate::Keys.each do |key|
-      Mandate.find_or_create_by(key: key)
+    Mandate::DefaultNames.each do |name|
+      Mandate.find_or_create_by(name: name)
     end
   end
 

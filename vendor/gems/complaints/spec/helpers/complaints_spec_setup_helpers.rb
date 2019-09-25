@@ -10,7 +10,7 @@ module ComplaintsSpecSetupHelpers
       fill_in('dob', :with => "08/09/1950")
       fill_in('village', :with => "Normaltown")
       fill_in('complaint_details', :with => "a long story about lots of stuff")
-      choose('special_investigations_unit')
+      choose('Special Investigations Unit')
       choose('complained_to_subject_agency_yes')
       check_subarea(:good_governance, "Delayed action")
       select(User.admin.first.first_last_name, :from => "assignee")
@@ -95,8 +95,8 @@ module ComplaintsSpecSetupHelpers
   end
 
   def create_mandates
-    Mandate::Keys.each do |key|
-      FactoryBot.create(:mandate, :key => key)
+    Mandate::DefaultNames.each do |name|
+      FactoryBot.create(:mandate, :name => name)
     end
   end
 
@@ -117,7 +117,7 @@ module ComplaintsSpecSetupHelpers
   end
 
   def _mandate_id
-    Mandate.find_by(:key => 'human_rights' ).id
+    Mandate.human_rights.first.id
   end
 
   def _agencies

@@ -62,7 +62,7 @@ FactoryBot.define do
 
     trait :gg_mandate do
       after(:build) do |aci|
-        mandate=Mandate.find_or_create_by(:key => 'good_governance')
+        mandate=Mandate.find_or_create_by(:name => 'Good Governance')
         aci.mandate_id = mandate.id
       end
     end

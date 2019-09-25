@@ -8,7 +8,6 @@ task :populate => :environment do
   end
 end
 
-
 desc "remove user-added data and wipes database ready for 'go-live'"
 task :depopulate => :environment do
   Note.destroy_all
