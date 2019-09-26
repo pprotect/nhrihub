@@ -1,0 +1,21 @@
+.row.form-group
+  .col-md-2
+    label
+      | {{ t.area }}
+  .col-md-10
+    .row
+      form.mandates
+        | {{#all_mandates}}
+        .col-md-2( style="padding-top:0;" )
+          label( for='{{name.underscore()}}' )
+            span
+              | {{name}}
+        .col-md-1( style="padding-top:0;" )
+          input( id='{{name.underscore()}}', type='radio', name='{{mandate_id}}', value='{{id}}' )
+        | {{/all_mandates}}
+
+
+script.
+  export default Ractive.extend({
+    template : $TEMPLATE
+  })

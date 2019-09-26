@@ -1,28 +1,35 @@
-= render :partial => 'shared/confirm_delete_modal'
-= render :partial => 'projects/index'
-= render :partial => 'reminders/reminder' # it's in the main app
-= render :partial => 'notes/note' # it's in the main app
+.message_block
+%h1= t(".heading")
+.btn.btn-success.btn-sm#add_project{:style => "margin-bottom:12px; color:white;", :onclick => "projects.new_project()"}
+  %i.fa.fa-plus.fa-lg{:style => "color:white"}
+  %span= t(".add_project")
+
+=stylesheet_link_tag 'projects'
+=# render :partial => 'shared/file_selector'
+=# render :partial => 'projects/projects_templates'
+=# render :partial => 'shared/performance_indicator_select'
+=# render :partial => 'shared/confirm_delete_modal'
+=# render :partial => 'reminders/reminder' # it's in the main app
+=# render :partial => 'notes/note' # it's in the main app
+
+#projects
+#confirm_delete_modal_container
+#note
+#reminder
 
 :coffeescript
+  @all_users = #{@all_users.to_json.html_safe}
   @selected_title = "#{params[:title] ? escape_javascript(params[:title]).html_safe : ''}"
   @projects_data = #{@projects.to_json.html_safe}
   @areas = #{@areas.to_json.html_safe}
   @subareas = #{@subareas.to_json.html_safe}
   @all_mandates = #{@mandates.to_json.html_safe}
   @agencies = #{@agencies.to_json.html_safe}
-  @all_agencies_in_threes = _.chain(@agencies).groupBy((el,i)->Math.floor(i/3)).toArray().value()
+  ##@all_agencies_in_threes = _.chain(@agencies).groupBy((el,i)->Math.floor(i/3)).toArray().value()
   @planned_results = #{@planned_results.to_json.html_safe }
   @project_named_documents_titles = #{@project_named_documents_titles.to_json.html_safe}
-  @performance_indicators = _.chain(planned_results).
-    map((pr)->pr.outcomes).
-    flatten().
-    map((pr)->pr.activities).
-    flatten().
-    map((a)->a.performance_indicators).
-    flatten().
-    map((a)->_(a).values()).
-    object().
-    value()
+
+  @performance_indicator_url = "#{project_performance_indicator_path('en','id')}"
   @maximum_filesize    = #{@maximum_filesize}
   @permitted_filetypes = #{@permitted_filetypes.to_json.html_safe}
   @create_reminder_url = "#{@create_reminder_url}"
@@ -35,4 +42,4 @@
   @delete_project_confirmation_message = "#{t('.delete_project_confirmation_message')}"
   @delete_project_document_confirmation_message = "#{t('.delete_project_document_confirmation_message')}"
 
-=javascript_include_tag 'projects'
+=javascript_pack_tag 'projects'

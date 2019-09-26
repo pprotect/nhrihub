@@ -1,0 +1,17 @@
+{
+  "name": "projects",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@rails/ujs": "^6.0.0",
+    "@rails/webpacker": "^4.0.7",
+    "coffee-loader": "^0.9.0",
+    "coffeescript": "1.12.7",
+    "webpack": "^4.35.3"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.3.5",
+    "webpack-dev-server": "^3.4.1"
+  }
+}

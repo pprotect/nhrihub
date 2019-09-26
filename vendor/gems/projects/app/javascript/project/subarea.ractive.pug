@@ -1,0 +1,16 @@
+span.subarea
+  | {{ name }}
+
+script.
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    computed: {
+      name: function() {
+        if (this.get('id') !== 0) {
+          return _(this.get('subareas')).findWhere({
+            id: this.get('id')
+          }).name;
+        }
+      }
+    }
+  });

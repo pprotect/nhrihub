@@ -1,0 +1,30 @@
+.row
+  .col-md-6.title
+    | {{ t.title }}
+  .col-md-4.filename
+    | {{ t.filename }}
+| {{#project_documents}}
+<projectDocument maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' id='{{id}}' filesize_error='{{filesize_error}}' filetype_error='{{filetype_error}}' validation_criteria='{{validation_criteria}}' id='{{id}}' file='{{file}}' title='{{title}}' file_id='{{file_id}}' original_filename='{{original_filename}}' project_named_documents_titles='{{ project_named_documents_titles}}' />
+| {{/project_documents}}
+| {{^project_documents}}
+div( style='padding-left:15px;' )
+  | {{ t.no_documents }}
+| {{/project_documents}}
+
+
+script.
+  import ProjectDocument from './project_document.ractive.pug'
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    components: {
+      projectDocument: ProjectDocument
+    },
+    remove: function(guid) {
+      var guids, index;
+      guids = _(this.findAllComponents('projectDocument')).pluck('_guid');
+      index = _(guids).indexOf(guid);
+      return this.splice('project_documents', index, 1);
+    }
+  });
+

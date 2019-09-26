@@ -1,0 +1,161 @@
+.row.filter_control_box#projects_controls
+  .row
+    .col-md-12
+      h4
+        | {{ t.search }}
+  .row.labels
+    .col-md-3
+      | {{ t.title }}
+    .col-md-3
+      | {{ t.area }}
+    .col-md-3
+      | {{ t.project_type }}
+  .row(style = "margin-bottom:12px;")
+    .col-md-3
+      input.form-control#title(type='text', name='title', value="{{filter_criteria.title}}", placeholder= "{{t.enter_text}}")
+    .col-md-3
+      .btn-group.select(style="width:240px;")
+        button.btn.btn-default.dropdown-toggle( type='button', data-toggle='dropdown' )
+          span.filter-option.pull-left
+            | {{ t.select_area }}
+          span.caret
+        ul.dropdown-menu#area_filter_select
+          <undesignatedAreaFilterSelect filter_criteria='{{filter_criteria}}' id='0' name='Undesignated'/>
+          | {{#all_mandates}}
+          <areaFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}'/>
+          | {{/all_mandates}}
+    .col-md-3
+      .btn-group.select( style="width:240px;" )
+        button.btn.btn-default.dropdown-toggle( type='button', data-toggle='dropdown' )
+          span.filter-option.pull-left
+            | {{ t.select_project_type }}
+          span.caret
+        ul.dropdown-menu#subarea_filter_select
+          <selectClear t='{{t}}' collection='{{'subarea_ids'}}'/>
+          <undesignatedSubareaFilterSelect filter_criteria='{{filter_criteria}}' id='0' name='Undesignated'/>
+          | {{#areas}}
+          li.dropdown-header( style="padding: 3px 0px 3px 20px;" )
+            | {{name}}
+            ul( style= "list-style:none; padding-left:18px;" )
+              | {{#subareas}}
+              <subareaFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}'/>
+              | {{/subareas}}
+          | {{/areas}}
+    .col-md-1.col-md-offset-1
+      i.erase.fa.fa-refresh( on-click='@this.clear_filter()', data-toggle='tooltip', title='{{ t.clear }}' )
+    .col-md-1
+      | {{#if expanded}}
+      a#compact( on-click='@this.compact()'.html_safe, data-toggle='tooltip', title='{{ t.compact_all }}' )
+      | {{else}}
+      a#expand( on-click='@this.expand()'.html_safe, data-toggle='tooltip', title='{{ t.expand_all }}' )
+      | {{/if}}
+  .row.labels
+    .col-md-3
+      | {{ t.performance_indicators }}
+  .row
+    .col-md-3
+      .btn-group.performance_indicator_select.select( style="width:240px;" )
+        button.btn.btn-default.dropdown-toggle( type="button", data-toggle='dropdown' )
+          span.filter-option.pull-left
+            | {{ t.select_performance_indicators }}
+          span.caret
+        <performanceIndicatorFilterSelect planned_results='{{planned_results}}' />
+
+
+style.
+  #title {
+    width:240px;
+    position:relative;
+    height:34px;
+   }
+  .filter_control_box {
+    background-color : #9A9375;
+    margin-bottom : 6px;
+    border-radius : 10px;
+    padding-bottom : 12px;
+
+      #expand {
+        background-size: 18px;
+      }
+
+      #compact {
+        background-size: 18px;
+      }
+
+      .row {
+        margin-left : 0px;
+
+        h4 {
+          color : #fff;
+          font-weight: 300;
+        }
+
+        &.labels {
+          padding-bottom: 3px;
+          color: #F0F8FF;
+          font-weight: 300;
+          font-size: 14px;
+        }
+      }
+  }
+
+
+script.
+  import translations from '../translations.js'
+  import AreaFilterSelect from './area_filter_select.ractive.pug'
+  import SelectClear from './select_clear.ractive.pug'
+  import SubareaFilterSelect from './subarea_filter_select.ractive.pug'
+  import PerformanceIndicatorFilterSelect from  '../../../../../../app/javascript/performance_indicator_filter_select.ractive.pug'
+  import UndesignatedSubareaFilterSelect from './undesignated_subarea_filter_select.ractive.pug'
+  import UndesignatedAreaFilterSelect from './undesignated_area_filter_select.ractive.pug'
+  import 'bootstrap'
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    data : function(){ return {
+      t : translations
+    }},
+    components: {
+      undesignatedSubareaFilterSelect: UndesignatedSubareaFilterSelect,
+      undesignatedAreaFilterSelect: UndesignatedAreaFilterSelect,
+      areaFilterSelect: AreaFilterSelect,
+      subareaFilterSelect: SubareaFilterSelect,
+      selectClear: SelectClear,
+      performanceIndicatorFilterSelect: PerformanceIndicatorFilterSelect
+    },
+    select_all: function(collection) {
+      var subarea_ids;
+      subarea_ids = _(subareas).map(function(s) {
+        return s.id;
+      });
+      subarea_ids.push(0); // the 'undesignated' subarea
+      return this.set('filter_criteria.' + collection, subarea_ids);
+    },
+    clear_all: function(collection) {
+      return this.set('filter_criteria.' + collection, []);
+    },
+    expand: function() {
+      return this.parent.expand();
+    },
+    compact: function() {
+      return this.parent.compact();
+    },
+    clear_filter: function() {
+      window.history.pushState({
+        foo: "bar"
+      }, "unused title string", window.location.origin + window.location.pathname);
+      return this.set('filter_criteria', _.extend(window.filter_criteria, {
+        title: ""
+      }));
+    },
+    set_filter_from_query_string: function() {
+      var filter_criteria, search_string;
+      search_string = (_.isEmpty(window.location.search) || _.isNull(window.location.search)) ? '' : window.location.search.split("=")[1].replace(/\+/g, ' ');
+      filter_criteria = _.extend(window.filter_criteria, {
+        title: unescape(search_string)
+      });
+      return this.set('filter_criteria', filter_criteria);
+    }
+  });
+

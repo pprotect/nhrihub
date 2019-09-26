@@ -1,0 +1,89 @@
+| {{^persisted}}
+.row.performance_indicators
+  .div#description
+    .col-md-2( class="{{#performance_indicator_required}}required{{/}}" )
+      | {{ t.performance_indicators }}
+  .div
+    .col-md-10
+      | {{> performance_indicator_edit }}
+| {{/persisted}}
+| {{#persisted}}
+.row.performance_indicators( data-toggle = 'edit' )
+  .div#description
+    .col-md-2.no_edit.in
+      | {{ t.performance_indicators }}
+    .col-md-2.edit( class="{{#performance_indicator_required}}required{{/}}" )
+      | {{ t.performance_indicators }}
+  .div
+    .col-md-10
+      .fade.no_edit.in
+        | {{> performance_indicator_show }}
+      .fade.edit
+        | {{> performance_indicator_edit }}
+| {{/persisted}}
+
+
+| {{#partial performance_indicator_edit}}
+.form-group.row#performance_indicator
+  .col-md-4
+    .dropdown.performance_indicator_select
+      a.btn.btn-default.dropdown-toggle( data-toggle = "dropdown", href = "#" )
+        | {{ t.select_performance_indicators }}
+        span.caret
+      | {{> performance_indicator_filter_select_template }}
+  .col-md-8#performance_indicators
+    | {{#sorted_performance_indicator_associations}}
+    <selectedPerformanceIndicator performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations='{{performance_indicator_associations}}' planned_results='{{planned_results}}' performance_indicator_id='{{performance_indicator.id}}' association_id='{{association_id}}' indexed_description='{{performance_indicator.indexed_description}}' id='{{id}}' />
+    | {{/sorted_performance_indicator_associations}}
+    | {{^sorted_performance_indicator_associations}}
+    div.selected_performance_indicator
+      | {{ t.none_assigned }}
+    | {{/sorted_performance_indicator_associations}}
+.form-group
+  span.help-block#performance_indicator_associations_error.error( class = "{{#performance_indicator_associations_error}}has-error{{/}}" ) There must be at least one performance indicator
+| {{/partial performance_indicator_edit}}
+
+| {{#partial performance_indicator_filter_select_template}}
+include performance_indicator_filter_select_template
+| {{/partial}}
+
+
+| {{#partial performance_indicator_show}}
+| {{#sorted_performance_indicator_associations}}
+.row.performance_indicator
+  .col-md-6
+    | {{performance_indicator.indexed_description}}
+| {{/sorted_performance_indicator_associations}}
+| {{^sorted_performance_indicator_associations}}
+.performance_indicator
+  | {{ t.none_assigned }}
+| {{/sorted_performance_indicator_associations}}
+| {{/partial performance_indicator_show}}
+
+script.
+  import translations from 'translations.js'
+  import SelectedPerformanceIndicator from 'selected_performance_indicator.ractive.pug'
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    data : function(){ return {
+      t : translations
+    }},
+    components: {
+      selectedPerformanceIndicator: SelectedPerformanceIndicator
+    },
+    computed: {
+      sorted_performance_indicator_associations: function() {
+        return _(this.get('performance_indicator_associations')).sortBy(function(pia) {
+          return pia.performance_indicator.indexed_description.split(' ')[0].split('.');
+        });
+      }
+    },
+    select: function(id) {
+      this.parent.add_unique_performance_indicator_id(id);
+      return false;
+    },
+    remove_indicator: function(indexed_description) {
+      return this.parent.remove_performance_indicator(indexed_description);
+    }
+  });

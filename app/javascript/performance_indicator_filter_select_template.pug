@@ -1,0 +1,27 @@
+ul.dropdown-menu#performance_indicator_filter_select( style="width: 450px;" )
+  | {{#planned_results }}
+  li.dropdown-submenu.planned_result
+    div
+      | {{ indexed_description }}
+    ul
+      | {{#outcomes }}
+      li.dropdown-submenu.outcome
+        div
+          | {{ indexed_description }}
+        ul
+          | {{#activities}}
+          li.dropdown-submenu.activity
+            div
+              | {{ indexed_description }}
+            ul
+              | {{#performance_indicators}}
+              li.performance_indicator
+                a.opt( on-click='@this.select(id)', style='padding-left: 0;')
+                  span.text
+                    | {{ indexed_description }}
+                  span.fa.fa-check
+              | {{/performance_indicators}}
+          | {{/activities}}
+      | {{/outcomes }}
+  | {{/planned_results }}
+

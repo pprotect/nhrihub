@@ -1,0 +1,17 @@
+li.subarea_filter( class-selected='selected' )
+  a( on-click='@this.toggle(id)' )
+    span.name
+      | {{name}}
+    span.fa.fa-check
+
+script.
+  import FilterSelect from './../filter_select.js'
+
+  export default FilterSelect.extend({
+    template: $TEMPLATE,
+    computed: {
+      collection: function() {
+        return "subarea_ids";
+      }
+    }
+  });

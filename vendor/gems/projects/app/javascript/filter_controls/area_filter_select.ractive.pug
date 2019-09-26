@@ -1,0 +1,18 @@
+li( class= 'dropdown-header area_filter {{#if selected}}selected{{/if}}' )
+  a( on-click='@this.toggle(id)' )
+    span
+      | {{name}}
+    span.fa.fa-check
+
+script.
+  import FilterSelect from './../filter_select.js'
+
+  export default FilterSelect.extend({
+    template: $TEMPLATE,
+    computed: {
+      collection: function() {
+        return "area_ids";
+      }
+    }
+  });
+

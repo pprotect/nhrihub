@@ -18,7 +18,6 @@ en:
       compact : "Compact"
       compact_all : "Compact all"
       expand : "Expand"
-      expand_all : "Expand all"
       choose_file : "Choose file"
       area: "Area"
       areas: "Areas"
@@ -28,7 +27,6 @@ en:
       filename: "File name"
       # search controls:
       search: "Search for projects by:"
-      title: "Title"
       enter_text: "All or part of title text"
       select_area: "Select area"
       agency: "Agency"
@@ -47,22 +45,14 @@ en:
       clear_all : "Clear all"
       select_all : "Select all"
       expand_all : "Expand all"
-      compact_all : "Compact all"
       min: "Min"
       max: "Max"
       doc_title: "Document title"
       revision: "Revision"
-      planned_result : "Planned result"
-      activity : "Activity"
-      performance_indicator : "Performance indicator"
       outcome : "Outcome"
       planned_result : "Planned result"
       activity : "Activity"
       performance_indicator : "Performance indicator"
-      planned_result : "Planned result"
-      activity : "Activity"
-      performance_indicator : "Performance indicator"
-      outcome : "Outcome"
 
   project_admin:
     show:

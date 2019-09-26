@@ -1,4 +1,5 @@
-@Validator =
+#it's a mixin for validation methods
+Validator =
   has_errors : ->
     attributes = _(@get('validation_criteria')).keys()
     error_attributes = _(attributes).map (attr)->attr+"_error"

@@ -1,0 +1,506 @@
+| {{#if persisted }}
+| {{> show_project_template }}
+| {{else}}
+| {{> new_project_template }}
+| {{/if}}
+
+| {{#partial new_project_template }}
+.row.new_project.expandable_well.well
+  .col-md-12
+    span.required_before
+      | {{ t.required }}
+  .col-md-12
+    .row.form-group( 'class-has-error' = 'title_error' )
+      .col-md-2
+        label.required( for = 'project_title' )
+          | {{ t.title }}
+      .col-md-7
+        input.form-control#project_title( value = '{{title}}', on-keydown="@this.remove_attribute_error('title')" )
+        span.help-block.error#title_error
+          | {{ t.title_error_message }}
+      .col-sm-3
+    .row.form-group( class-has-error = 'description_error' )
+      .col-md-2
+        label.required( for = 'project_description' )
+          | {{ t.description }}
+      .col-md-7
+        textarea.form-control#project_description( value = '{{description}}', on-keydown="@this.remove_attribute_error('description')" )
+        span.help-block.error#description_error
+          | {{ t.description_error_message }}
+    <areaSelector mandate_id='{{mandate_id}}' all_mandates='{{all_mandates}}' t='{{t}}' />
+    <subareasSelector areas='{{areas}}' subarea_ids='{{subarea_ids}}' t='{{t}}' />
+    <performanceIndicators performance_indicator_url='{{performance_indicator_url}}' serialization_key='{{serialization_key}}' persisted='{{persisted}}' planned_results='{{planned_results}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' performance_indicator_associations_error='{{performance_indicator_associations_error}}' />
+    .panel.panel-default#documents
+      .panel-heading
+        | {{ t.project_documents }}
+      .panel-body
+        | {{> file_selector_template {key : 'project'} }}
+        <projectDocuments maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' filter_criteria='{{filter_criteria}}' filesize_error='{{filesize_error}}' filetype_error='{{filetype_error}}' project_documents='{{project_documents}}' project_named_documents_titles='{{ project_named_documents_titles}}' >
+    .row
+      .col-sm-3.col-sm-offset-3( style = "text-align:center;" )
+        .btn.btn-danger.btn-sm#cancel_project( on-click = "@this.cancel_project()" )
+          i.fa.fa-remove.fa-lg( style = "color:white" )
+          span( style = "color:white" )
+          | {{ t.defaults.cancel }}
+      .col-sm-3( style = "text-align:center;" )
+        .btn.btn-success.btn-sm#save_project( style = "color:white;", on-click = "@this.save_project()" )
+          i.fa.fa-check.fa-lg( style = "color:white" )
+          span
+            | {{ t.defaults.save }}
+        .form-group( class-has-error = 'has_errors' )
+          span#project_error.help-block.error
+            | {{ t.error_messages.form_error }}
+| {{/partial }}
+
+| {{#partial show_project_template }}
+.row.well.well-sm.expandable_well.project.editable_container( style= "{{#if !include}}display:none{{/if}}", as-inpage_edit='id' )
+  .col-md-12
+    .row
+      .col-md-9( data-toggle='edit' )
+        .edit
+          span.required_before
+            | {{ t.required }}
+    .row.basic_info
+      .col-md-9.title( data-toggle='edit' )
+        .fade.no_edit.in
+          span
+            | {{ title }}
+        .fade.edit( style="width: 100%" )
+          | {{> edit_title}}
+      .col-md-3.actions
+        .row( style="margin-left:0px;" )
+          .col-md-1.col-md-offset-2( data-toggle='edit' )
+            .no_edit.in
+              .alarm_icon.counter( data-count="{{reminders_count}}", on-click="@this.show_reminders_panel()" )
+            .edit
+          .col-md-1( data-toggle='edit' )
+            .no_edit.in
+              .note_icon.show_notes.counter( data-count='{{notes_count}}', on-click="@this.show_notes_panel()", style="position:relative; left: -3px;" )
+            .edit
+          .col-md-1.icon( data-toggle='edit' )
+            .fade.no_edit.in
+              i.fa.fa-pencil-square-o#edit_start( style="position:relative; top:1px;" )
+          .col-md-1( data-toggle='edit' )
+            .no_edit.in
+              i.fa.fa-sm.fa-trash-o.delete_icon( on-click='@this.show_confirm_delete_modal()' )
+          .col-md-1( data-toggle='collapse', href=".collapse{{id}}", style="width:45px;" )
+            div( data-toggle='edit' )
+              .no_edit.in
+                | {{#if expanded}}
+                i#compact( on-click='@this.compact()', data-toggle='tooltip', title='{{ t.compact }}', style="position:relative; top:3px;" )
+                | {{else}}
+                i#expand( on-click='@this.expand()', data-toggle='tooltip', title='{{ t.expand }}', style="position:relative; top:3px;" )
+                | {{/if}}
+              .edit
+    .collapse.expanded_info( class="collapse{{id}}" )
+      .row.description.form-group( class-has-error='description_error', data-toggle='edit')
+        .col-md-2
+          .no_edit.in
+            span
+              | {{ t.description }}
+          .edit
+            span.required
+              | {{ t.description }}
+        .col-md-10
+          .fade.no_edit.in
+            span
+              | {{description}}
+          .fade.edit( style="width: 100%" )
+            textarea.form-control#project_description( value='{{description}}', on-keydown="@this.remove_attribute_error('description')" )
+            span.help-block.error#description_error
+              | {{ t.description_error_message }}
+      <performanceIndicators performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations_error='{{performance_indicator_associations_error}}' serialization_key='{{serialization_key}}' persisted='{{persisted}}' planned_results='{{planned_results}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' />
+      .row#mandate( data-toggle='edit' )
+        .fade.no_edit.in
+          .col-md-2.description( style='font-weight: 700' )
+            | {{ t.area }}
+          .col-md-10#name
+            | {{ mandate_name }}
+        .div.edit
+          <areaSelector mandate_id='{{mandate_id}}' all_mandates='{{all_mandates}}' t='{{t}}' />
+      .row#subareas( data-toggle='edit' )
+        .no_edit.in
+          .col-md-2.description( style='font-weight: 700' )
+            | {{ t.subareas }}
+          .col-md-10
+            | {{#area_subarea_ids:i}}
+            <area area_id='{{parseInt(i)}}' subarea_ids='{{this}}' areas='{{areas}}' subareas='{{subareas}}' />
+            | {{/area_subarea_ids}}
+        .edit
+          <subareasSelector areas='{{areas}}' subarea_ids='{{subarea_ids}}' t='{{t}}' />
+      .panel.panel-default.documents
+        .panel-heading
+          .row
+            .col-md-2
+              | {{ t.project_documents }}
+        .panel-body#project_documents( data-toggle='edit' )
+          .fade.edit( style="padding-left:15px; padding-top:15px;" )
+            | {{> file_selector_template {key : 'project'} }}
+          .fade.no_edit.in
+          <projectDocuments maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' filter_criteria='{{filter_criteria}}' filesize_error='{{filesize_error}}' filetype_error='{{filetype_error}}' project_documents='{{project_documents}}' project_named_documents_titles='{{ project_named_documents_titles}}' />
+      .row#save_or_cancel( data-toggle='edit', style="margin-top:30px;" )
+        .col-sm-3.col-sm-offset-3.edit( style="text-align:center;" )
+          .btn.btn-danger.btn-sm#edit_cancel
+            i.fa.fa-remove.fa-lg
+            span
+              | {{ t.defaults.cancel }}
+        .col-sm-3.edit( style="text-align:center;" )
+          .btn.btn-success.btn-sm.save_project#edit_save
+            i.fa.fa-check.fa-lg
+            span
+              | {{ t.defaults.save }}
+          .form-group( class-has-error='has_errors' )
+            span#project_error.help-block.error
+              | {{ t.error_messages.form_error }}
+| {{/partial }}
+
+| {{#partial file_selector_template }}
+.row.fileupload
+  .col-md-2
+    span.btn.btn-xs.btn-success.fileinput-button
+      i.fa.fa-plus.fa-lg( style="color:white" )
+      span
+        | {{ t.add_document }}
+    input.hidden_fileinput( id="{{key}}_fileinput", multiple="multiple", name="{{key}}_file", type="file", as-ractive_fileupload=true )
+  .col-md-10.fileupload_progress
+    <progressBar />
+| {{/partial }}
+
+| {{#partial edit_title }}
+.row.form-group( class-has-error='title_error' )
+  .col-md-2
+    .no_edit.in
+      span
+        | {{ t.title }}
+    .edit
+      span.required
+        | {{ t.title }}
+  .col-md-10.clearfix
+    .chars_remaining
+      <charsRemaining t='{{t}}', count='{{count}}' />
+    input(type='text', name='project[title]', id='project_title', class='form-control', placeholder="Enter title", size=100, maxlength=100, value="{{title}}", on-keydown="@this.remove_attribute_error('title')")
+    span.help-block#title_error( style="font-size:0.8em; padding-left:4px; position:relative; top:-4px; width:100%; background-color:#d9d0a5" )
+      | {{ t.title_error_message }}
+| {{/partial}}
+
+style.
+  .basic_info .title>.edit>.row>.col-md-2 {
+    padding-top: 18px;
+  }
+  .row.description {
+    width: 77%;
+  }
+  .chars_remaining {
+    float: right;
+  }
+  #save_or_cancel i, #save_or_cancel span{
+    color: white;
+  }
+  #save_or_cancel span, .fileinput-button span {
+    padding-left: 6px;
+    padding-top: 2px;
+  }
+
+style.
+  $error_red : #a94442;
+  .help-block {
+    display: block;
+    color: $error_red;
+  }
+
+  .form-group:not(.has-error){
+    span.help-block:not(.has-error) {
+      display : none;
+    }
+  }
+
+  .form-group.errors {
+    margin-top : 0;
+    margin-bottom : 0;
+  }
+
+  .required:after, .required_before:before{
+    content : '*';
+    color : $error_red;
+    font-size : larger;
+  }
+
+script.
+  import ConfirmDeleteModal from '../../../../../../app/javascript/confirm_delete_modal'
+  import AreaSelector from './area_selector.ractive.pug'
+  import SubareasSelector from './subarea_selector.ractive.pug'
+  import Area from './area.ractive.pug'
+  import Subarea from './subarea.ractive.pug'
+  import ProjectDocuments from './project_documents.ractive.pug'
+  //import Validator from '../../../../../../app/assets/javascripts/validator.coffee' //explicit path to avoid ambiguity
+  var Validator = require("exports-loader?Validator!../../../../../../app/assets/javascripts/validator.coffee")
+  import PerformanceIndicatorAssociation from './performance_indicator_association.js'
+  import PerformanceIndicators from 'performance_indicators.ractive.pug'
+  import Remindable from 'shared/remindable.coffee'
+  import Notable from 'shared/notable.coffee'
+  import translations from '../translations.js'
+
+  const Persistence = $.extend({
+    delete_callback: function(data, textStatus, jqxhr) {
+      return this.parent.remove(this._guid);
+    },
+    formData: function() {
+      return this.asFormData(this.get('persistent_attributes')); // in ractive_local_methods, returns a FormData instance
+    },
+    update_persist: function(success, error, context) { // called by EditInPlace
+      var data;
+      if (this.validate()) {
+        data = this.formData();
+        return $.ajax({
+          // thanks to http://stackoverflow.com/a/22987941/451893
+          //xhr: @progress_bar_create.bind(@)
+          method: 'put',
+          data: data,
+          url: Routes.project_path(current_locale, this.get('id')),
+          //success : @update_project_callback
+          success: success,
+          //context : @
+          context: context,
+          processData: false,
+          contentType: false // jQuery correctly sets the contentType and boundary values
+        });
+      }
+    },
+    save_project: function() {
+      var data;
+      if (this.validate()) {
+        data = this.formData();
+        return $.ajax({
+          // thanks to http://stackoverflow.com/a/22987941/451893
+          //xhr: @progress_bar_create.bind(@)
+          method: 'post',
+          data: data,
+          url: Routes.projects_path(current_locale),
+          success: this.save_project_callback,
+          context: this,
+          processData: false,
+          contentType: false // jQuery correctly sets the contentType and boundary values
+        });
+      }
+    },
+    save_project_callback: function(response, status, jqxhr) {
+      UserInput.reset();
+      return this.set(response);
+    },
+    progress_bar_create: function() {
+      return this.findComponent('progressBar').start();
+    }
+  }, ConfirmDeleteModal);
+
+  const FilterMatch = {
+    include: function() {
+      return this.matches_title() && this.matches_area() && this.matches_subarea() && this.matches_performance_indicator();
+    },
+    matches_title: function() {
+      var escaped_title, re;
+      escaped_title = this.get('filter_criteria.title').replace(/\\/g, "\\\\").replace(/(\?|\(|\)|\[|\]|\{|\}|\.|\>|\<)/g, "\\$1");
+      re = new RegExp(escaped_title.trim(), "i");
+      return re.test(this.get('title'));
+    },
+    matches_area: function() {
+      var criterion, match_undesignated, match_value, select_undesignated, undesignated, value;
+      criterion = this.get('filter_criteria.area_ids');
+      value = this.get('mandate_id');
+      select_undesignated = _(criterion).include(0); // 0 means undesignated area
+      undesignated = _.isNull(value) || _.isUndefined(value);
+      match_undesignated = select_undesignated && undesignated;
+      match_value = _(criterion).include(value);
+      return match_value || match_undesignated;
+    },
+    matches_subarea: function() {
+      var criterion, match_undesignated, select_undesignated, undesignated, value;
+      criterion = this.get('filter_criteria.subarea_ids');
+      value = this.get('subarea_ids');
+      select_undesignated = _(criterion).include(0); // 0 means undesignated subarea
+      undesignated = _.isEmpty(value);
+      match_undesignated = select_undesignated && undesignated;
+      return this.contains(criterion, value) || match_undesignated;
+    },
+    matches_performance_indicator: function() {
+      var criterion, values;
+      criterion = parseInt(this.get('filter_criteria.performance_indicator_id'));
+      values = this.get('performance_indicator_ids');
+      if (_.isUndefined(criterion) || _.isNaN(criterion)) {
+        return true;
+      }
+      return _(values).indexOf(criterion) !== -1;
+    },
+    contains: function(criterion, value) {
+      var common_elements;
+      //return true if _.isEmpty(criterion)
+      common_elements = _.intersection(criterion, value);
+      return !_.isEmpty(common_elements);
+    }
+  };
+
+  const EditBackup = {
+    stash: function() {
+      var stashed_attributes;
+      stashed_attributes = _(this.get()).omit('performance_indicator_ids', 'expanded', 'editing', 'performance_indicator_required', 'persistent_attributes', 'url', 'truncated_title', 'delete_confirmation_message', 'reminders_count', 'notes_count', 'count', 'persisted', 'type', 'include', 'create_note_url', 'create_reminder_url', 'has_errors', 'validation_criteria');
+      return this.stashed_instance = $.extend(true, {}, stashed_attributes);
+    },
+    restore: function() {
+      //@restore_checkboxes()
+      return this.set(this.stashed_instance);
+    }
+  };
+
+  const CharsRemaining = Ractive.extend({
+    template(){
+      return this.get('t.chars_remaining');
+    }
+  });
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    data : function(){ return {
+      t : translations
+    }},
+    oninit: function() {
+      return this.set({
+        'editing': false,
+        'title_error': false,
+        'description_error': false,
+        'performance_indicator_associations_error': false,
+        'project_error': false,
+        'filetype_error': false,
+        'filesize_error': false,
+        'expanded': false,
+        'serialization_key': 'project'
+      });
+    },
+    computed: {
+      performance_indicator_required: function() {
+        return true;
+      },
+      performance_indicator_ids: function() {
+        return _(this.get('performance_indicator_associations')).map(function(pia) {
+          return pia.performance_indicator.id;
+        });
+      },
+      persistent_attributes: function() {
+        // the asFormData method knows how to interpret 'project_documents_attributes'
+        return ['title', 'description', 'mandate_id', 'subarea_ids', 'selected_performance_indicators_attributes', 'project_documents_attributes'];
+      },
+      url: function() {
+        return Routes.project_path(current_locale, this.get('id'));
+      },
+      truncated_title: function() {
+        return this.get('title').split(' ').slice(0, 4).join(' ') + "...";
+      },
+      delete_confirmation_message: function() {
+        return `${delete_project_confirmation_message} "${this.get('truncated_title')}"?`;
+      },
+      reminders_count: function() {
+        return this.get('reminders').length;
+      },
+      notes_count: function() {
+        return this.get('notes').length;
+      },
+      count: function() {
+        var t;
+        t = this.get('title') || "";
+        return 100 - t.length;
+      },
+      persisted: function() {
+        return !_.isNull(this.get('id'));
+      },
+      type: function() {
+        return window.model_name;
+      },
+      include: function() {
+        return this.include();
+      },
+      create_note_url: function() {
+        return window.create_note_url.replace('id', this.get('id'));
+      },
+      create_reminder_url: function() {
+        return window.create_reminder_url.replace('id', this.get('id'));
+      },
+      has_errors: function() {
+        var attributes, error_attributes;
+        attributes = _(this.get('validation_criteria')).keys();
+        error_attributes = _(attributes).map(function(attr) {
+          return attr + "_error";
+        });
+        return _(error_attributes).any((attr) => {
+          return this.get(attr);
+        });
+      },
+      validation_criteria: function() {
+        return {
+          title: 'notBlank',
+          description: 'notBlank',
+          performance_indicator_associations: ['nonEmpty', this.get('performance_indicator_associations')]
+        };
+      },
+      mandate_name: {
+        get: function() {
+          var mandate;
+          if (_.isNull(this.get('mandate_id'))) {
+            return null;
+          }
+          mandate = _(this.get('all_mandates')).findWhere({
+            id: this.get('mandate_id')
+          });
+          return mandate.name;
+        },
+        set: function(val) {
+          return 'foo';
+        }
+      }
+    },
+    components: {
+      areaSelector: AreaSelector,
+      subareasSelector: SubareasSelector,
+      area: Area,
+      subarea: Subarea,
+      projectDocuments: ProjectDocuments,
+      //progressBar: ProgressBar
+      charsRemaining: CharsRemaining,
+      performanceIndicators: PerformanceIndicators
+    },
+    cancel_project: function() {
+      UserInput.reset();
+      return this.parent.remove(this._guid);
+    },
+    expand: function() {
+      this.set('expanded', true);
+      return $(this.find('.collapse')).collapse('show');
+    },
+    compact: function() {
+      this.set('expanded', false);
+      return $(this.find('.collapse')).collapse('hide');
+    },
+    remove_errors: function() {
+      this.compact(); //nothing to do with errors, but this method is called on edit_cancel
+      return this.restore();
+    },
+    remove_attribute_error: function(attr) {
+      return this.set(attr + "_error", false);
+    },
+    add_file: function(file) {
+      var project;
+      project = {
+        id: null,
+        project_id: this.get('id'),
+        file: file,
+        title: '',
+        file_id: '',
+        url: '',
+        original_filename: file.name,
+        original_type: file.type
+      };
+      return this.unshift('project_documents', project);
+    },
+    show_file_selector: function() {
+      return this.find('#project_fileinput').click();
+    }
+  }).extend(Validator).extend(PerformanceIndicatorAssociation).extend(EditBackup).extend(Persistence).extend(FilterMatch).extend(Remindable).extend(Notable);
+

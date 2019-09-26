@@ -1,0 +1,46 @@
+.row.selected_performance_indicator
+  .col-md-8
+    | {{indexed_description}}
+  .col-md-4
+    i.fa.fa-remove.remove( on-click = '@this.remove_indicator(association_id,id)' )
+
+script.
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    oninit: function() {
+      return this.set({
+        serialization_key: `${this.parent.get('serialization_key')}[performance_indicator_associations_attributes][]`
+      });
+    },
+    computed: {
+      persistent_attributes: function() {
+        if (!this.get('persisted')) {
+          return ['association_id', 'performance_indicator_id'];
+        }
+      },
+      persisted: function() {
+        return !_.isNull(this.get('id'));
+      }
+    },
+    remove_indicator: function(association_id, id) { // association_id is the Project or MediaAppearance id, id is the ProjectPerformanceIndicator or MediaAppearancePerformanceIndicator id
+      var data, url;
+      if (_.isNull(id)) { // not yet persisted
+        return this.parent.remove_indicator(this.get('indexed_description'));
+      } else {
+        url = this.get('performance_indicator_url').replace('id', this.get('id'));
+        data = {
+          "_method": 'delete'
+        };
+        return $.ajax({
+          method: 'post',
+          data: data,
+          url: url,
+          success: this.delete_performance_indicator_callback,
+          context: this
+        });
+      }
+    },
+    delete_performance_indicator_callback: function() {
+      return this.parent.remove_indicator(this.get('indexed_description'));
+    }
+  });

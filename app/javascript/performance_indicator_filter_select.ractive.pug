@@ -1,0 +1,22 @@
+include performance_indicator_filter_select_template.pug
+
+style.
+  #performance_indicator_filter_select li a.opt {
+    padding-left: 0px;
+  }
+  #performance_indicator_filter_select li a.opt .text {
+    font-weight: 700;
+  }
+
+script.
+  export default Ractive.extend({
+    //template: "#performance_indicator_filter_select_template",
+    template: $TEMPLATE,
+    select: function(id) {
+      if (this.get('filter_criteria.performance_indicator_id') === id) {
+        return this.set('filter_criteria.performance_indicator_id', null);
+      } else {
+        return this.set('filter_criteria.performance_indicator_id', id);
+      }
+    }
+  });

@@ -11,6 +11,8 @@ class ProjectsController < ApplicationController
     @permitted_filetypes = ProjectDocument.permitted_filetypes
     @create_reminder_url = project_reminders_path('en','id')
     @create_note_url     = project_notes_path('en','id')
+    @all_users = User.select(:firstName, :lastName, :id).all
+    render :index, :layout => 'application_webpack'
   end
 
   def create

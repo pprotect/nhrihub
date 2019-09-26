@@ -1,0 +1,68 @@
+<filterControls planned_results='{{planned_results}}' subareas='{{subareas}}' filter_criteria='{{filter_criteria}}' />
+| {{#projects}}
+<project areas='{{areas}}' subarea_ids='{{subarea_ids}}' area_subarea_ids='{{area_subarea_ids}}' mandate_id='{{mandate_id}}' performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' filter_criteria='{{filter_criteria}}' maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' id='{{id}}' title='{{title}}' description='{{description}}' area_ids='{{area_ids}}'  performance_indicator_associations='{{performance_indicator_associations}}' project_type_ids='{{project_type_ids}}' reminders='{{reminders}}' notes='{{notes}}' project_documents='{{project_documents}}' expanded='false' />
+| {{/projects}}
+
+script.
+  import FilterControls from './filter_controls/filter_controls.ractive.pug'
+  import Project from './project/project.ractive.pug'
+  window.$ = window.jQuery = $ // it's the only method I could get to work for making $ available globally!
+  window._ = _
+
+  export default {
+    el: "#projects",
+    template: $TEMPLATE,
+    data() {
+      return $.extend(true,{},{projects : projects_data, filter_criteria : filter_criteria});
+    },
+    components: {
+      project: Project,
+      filterControls: FilterControls
+    },
+    new_project: function() {
+      var new_project_attributes;
+      if (!this.add_project_active()) {
+        new_project_attributes = {
+          id: null,
+          title: "",
+          description: "",
+          mandate_id: null,
+          project_type_ids: [],
+          performance_indicator_associations: [],
+          project_documents: []
+        };
+        UserInput.claim_user_input_request(this, 'cancel_add_project');
+        return this.unshift('projects', new_project_attributes);
+      }
+    },
+    add_project_active: function() {
+      return !_.isEmpty(this.findAllComponents('project')) && !this.findAllComponents('project')[0].get('persisted');
+    },
+    cancel_add_project: function() {
+      var new_project;
+      new_project = _(this.findAllComponents('project')).find(function(project) {
+        return !project.get('persisted');
+      });
+      return this.remove(new_project._guid);
+    },
+    remove: function(guid) {
+      var index, project_guids;
+      project_guids = _(this.findAllComponents('project')).map(function(pr) {
+        return pr._guid;
+      });
+      index = project_guids.indexOf(guid);
+      return this.splice('projects', index, 1);
+    },
+    expand: function() {
+      this.set('expanded', true);
+      return _(this.findAllComponents('project')).each(function(project) {
+        return project.expand();
+      });
+    },
+    compact: function() {
+      this.set('expanded', false);
+      return _(this.findAllComponents('project')).each(function(project) {
+        return project.compact();
+      });
+    }
+  };

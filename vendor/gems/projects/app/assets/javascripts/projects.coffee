@@ -30,28 +30,6 @@ Ractive.defaults.data =
   maximum_filesize : maximum_filesize
   performance_indicators : performance_indicators
 
-EditInPlace = (node,id)->
-  ractive = @
-  edit = new InpageEdit
-    object : @
-    on : node
-    focus_element : 'input.title'
-    #success : (response, statusText, jqxhr)->
-       #ractive = @.options.object
-       #@.show() # before updating b/c we'll lose the handle
-       #ractive.set(response)
-    success : (response, textStatus, jqXhr)->
-      @.options.object.set(response)
-      @load()
-    error : ->
-      console.log "Changes were not saved, for some reason"
-    start_callback : -> ractive.expand()
-  return {
-    teardown : (id)=>
-      edit.off()
-    update : (id)=>
-    }
-
 AreaSelector = Ractive.extend
   template : '#area_selector_template'
 
@@ -446,6 +424,28 @@ projects_options = ->
     @set('expanded',false)
     _(@findAllComponents('project')).each (project)->
       project.compact()
+
+EditInPlace = (node,id)->
+  ractive = @
+  edit = new InpageEdit
+    object : @
+    on : node
+    focus_element : 'input.title'
+    #success : (response, statusText, jqxhr)->
+       #ractive = @.options.object
+       #@.show() # before updating b/c we'll lose the handle
+       #ractive.set(response)
+    success : (response, textStatus, jqXhr)->
+      @.options.object.set(response)
+      @load()
+    error : ->
+      console.log "Changes were not saved, for some reason"
+    start_callback : -> ractive.expand()
+  return {
+    teardown : (id)=>
+      edit.off()
+    update : (id)=>
+    }
 
 Ractive.decorators.inpage_edit = EditInPlace
 

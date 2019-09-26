@@ -1,0 +1,89 @@
+.row.well.well-sm.expandable_well.project.editable_container{ :style => "{{#if !include}}display:none{{/if}}", 'as-inpage_edit'=>'id'}
+  .col-md-12
+    .row
+      .col-md-9{'data-toggle' => 'edit'}
+        .edit
+          %span.required_before=t('required')
+    .row.basic_info
+      .col-md-9.title{'data-toggle'=>'edit'}
+        .fade.no_edit.in
+          %span {{ title }}
+        .fade.edit{:style => "width: 100%"}
+          {{> edit_title}}
+      .col-md-3.actions
+        .row{:style => "margin-left:0px;"}
+          .col-md-1.col-md-offset-2{'data-toggle'=>:edit}
+            .no_edit.in
+              .alarm_icon.counter{'data-count'=>"{{reminders_count}}", 'on-click' => "@this.show_reminders_panel()".html_safe}
+            .edit
+          .col-md-1{'data-toggle'=>:edit}
+            .no_edit.in
+              .note_icon.show_notes.counter{'data-count'=>'{{notes_count}}', 'on-click' => "@this.show_notes_panel()".html_safe, :style => "position:relative; left: -3px;"}
+            .edit
+          .col-md-1.icon{'data-toggle' => 'edit'}
+            .fade.no_edit.in
+              %i.fa.fa-pencil-square-o#edit_start{ :style=> "position:relative; top:1px;"}
+          .col-md-1{'data-toggle'=>:edit}
+            .no_edit.in
+              %i.fa.fa-sm.fa-trash-o.delete_icon{'on-click'=>'@this.show_confirm_delete_modal()'.html_safe}
+          .col-md-1{'data-toggle'=>:collapse, :href => ".collapse{{id}}", :style => "width:45px;"}
+            %div{'data-toggle'=>:edit}
+              .no_edit.in
+                {{#if expanded}}
+                %i#compact{'on-click'=>'@this.compact()'.html_safe, 'data-toggle'=>'tooltip', 'title'=>t('.compact'), :style => "position:relative; top:3px;"}
+                {{else}}
+                %i#expand{'on-click'=>'@this.expand()'.html_safe, 'data-toggle'=>'tooltip', 'title'=>t('.expand'), :style => "position:relative; top:3px;"}
+                {{/if}}
+              .edit
+    .collapse.expanded_info{:class => "collapse{{id}}"}
+      .row.description.form-group{'class-has-error' => 'description_error', 'data-toggle'=>'edit', :style => "width:60%"}
+        .col-md-2
+          .no_edit.in
+            %span=t('.description')
+          .edit
+            %span.required=t('.description')
+        .col-md-10
+          .fade.no_edit.in
+            %span {{description}}
+          .fade.edit{:style => "width: 100%"}
+            %textarea.form-control#project_description{:value => '{{description}}', 'on-keydown'=>"@this.remove_attribute_error('description')".html_safe}
+            %span.help-block.error#description_error= t('.description_error_message')
+      <performanceIndicators performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations_error='{{performance_indicator_associations_error}}' serialization_key='{{serialization_key}}' persisted='{{persisted}}' planned_results='{{planned_results}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' />
+      .row#mandate{'data-toggle'=>'edit'}
+        .fade.no_edit.in
+          .col-md-2.description{style: 'font-weight: 700'}=t('.area')
+          .col-md-10#name
+            {{ mandate_name }}
+        .div.edit
+          <areaSelector mandate_id='{{mandate_id}}' areas='{{all_areas}}' />
+      .row#subareas{'data-toggle' => :edit}
+        .no_edit.in
+          .col-md-2.description{style: 'font-weight: 700'}=t('.subareas')
+          .col-md-10
+            {{#area_subarea_ids:i}}
+            <area area_id='{{parseInt(i)}}' subarea_ids='{{this}}' />
+            {{/area_subarea_ids}}
+        .edit
+          <subareasSelector subarea_ids='{{subarea_ids}}' />
+      .panel.panel-default.documents
+        .panel-heading
+          .row
+            .col-md-2= t('.project_documents')
+        .panel-body#project_documents{'data-toggle' => :edit}
+          .fade.edit{:style => "padding-left:15px; padding-top:15px;"}
+            {{> file_selector_template {key : 'project'} }}
+          .fade.no_edit.in
+          <projectDocuments maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' filter_criteria='{{filter_criteria}}' filesize_error='{{filesize_error}}' filetype_error='{{filetype_error}}' project_documents='{{project_documents}}' project_named_documents_titles='{{ project_named_documents_titles}}' />
+      .row{'data-toggle'=>:edit, :style => "margin-top:30px;"}
+        .col-sm-3.col-sm-offset-3.edit{:style => "text-align:center;"}
+          .btn.btn-danger.btn-sm#edit_cancel
+            %i.fa.fa-remove.fa-lg{:style => "color:white"}
+            %span{:style => "color:white"}= t("defaults.cancel")
+        .col-sm-3.edit{:style => "text-align:center;"}
+          .btn.btn-success.btn-sm.save_project#edit_save{:style => "color:white;"}
+            %i.fa.fa-check.fa-lg{:style => "color:white"}
+            %span= t("defaults.save")
+          .form-group{'class-has-error' => 'has_errors'}
+            %span#project_error.help-block.error= t("error_messages.form_error")
+
+

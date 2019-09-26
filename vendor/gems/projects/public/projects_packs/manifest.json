@@ -1,0 +1,14 @@
+{
+  "entrypoints": {
+    "projects": {
+      "js": [
+        "/projects_packs/js/projects-a464d20f75620cbdd80a.js"
+      ],
+      "js.map": [
+        "/projects_packs/js/projects-a464d20f75620cbdd80a.js.map"
+      ]
+    }
+  },
+  "projects.js": "/projects_packs/js/projects-a464d20f75620cbdd80a.js",
+  "projects.js.map": "/projects_packs/js/projects-a464d20f75620cbdd80a.js.map"
+}

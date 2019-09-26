@@ -1,0 +1,111 @@
+| {{#if persisted}}
+| {{> show_project_document_template }}
+| {{else}}
+| {{> new_project_document_template }}
+| {{/if}}
+
+| {{#partial show_project_document_template}}
+.project_document
+  .row( style="margin-left:0px;" )
+    .col-md-6.title
+      | {{title}}
+    .col-md-4.filename
+      | {{original_filename}}
+    .col-md-1
+      i.fa.fa-cloud-download( on-click='@this.download_attachment()' )
+    .col-md-1.delete
+      i.fa.fa-sm.fa-trash-o.delete_icon( on-click='@this.show_confirm_delete_modal()' )
+| {{/partial}}
+
+| {{#partial new_project_document_template}}
+.row.document
+  .col-md-6.title
+    input.form-control#project_document_title( type='text', value='{{title}}', list='project_named_documents' )
+    datalist#project_named_documents
+      | {{#project_named_documents_titles}}
+      option( value='{{.}}' ) {{.}}
+      | {{/project_named_documents_titles}}
+    .errors.form-group( class-has-error="file.size_error" )
+      span.help-block.error#filesize_error
+        | {{ t.error_messages.too_large }}
+    .errors.form-group( class-has-error="file.type_error" )
+      span.help-block.error#filetype_error
+        | {{ t.error_messages.unpermitted_type }}
+    .errors.form-group( class-has-error='unconfigured_filetypes_error' )
+      span.help-block.error#unconfigured_filetypes_error
+        | {{ t.error_messages.noFileTypes }}
+  .col-md-4.filename( style="overflow-wrap:break-word" )
+    | {{original_filename}}
+  .col-md-2
+    i.fa.fa-remove.remove( on-click='@this.remove_file()' )
+| {{/partial}}
+
+script.
+  var Validator = require("exports-loader?Validator!../../../../../../app/assets/javascripts/validator.coffee")
+  import ConfirmDeleteModal from '../../../../../../app/javascript/confirm_delete_modal'
+  import translations from '../translations.js'
+
+  const ProjectDocumentValidator = _.extend({
+    initialize_validator: function() {
+      this.set('validation_criteria', {
+        'file.size': ['lessThan', this.get('maximum_filesize')],
+        'file.type': ['match', this.get('permitted_filetypes')]
+      });
+      return this.set('unconfigured_validation_parameter_error', false);
+    }
+  }, Validator);
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    oninit: function() {
+      if (!this.get('persisted')) {
+        this.initialize_validator();
+        return this.validate();
+      }
+    },
+    data : function(){ return {
+      t : translations,
+      serialization_key: 'project[project_documents_attributes][]'
+    }},
+    computed: {
+      persistent_attributes: function() {
+        if (!this.get('id')) { // only persist if it's not already persisted, otherwise don't
+          return ['title', 'original_filename', 'file', 'original_type'];
+        }
+      },
+      unconfigured_filetypes_error: function() {
+        return this.get('unconfigured_validation_parameter_error');
+      },
+      persisted: function() {
+        return !_.isNull(this.get('id'));
+      },
+      url: function() {
+        if (!_.isNull(this.get('id'))) {
+          return Routes.project_document_path(current_locale, this.get('id'));
+        }
+      },
+      truncated_title: function() {
+        return this.get('title').split(' ').slice(0, 4).join(' ') + "...";
+      },
+      truncated_title_or_filename: function() {
+        if (!_.isEmpty(this.get('title'))) {
+          return this.get('truncated_title');
+        } else {
+          return this.get('original_filename');
+        }
+      },
+      delete_confirmation_message: function() {
+        return `${delete_project_document_confirmation_message} "${this.get('truncated_title_or_filename')}"?`;
+      }
+    },
+    remove_file: function() {
+      return this.parent.remove(this._guid);
+    },
+    delete_callback: function(data, textStatus, jqxhr) {
+      return this.parent.remove(this._guid);
+    },
+    download_attachment: function() {
+      return window.location = this.get('url');
+    }
+  }).extend(ProjectDocumentValidator).extend(ConfirmDeleteModal);
+

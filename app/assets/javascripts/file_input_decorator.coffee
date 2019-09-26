@@ -5,7 +5,7 @@
     $(@).parent().find('input:file').trigger('click')
   add_file = (event,el)->
     file = el.files[0]
-    ractive = Ractive.getNodeInfo($(el).closest('.fileupload')[0]).ractive
+    ractive = Ractive.getContext($(el).closest('.fileupload')[0]).ractive
     ractive.add_file(file)
     _reset_input()
   _reset_input = ->

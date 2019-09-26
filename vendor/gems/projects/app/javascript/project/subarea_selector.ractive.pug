@@ -1,0 +1,34 @@
+.row.form-group
+  .col-md-2
+    label
+    |  {{ t.project_type }}
+  .col-md-10
+    .row
+      | {{#areas}}
+      .col-md-3( id='{{name.underscore()}}_subareas', style="padding-top:0;" )
+        label
+        | {{name}}:
+        | {{#subareas}}
+        .row.subarea
+          .col-md-8
+            label( for='subarea_{{id}}' )
+              span
+              | {{name}}
+          .col-md-4
+            input( id='subarea_{{id}}', type='checkbox', name='{{subarea_ids}}', value='{{id}}' )
+        | {{/subareas}}
+      | {{/areas}}
+
+
+
+script.
+  import FilterSelect from './../filter_select.js'
+
+  export default FilterSelect.extend({
+    template: $TEMPLATE,
+    computed: {
+      collection: function() {
+        return "subarea_ids";
+      }
+    }
+  });

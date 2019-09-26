@@ -7,6 +7,8 @@ module Complaints
     def webpacker_instance(name)
       if name == "complaints"
         Complaints.webpacker
+      elsif name == "projects"
+        Projects.webpacker
       else
         Webpacker.instance
       end

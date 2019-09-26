@@ -1,0 +1,27 @@
+li.select_clear
+  button.btn.btn-default.btn-xs#clear_all( on-click='@this.clear_all()' )
+    | {{ t.clear_all }}
+  button.btn.btn-default.btn-xs#select_all( on-click='@this.select_all()' )
+    | {{ t.select_all }}
+
+style.
+  .select_clear {
+    margin-left: 40px;
+  }
+  #select_all {
+    margin-left: 36px;
+  }
+
+script.
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    clear_all: function() {
+      event.stopPropagation();
+      return this.parent.clear_all(this.get('collection'));
+    },
+    select_all: function() {
+      event.stopPropagation();
+      return this.parent.select_all(this.get('collection'));
+    }
+  });

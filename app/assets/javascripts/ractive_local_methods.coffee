@@ -45,21 +45,21 @@ local_methods =
         component_instance.asFormData(component_instance.get('persistent_attributes'),formData)
 
     _(array_attributes).each (attribute)=>
-     value = @get(attribute)
-     prefix = @get('serialization_key')
-     if _.isEmpty(value)
-       value = [""]
+      value = @get(attribute)
+      prefix = @get('serialization_key')
+      if _.isEmpty(value)
+        value = [""]
 
-     _(value).each (item)->
-       name = prefix + "["+ attribute + "][]"
-       formData.append(name, item)
-       return
+      _(value).each (item)->
+        name = prefix + "["+ attribute + "][]"
+        formData.append(name, item)
+        return
 
     _(simple_attributes).each (attribute)=>
       value = @get(attribute)
       prefix = @get('serialization_key')
       name = prefix + "["+ attribute + "]"
-      formData.append(name, value)
+      formData.append(name, value) unless _.isNull(value)
       return
 
     formData
