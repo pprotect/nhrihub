@@ -124,7 +124,7 @@
             | {{ t.subareas }}
           .col-md-10
             | {{#area_subarea_ids:i}}
-            <area area_id='{{parseInt(i)}}' subarea_ids='{{this}}' areas='{{areas}}' subareas='{{subareas}}' />
+            <area id='{{parseInt(i)}}' subarea_ids='{{this}}' areas='{{areas}}' subareas='{{subareas}}' />
             | {{/area_subarea_ids}}
         .edit
           <subareasSelector areas='{{areas}}' subarea_ids='{{subarea_ids}}' t='{{t}}' />
@@ -229,15 +229,14 @@ script.
   import ConfirmDeleteModal from '../../../../../../app/javascript/confirm_delete_modal'
   import AreaSelector from './area_selector.ractive.pug'
   import SubareasSelector from './subarea_selector.ractive.pug'
-  import Area from './area.ractive.pug'
-  import Subarea from './subarea.ractive.pug'
+  import Area from 'area.ractive.pug'
+  import Subarea from 'subarea.ractive.pug'
   import ProjectDocuments from './project_documents.ractive.pug'
-  //import Validator from '../../../../../../app/assets/javascripts/validator.coffee' //explicit path to avoid ambiguity
   var Validator = require("exports-loader?Validator!../../../../../../app/assets/javascripts/validator.coffee")
   import PerformanceIndicatorAssociation from './performance_indicator_association.js'
   import PerformanceIndicators from 'performance_indicators.ractive.pug'
-  import Remindable from 'shared/remindable.coffee'
-  import Notable from 'shared/notable.coffee'
+  import Remindable from 'remindable.coffee'
+  import Notable from 'notable.coffee'
   import translations from '../translations.js'
 
   const Persistence = $.extend({

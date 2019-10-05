@@ -187,10 +187,10 @@ style.
   .reminder #reminder_start_date_1i {width: 4em;}
 
 script.
-  import ConfirmDeleteModal from '../javascript/confirm_delete_modal'
-  var InpageEdit = require("exports-loader?InpageEdit!../assets/javascripts/in_page_edit.coffee")
+  import ConfirmDeleteModal from '../../confirm_delete_modal'
+  var InpageEdit = require("exports-loader?InpageEdit!../../../assets/javascripts/in_page_edit.coffee")
   import I18n from './reminders_translations.js'
-  import csrf_header from './csrf'
+  import csrf_header from 'csrf'
 
   const ReminderEdit = function(node,id){
     var ractive = this;

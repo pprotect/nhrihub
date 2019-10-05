@@ -1,4 +1,4 @@
-import I18n from './notes_popover_translations.js'
+import I18n from 'notes_popover_translations.js'
 
 export default function(node){
   $(node).popover({

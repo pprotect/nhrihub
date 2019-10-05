@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@rails/ujs": "^6.0.0",
     "@rails/webpacker": "^4.0.7",
     "coffee-loader": "^0.9.0",
     "coffeescript": "1.12.7",

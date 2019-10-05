@@ -20,6 +20,8 @@ window.complaints_page_data = function(){
 import complaints_options from '../complaints_page.ractive.pug'
 var filter_criteria_datepicker = require("exports-loader?filter_criteria_datepicker!filter_criteria_datepicker")
 
+require("@rails/ujs").start()
+
 _.extend(Ractive.defaults.data, {
   fade: window.env!='test',
   all_users : source_all_users,

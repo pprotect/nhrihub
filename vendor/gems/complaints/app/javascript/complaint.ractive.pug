@@ -1,4 +1,4 @@
-script#file_selector_template(type='text/ractive', src='file_selector_template.html')
+script#file_selector_template(type='text/ractive' src='../../../../../app/views/shared/_file_selector_template.html')
 script#complaint_detail(type='text/ractive', src='complaint_detail.html')
 
 script#new_complaint_template(type = 'text/ractive')
@@ -319,7 +319,7 @@ style.
 script(type='text/javascript').
   import Mandates from './mandates'
   import MandatesSelector from './mandates_selector'
-  import Area from './area'
+  import Area from 'area'
   import Agencies from './agencies'
   import AgenciesSelector from './agencies_selector'
   import Assignees from './assignees'
@@ -330,40 +330,16 @@ script(type='text/javascript').
   import 'jquery-ui/ui/widgets/datepicker'
   var EditInPlace = require("exports-loader?EditInPlace!edit_in_place")
   import translations from './translations.js'
-  //var Notable = require("exports-loader?Notable!../../../../../app/assets/javascripts/notable.coffee")
   import Communications from './communications.ractive.pug'
   import '../../../../../app/assets/javascripts/local_node_modules/bootstrap-multimodal/js/multimodal.js'
   import StatusChange from './status_change.ractive.pug'
   var RactiveLocalMethods = require("exports-loader?local_methods!ractive_local_methods")
-  import csrf_header from '../../../../../app/javascript/csrf'
-  import reminders from '../../../../../app/javascript/reminders.ractive.pug'
-  import notes from '../../../../../app/javascript/notes.ractive.pug'
+  import reminders from 'reminders.ractive.pug'
+  import notes from 'notes.ractive.pug'
+  import Remindable from 'remindable.coffee'
+  import Notable from 'notable.coffee'
   import SubareaSelector from './subarea_selector.ractive.pug'
   import 'bootstrap'
-
-  var Notable = {
-    show_notes_panel: function() {
-      notes.set({
-        notes: this.get('notes'),
-        create_note_url: this.get('create_note_url'),
-        parent: this
-      });
-      $('#notes_modal').modal('show');
-    }
-  };
-
-  var Remindable = {
-    // copy this object's reminders into the global reminders object
-    show_reminders_panel : function(){
-        reminders.set({
-          reminders: this.get('reminders'),
-          create_reminder_url : this.get('create_reminder_url'),
-          parent : this
-          });
-        $('#reminders_modal').modal('show');
-      }
-    };
-
 
   const EditBackup = {
     stash() {
@@ -388,7 +364,6 @@ script(type='text/javascript').
           // thanks to http://stackoverflow.com/a/22987941/451893
           //xhr: @progress_bar_create.bind(@)
           method : 'post',
-          headers : csrf_header,
           data,
           url : Routes.complaints_path(current_locale),
           success : this.save_complaint_callback,
@@ -418,7 +393,6 @@ script(type='text/javascript').
           // thanks to http://stackoverflow.com/a/22987941/451893
           //xhr: @progress_bar_create.bind(@)
           method : 'put',
-          headers : csrf_header,
           data,
           url : this.get('persisted') ? Routes.complaint_path(current_locale, this.get('id')) : undefined,
           success,

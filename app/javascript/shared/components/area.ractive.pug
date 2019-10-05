@@ -1,13 +1,12 @@
 .area
-  .name
-    | {{ name }}
+  .name {{ name }}
   .subareas.comma-list
     | {{#subarea_ids}}
     <subarea id='{{this}}' subareas='{{subareas}}' />
     | {{/subarea_ids}}
 
 script.
-  import Subarea from './subarea.ractive.pug'
+  import Subarea from 'subarea.ractive.pug'
 
   export default Ractive.extend({
     template: $TEMPLATE,
@@ -15,7 +14,7 @@ script.
       name: function() {
         if (this.get('area_id') !== 0) {
           return _(this.get('areas')).findWhere({
-            id: this.get('area_id')
+            id: this.get('id')
           }).name;
         }
       }

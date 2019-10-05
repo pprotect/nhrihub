@@ -4,7 +4,7 @@
 |  {{> show_communication_template }}
 |  {{/if}}
 
-script#file_selector_template(type='text/ractive' src='../../../../../app/views/shared/file_selector/_file_selector.html')
+script#file_selector_template(type='text/ractive' src='../../../../../app/views/shared/_file_selector_template.html')
 
 script#new_communication_template(type = 'text/ractive')
   .form#new_communication(style = "margin-top:28px")
@@ -118,18 +118,15 @@ script(type='text/javascript').
   import I18n from './translations.js'
   import documents from './documents.ractive.pug'
   var RactiveLocalMethods = require("exports-loader?local_methods!ractive_local_methods")
-  import csrf_header from '../../../../../app/javascript/csrf'
 
   var Persistence = {
     save_communication() {
       const url = Routes.complaint_communications_path(current_locale, this.get('complaint_id'));
       const data = this.formData();
-      const headers = {'X-CSRF-Token' : $('meta[name=csrf-token]').attr('content')};
       if (this.validate()) {
         $.ajax({
           // thanks to http://stackoverflow.com/a/22987941/451893
           //xhr: @start_progress_bar.bind(@)
-          headers : csrf_header,
           method : 'post',
           data,
           url,

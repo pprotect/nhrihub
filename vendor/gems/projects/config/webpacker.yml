@@ -15,7 +15,9 @@ default: &default
   # Additional paths webpack should lookup modules
   # ['app/assets', 'engine/foo/app/assets']
   resolved_paths: ['../../../app/assets/javascripts',
-                   '../../../app/javascript']
+                   '../../../app/javascript/shared/mixins',
+                   '../../../app/javascript/shared/components',
+                   '../../../app/javascript/shared/decorators']
 
   # Reload manifest.json on all requests so we reload latest compiled packs
   cache_manifest: false
