@@ -36,7 +36,7 @@
           | {{#areas}}
           li.dropdown-header( style="padding: 3px 0px 3px 20px;" )
             | {{name}}
-            ul( style= "list-style:none; padding-left:18px;" )
+            ul( id='{{name.underscore()}}_subareas' style= "list-style:none; padding-left:18px;" )
               | {{#subareas}}
               <subareaFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}'/>
               | {{/subareas}}

@@ -7,13 +7,13 @@
       | {{#areas}}
       .col-md-3( id='{{name.underscore()}}_subareas', style="padding-top:0;" )
         label
-        | {{name}}:
+          | {{name}}:
         | {{#subareas}}
         .row.subarea
           .col-md-8
             label( for='subarea_{{id}}' )
               span
-              | {{name}}
+                | {{name}}
           .col-md-4
             input( id='subarea_{{id}}', type='checkbox', name='{{subarea_ids}}', value='{{id}}' )
         | {{/subareas}}

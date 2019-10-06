@@ -456,11 +456,11 @@ feature "filter controls dropdown options", :js => true do # b/c there was a bug
   it "populates area, subarea, and performance_indicator dropdowns" do
     page.find('button', :text => 'Select area').click
     Mandate.all.each do |area|
-      expect(page).to have_selector('#area_filter_select li a span', :text => area.name)
+      expect(page).to have_selector('#area_filter_select li.area_select label', :text => area.name)
     end
     page.find('button', :text => 'Select project type').click
     ProjectSubarea.pluck(:name).each do |name|
-      expect(page).to have_selector('#subarea_filter_select li a span', :text => name)
+      expect(page).to have_selector("#subarea_filter_select li.subarea_select label", text: name)
     end
     page.find('button', :text => 'Select performance indicators').click
     PerformanceIndicator.in_current_strategic_plan.all.each do |pi|

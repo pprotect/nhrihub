@@ -100,9 +100,9 @@ module ProjectsSpecHelpers
   end
 
   def check_subarea(area, subarea)
-  area_key = area.gsub(/\s/,'').underscore
-  checkbox = page.find("##{area_key}_subareas .subarea", :text => subarea).find('input')
-  checkbox.click
+    area_key = area.gsub(/\s/,'').underscore
+    checkbox = page.find("##{area_key}_subareas .subarea", :text => subarea).find('input')
+    checkbox.click
   end
 
   def agencies
