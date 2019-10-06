@@ -19,16 +19,7 @@
         | {{/subareas}}
       | {{/areas}}
 
-
-
 script.
-  import FilterSelect from './../filter_select.js'
-
-  export default FilterSelect.extend({
+  export default Ractive.extend({
     template: $TEMPLATE,
-    computed: {
-      collection: function() {
-        return "subarea_ids";
-      }
-    }
   });

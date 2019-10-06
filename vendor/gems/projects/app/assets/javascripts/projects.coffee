@@ -461,7 +461,3 @@ $ ->
 window.onpopstate = (event)->
   if event.state # to ensure that it doesn't trigger on page load, it's a problem with phantomjs but not with chrome
     window.projects.findComponent('filterControls').set_filter_from_query_string()
-
-
-
-
