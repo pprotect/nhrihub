@@ -16,5 +16,9 @@ module Projects
 
       end # /initializer
 
+      config.app_middleware.use(
+        Rack::Static,
+        urls: ["/projects_packs"], root: "vendor/gems/projects/public"
+      )
   end
 end
