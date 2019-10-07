@@ -1,5 +1,4 @@
 class Nhri::AdvisoryCouncil::AdvisoryCouncilIssue::AreasController < AreasController
-
   def create
     super
   end

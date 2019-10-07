@@ -2,9 +2,8 @@ class ProjectsController < ApplicationController
   def index
     @areas = ProjectArea.all
     @subareas = ProjectSubarea.all
-    @mandates = Mandate.all.sort_by(&:name)
+    @mandates = Mandate.all
     @projects = Project.all
-    @agencies = Agency.all
     @planned_results = PlannedResult.all_with_associations
     @project_named_documents_titles = ProjectDocument::NamedProjectDocumentTitles
     @maximum_filesize = ProjectDocument.maximum_filesize * 1000000
