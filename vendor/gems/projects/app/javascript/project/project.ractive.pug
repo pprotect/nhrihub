@@ -29,7 +29,7 @@
           | {{ t.description_error_message }}
     <areaSelector mandate_id='{{mandate_id}}' all_mandates='{{all_mandates}}' t='{{t}}' />
     <subareasSelector areas='{{areas}}' subarea_ids='{{subarea_ids}}' t='{{t}}' />
-    <performanceIndicators performance_indicator_url='{{performance_indicator_url}}' serialization_key='{{serialization_key}}' persisted='{{persisted}}' planned_results='{{planned_results}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' performance_indicator_associations_error='{{performance_indicator_associations_error}}' />
+    <performanceIndicators performance_indicator_required=true performance_indicator_url='{{performance_indicator_url}}' serialization_key='{{serialization_key}}' persisted='{{persisted}}' planned_results='{{planned_results}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' performance_indicator_associations_error='{{performance_indicator_associations_error}}' />
     .panel.panel-default#documents
       .panel-heading
         | {{ t.project_documents }}
