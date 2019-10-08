@@ -116,7 +116,7 @@
             | {{ t.area }}
           .col-md-10#name
             | {{ mandate_name }}
-        .div.edit
+        .col-md-12.edit
           <areaSelector mandate_id='{{mandate_id}}' all_mandates='{{all_mandates}}' t='{{t}}' />
       .row#subareas( data-toggle='edit' )
         .no_edit.in
@@ -126,7 +126,7 @@
             | {{#area_subarea_ids:i}}
             <area id='{{parseInt(i)}}' subarea_ids='{{this}}' areas='{{areas}}' subareas='{{subareas}}' />
             | {{/area_subarea_ids}}
-        .edit
+        .col-md-12.edit
           <subareasSelector areas='{{areas}}' subarea_ids='{{subarea_ids}}' t='{{t}}' />
       .panel.panel-default.documents
         .panel-heading

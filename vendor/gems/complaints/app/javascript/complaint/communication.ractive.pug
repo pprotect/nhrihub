@@ -4,7 +4,7 @@
 |  {{> show_communication_template }}
 |  {{/if}}
 
-script#file_selector_template(type='text/ractive' src='../../../../../app/views/shared/_file_selector_template.html')
+script#file_selector_template(type='text/ractive' src='../../../../../../app/views/shared/_file_selector_template.html')
 
 script#new_communication_template(type = 'text/ractive')
   .form#new_communication(style = "margin-top:28px")
@@ -108,14 +108,14 @@ script(type='text/javascript').
   import DirectionIcon from './direction_icon.ractive.pug'
   //import ProgressBar
   import Communicants from './communicants.ractive.pug'
-  import Validator from '../../../../../app/javascript/validator'
-  import Note from '../../../../../app/javascript/single_note_modal.js'
-  import ConfirmDeleteModal from '../../../../../app/javascript/confirm_delete_modal'
+  import Validator from '../../../../../../app/javascript/validator'
+  import Note from '../../../../../../app/javascript/single_note_modal.js'
+  import ConfirmDeleteModal from '../../../../../../app/javascript/confirm_delete_modal'
   import 'jquery-ui/ui/widgets/datepicker'
   var SingleMonthDatepicker = require("exports-loader?SingleMonthDatepicker!single_month_datepicker.coffee")
   Ractive.decorators.single_month_datepicker = SingleMonthDatepicker
-  import '../../../../../app/assets/javascripts/file_input_decorator.coffee'
-  import I18n from './translations.js'
+  import '../../../../../../app/assets/javascripts/file_input_decorator.coffee'
+  import I18n from 'translations.js'
   import documents from './documents.ractive.pug'
   var RactiveLocalMethods = require("exports-loader?local_methods!ractive_local_methods")
 

@@ -1,4 +1,4 @@
-script#file_selector_template(type='text/ractive' src='../../../../../app/views/shared/_file_selector_template.html')
+script#file_selector_template(type='text/ractive' src='../../../../../../app/views/shared/_file_selector_template.html')
 script#complaint_detail(type='text/ractive', src='complaint_detail.html')
 
 script#new_complaint_template(type = 'text/ractive')
@@ -325,13 +325,13 @@ script(type='text/javascript').
   import Assignees from './assignees'
   import AssigneeSelector from './assignee_selector'
   import ComplaintDocuments from './complaint_documents'
-  import ConfirmDeleteModal from '../../../../../app/javascript/confirm_delete_modal'
-  import Validator from '../../../../../app/javascript/validator'
+  import ConfirmDeleteModal from '../../../../../../app/javascript/confirm_delete_modal'
+  import Validator from '../../../../../../app/javascript/validator'
   import 'jquery-ui/ui/widgets/datepicker'
   var EditInPlace = require("exports-loader?EditInPlace!edit_in_place")
-  import translations from './translations.js'
+  import translations from 'translations.js'
   import Communications from './communications.ractive.pug'
-  import '../../../../../app/assets/javascripts/local_node_modules/bootstrap-multimodal/js/multimodal.js'
+  import '../../../../../../app/assets/javascripts/local_node_modules/bootstrap-multimodal/js/multimodal.js'
   import StatusChange from './status_change.ractive.pug'
   var RactiveLocalMethods = require("exports-loader?local_methods!ractive_local_methods")
   import reminders from 'reminders.ractive.pug'
