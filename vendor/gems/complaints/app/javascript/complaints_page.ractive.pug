@@ -25,7 +25,7 @@ script.
       if(_.isEmpty(params.selected_subarea_ids)){params.selected_subarea_ids = [""]} // hack to send "empty" array indicating no status was checked
       if(_.isEmpty(params.selected_agency_ids)){params.selected_agency_ids = [""]} // hack to send "empty" array indicating no status was checked
       $.get(window.url, params , this.refresh, 'json')
-      },
+    },
     components : {
       complaint : Complaint,
       filterControls : FilterControls

@@ -27,6 +27,83 @@ class Project < ActiveRecord::Base
   alias_method :subarea_ids=, :project_subarea_ids=
   alias_method :subarea_ids, :project_subarea_ids
 
+  def self.selected_by_url(params)
+    if title = params[:title]
+      with_title(title)
+    else
+      all
+    end
+  end
+
+  def self.filtered(query)
+    with_title(query[:title]).
+      with_mandate(query[:mandate_ids]).
+      with_subareas(query[:subarea_ids]).
+      with_performance_indicators(query[:performance_indicator_ids])
+  end
+
+  def self.no_filter
+    where("1=1")
+  end
+
+  def self.filter_all
+    where("1=0")
+  end
+
+  def self.pg_esc(string)
+    string.gsub(/('|\?|\[|\\|\)|\()/,'\\\\\1')
+  end
+
+  def self.with_title(title_fragment)
+    return no_filter if(title_fragment.blank?)
+    where("\"projects\".\"title\" ~* '.*#{pg_esc(title_fragment)}.*'")
+  end
+
+  def self.with_mandate(mandate_ids)
+    matches_mandate_filter(mandate_ids).or(undesignated_mandate(mandate_ids))
+  end
+
+  def self.matches_mandate_filter(mandate_ids)
+    where(mandate_id: mandate_ids)
+  end
+
+  def self.undesignated_mandate(mandate_ids)
+    if mandate_ids.delete_if(&:blank?).map(&:to_i).include?(0)
+      where(mandate_id: nil)
+    else
+      where("1=0")
+    end
+  end
+
+  def self.with_subareas(subarea_ids)
+    return filter_all if subarea_ids.delete_if(&:blank?).empty?
+    #matches_subareas_filter(subarea_ids).or(undesignated_subarea(subarea_ids))
+    subquery_select_subareas = <<-SQL.squish
+      select "projects"."id"
+      from projects
+      join project_project_subareas
+      on project_project_subareas.project_id = projects.id
+      where project_project_subareas.subarea_id in (#{subarea_ids.join(',')})
+    SQL
+    subquery_match_subareas = "\"projects\".\"id\" in (#{subquery_select_subareas})"
+    subquery_any_subareas = <<-SQL.squish
+      SELECT "project_project_subareas".*
+        FROM "project_project_subareas"
+        WHERE "projects"."id" = "project_project_subareas"."project_id"
+    SQL
+    if subarea_ids.map(&:to_i).include?(0)
+      Project.where("(#{subquery_match_subareas}) OR NOT (EXISTS (#{subquery_any_subareas }))")
+    else
+      Project.where("(#{subquery_match_subareas})")
+    end
+    #where.not(ProjectProjectSubarea.where("project_project_subareas.project_id = projects.id").arel.exists)
+  end
+
+  def self.with_performance_indicators(performance_indicator_ids)
+    return filter_all if performance_indicator_ids.delete_if(&:blank?).empty?
+    joins(:project_performance_indicators).where("project_performance_indicators.performance_indicator_id" => performance_indicator_ids).distinct
+  end
+
   def as_json(options={})
     super( :methods => [
       :id, :title, :description, :subarea_ids, :area_subarea_ids,

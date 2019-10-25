@@ -1,6 +1,6 @@
 | {{^persisted}}
 .row.performance_indicators
-  .div#description
+  #description
     .col-md-2( class="{{#performance_indicator_required}}required{{/}}" )
       | {{ t.performance_indicators }}
   .div
@@ -9,7 +9,7 @@
 | {{/persisted}}
 | {{#persisted}}
 .row.performance_indicators( data-toggle = 'edit' )
-  .div#description
+  #description
     .col-md-2.no_edit.in
       | {{ t.performance_indicators }}
     .col-md-2.edit( class="{{#performance_indicator_required}}required{{/}}" )
@@ -36,7 +36,7 @@
     <selectedPerformanceIndicator performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations='{{performance_indicator_associations}}' planned_results='{{planned_results}}' performance_indicator_id='{{performance_indicator.id}}' association_id='{{association_id}}' indexed_description='{{performance_indicator.indexed_description}}' id='{{id}}' />
     | {{/sorted_performance_indicator_associations}}
     | {{^sorted_performance_indicator_associations}}
-    div.selected_performance_indicator
+    .selected_performance_indicator
       | {{ t.none_assigned }}
     | {{/sorted_performance_indicator_associations}}
 .form-group
@@ -60,12 +60,21 @@ include performance_indicator_filter_select_template
 | {{/sorted_performance_indicator_associations}}
 | {{/partial performance_indicator_show}}
 
+style.
+  .performance_indicators #description {
+    font-weight: 700;
+  }
+  #performance_indicator_filter_select{ 
+    width: 450px;
+  }
+
 script.
   import translations from 'translations.js'
   import SelectedPerformanceIndicator from 'selected_performance_indicator.ractive.pug'
 
   export default Ractive.extend({
     template: $TEMPLATE,
+    css: $CSS,
     data : function(){ return {
       t : translations
     }},

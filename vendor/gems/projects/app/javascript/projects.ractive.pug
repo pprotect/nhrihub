@@ -1,6 +1,6 @@
 <filterControls planned_results='{{planned_results}}' subareas='{{subareas}}' filter_criteria='{{filter_criteria}}' />
 | {{#projects}}
-<project areas='{{areas}}' subarea_ids='{{subarea_ids}}' area_subarea_ids='{{area_subarea_ids}}' mandate_id='{{mandate_id}}' performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' filter_criteria='{{filter_criteria}}' maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' id='{{id}}' title='{{title}}' description='{{description}}' area_ids='{{area_ids}}'  performance_indicator_associations='{{performance_indicator_associations}}' project_type_ids='{{project_type_ids}}' reminders='{{reminders}}' notes='{{notes}}' project_documents='{{project_documents}}' expanded='false' />
+<project areas='{{areas}}' subarea_ids='{{subarea_ids}}' area_subarea_ids='{{area_subarea_ids}}' mandate_id='{{mandate_id}}' performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' filter_criteria='{{filter_criteria}}' maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' id='{{id}}' title='{{title}}' description='{{description}}' mandate_ids='{{mandate_ids}}'  performance_indicator_associations='{{performance_indicator_associations}}' project_type_ids='{{project_type_ids}}' reminders='{{reminders}}' notes='{{notes}}' project_documents='{{project_documents}}' expanded='{{expanded}}' />
 | {{/projects}}
 
 script.
@@ -14,6 +14,16 @@ script.
     template: $TEMPLATE,
     data() {
       return $.extend(true,{},{projects : projects_data, filter_criteria : filter_criteria});
+    },
+    refresh : function(data, statusText, xhr){
+      projects.set('projects', data)
+    },
+    load: function(){
+      var params = _.extend({},this.get('filter_criteria'))
+      if(_.isEmpty(params.mandate_ids)){params.mandate_ids = [""]} // hack to send "empty" array indicating no status was checked
+      if(_.isEmpty(params.subarea_ids)){params.subarea_ids = [""]} // hack to send "empty" array indicating no status was checked
+      if(_.isEmpty(params.performance_indicator_ids)){params.performance_indicator_ids= [""]} // hack to send "empty" array indicating no status was checked
+      $.get(window.url, params , this.refresh, 'json')
     },
     components: {
       project: Project,

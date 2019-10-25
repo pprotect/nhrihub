@@ -13,9 +13,14 @@ style.
   }
 
 script.
+  import I18n from './select_clear_translations.js'
+
   export default Ractive.extend({
     template: $TEMPLATE,
     css: $CSS,
+    data : function(){ return {
+      t : I18n.translations.en
+    }},
     clear_all: function() {
       event.stopPropagation();
       return this.parent.clear_all(this.get('collection'));

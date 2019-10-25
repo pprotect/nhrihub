@@ -19,7 +19,13 @@
         | {{/subareas}}
       | {{/areas}}
 
+style.
+  .subarea label {
+    font-weight: 400;
+  }
+
 script.
   export default Ractive.extend({
     template: $TEMPLATE,
+    css: $CSS
   });

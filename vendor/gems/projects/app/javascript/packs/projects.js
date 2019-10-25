@@ -44,7 +44,8 @@ _.extend(Ractive.defaults.data, {
   performance_indicator_url : performance_indicator_url,
   maximum_filesize : maximum_filesize,
   permitted_filetypes : permitted_filetypes,
-  all_users : all_users
+  all_users : all_users,
+  default_filter_criteria : default_filter_criteria
 })
 
 
@@ -64,4 +65,3 @@ window.onpopstate = function(event) {
     return window.projects.findComponent('filterControls').set_filter_from_query_string();
   }
 };
-

@@ -3244,6 +3244,14 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+jstransformer-scss@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/jstransformer-scss/-/jstransformer-scss-1.0.0.tgz#bae38cb112f5d38871210c22c9cf4a16a0e9f738"
+  integrity sha1-uuOMsRL104hxIQwiyc9KFqDp9zg=
+  dependencies:
+    extend-shallow "^2.0.1"
+    node-sass "^4.0.0"
+
 killable@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/killable/-/killable-1.0.1.tgz#4c8ce441187a061c7474fb87ca08e2a638194892"
@@ -3742,7 +3750,7 @@ node-releases@^1.1.23:
   dependencies:
     semver "^5.3.0"
 
-node-sass@^4.12.0:
+node-sass@^4.0.0, node-sass@^4.12.0:
   version "4.12.0"
   resolved "https://registry.yarnpkg.com/node-sass/-/node-sass-4.12.0.tgz#0914f531932380114a30cc5fa4fa63233a25f017"
   dependencies:

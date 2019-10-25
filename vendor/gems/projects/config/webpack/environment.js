@@ -1,6 +1,7 @@
 const { environment, config } = require('@rails/webpacker');
 const coffee =  require('./loaders/coffee')
 const { resolve } = require('path');
+const path = require('path');
 
 environment.config.set('output.path', resolve(config.public_root_path, config.public_output_path));
 
@@ -13,12 +14,13 @@ environment.loaders.append('ractive_component', {
 
 environment.loaders.append('ractive_pug_component', {
   test: /\.ractive\.pug$/,
-  use: ['ractive-bin-loader', 'pug-html-loader']
+  use: [{loader: 'ractive-bin-loader',options:{}},
+        {loader: 'pug-html-loader',options: {basedir: path.join(__dirname,'../../../../../app/assets/stylesheets')}}]
 })
 
 environment.loaders.append('locales', {
- test: /\.ya?ml$/,
- loaders: ['json-loader', 'yaml-loader']
+  test: /\.ya?ml$/,
+  loaders: ['json-loader', 'yaml-loader']
 })
 
 environment.plugins.append(

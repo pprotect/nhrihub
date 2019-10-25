@@ -1,0 +1,54 @@
+li.custom_checkbox(class='{{select_attribute}}_select')
+  input(id='{{select_attribute}}_{{id}}' type='checkbox' name='{{collection}}' value='{{id}}' )
+  label(for='{{select_attribute}}_{{id}}' on-click='is_clicked()')
+    div.name {{ name }}
+    div.fa.fa-check
+
+style
+  :scss
+    .custom_checkbox {
+      &:hover , &:focus {
+        background-image: -webkit-linear-gradient(top, #F5F5F5 0%, #e8e8e8 100%);
+        background-image: -o-linear-gradient(top, whitesmoke 0%, #e8e8e8 100%);
+        background-image: linear-gradient(to bottom, #F5F5F5 0%, #e8e8e8 100%);
+        background-repeat: repeat-x;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF5F5F5', endColorstr='#FFE8E8E8', GradientType=0);
+        background-color: #e8e8e8;
+        text-decoration: none;
+      }
+      input[type='checkbox'] {
+        position: absolute;
+        left: -9999px;
+        &:checked+label>.fa-check{
+          display: inline-block;
+        }
+        &:not(:checked)+label>.fa-check{
+          display: none;
+        }
+      }
+
+      label{
+        color: #333;
+        font-weight: 400;
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+
+        .name {
+          flex: 1 0 90%;
+        }
+
+        .fa-check {
+          flex-basis: 10%;
+        }
+      }
+    }
+
+script.
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    is_clicked: function(){
+      event.stopPropagation();
+    }
+  });

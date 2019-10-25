@@ -5,11 +5,15 @@
     <subarea id='{{this}}' subareas='{{subareas}}' />
     | {{/subarea_ids}}
 
+style
+  include:scss /area_subarea.scss
+
 script.
   import Subarea from 'subarea.ractive.pug'
 
   export default Ractive.extend({
     template: $TEMPLATE,
+    css: $CSS,
     computed: {
       name: function() {
         if (this.get('area_id') !== 0) {

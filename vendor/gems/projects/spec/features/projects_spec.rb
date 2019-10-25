@@ -29,13 +29,13 @@ feature "projects index", :js => true do
       url = URI(@project.index_url)
       visit @project.index_url.gsub(%r{.*#{url.host}},'') # hack, don't know how else to do it, host otherwise is SITE_URL defined in lib/constants
       expect(number_of_rendered_projects).to eq 1
-      expect(number_of_all_projects).to eq 2
       expect(page.find('#projects_controls #title').value).to eq @project.title
       clear_filter_fields
       expect(number_of_rendered_projects).to eq 2
       expect(query_string).to be_blank
       click_back_button
       expect(page.evaluate_script("window.location.search")).to eq "?title=#{(ERB::Util.url_encode(@project.title)).gsub(/%20/,'+')}"
+      wait_for_ajax
       expect(number_of_rendered_projects).to eq 1
     end
 
@@ -194,7 +194,6 @@ feature "projects index", :js => true do
       expect(page.find('#project_title').value).to eq ""
       expect(page.find('#project_description').value).to eq ""
     end
-
 
     it "should show warning and not add when title is blank" do
       add_project.click
@@ -454,9 +453,9 @@ feature "filter controls dropdown options", :js => true do # b/c there was a bug
 
   # all_areas (areas) Mandate.all, all_area_project_types (project_types) ProjectTypes.mandate_groups, planned_results (planned_results) PlannedResult.all_with_associations
   it "populates area, subarea, and performance_indicator dropdowns" do
-    page.find('button', :text => 'Select area').click
+    page.find('button', :text => 'Select mandate').click
     Mandate.all.each do |area|
-      expect(page).to have_selector('#area_filter_select li.area_select label', :text => area.name)
+      expect(page).to have_selector('#mandate_filter_select li.mandate_select label', :text => area.name)
     end
     page.find('button', :text => 'Select project type').click
     ProjectSubarea.pluck(:name).each do |name|
@@ -464,7 +463,7 @@ feature "filter controls dropdown options", :js => true do # b/c there was a bug
     end
     page.find('button', :text => 'Select performance indicators').click
     PerformanceIndicator.in_current_strategic_plan.all.each do |pi|
-      expect(page).to have_selector('#performance_indicator_filter_select .planned_result .outcome .activity li.performance_indicator a span.text', :text => pi.indexed_description)
+      expect(page).to have_selector('#performance_indicator_filter_select .planned_result .outcome .activity li.performance_indicator_select label .name', :text => pi.indexed_description)
     end
   end
 end
@@ -485,4 +484,32 @@ feature "default area subarea filters", :js => true do
     expect(number_of_rendered_projects).to eq 6
   end
 
+end
+
+feature "filter by performance indicators", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ProjectsSpecHelpers
+
+  before do
+    Project.first.performance_indicators = PerformanceIndicator.all[0..2]
+    visit projects_path(:en)
+  end
+
+  it "should show projects with matching performance indicators" do
+    expect(number_of_rendered_projects).to eq 2
+    page.find('.performance_indicator_select').click
+    page.all('.performance_indicator_select .performance_indicator .fa-check').each do |pi|
+      expect(pi[:class]).to match(/checked/)
+    end
+    page.find(:xpath, ".//button[contains(.,'Clear all')]").click
+    page.all('.performance_indicator_select .performance_indicator .fa-check').each do |pi|
+      expect(pi[:class]).not_to match(/checked/)
+    end
+    expect(number_of_rendered_projects).to eq 0
+    page.find(:xpath, ".//button[contains(.,'Select all')]").click
+    page.all('.performance_indicator_select .performance_indicator .fa-check').each do |pi|
+      expect(pi[:class]).to match(/checked/)
+    end
+    expect(number_of_rendered_projects).to eq 2
+  end
 end

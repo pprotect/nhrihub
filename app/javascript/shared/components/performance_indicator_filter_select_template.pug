@@ -1,4 +1,4 @@
-ul.dropdown-menu#performance_indicator_filter_select( style="width: 450px;" )
+ul.dropdown-menu#performance_indicator_filter_select
   | {{#planned_results }}
   li.dropdown-submenu.planned_result
     div
@@ -16,7 +16,7 @@ ul.dropdown-menu#performance_indicator_filter_select( style="width: 450px;" )
             ul
               | {{#performance_indicators}}
               li.performance_indicator
-                a.opt( on-click='@this.select(id)', style='padding-left: 0;')
+                a.opt( on-click='@this.select(id)')
                   span.text
                     | {{ indexed_description }}
                   span.fa.fa-check

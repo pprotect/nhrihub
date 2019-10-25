@@ -53,7 +53,7 @@
 | {{/partial }}
 
 | {{#partial show_project_template }}
-.row.well.well-sm.expandable_well.project.editable_container( style= "{{#if !include}}display:none{{/if}}", as-inpage_edit='id' )
+.row.well.well-sm.expandable_well.project.editable_container( as-inpage_edit='id' )
   .col-md-12
     .row
       .col-md-9( data-toggle='edit' )
@@ -109,11 +109,11 @@
             textarea.form-control#project_description( value='{{description}}', on-keydown="@this.remove_attribute_error('description')" )
             span.help-block.error#description_error
               | {{ t.description_error_message }}
-      <performanceIndicators performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations_error='{{performance_indicator_associations_error}}' serialization_key='{{serialization_key}}' persisted='{{persisted}}' planned_results='{{planned_results}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' />
+      <performanceIndicators performance_indicator_required=true performance_indicator_url='{{performance_indicator_url}}' performance_indicator_associations_error='{{performance_indicator_associations_error}}' serialization_key='{{serialization_key}}' persisted='{{persisted}}' planned_results='{{planned_results}}' performance_indicator_associations='{{performance_indicator_associations}}' performance_indicators='{{performance_indicators}}' />
       .row#mandate( data-toggle='edit' )
         .fade.no_edit.in
           .col-md-2.description( style='font-weight: 700' )
-            | {{ t.area }}
+            | {{ t.mandate }}
           .col-md-10#name
             | {{ mandate_name }}
         .col-md-12.edit
@@ -183,6 +183,9 @@
       | {{ t.title_error_message }}
 | {{/partial}}
 
+style
+  include:scss /form_errors.scss
+
 style.
   .basic_info .title>.edit>.row>.col-md-2 {
     padding-top: 18px;
@@ -193,36 +196,12 @@ style.
   .chars_remaining {
     float: right;
   }
-  #save_or_cancel i, #save_or_cancel span{
+  #save_or_cancel .btn i, #save_or_cancel .btn span{
     color: white;
   }
   #save_or_cancel span, .fileinput-button span {
     padding-left: 6px;
     padding-top: 2px;
-  }
-
-style.
-  $error_red : #a94442;
-  .help-block {
-    display: block;
-    color: $error_red;
-  }
-
-  .form-group:not(.has-error){
-    span.help-block:not(.has-error) {
-      display : none;
-    }
-  }
-
-  .form-group.errors {
-    margin-top : 0;
-    margin-bottom : 0;
-  }
-
-  .required:after, .required_before:before{
-    content : '*';
-    color : $error_red;
-    font-size : larger;
   }
 
 script.
@@ -292,56 +271,15 @@ script.
     }
   }, ConfirmDeleteModal);
 
-  const FilterMatch = {
-    include: function() {
-      return this.matches_title() && this.matches_area() && this.matches_subarea() && this.matches_performance_indicator();
-    },
-    matches_title: function() {
-      var escaped_title, re;
-      escaped_title = this.get('filter_criteria.title').replace(/\\/g, "\\\\").replace(/(\?|\(|\)|\[|\]|\{|\}|\.|\>|\<)/g, "\\$1");
-      re = new RegExp(escaped_title.trim(), "i");
-      return re.test(this.get('title'));
-    },
-    matches_area: function() {
-      var criterion, match_undesignated, match_value, select_undesignated, undesignated, value;
-      criterion = this.get('filter_criteria.area_ids');
-      value = this.get('mandate_id');
-      select_undesignated = _(criterion).include(0); // 0 means undesignated area
-      undesignated = _.isNull(value) || _.isUndefined(value);
-      match_undesignated = select_undesignated && undesignated;
-      match_value = _(criterion).include(value);
-      return match_value || match_undesignated;
-    },
-    matches_subarea: function() {
-      var criterion, match_undesignated, select_undesignated, undesignated, value;
-      criterion = this.get('filter_criteria.subarea_ids');
-      value = this.get('subarea_ids');
-      select_undesignated = _(criterion).include(0); // 0 means undesignated subarea
-      undesignated = _.isEmpty(value);
-      match_undesignated = select_undesignated && undesignated;
-      return this.contains(criterion, value) || match_undesignated;
-    },
-    matches_performance_indicator: function() {
-      var criterion, values;
-      criterion = parseInt(this.get('filter_criteria.performance_indicator_id'));
-      values = this.get('performance_indicator_ids');
-      if (_.isUndefined(criterion) || _.isNaN(criterion)) {
-        return true;
-      }
-      return _(values).indexOf(criterion) !== -1;
-    },
-    contains: function(criterion, value) {
-      var common_elements;
-      //return true if _.isEmpty(criterion)
-      common_elements = _.intersection(criterion, value);
-      return !_.isEmpty(common_elements);
-    }
-  };
-
   const EditBackup = {
     stash: function() {
       var stashed_attributes;
-      stashed_attributes = _(this.get()).omit('performance_indicator_ids', 'expanded', 'editing', 'performance_indicator_required', 'persistent_attributes', 'url', 'truncated_title', 'delete_confirmation_message', 'reminders_count', 'notes_count', 'count', 'persisted', 'type', 'include', 'create_note_url', 'create_reminder_url', 'has_errors', 'validation_criteria');
+      stashed_attributes = _(this.get()).omit('performance_indicator_ids', 'expanded', 'editing',
+                                              'performance_indicator_required', 'persistent_attributes', 'url',
+                                              'truncated_title', 'delete_confirmation_message', 'reminders_count',
+                                              'notes_count', 'count', 'persisted', 'type', 'create_note_url',
+                                              'create_reminder_url', 'has_errors', 'validation_criteria', 'filter_criteria',
+                                              'default_filter_criteria', 'all_mandates', 'all_users');
       return this.stashed_instance = $.extend(true, {}, stashed_attributes);
     },
     restore: function() {
@@ -413,9 +351,6 @@ script.
       },
       type: function() {
         return window.model_name;
-      },
-      include: function() {
-        return this.include();
       },
       create_note_url: function() {
         return window.create_note_url.replace('id', this.get('id'));
@@ -502,5 +437,11 @@ script.
     show_file_selector: function() {
       return this.find('#project_fileinput').click();
     }
-  }).extend(Validator).extend(PerformanceIndicatorAssociation).extend(EditBackup).extend(Persistence).extend(FilterMatch).extend(Remindable).extend(Notable);
+  })
+  .extend(Validator)
+  .extend(PerformanceIndicatorAssociation)
+  .extend(EditBackup)
+  .extend(Persistence)
+  .extend(Remindable)
+  .extend(Notable);
 

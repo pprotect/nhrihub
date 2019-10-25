@@ -1,0 +1,51 @@
+ul.dropdown-menu#performance_indicator_filter_select
+  <selectClear collection='{{'subarea_ids'}}'/>
+  | {{#planned_results }}
+  li.dropdown-submenu.planned_result
+    div {{ indexed_description }}
+    ul
+      | {{#outcomes }}
+      li.dropdown-submenu.outcome
+        div {{ indexed_description }}
+        ul
+          | {{#activities}}
+          li.dropdown-submenu.activity
+            div {{ indexed_description }}
+            ul
+              | {{#performance_indicators}}
+              <performanceIndicatorFilterSelect id='{{id}}' select_attribute='performance_indicator' name='{{indexed_description}}' collection='{{filter_criteria.performance_indicator_ids}}' />
+              | {{/performance_indicators}}
+          | {{/activities}}
+      | {{/outcomes }}
+  | {{/planned_results }}
+
+style.
+  #performance_indicator_filter_select{ 
+    width: 450px;
+  }
+  ul{
+    padding-inline-start: 12px;
+  }
+  ul ul {
+    padding-inline-start: 24px;
+  }
+  .planned_result>div, .outcome>div, .activity>div { color : #888787 }
+
+script.
+  import SelectClear from 'select_clear'
+  import PerformanceIndicatorFilterSelect from 'performance_indicator_filter_select.ractive.pug'
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    components: {
+      selectClear: SelectClear,
+      performanceIndicatorFilterSelect: PerformanceIndicatorFilterSelect
+    },
+    select_all: function(){
+      this.set('filter_criteria.performance_indicator_ids',this.get('default_filter_criteria.performance_indicator_ids'))
+    },
+    clear_all: function(){
+      this.set('filter_criteria.performance_indicator_ids',[])
+    }
+  });

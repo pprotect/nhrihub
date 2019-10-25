@@ -1,7 +1,7 @@
 .row.form-group
   .col-md-2
     label
-      | {{ t.area }}
+      | {{ t.mandate }}
   .col-md-10
     .row
       form.mandates
@@ -14,8 +14,13 @@
           input( id='{{name.underscore()}}', type='radio', name='{{mandate_id}}', value='{{id}}' )
         | {{/all_mandates}}
 
+style.
+  .mandates label {
+    font-weight: 400;
+  }
 
 script.
   export default Ractive.extend({
-    template : $TEMPLATE
+    template : $TEMPLATE,
+    css: $CSS
   })

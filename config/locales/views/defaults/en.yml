@@ -12,3 +12,5 @@ en:
     delete: 'Delete'
     invalid: 'Invalid'
     required: 'Required'
+    clear_all: 'Clear all'
+    select_all: 'Select all'

@@ -28,9 +28,14 @@
   @create_note_url     = "#{@create_note_url}"
   @filter_criteria =
     title : selected_title
-    area_ids : #{@mandates.map(&:id)<<0}
+    mandate_ids : #{@mandates.map(&:id)<<0}
     subarea_ids : #{@subareas.map(&:id)<<0}
-    performance_indicator_id : null
+    performance_indicator_ids : #{@performance_indicator_ids}
+  @default_filter_criteria =
+    title : ""
+    mandate_ids : #{@mandates.map(&:id)<<0}
+    subarea_ids : #{@subareas.map(&:id)<<0}
+    performance_indicator_ids : #{@performance_indicator_ids}
   @delete_project_confirmation_message = "#{t('.delete_project_confirmation_message')}"
   @delete_project_document_confirmation_message = "#{t('.delete_project_document_confirmation_message')}"
 

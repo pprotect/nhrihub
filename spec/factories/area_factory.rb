@@ -13,4 +13,9 @@ FactoryBot.define do
     name { 'an area' }
     type { 'Nhri::AdvisoryCouncil::AdvisoryCouncilIssueArea' }
   end
+
+  factory :project_area, class: ProjectArea do
+    name { 'an area' }
+    type { 'ProjectArea' }
+  end
 end
