@@ -79,24 +79,28 @@ end
 #end
 
 describe "next case reference" do
-  let(:current_year){ Date.today.strftime('%y') }
-  let(:this_year_case_reference) { "C"+current_year+"-22" }
+  let(:current_year){ Date.today.strftime('%y').to_i }
+  let(:this_year_case_reference) { CaseReference.new(current_year,22) }
   context "existing Complaints are from previous year" do
     before do
-      Complaint.create(:case_reference => 'C12-35')
+      complaint = Complaint.create
+      complaint.update_attribute(:case_reference, CaseReference.new(12,35))
     end
 
     it "should start the sequence at 1 with the current year" do
-      expect(Complaint.next_case_reference).to eq("C#{ current_year }-1")
+      expect(Complaint.next_case_reference.to_s).to eq("C#{ current_year }-1")
     end
   end
 
   context "existing Complaints are from the current year" do
     before do
-      Complaint.create(:case_reference => this_year_case_reference)
+      #Complaint.create(:case_reference => this_year_case_reference)
+      complaint = Complaint.create
+      complaint.update_attribute(:case_reference, this_year_case_reference)
     end
+
     it "should increment the sequence only" do
-      expect(Complaint.next_case_reference).to eq("C#{current_year}-23")
+      expect(Complaint.next_case_reference.to_s).to eq("C#{current_year}-23")
     end
   end
 
@@ -106,29 +110,47 @@ describe "next case reference" do
     end
 
     it "should create the first case reference for the current year" do
-      expect(Complaint.next_case_reference).to eq("C#{ current_year }-1")
+      expect(Complaint.next_case_reference.to_s).to eq("C#{ current_year }-1")
     end
+  end
+end
+
+describe "server assignment of case reference" do
+  it "should not assign case reference to a new complaint" do
+    expect(Complaint.new.case_reference.year).to be_nil
+    expect(Complaint.new.case_reference.sequence).to be_nil
+  end
+
+  it "should assign case reference to a saved complaint" do
+    expect(Complaint.create.reload.case_reference.to_s).to eq "C#{Date.today.strftime('%y')}-1"
   end
 end
 
 describe "sort algorithm" do
   before do
-    Complaint.create(:case_reference => "C17-4")
-    Complaint.create(:case_reference => "C16-10")
-    Complaint.create(:case_reference => "C16-2")
-    Complaint.create(:case_reference => "C16-1")
-    Complaint.create(:case_reference => "C16-5")
-    Complaint.create(:case_reference => "C15-11")
+    c = Complaint.create
+    c.update_attribute(:case_reference, CaseReference.new(17,4))
+    c = Complaint.create
+    c.update_attribute(:case_reference, CaseReference.new(16,10))
+    c = Complaint.create
+    c.update_attribute(:case_reference, CaseReference.new(16,2))
+    c = Complaint.create
+    c.update_attribute(:case_reference, CaseReference.new(16,1))
+    c = Complaint.create
+    c.update_attribute(:case_reference, CaseReference.new(16,5))
+    c = Complaint.create
+    c.update_attribute(:case_reference, CaseReference.new(15,11))
   end
 
   it "should sort by ascending case reference" do
-    expect(Complaint.all.sort.pluck(:case_reference)).to eq ["C17-4","C16-10","C16-5","C16-2","C16-1","C15-11"]
+    expect(Complaint.all.sort.pluck(:case_reference).map(&:to_s)).to eq ["C17-4","C16-10","C16-5","C16-2","C16-1","C15-11"]
   end
 end
 
 describe "#index_url" do
   before do
-    @complaint = Complaint.create(:case_reference => 'C12-35')
+    @complaint = Complaint.create
+    @complaint.update_attribute(:case_reference,  CaseReference.new(12,35))
   end
 
   it "should contain protocol, host, locale, complaints path, and case_reference query string" do
@@ -187,12 +209,12 @@ describe "#as_json" do
       end
 
       2.times do |i|
-        FactoryBot.create(:complaint, :with_fixed_associations, :with_assignees, :with_document, :with_comm, :with_reminders, :with_two_notes, :case_reference => "C17-#{3-i}")
+        FactoryBot.create(:complaint, :with_fixed_associations, :with_assignees, :with_document, :with_comm, :with_reminders, :with_two_notes, :case_reference => CaseReference.new(17,3-i))
       end
     end
 
     it 'should create a properly formatted json object' do
-      @complaints = JSON.parse(Complaint.all.to_json)
+      @complaints = JSON.parse(Complaint.all.sort.reverse.to_json) # sorts by case_reference in descending order
       expect(@complaints).to be_an Array
       expect(@complaints.length).to be 2
       expect(@complaints.first.keys).to match_array ["id", "case_reference", "village", "phone", "created_at", "updated_at",
@@ -203,8 +225,8 @@ describe "#as_json" do
                                                      "date", "date_of_birth", "current_status_humanized", "attached_documents",
                                                      "status_changes", "agency_ids", "communications", "area_ids", "subarea_ids", "area_subarea_ids"]
 
-      expect(@complaints.first["id"]).to eq Complaint.first.id
-      expect(@complaints.first["case_reference"]).to eq Complaint.first.case_reference
+      expect(@complaints.first["id"]).to eq Complaint.first.id # Complaint.first sorts by id in ascending order, returns lowest id/case_ref
+      expect(@complaints.first["case_reference"]).to eq Complaint.first.case_reference.to_s
       expect(@complaints.first["village"]).to eq Complaint.first.village
       expect(@complaints.first["phone"]).to eq Complaint.first.phone
       # compare millisecond values, due to different precision in each value being compared
@@ -261,7 +283,8 @@ describe "#as_json" do
   context "with empty associations" do
     before do
       2.times do |i|
-        FactoryBot.create(:complaint, :case_reference => "C17-#{3-i}")
+        c = FactoryBot.create(:complaint)
+        c.update_attribute(:case_reference, CaseReference.new(17,3-i))
       end
     end
 

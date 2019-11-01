@@ -30,7 +30,7 @@ RSpec.describe ReminderMailer, type: :mailer do
       expect(url.path).to eq "/en/complaints"
       params = CGI.parse(url.query)
       expect(params.keys.first).to eq "case_reference"
-      expect(params.values.first).to eq ["some string"]
+      expect(params.values.first).to eq [complaint.case_reference.to_s]
       expect( mail.header_fields.find{|h| h.name == 'From'}.value).to eq "NHRI Hub Administrator<no_reply@nhri-hub.com>"
       expect( mail.header_fields.find{|h| h.name == 'List-Unsubscribe-Post'}.value).to eq "List-Unsubscribe=One-Click"
       expect( mail.header_fields.find{|h| h.name == 'List-Unsubscribe'}.value).to eq admin_unsubscribe_url(:en,user.id, user.reload.unsubscribe_code, host: SITE_URL, protocol: :https)

@@ -170,10 +170,6 @@ module ComplaintsSpecHelpers
     find('#save_complaint')
   end
 
-  def new_complaint_case_reference
-    page.find('.new_complaint #case_reference').text
-  end
-
   def agencies
     page.find('#agencies')
   end

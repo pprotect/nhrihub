@@ -25,7 +25,6 @@ end
 
 FactoryBot.define do
   factory :complaint do
-    case_reference  { "some string" }
     firstName { Faker::Name.first_name }
     lastName { Faker::Name.last_name }
     village { Faker::Address.city }

@@ -220,7 +220,6 @@ feature "complaints index", :js => true do
     expect(page).to have_selector("#documents .document .filename", :text => "first_upload_file.pdf")
 
     next_ref = Complaint.next_case_reference
-    expect(new_complaint_case_reference).to eq next_ref
     expect{save_complaint.click; wait_for_ajax}.to change{ Complaint.count }.by(1)
                                                .and change{ ComplaintComplaintSubarea.count }.by(3)
                                                .and change{ ComplaintAgency.count }.by(2)
@@ -229,7 +228,8 @@ feature "complaints index", :js => true do
                                                .and change { ActionMailer::Base.deliveries.count }.by(1)
     # on the server
     complaint = Complaint.last
-    expect(complaint.case_reference).to eq next_ref
+    expect(complaint.case_reference.year).to eq next_ref.year
+    expect(complaint.case_reference.sequence).to eq next_ref.sequence
     expect(complaint.lastName).to eq "Normal"
     expect(complaint.firstName).to eq "Norman"
     expect(complaint.chiefly_title).to eq "bossman"
@@ -254,7 +254,7 @@ feature "complaints index", :js => true do
     expect(complaint.date_received.to_date).to eq Date.new(Date.today.year, Date.today.month, 16)
 
     # on the client
-    expect(first_complaint.find('.case_reference').text).to eq next_ref
+    expect(first_complaint.find('.case_reference').text).to eq next_ref.to_s
     expect(first_complaint.find('.current_assignee').text).to eq user.first_last_name
     expect(first_complaint.find('.lastName').text).to eq "Normal"
     expect(first_complaint.find('.firstName').text).to eq "Norman"
@@ -301,9 +301,11 @@ feature "complaints index", :js => true do
     end
 
     expect(page.find('#mandate').text).to match /Special Investigations Unit/
+
+    # Email notification
     expect( email.subject ).to eq "Notification of complaint assignment"
     expect( addressee ).to eq user.first_last_name
-    expect( complaint_url ).to match (/\/en\/complaints\.html\?case_reference=c#{Date.today.strftime("%y")}-1$/i)
+    expect( complaint_url ).to match (/\/en\/complaints\?case_reference=c#{Date.today.strftime("%y")}-3$/i)
     expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
     expect( header_field('From')).to eq "NHRI Hub Administrator<no_reply@nhri-hub.com>"
     expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
@@ -374,10 +376,9 @@ feature "complaints index", :js => true do
       expect{save_complaint.click; wait_for_ajax}.to change{ Complaint.count }.by(1)
     end
     year = Date.today.strftime("%y")
-    expect(Complaint.pluck(:case_reference)).to eq ["c12-34","c12-42"]+(1..15).map{|i| "C#{year}-#{i}"}
-    expect(page.all('.complaint .basic_info .case_reference').map(&:text)).to eq (1..15).map{|i| "C#{year}-#{i}"}.reverse+["c12-34"]
-    add_complaint
-    expect(page.find('.new_complaint #case_reference').text).to eq "C#{year}-16"
+    expect(Complaint.all.sort.map(&:case_reference).map(&:to_s)).to eq (1..17).map{|i| "C#{year}-#{i}"}.reverse
+    # the second complaint has closed status, so is not included on the default page
+    expect(page.all('.complaint .basic_info .case_reference').map(&:text)).to eq (3..17).map{|i| "C#{year}-#{i}"}.reverse << "C#{year}-1"
   end
 
   it "does not add a new complaint that is invalid" do
@@ -581,7 +582,7 @@ feature "complaints index", :js => true do
     user = User.staff.last
     expect( email.subject ).to eq "Notification of complaint assignment"
     expect( addressee ).to eq user.first_last_name
-    expect( complaint_url ).to match (/\/en\/complaints\.html\?case_reference=#{Complaint.first.case_reference}$/)
+    expect( complaint_url ).to match (/\/en\/complaints\?case_reference=#{Complaint.first.case_reference}$/)
     expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
     expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
     expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.reload.unsubscribe_code, host: SITE_URL, protocol: :https)
@@ -833,7 +834,7 @@ feature "complaints index", :js => true do
     url = URI(@complaint.index_url)
     visit @complaint.index_url.gsub(%r{.*#{url.host}},'') # hack, don't know how else to do it, host otherwise is SITE_URL defined in lib/constants
     expect(complaints.count).to eq 1
-    expect(page.find('#complaints_controls #case_reference').value).to eq @complaint.case_reference
+    expect(page.find('#complaints_controls #case_reference').value).to eq @complaint.case_reference.to_s
     clear_filter_fields
     expect(complaints.count).to eq 4
     expect(query_string).to be_blank
@@ -932,7 +933,7 @@ feature "reloads complaints if a different assignee is selected", js: true do
     select_assignee('Norman Normal')
     wait_for_ajax
     expect(complaints.count).to eq 1
-    expect(first_complaint.find('.case_reference').text).to eq @norms_complaint.case_reference
+    expect(first_complaint.find('.case_reference').text).to eq @norms_complaint.case_reference.to_s
   end
 
   it "should show complaints for the current user after alternative assignee setting is cleared" do
@@ -943,7 +944,7 @@ feature "reloads complaints if a different assignee is selected", js: true do
     expect(complaints.count).to eq 1
     open_status_id = ComplaintStatus.where(:name => 'Open').first.id
     expected_complaint = Complaint.with_status(open_status_id).for_assignee(User.first).first
-    expect(first_complaint.find('.case_reference').text).to eq expected_complaint.case_reference
+    expect(first_complaint.find('.case_reference').text).to eq expected_complaint.case_reference.to_s
   end
 end
 
@@ -962,7 +963,7 @@ feature "selects complaints by partial match of case reference", :js => true do
       FactoryBot.create(:complaint,
                         :open,
                         :with_associations,
-                        :assigned_to => User.first, case_reference: Complaint.next_case_reference)
+                        :assigned_to => User.first)
     end
     visit complaints_path(:en)
   end

@@ -35,7 +35,6 @@ class ComplaintsController < ApplicationController
                          GoodGovernance::ComplaintBasis.named_list,
                          Nhri::ComplaintBasis.named_list,
                          Siu::ComplaintBasis.named_list ]
-    @next_case_reference = Complaint.next_case_reference
     @users = User.all
     @good_governance_complaint_bases = GoodGovernance::ComplaintBasis.all
     @human_rights_complaint_bases = Nhri::ComplaintBasis.all
@@ -115,14 +114,14 @@ class ComplaintsController < ApplicationController
              :selected_subarea_ids => [],
              :selected_agency_ids => [] ).
       with_defaults(default_params).
-      slice(:selected_assignee_id, :selected_status_ids, :case_reference, :complainant,
+      slice(:selected_assignee_id, :selected_status_ids, :complainant,
             :from, :to, :village, :phone, :selected_mandate_ids,
-            :selected_subarea_ids,
+            :selected_subarea_ids, :case_reference,
             :selected_agency_ids )
   end
 
   def complaint_params
-    params.require(:complaint).permit( :case_reference, :firstName, :lastName, :chiefly_title, :village, :phone, :new_assignee_id,
+    params.require(:complaint).permit( :firstName, :lastName, :chiefly_title, :village, :phone, :new_assignee_id,
                                        :dob, :email, :complained_to_subject_agency, :desired_outcome, :gender, :details,
                                        :date, :imported, :mandate_id,
                                        :subarea_ids => [],

@@ -27,7 +27,7 @@ module ComplaintsSpecSetupHelpers
     staff_user = User.where(:login => 'staff').first
     FactoryBot.create(:complaint, :open,
                       :assigned_to => [user, staff_user],
-                      :case_reference => "c12-34",
+                      #:case_reference => "c12-34",
                       :date_received => DateTime.now.advance(:days => -100),
                       :village => Faker::Address.city,
                       :phone => Faker::PhoneNumber.phone_number,
@@ -41,7 +41,7 @@ module ComplaintsSpecSetupHelpers
                       :agencies => _agencies,
                       :communications => _communications)
     FactoryBot.create(:complaint, :closed,
-                      :case_reference => "c12-42",
+                      #:case_reference => "c12-42",
                       :assigned_to => [user, staff_user],
                       :date_received => DateTime.now.advance(:days => -100),
                       :village => Faker::Address.city,
@@ -62,19 +62,19 @@ module ComplaintsSpecSetupHelpers
     admin = User.where(:login => 'admin').first
     assignees = [admin, admin]
     FactoryBot.create(:complaint, :open, :assigned_to => assignees,
-                      :case_reference => "c12-22",
+                      #:case_reference => "c12-22",
                       :complaint_areas => [hr_area],
                       :complaint_subareas => hr_subareas,
                       :agencies => [Agency.first]
                      )
     FactoryBot.create(:complaint, :open, :assigned_to => assignees,
-                      :case_reference => "c12-33",
+                      #:case_reference => "c12-33",
                       :complaint_areas => [hr_area],
                       :complaint_subareas => hr_subareas,
                       :agencies => [Agency.first]
                      )
     @complaint = FactoryBot.create(:complaint, :open, :assigned_to => assignees,
-                                   :case_reference => "c12-55",
+                                   #:case_reference => "c12-55",
                                    :complaint_areas => [hr_area],
                                    :complaint_subareas => hr_subareas,
                                    :agencies => [Agency.first]

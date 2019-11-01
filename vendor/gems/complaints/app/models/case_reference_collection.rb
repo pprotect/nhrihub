@@ -1,8 +1,8 @@
 class CaseReferenceCollection
   attr_accessor :refs
 
-  def initialize(refs)
-    @refs = refs.map{|cr| CaseReference.new(cr)}
+  def initialize(refs=[])
+    @refs = refs
   end
 
   def highest_ref
@@ -10,11 +10,7 @@ class CaseReferenceCollection
   end
 
   def next_ref
-    if highest_ref
-      highest_ref.next_ref
-    else
-      CaseReference.new().next_ref
-    end
+    (highest_ref || CaseReference.new).next_ref
   end
 
 end

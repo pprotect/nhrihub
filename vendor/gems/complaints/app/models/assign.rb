@@ -19,8 +19,6 @@ class Assign < ActiveRecord::Base
 
   scope :most_recent_for_assignee, ->(id){ single_complaint_most_recent.for_assignee(id) }
 
-  after_create :notify_assignee
-
   def notify_assignee
     assignee.complaint_assignment_notify(complaint)
   end

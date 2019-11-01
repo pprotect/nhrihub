@@ -1,28 +1,25 @@
 class CaseReference
   attr_accessor :ref, :year, :sequence
-  def initialize(ref=nil)
-    if ref
-      @ref = ref
-      @year, @sequence = @ref[1,8].split('-').map(&:to_i)
-      @sequence = 0 if @sequence.nil? # imported malformed case ref
-      @year = 00 if @year.nil? # ditto
-    else
-      @year = current_year
-      @sequence = 0
-      @ref = next_ref
-    end
+  def initialize(year=nil, sequence=nil)
+    @year = year
+    @sequence = sequence
   end
 
+  def to_s
+    "C#{year}-#{sequence}"
+  end
+  alias_method :as_json, :to_s
+
   def <=>(other)
-    [other.year, other.sequence] <=> [year,sequence]
+    [other.year.to_i, other.sequence.to_i] <=> [year.to_i,sequence.to_i]
   end
 
   def next_ref
-    "C#{next_year}-#{next_sequence}"
+    self.class.new(next_year, next_sequence)
   end
 
   def next_year
-    [year,current_year].max
+    [year.to_i,current_year].max # year may be nil
   end
 
   def current_year
@@ -43,7 +40,7 @@ class CaseReference
       "1=1"
     else
       match, year, sequence = digits.match(/^(\d{1,2})(\d*)/).to_a
-      "complaints.case_reference ~* '^C#{year}-*#{sequence}'" # postgres ~* operator is case-insensitive regex match
+      "complaints.case_reference ~* 'year: #{year}\\d?\\nsequence: #{sequence}'" # postgres ~* operator is case-insensitive regex match
     end
   end
 end

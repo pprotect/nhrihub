@@ -37,7 +37,6 @@ script.
       if (!this.add_complaint_active()) {
         const new_complaint = {
           assigns : [],
-          case_reference : this.get('next_case_reference'),
           firstName : "",
           lastName : "",
           attached_documents : [],
@@ -83,10 +82,5 @@ script.
     },
     generate_report() {
       return window.location=Routes.complaints_path('en',{format : 'docx'});
-    },
-    increment_next_case_reference(last_ref){
-      const ref_components = last_ref.split('-');
-      const new_ref = `${ref_components[0]}-${parseInt(ref_components[1])+1}`;
-      return this.set('next_case_reference', new_ref);
     }
   };

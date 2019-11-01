@@ -9,7 +9,7 @@ class Complaint < ActiveRecord::Base
   has_many :complaint_subareas, :through => :complaint_complaint_subareas
   has_many :reminders, :as => :remindable, :autosave => true, :dependent => :destroy, :inverse_of => :remindable
   has_many :notes, :as => :notable, :autosave => true, :dependent => :destroy, :inverse_of => :notable
-  has_many :assigns, :autosave => true, :dependent => :destroy
+  has_many :assigns, :autosave => true, :dependent => :destroy, after_add: :notify_assignee
   has_many :assignees, :through => :assigns
   belongs_to :mandate # == areas
   has_many :status_changes, :dependent => :destroy
@@ -22,6 +22,21 @@ class Complaint < ActiveRecord::Base
   has_many :communications, :dependent => :destroy
 
   attr_accessor :witness_name
+
+  # why after_commit iso after_create? see https://dev.mikamai.com/2016/01/19/postgresql-transaction-and-rails-callbacks/
+  after_commit :generate_case_reference, on: :create
+  #serialize :case_reference, CaseReference
+
+  def generate_case_reference
+    update_column :case_reference, Complaint.next_case_reference
+    # must be done after commit b/c case_reference is not final until the last commit
+    assigns.last&.notify_assignee
+  end
+
+  def notify_assignee(assign)
+    # i.e. when complaint is updated with a new assign
+    assign.notify_assignee if assigns.size > 1
+  end
 
   def self.filtered(query)
     for_assignee(query[:selected_assignee_id]).
@@ -170,7 +185,7 @@ class Complaint < ActiveRecord::Base
   end
 
   def <=>(other)
-    CaseReference.new(case_reference) <=> CaseReference.new(other.case_reference)
+    case_reference <=> other.case_reference
   end
 
   def as_json(options = {})

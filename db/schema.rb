@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_25_140442) do
+ActiveRecord::Schema.define(version: 2019_10_30_215908) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -290,6 +290,8 @@ ActiveRecord::Schema.define(version: 2019_09_25_140442) do
     t.string "chiefly_title"
     t.string "occupation"
     t.string "employer"
+    t.string "case_reference_alt"
+    t.index ["case_reference"], name: "index_complaints_on_case_reference", unique: true
   end
 
   create_table "controllers", id: :serial, force: :cascade do |t|

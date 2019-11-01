@@ -10,13 +10,6 @@ script#new_complaint_template(type = 'text/ractive')
             | {{ t.required }}
       .row
         .col-md-2
-          span
-            | {{ t.case_reference }}
-        .col-md-6
-          span#case_reference
-            | {{case_reference}}
-      .row
-        .col-md-2
           span 
           | {{ t.complainant }}
         .col-md-6(style = 'padding-top:0px')
@@ -381,7 +374,6 @@ script(type='text/javascript').
     save_complaint_callback(response, status, jqxhr){
       UserInput.reset();
       this.set(response);
-      return complaints.increment_next_case_reference(response.case_reference);
     },
     progress_bar_create() {
       return this.findComponent('progressBar').start();
@@ -428,7 +420,7 @@ script(type='text/javascript').
         return !(_.isNull(this.get('id')) || _.isUndefined(this.get('id')));
       },
       persistent_attributes() {
-        return ['case_reference','village','phone','mandate_id',
+        return ['village','phone','mandate_id',
           'current_status_humanized', 'new_assignee_id', 'subarea_ids',
           'agency_ids', 'attached_documents_attributes', 'details',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
