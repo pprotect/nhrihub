@@ -25,7 +25,7 @@ class Complaint < ActiveRecord::Base
 
   # why after_commit iso after_create? see https://dev.mikamai.com/2016/01/19/postgresql-transaction-and-rails-callbacks/
   after_commit :generate_case_reference, on: :create
-  #serialize :case_reference, CaseReference
+  serialize :case_reference, CaseReference
 
   def generate_case_reference
     update_column :case_reference, Complaint.next_case_reference
