@@ -23,7 +23,7 @@
     = csrf_meta_tags
   %body{:role => :document, :class => ("no-animation" if Rails.env.test? || Rails.env.jstest?), :style => 'padding-top:80px;'}
     - if logged_in?
-      - cache "#{current_user.roles.collect{|r| r.name+'_'+r.updated_at.to_s} }_#{StrategicPlan.pluck(:id).join()}" do
+      - cache "#{current_user.roles.collect{|r| r.name+'_'+r.updated_at.to_s} }_#{StrategicPlan.pluck(:id).join()}_#{request.path}" do
         %nav.navbar.navbar-default.navbar-fixed-top
           .container-fluid
             .navbar-header
