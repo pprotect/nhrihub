@@ -1,3 +1,4 @@
+TIME_ZONE = "Pretoria"
 TWO_FACTOR_AUTHENTICATION = 'disabled'
 SITE_URL = "nhri-hub.com"
 SITE_NAME = "demo"
