@@ -1162,41 +1162,70 @@ feature "selects complaints by partial match of phone", :js => true do
   end
 end
 
-feature "selects complaints by partial match of area", :js => true do
+feature "selects complaints by match of area", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
   include ComplaintsSpecSetupHelpers
 
-  before do
-    create_mandates
-    create_subareas
-    create_agencies
-    user = User.first
-    FactoryBot.create(:complaint, :open, :with_associations, :human_rights, agencies: [Agency.first], assigned_to: user)
-    FactoryBot.create(:complaint, :open, :with_associations, :good_governance, agencies: [Agency.first], assigned_to: user)
-    FactoryBot.create(:complaint, :open, :with_associations, :special_investigations_unit, agencies: [Agency.first], assigned_to: user)
-    FactoryBot.create(:complaint, :open, :with_associations, :corporate_services, agencies: [Agency.first], assigned_to: user)
-    visit complaints_path(:en)
+  context "when mandates are fully populated" do
+    before do
+      create_mandates
+      create_subareas
+      create_agencies
+      user = User.first
+      FactoryBot.create(:complaint, :open, :with_associations, :human_rights, agencies: [Agency.first], assigned_to: user)
+      FactoryBot.create(:complaint, :open, :with_associations, :good_governance, agencies: [Agency.first], assigned_to: user)
+      FactoryBot.create(:complaint, :open, :with_associations, :special_investigations_unit, agencies: [Agency.first], assigned_to: user)
+      FactoryBot.create(:complaint, :open, :with_associations, :corporate_services, agencies: [Agency.first], assigned_to: user)
+      visit complaints_path(:en)
+    end
+
+    it "should return complaints matching the selected mandates" do
+      open_dropdown 'Select area'
+      Mandate.all.each do |mandate|
+        expect(page).to have_selector('#mandate_filter_select li.selected a span', :text => mandate.name)
+      end
+      expect(complaints.count).to eq 4
+      select_option('Corporate Services').click #deselect
+      wait_for_ajax
+      expect(complaints.count).to eq 3
+      select_option('Human Rights').click #deselect
+      wait_for_ajax
+      expect(complaints.count).to eq 2
+      select_option('Special Investigations Unit').click #deselect
+      wait_for_ajax
+      expect(complaints.count).to eq 1
+      select_option('Good Governance').click #deselect
+      wait_for_ajax
+      expect(complaints.count).to eq 0
+    end
   end
 
-  it "should return complaints matching the selected areas" do
-    open_dropdown 'Select area'
-    Mandate.all.each do |mandate|
-      expect(page).to have_selector('#mandate_filter_select li.selected a span', :text => mandate.name)
+  context "when no mandates are populated" do
+    before do
+      #create_mandates
+      create_subareas
+      create_agencies
+      user = User.first
+      FactoryBot.create(:complaint, :open, :with_associations, :human_rights, agencies: [Agency.first], assigned_to: user, phone: '1284235660ext99')
+      FactoryBot.create(:complaint, :open, :with_associations, :good_governance, agencies: [Agency.first], assigned_to: user, phone: '312988622x34')
+      FactoryBot.create(:complaint, :open, :with_associations, :special_investigations_unit, agencies: [Agency.first], assigned_to: user, phone: 'high3235')
+      FactoryBot.create(:complaint, :open, :with_associations, :corporate_services, agencies: [Agency.first], assigned_to: user, phone: '432')
+      visit complaints_path(:en)
     end
-    expect(complaints.count).to eq 4
-    select_option('Corporate Services').click #deselect
-    wait_for_ajax
-    expect(complaints.count).to eq 3
-    select_option('Human Rights').click #deselect
-    wait_for_ajax
-    expect(complaints.count).to eq 2
-    select_option('Special Investigations Unit').click #deselect
-    wait_for_ajax
-    expect(complaints.count).to eq 1
-    select_option('Good Governance').click #deselect
-    wait_for_ajax
-    expect(complaints.count).to eq 0
+
+    it "should return all complaints" do
+      expect(complaints.count).to eq 4
+
+      # trigger ajax request for "all" by filtering on another field and then resetting
+      # not strictly necessary to filter on another field, but it makes the test more convincing
+      # to change from 2-count to 4-count!
+      set_filter_controls_text_field('phone','9')
+      expect(complaints.count).to eq 2
+      clear_filter_fields
+
+      expect(complaints.count).to eq 4
+    end
   end
 end
 
@@ -1205,30 +1234,54 @@ feature "selects complaints matching the selected subarea", :js => true do
   include ComplaintsSpecHelpers
   include ComplaintsSpecSetupHelpers
 
-  before do
-    create_mandates
-    create_agencies
-    user = User.first
-    siu_cb = FactoryBot.create(:complaint_subarea, :siu, name: 'foo')
-    gg_cb  = FactoryBot.create(:complaint_subarea, :good_governance, name: 'bar')
-    hr_cb  = FactoryBot.create(:complaint_subarea, :human_rights, name: 'baz')
-    FactoryBot.create(:complaint, :open, complaint_subareas: [gg_cb], assigned_to: user, agencies: [Agency.first])
-    FactoryBot.create(:complaint, :open, complaint_subareas: [siu_cb],  assigned_to: user, agencies: [Agency.first])
-    FactoryBot.create(:complaint, :open, complaint_subareas: [hr_cb],  assigned_to: user, agencies: [Agency.first])
-    visit complaints_path(:en)
+  context "when subareas are fully populated" do
+    before do
+      create_mandates
+      create_agencies
+      user = User.first
+      siu_cb = FactoryBot.create(:complaint_subarea, :siu, name: 'foo')
+      gg_cb  = FactoryBot.create(:complaint_subarea, :good_governance, name: 'bar')
+      hr_cb  = FactoryBot.create(:complaint_subarea, :human_rights, name: 'baz')
+      FactoryBot.create(:complaint, :open, complaint_subareas: [gg_cb], assigned_to: user, agencies: [Agency.first])
+      FactoryBot.create(:complaint, :open, complaint_subareas: [siu_cb],  assigned_to: user, agencies: [Agency.first])
+      FactoryBot.create(:complaint, :open, complaint_subareas: [hr_cb],  assigned_to: user, agencies: [Agency.first])
+      visit complaints_path(:en)
+    end
+
+    it "should return complaints based on selected subarea" do
+      open_dropdown('Select complaint basis')
+      expect(select_option('foo')[:class]).to include('selected')
+      expect(complaints.count).to eq 3
+      select_option('foo').click # deselect
+      wait_for_ajax
+      expect(complaints.count).to eq 2
+      clear_options('Select complaint basis')
+      expect(complaints.count).to eq 0
+      select_all_options('Select complaint basis')
+      expect(complaints.count).to eq 3
+    end
   end
 
-  it "should return complaints based on selected subarea" do
-    open_dropdown('Select complaint basis')
-    expect(select_option('foo')[:class]).to include('selected')
-    expect(complaints.count).to eq 3
-    select_option('foo').click # deselect
-    wait_for_ajax
-    expect(complaints.count).to eq 2
-    clear_options('Select complaint basis')
-    expect(complaints.count).to eq 0
-    select_all_options('Select complaint basis')
-    expect(complaints.count).to eq 3
+  context "when no subareas are populated" do
+    before do
+      create_mandates
+      create_agencies
+      user = User.first
+      FactoryBot.create(:complaint, :open, assigned_to: user, agencies: [Agency.first], phone: '1284235660ext99')
+      FactoryBot.create(:complaint, :open, assigned_to: user, agencies: [Agency.first], phone: '312588622x34')
+      FactoryBot.create(:complaint, :open, assigned_to: user, agencies: [Agency.first], phone: 'high3235')
+      visit complaints_path(:en)
+    end
+
+    it "should return all complaints" do
+      expect(complaints.count).to eq 3
+
+      set_filter_controls_text_field('phone','9')
+      expect(complaints.count).to eq 1
+      clear_filter_fields
+
+      expect(complaints.count).to eq 3
+    end
   end
 end
 
@@ -1237,32 +1290,56 @@ feature "selects complaints matching selected agency(-ies)", :js => true do
   include ComplaintsSpecHelpers
   include ComplaintsSpecSetupHelpers
 
-  before do
-    create_mandates
-    create_agencies
-    create_subareas
-    user = User.first
-    cc = FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user)
-    cc.agencies = [Agency.first]
-    cc = FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user)
-    cc.agencies = [Agency.second]
-    cc = FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user)
-    cc.agencies = [Agency.third]
-    visit complaints_path(:en)
+  context "when agencies are fully populated" do
+    before do
+      create_mandates
+      create_agencies
+      create_subareas
+      user = User.first
+      cc = FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user)
+      cc.agencies = [Agency.first]
+      cc = FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user)
+      cc.agencies = [Agency.second]
+      cc = FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user)
+      cc.agencies = [Agency.third]
+      visit complaints_path(:en)
+    end
+
+    it "should return complaints based on selected agencies" do
+      expect(complaints.count).to eq 3
+      open_dropdown('Select agency')
+      Agency.pluck(:name).each do |name|
+        expect(select_option(name)[:class]).to include('selected')
+      end
+      select_option(Agency.first.name).click # deselect
+      wait_for_ajax
+      expect(complaints.count).to eq 2
+      clear_options('Select agency')
+      expect(complaints.count).to eq 0
+      select_all_options('Select agency')
+      expect(complaints.count).to eq 3
+    end
   end
 
-  it "should return complaints based on selected agencies" do
-    expect(complaints.count).to eq 3
-    open_dropdown('Select agency')
-    Agency.pluck(:name).each do |name|
-      expect(select_option(name)[:class]).to include('selected')
+  context "when no agencies are populated" do
+    before do
+      create_mandates
+      create_subareas
+      user = User.first
+      FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, phone: '1284235660ext99')
+      FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, phone: '312588622x34')
+      FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, phone: 'high3235')
+      visit complaints_path(:en)
     end
-    select_option(Agency.first.name).click # deselect
-    wait_for_ajax
-    expect(complaints.count).to eq 2
-    clear_options('Select agency')
-    expect(complaints.count).to eq 0
-    select_all_options('Select agency')
-    expect(complaints.count).to eq 3
+
+    it "should return complaints based on selected agencies" do
+      expect(complaints.count).to eq 3
+
+      set_filter_controls_text_field('phone','9')
+      expect(complaints.count).to eq 1
+      clear_filter_fields
+
+      expect(complaints.count).to eq 3
+    end
   end
 end

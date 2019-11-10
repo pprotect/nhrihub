@@ -2,13 +2,9 @@
   "entrypoints": {
     "projects": {
       "js": [
-        "/projects_packs/js/projects-cc8e5d5528ae71e84faa.js"
-      ],
-      "js.map": [
-        "/projects_packs/js/projects-cc8e5d5528ae71e84faa.js.map"
+        "/projects_packs/js/projects-cb208b1f27d84b2a1c64.js"
       ]
     }
   },
-  "projects.js": "/projects_packs/js/projects-cc8e5d5528ae71e84faa.js",
-  "projects.js.map": "/projects_packs/js/projects-cc8e5d5528ae71e84faa.js.map"
+  "projects.js": "/projects_packs/js/projects-cb208b1f27d84b2a1c64.js"
 }

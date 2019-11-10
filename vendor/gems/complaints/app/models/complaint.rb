@@ -53,11 +53,17 @@ class Complaint < ActiveRecord::Base
   end
 
   def self.with_agencies(selected_agency_ids)
+    return no_filter if Agency.count.zero?
     selected_agency_ids = nil if selected_agency_ids.delete_if(&:blank?).empty?
     joins(:complaint_agencies).where("complaint_agencies.agency_id in (?)", selected_agency_ids)
   end
 
+  def self.no_filter
+    where("1=1")
+  end
+
   def self.with_subareas(selected_subarea_ids)
+    return no_filter if ComplaintSubarea.count.zero?
     selected_subarea_ids = nil if selected_subarea_ids.delete_if(&:blank?).empty?
 
     joins(:complaint_complaint_subareas).
@@ -65,49 +71,35 @@ class Complaint < ActiveRecord::Base
   end
 
   def self.with_mandates(selected_mandate_ids)
+    return no_filter if Mandate.count.zero?
     where(mandate_id: selected_mandate_ids)
   end
 
   def self.with_phone(phone_fragment)
     digits = phone_fragment&.delete('^0-9')
-    if digits.nil? || digits.empty?
-      where("1=1")
-    else
-      where("complaints.phone ~ '.*#{digits}.*'")
-    end
+    return no_filter if digits.nil? || digits.empty?
+    where("complaints.phone ~ '.*#{digits}.*'")
   end
 
   def self.with_village(village_fragment)
-    if village_fragment.blank?
-      where("1=1")
-    else
-      where("\"complaints\".\"village\" ~* '.*#{village_fragment}.*'")
-    end
+    return no_filter if village_fragment.blank?
+    where("\"complaints\".\"village\" ~* '.*#{village_fragment}.*'")
   end
 
   def self.since_date(from)
-    if from.blank?
-      where('1=1')
-    else
-      where("complaints.date_received >= ?", Time.parse(from).beginning_of_day) # need to convert the argument to UTC
-    end
+    return no_filter if from.blank?
+    where("complaints.date_received >= ?", Time.parse(from).beginning_of_day) # need to convert the argument to UTC
   end
 
   def self.before_date(to)
-    if to.blank?
-      where('1=1')
-    else
-      where("complaints.date_received <= ?", Time.parse(to).end_of_day)
-    end
+    return no_filter if to.blank?
+    where("complaints.date_received <= ?", Time.parse(to).end_of_day)
   end
 
   def self.with_complainant_match(complainant_fragment)
-    if complainant_fragment.blank?
-      where("1=1")
-    else
-      sql = "\"complaints\".\"firstName\" || ' ' || \"complaints\".\"lastName\" ~* '.*#{complainant_fragment}.*'"
-      where(sql)
-    end
+    return no_filter if complainant_fragment.blank?
+    sql = "\"complaints\".\"firstName\" || ' ' || \"complaints\".\"lastName\" ~* '.*#{complainant_fragment}.*'"
+    where(sql)
   end
 
   def self.index_page_associations(ids, query)

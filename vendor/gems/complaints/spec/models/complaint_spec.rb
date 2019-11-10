@@ -59,25 +59,6 @@ describe "Complaint with gg complaint basis" do
   end
 end
 
-#describe "Complaint with hr complaint basis" do
-  #before do
-    #@complaint = Complaint.create
-    #@human_rights_area = ComplaintArea.create(:name => "Human Rights")
-    #@human_rights_subarea = ComplaintSubarea.create(:name => "A thing")
-    #@complaint.complaint_areas << @human_rights_area
-    #@complaint.complaint_subareas << @human_rights_subarea
-    #@complaint.save
-  #end
-
-  #it "should be saved with the associations" do
-    #expect(@complaint.human_rights_complaint_bases.count).to eq 1
-    #expect(@complaint.human_rights_complaint_bases.first.name).to eq "A thing"
-    #expect(Nhri::ComplaintBasis.count).to eq 1
-    #expect(Convention.count).to eq 1
-    #expect(ComplaintComplaintBasis.count).to eq 1
-  #end
-#end
-
 describe "next case reference" do
   let(:current_year){ Date.today.strftime('%y').to_i }
   let(:this_year_case_reference) { CaseReference.new(current_year,22) }

@@ -44,19 +44,19 @@ FactoryBot.define do
     assigns { admin_assigns(assigned_to) }
 
     trait :corporate_services do
-      mandate_id { Mandate.strategic_plan.first.id }
+      mandate_id { Mandate.strategic_plan.first&.id }
     end
 
     trait :human_rights do
-      mandate_id { Mandate.human_rights.first.id }
+      mandate_id { Mandate.human_rights.first&.id }
     end
 
     trait :special_investigations_unit do
-      mandate_id { Mandate.siu.first.id }
+      mandate_id { Mandate.siu.first&.id }
     end
 
     trait :good_governance do
-      mandate_id { Mandate.good_governance.first.id }
+      mandate_id { Mandate.good_governance.first&.id }
     end
 
     trait :with_associations do

@@ -36,7 +36,7 @@ FactoryBot.define do
 
     trait :with_subareas do 
       after(:build) do |project|
-        project.project_subarea_ids = ProjectSubarea.pluck(:id).sample(4)
+        project.project_subarea_ids = ProjectSubarea.first(4).map(&:id)
       end
     end
 

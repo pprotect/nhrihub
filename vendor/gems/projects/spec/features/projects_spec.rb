@@ -490,26 +490,116 @@ feature "filter by performance indicators", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ProjectsSpecHelpers
 
-  before do
-    Project.first.performance_indicators = PerformanceIndicator.all[0..2]
-    visit projects_path(:en)
+  context "when there are performance indicators configured" do
+    before do
+      Project.first.performance_indicators = PerformanceIndicator.all[0..2]
+      visit projects_path(:en)
+    end
+
+    it "should show projects with matching performance indicators" do
+      expect(number_of_rendered_projects).to eq 2
+      page.find('.performance_indicator_select').click
+      page.all('.performance_indicator_select .performance_indicator .fa-check').each do |pi|
+        expect(pi[:class]).to match(/checked/)
+      end
+      page.find(:xpath, ".//button[contains(.,'Clear all')]").click
+      page.all('.performance_indicator_select .performance_indicator .fa-check').each do |pi|
+        expect(pi[:class]).not_to match(/checked/)
+      end
+      expect(number_of_rendered_projects).to eq 0
+      page.find(:xpath, ".//button[contains(.,'Select all')]").click
+      page.all('.performance_indicator_select .performance_indicator .fa-check').each do |pi|
+        expect(pi[:class]).to match(/checked/)
+      end
+      expect(number_of_rendered_projects).to eq 2
+    end
   end
 
-  it "should show projects with matching performance indicators" do
-    expect(number_of_rendered_projects).to eq 2
-    page.find('.performance_indicator_select').click
-    page.all('.performance_indicator_select .performance_indicator .fa-check').each do |pi|
-      expect(pi[:class]).to match(/checked/)
+  context "when there are no performance indicators configured" do
+    before do
+      PerformanceIndicator.destroy_all
+      visit projects_path(:en)
     end
-    page.find(:xpath, ".//button[contains(.,'Clear all')]").click
-    page.all('.performance_indicator_select .performance_indicator .fa-check').each do |pi|
-      expect(pi[:class]).not_to match(/checked/)
+
+    it "should show projects with matching performance indicators" do
+      expect(number_of_rendered_projects).to eq 2
+      clear_filter_fields
+      expect(number_of_rendered_projects).to eq 2
     end
-    expect(number_of_rendered_projects).to eq 0
-    page.find(:xpath, ".//button[contains(.,'Select all')]").click
-    page.all('.performance_indicator_select .performance_indicator .fa-check').each do |pi|
-      expect(pi[:class]).to match(/checked/)
+  end
+end
+
+feature "filter by mandate", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ProjectsSpecHelpers
+
+  context "when mandates are configured" do
+    before do
+      visit projects_path(:en)
     end
-    expect(number_of_rendered_projects).to eq 2
+
+    it "should filter by selected mandate" do
+      expect(number_of_rendered_projects).to eq 2
+      page.find('button', text: "Select mandate").click
+      page.find(".mandate_select", text: "Undesignated").click
+      wait_for_ajax
+      expect(number_of_rendered_projects).to eq 1
+      clear_filter_fields
+      expect(number_of_rendered_projects).to eq 2
+    end
+  end
+
+  context "when no mandates are configured" do
+    before do
+      Mandate.destroy_all
+      visit projects_path(:en)
+    end
+
+    it "should filter by selected mandate" do
+      expect(number_of_rendered_projects).to eq 2
+      clear_filter_fields
+      expect(number_of_rendered_projects).to eq 2
+    end
+  end
+
+end
+
+feature "filter by project type", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ProjectsSpecHelpers
+
+  context "when subareas (= project types) are configured" do
+    before do
+      visit projects_path(:en)
+    end
+
+    it "should filter by selected project type" do
+      expect(number_of_rendered_projects).to eq 2
+      page.find('button', text: "Select project type").click
+      page.find('button#clear_all').click
+      wait_for_ajax
+      expect(number_of_rendered_projects).to eq 0
+      page.find('li.subarea_select', text: "Amicus Curiae").click
+      wait_for_ajax
+      expect(number_of_rendered_projects).to eq 1
+      page.find('button#select_all').click
+      wait_for_ajax
+      expect(number_of_rendered_projects).to eq 2
+    end
+  end
+
+  context "when no subareas (= project types) are configured" do
+    before do
+      ProjectProjectSubarea.destroy_all
+      ProjectSubarea.destroy_all
+      visit projects_path(:en)
+    end
+
+    it "should filter by selected project type" do
+      expect(number_of_rendered_projects).to eq 2
+      clear_filter_fields # selects projects with undesignated subareas... i.e. all projects
+      wait_for_ajax
+      expect(number_of_rendered_projects).to eq 2
+    end
   end
 end

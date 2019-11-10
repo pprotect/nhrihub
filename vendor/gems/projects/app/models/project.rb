@@ -60,6 +60,7 @@ class Project < ActiveRecord::Base
   end
 
   def self.with_mandate(mandate_ids)
+    return no_filter if Mandate.count.zero?
     matches_mandate_filter(mandate_ids).or(undesignated_mandate(mandate_ids))
   end
 
@@ -77,7 +78,6 @@ class Project < ActiveRecord::Base
 
   def self.with_subareas(subarea_ids)
     return filter_all if subarea_ids.delete_if(&:blank?).empty?
-    #matches_subareas_filter(subarea_ids).or(undesignated_subarea(subarea_ids))
     subquery_select_subareas = <<-SQL.squish
       select "projects"."id"
       from projects
@@ -100,6 +100,7 @@ class Project < ActiveRecord::Base
   end
 
   def self.with_performance_indicators(performance_indicator_ids)
+    return no_filter if PerformanceIndicator.count.zero?
     return filter_all if performance_indicator_ids.delete_if(&:blank?).empty?
     joins(:project_performance_indicators).where("project_performance_indicators.performance_indicator_id" => performance_indicator_ids).distinct
   end
