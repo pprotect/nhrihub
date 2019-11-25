@@ -2,7 +2,8 @@ source 'https://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~>6.0.0.rc1'
+gem 'rails', '=6.0.1'
+gem 'sprockets', '~> 3.0'
 gem 'activestorage'
 
 gem 'bootsnap', :require => false
@@ -50,9 +51,10 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   # Use Capistrano for deployment
+  #gem 'capistrano', '~>3.8.1'
+  gem 'capistrano'
   gem 'capistrano-rails'
-  gem 'capistrano', '~>3.8.1'
-  # capistrano add-ons
+  ## capistrano add-ons
   gem 'capistrano-bundler'
   gem 'capistrano-passenger'
   gem 'capistrano-faster-assets'
@@ -60,8 +62,9 @@ group :development do
   # specify higher rev than required by capistrano in order to get
   # fixed connection pooling and faster deploys
   gem 'sshkit', '~> 1.5'
+  # for github pages:
   gem 'jekyll'
-  gem 'jekyll-theme-tactile'
+  gem 'jekyll-theme-tactile', :git => 'git@github.com:pages-themes/tactile.git' # b/c latest version is not available on Rubygems atm
 end
 
 gem 'haml-rails'
@@ -78,8 +81,8 @@ group :test, :jstest do
   gem 'selenium-webdriver'
   gem 'webdrivers'
   gem 'database_cleaner', '~>1.6.1'
-  gem 'teaspoon'
-  gem 'teaspoon-mocha'
+  #gem 'teaspoon'
+  #gem 'teaspoon-mocha'
   gem 'magic_lamp'
   gem 'simplecov', :require => false
 end
@@ -104,8 +107,10 @@ gem 'tzinfo-data' # so that we use the ruby tzinfo vs what is installed on the m
 
 gem 'acme_plugin', "~> 0.0.10"
 
+gem 'rubocop-faker'
+
 gem "refile", :git => "https://github.com/refile/refile.git", :ref => "d7a42", require: "refile/rails" # for rails5 compatibility
-gem "rack", git: "https://github.com/rack/rack.git" # also for sinatra 2.0.0-alpha support
+gem "rack" #, git: "https://github.com/rack/rack.git" # also for sinatra 2.0.0-alpha support
 gem "rack-protection" #, git: "https://github.com/sinatra/rack-protection.git"
 gem "rails-settings-cached", '~> 0.4.2'
 gem "underscore-rails"
@@ -119,6 +124,7 @@ gem "flamegraph"
 gem "stackprof", :require => false
 gem "webpacker", '~> 4.0.7'
 gem "bulk_cache_fetcher" # used in complaints module
+#gem "get_back", :git => "git@github.com:lazylester/get_back.git"
 
 ### NHRI Modules:
 gem 'authengine', :path => 'vendor/gems/authengine'

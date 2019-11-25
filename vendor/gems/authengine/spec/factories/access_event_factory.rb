@@ -5,7 +5,7 @@ FactoryBot.define do
                      'user/login_blank', 'user/invalid_password',
                      'user/login_not_found', 'user/account_not_activated',
                      'user/account_disabled' ].sample }
-    login { Faker::Lorem.words[1] }
+    login { Faker::Lorem.words[number: 1] }
     request_ip { Faker::Internet.ip_v4_address }
     request_user_agent { Faker::Internet.user_agent }
     created_at { DateTime.now.advance(days: -rand(365), hours: -rand(24)) }

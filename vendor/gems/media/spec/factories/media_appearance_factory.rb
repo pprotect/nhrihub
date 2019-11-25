@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :media_appearance do
-    title {Faker::Lorem.sentence(5)}
+    title {Faker::Lorem.sentence(word_count: 5)}
     user_id { User.pluck(:id).sample }
 
     trait :link do
@@ -10,7 +10,7 @@ FactoryBot.define do
     trait :file do
       file                { LoremIpsumDocument.new.upload_file }
       filesize            { 10000 + (30000*rand).to_i }
-      original_filename   { "#{Faker::Lorem.words(2).join("_")}.pdf" }
+      original_filename   { "#{Faker::Lorem.words(number: 2).join("_")}.pdf" }
       original_type       { "application/pdf" }
 
       after(:build) do |media_appearance|
@@ -32,12 +32,12 @@ FactoryBot.define do
     end
 
     trait :no_f_in_title do
-      title { Faker::Lorem.sentence(5).gsub(/f/i,"b") }
+      title { Faker::Lorem.sentence(word_count: 5).gsub(/f/i,"b") }
     end
 
     trait :title_has_an_f do
       title {
-        str = Faker::Lorem.sentence(5)
+        str = Faker::Lorem.sentence(word_count: 5)
         i = rand(str.length)
         l = str.length
         new_str = (str.dup.slice(0,i-1)+'f'+str.dup.slice(i-l,1000)).dup }

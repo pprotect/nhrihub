@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :outcome do
-    description { Faker::Lorem.words(6).join(" ") }
+    description { Faker::Lorem.words(number: 6).join(" ") }
 
     trait :populated do
       after(:create) do |o|

@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :project do
-    title { Faker::Lorem.words(7).join(' ') }
-    description { Faker::Lorem.sentences(3).join(' ') }
+    title { Faker::Lorem.words(number: 7).join(' ') }
+    description { Faker::Lorem.sentences(number: 3).join(' ') }
 
     trait :with_reminders do
       after(:build) do |project|

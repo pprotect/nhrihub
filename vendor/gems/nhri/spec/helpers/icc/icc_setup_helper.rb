@@ -12,7 +12,7 @@ module IccSetupHelper
     doc = FactoryBot.create(:accreditation_required_document,
                              :revision => first_doc_rev.to_s,
                              :title => "Statement of Compliance",
-                             :original_filename => Faker::Lorem.words(3).join('_')+'.doc')
+                             :original_filename => Faker::Lorem.words(number: 3).join('_')+'.doc')
     dgid = doc.document_group_id
     4.times do |i|
       current_doc_rev -= 0.1
@@ -21,7 +21,7 @@ module IccSetupHelper
                          :document_group_id => dgid,
                          :revision => current_doc_rev.to_s,
                          :title => "Statement of Compliance",
-                         :original_filename => Faker::Lorem.words(3).join('_')+'.doc')
+                         :original_filename => Faker::Lorem.words(number: 3).join('_')+'.doc')
     end
   end
 
@@ -31,8 +31,8 @@ module IccSetupHelper
    end
 
 
-   FactoryBot.create(:accreditation_required_document, :title => "Statement of Compliance", :original_filename => Faker::Lorem.words(3).join('_')+'.doc')
-   FactoryBot.create(:accreditation_required_document, :title => "Annual Report", :original_filename => Faker::Lorem.words(3).join('_')+'.doc')
-   FactoryBot.create(:accreditation_required_document, :title => "Budget", :original_filename => Faker::Lorem.words(3).join('_')+'.doc')
+   FactoryBot.create(:accreditation_required_document, :title => "Statement of Compliance", :original_filename => Faker::Lorem.words(number: 3).join('_')+'.doc')
+   FactoryBot.create(:accreditation_required_document, :title => "Annual Report", :original_filename => Faker::Lorem.words(number: 3).join('_')+'.doc')
+   FactoryBot.create(:accreditation_required_document, :title => "Budget", :original_filename => Faker::Lorem.words(number: 3).join('_')+'.doc')
   end
 end

@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :strategic_priority do
     strategic_plan_id { StrategicPlan.maximum(:id) }
     priority_level {StrategicPriority.where(:strategic_plan_id => strategic_plan_id).maximum(:priority_level) || 1}
-    description    { Faker::Lorem.words(6).join(" ") }
+    description    { Faker::Lorem.words(number: 6).join(" ") }
 
     trait :populated do
       after(:create) do |sp|

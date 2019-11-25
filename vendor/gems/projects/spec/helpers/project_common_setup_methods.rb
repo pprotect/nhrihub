@@ -31,15 +31,15 @@ module ProjectCommonSetupMethods
     o = Outcome.create(:planned_result_id => pr.id, :description => "ultimate enlightenment")
     a1 = Activity.create(:description => "Smarter thinking", :outcome_id => o.id)
     3.times do
-      PerformanceIndicator.create(:description => Faker::Lorem.words(3).join(" "), :target => "90%", :activity_id => a1.id)
+      PerformanceIndicator.create(:description => Faker::Lorem.words(number: 3).join(" "), :target => "90%", :activity_id => a1.id)
     end
     a2 = Activity.create(:description => "Public outreach", :outcome_id => o.id)
     3.times do
-      PerformanceIndicator.create(:description => Faker::Lorem.words(3).join(" "), :target => "90%", :activity_id => a2.id)
+      PerformanceIndicator.create(:description => Faker::Lorem.words(number: 3).join(" "), :target => "90%", :activity_id => a2.id)
     end
     a3 = Activity.create(:description => "Media coverage", :outcome_id => o.id)
     3.times do
-      PerformanceIndicator.create(:description => Faker::Lorem.words(3).join(" "), :target => "90%", :activity_id => a3.id)
+      PerformanceIndicator.create(:description => Faker::Lorem.words(number: 3).join(" "), :target => "90%", :activity_id => a3.id)
     end
   end
 end

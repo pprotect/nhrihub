@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :strategic_plan do
     start_date { nil }
-    title {Faker::Lorem.sentence(8,false,0)}
+    title {Faker::Lorem.sentence(word_count: 8,supplemental: false,random_words_to_add: 0)}
 
     trait :populated do
       after(:create) do |sp|

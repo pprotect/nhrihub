@@ -30,7 +30,7 @@ feature "index page", :js => true do
     fill_in("Title", :with => "Director")
     fill_in("Email", :with => "elda@trantow.name")
     fill_in("Alternate email", :with => "griffin.reichert@williamson.info")
-    fill_in("Biography", :with => Faker::Lorem.sentences(2).join(' '))
+    fill_in("Biography", :with => Faker::Lorem.sentences(number: 2).join(' '))
     fill_in("Organization", :with => "Some organization")
     fill_in("Department", :with => "Department of public affairs")
     expect{page.find('#save').click; wait_for_ajax}.to change{AdvisoryCouncilMember.count}.by(1)
@@ -71,7 +71,7 @@ feature "index page", :js => true do
     fill_in("Title", :with => "Director")
     fill_in("Email", :with => "elda@trantow.name")
     fill_in("Alternate email", :with => "griffin.reichert@williamson.info")
-    fill_in("Biography", :with => Faker::Lorem.sentences(2).join(' '))
+    fill_in("Biography", :with => Faker::Lorem.sentences(number: 2).join(' '))
     fill_in("Organization", :with => "Some organization")
     fill_in("Department", :with => "Department of public affairs")
     modal_close_icon.click
@@ -97,7 +97,7 @@ feature "index page", :js => true do
     fill_in("Title", :with => "Director")
     fill_in("Email", :with => "elda@trantow.name")
     fill_in("Alternate email", :with => "griffin.reichert@williamson.info")
-    fill_in("Biography", :with => Faker::Lorem.sentences(2).join(' '))
+    fill_in("Biography", :with => Faker::Lorem.sentences(number: 2).join(' '))
     fill_in("Organization", :with => "Some organization")
     fill_in("Department", :with => "Department of public affairs")
     add_member_cancel_icon.click
@@ -121,7 +121,7 @@ feature "index page", :js => true do
     id = AdvisoryCouncilMember.first.id
     expect(page).to have_selector("#edit_member_modal h4", :text => 'Edit advisory council member')
     sleep(0.2)
-    new_bio = Faker::Lorem.sentences(2).join(' ')
+    new_bio = Faker::Lorem.sentences(number: 2).join(' ')
     fill_in("First name", :with => "Letitia")
     fill_in("Last name", :with => "Effertz")
     fill_in("Title", :with => "Director")
@@ -154,7 +154,7 @@ feature "index page", :js => true do
     advisory_council_member = AdvisoryCouncilMember.first
     id = advisory_council_member.id
     expect(page).to have_selector("#edit_member_modal h4", :text => 'Edit advisory council member')
-    new_bio = Faker::Lorem.sentences(2).join(' ')
+    new_bio = Faker::Lorem.sentences(number: 2).join(' ')
     fill_in("First name", :with => "Letitia")
     fill_in("Last name", :with => "Effertz")
     fill_in("Title", :with => "Director")

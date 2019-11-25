@@ -5,7 +5,7 @@ FactoryBot.define do
     heading_id {(Nhri::Heading.pluck(:id).sample)}
     nature {["Structural","Process","Outcomes"].sample}
     monitor_format { ["text", "numeric", "file"].sample }
-    numeric_monitor_explanation {if monitor_format=="numeric" then Faker::Lorem.words(7).join(' ') else nil end }
+    numeric_monitor_explanation {if monitor_format=="numeric" then Faker::Lorem.words(number: 7).join(' ') else nil end }
 
     trait :with_reminder do
       after(:build) do |indicator|

@@ -1,10 +1,10 @@
 FactoryBot.define do
   factory :icc_reference_document do
-    title               {Faker::Lorem.words(4).join(' ')}
+    title               {Faker::Lorem.words(number: 4).join(' ')}
     file                { LoremIpsumDocument.new.upload_file }
     source_url          { Faker::Internet.url }
     filesize            { rand(1000000) + 10000 }
-    original_filename   { Faker::Lorem.words(4).join('_')+'.docx' }
+    original_filename   { Faker::Lorem.words(number: 4).join('_')+'.docx' }
     original_type       { "docx" }
     user_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user).id end }
 

@@ -10,6 +10,6 @@ FactoryBot.define do
     home_phone { Faker::PhoneNumber.phone_number }
     email { Faker::Internet.email }
     alternate_email { Faker::Internet.email }
-    bio { Faker::Lorem.sentences(2).join(' ') }
+    bio { Faker::Lorem.sentences(number: 2).join(' ') }
   end
 end

@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :note do
-    text { Faker::Lorem.sentence(10) }
+    text { Faker::Lorem.sentence(word_count: 10) }
     author_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user).id end }
     editor_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user).id end }
 

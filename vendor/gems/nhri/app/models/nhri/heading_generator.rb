@@ -95,7 +95,7 @@ class Nhri::HeadingGenerator
                        :nature => nature,
                        :human_rights_attribute_id => o_id,
                        :heading_id => heading.id,
-                       :numeric_monitor_explanation => Faker::Lorem.words(7).join(' '),
+                       :numeric_monitor_explanation => Faker::Lorem.words(number: 7).join(' '),
                        :notes => notes,
                        :reminders => reminders,
                        :numeric_monitors => numeric_monitors)

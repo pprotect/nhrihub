@@ -14,7 +14,7 @@ FactoryBot.define do
   factory :file_monitor, :class => Nhri::FileMonitor do
     file                { LoremIpsumDocument.new.upload_file }
     filesize            { 10000 + (30000*rand).to_i }
-    original_filename   { "#{Faker::Lorem.words(2).join("_")}.pdf" }
+    original_filename   { "#{Faker::Lorem.words(number: 2).join("_")}.pdf" }
     original_type       { "application/msword" }
     user_id { if User.count > 20 then User.pluck(:id).sample else FactoryBot.create(:user).id end }
   end

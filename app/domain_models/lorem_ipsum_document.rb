@@ -19,11 +19,11 @@ class LoremIpsumDocument < WordReport
   end
 
   def title
-    Faker::Lorem.words(5).join(' ').titleize
+    Faker::Lorem.words(number: 5).join(' ').titleize
   end
 
   def heading
-    Faker::Lorem.words(3).join(' ').titleize
+    Faker::Lorem.words(number: 3).join(' ').titleize
   end
 
   def text

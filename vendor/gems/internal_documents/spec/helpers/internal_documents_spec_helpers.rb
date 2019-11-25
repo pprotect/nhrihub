@@ -7,8 +7,8 @@ module InternalDocumentsSpecHelpers
     current_doc_rev = first_doc_rev = (rand(49)+50).to_f/10
     doc = FactoryBot.create(:internal_document,
                              :revision => first_doc_rev.to_s,
-                             :title => Faker::Lorem.words(4).join(' '),
-                             :original_filename => Faker::Lorem.words(3).join('_')+'.doc')
+                             :title => Faker::Lorem.words(number: 4).join(' '),
+                             :original_filename => Faker::Lorem.words(number: 3).join('_')+'.doc')
     dgid = doc.document_group_id
     4.times do |i|
       current_doc_rev -= 0.1
@@ -16,8 +16,8 @@ module InternalDocumentsSpecHelpers
       FactoryBot.create(:internal_document,
                          :document_group_id => dgid,
                          :revision => current_doc_rev.to_s,
-                         :title => Faker::Lorem.words(4).join(' '),
-                         :original_filename => Faker::Lorem.words(3).join('_')+'.doc')
+                         :title => Faker::Lorem.words(number: 4).join(' '),
+                         :original_filename => Faker::Lorem.words(number: 3).join('_')+'.doc')
     end
   end
 
