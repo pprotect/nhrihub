@@ -1,4 +1,12 @@
 GIT
+  remote: git@github.com:lazylester/get_back.git
+  revision: 04a26715cc85c9077443fdc7f4a97448e58cc2f4
+  specs:
+    get_back (0.0.1)
+      httparty
+      rails (~> 6.0.0)
+
+GIT
   remote: git@github.com:pages-themes/tactile.git
   revision: 54f483b8cd69f45f3750b5ce1074f7a445e827a4
   specs:
@@ -49,13 +57,6 @@ GIT
   branch: master
   specs:
     secure_headers (6.1.1)
-
-PATH
-  remote: ../get_back
-  specs:
-    get_back (0.0.1)
-      httparty
-      rails (~> 6.0.0)
 
 PATH
   remote: vendor/gems/authengine

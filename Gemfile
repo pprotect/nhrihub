@@ -51,7 +51,6 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   # Use Capistrano for deployment
-  #gem 'capistrano', '~>3.8.1'
   gem 'capistrano'
   gem 'capistrano-rails'
   ## capistrano add-ons
@@ -124,8 +123,8 @@ gem "flamegraph"
 gem "stackprof", :require => false
 gem "webpacker", '~> 4.0.7'
 gem "bulk_cache_fetcher" # used in complaints module
-#gem "get_back", :git => "git@github.com:lazylester/get_back.git"
-gem "get_back", :path => "../get_back"
+gem "get_back", :git => "git@github.com:lazylester/get_back.git"
+#gem "get_back", :path => "../get_back"
 
 ### NHRI Modules:
 gem 'authengine', :path => 'vendor/gems/authengine'
