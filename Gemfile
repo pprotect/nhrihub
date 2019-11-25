@@ -125,6 +125,7 @@ gem "stackprof", :require => false
 gem "webpacker", '~> 4.0.7'
 gem "bulk_cache_fetcher" # used in complaints module
 #gem "get_back", :git => "git@github.com:lazylester/get_back.git"
+gem "get_back", :path => "../get_back"
 
 ### NHRI Modules:
 gem 'authengine', :path => 'vendor/gems/authengine'
