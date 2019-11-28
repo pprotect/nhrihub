@@ -3,8 +3,12 @@ namespace :db do
   task :sync do
     on roles(:all) do
       execute "cd #{current_path} && RAILS_ENV=production rake db:snapshot "
-      run_locally "rsync --remove-source-files --rsh=ssh #{user}@#{domain}:'#{current_path}/tmp/backups*' db/backups"
-      run_locally "rake db:restore"
+      ssh_host = host.hostname
+      backup_files = current_path.join('tmp','backups*')
+      run_locally do
+        system "rsync -Pav -e ssh  #{ssh_host}:'#{backup_files}' db/backups"
+        system "rake db:restore"
+      end
     end
   end
 end

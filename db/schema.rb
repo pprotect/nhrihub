@@ -25,6 +25,18 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
     t.string "request_user_agent"
   end
 
+  create_table "acme_plugin_challenges", id: :serial, force: :cascade do |t|
+    t.text "response"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "acme_plugin_settings", id: :serial, force: :cascade do |t|
+    t.text "private_key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "action_role_changes", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -42,11 +54,11 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
   end
 
   create_table "actions", id: :serial, force: :cascade do |t|
-    t.string "action_name"
+    t.string "action_name", limit: 255
     t.integer "controller_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string "human_name"
+    t.string "human_name", limit: 255
     t.index ["action_name"], name: "index_actions_on_action_name"
   end
 
@@ -76,7 +88,7 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
     t.text "description"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string "progress"
+    t.string "progress", limit: 255
     t.integer "index", array: true
   end
 
@@ -295,7 +307,7 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
   end
 
   create_table "controllers", id: :serial, force: :cascade do |t|
-    t.string "controller_name"
+    t.string "controller_name", limit: 255
     t.datetime "last_modified"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -326,9 +338,9 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
   create_table "document_groups", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string "type", limit: 40
     t.string "title"
     t.integer "archive_doc_count", default: 0
+    t.string "type"
   end
 
   create_table "file_monitors", id: :serial, force: :cascade do |t|
@@ -379,18 +391,18 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
   end
 
   create_table "internal_documents", id: :serial, force: :cascade do |t|
-    t.string "title"
+    t.string "title", limit: 255
     t.integer "filesize"
-    t.string "original_filename"
+    t.string "original_filename", limit: 255
     t.integer "revision_major"
     t.integer "revision_minor"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "lastModifiedDate"
-    t.string "original_type"
+    t.string "original_type", limit: 255
     t.integer "document_group_id"
     t.integer "user_id"
-    t.string "type", limit: 60
+    t.string "type"
   end
 
   create_table "mandates", id: :serial, force: :cascade do |t|
@@ -413,7 +425,6 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
     t.integer "user_id"
     t.string "url"
     t.string "title"
-    t.jsonb "description"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "lastModifiedDate"
@@ -455,16 +466,16 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
   end
 
   create_table "organizations", id: :serial, force: :cascade do |t|
-    t.string "name"
-    t.string "street"
-    t.string "city"
-    t.string "zip"
-    t.string "phone"
-    t.string "email"
+    t.string "name", limit: 255
+    t.string "street", limit: 255
+    t.string "city", limit: 255
+    t.string "zip", limit: 255
+    t.string "phone", limit: 255
+    t.string "email", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "contacts"
-    t.string "state"
+    t.string "contacts", limit: 255
+    t.string "state", limit: 255
   end
 
   create_table "outcomes", id: :serial, force: :cascade do |t|
@@ -485,7 +496,7 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
   end
 
   create_table "planned_results", id: :serial, force: :cascade do |t|
-    t.string "description"
+    t.string "description", limit: 255
     t.integer "strategic_priority_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -537,8 +548,8 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
   end
 
   create_table "reminders", id: :serial, force: :cascade do |t|
-    t.string "text"
-    t.string "reminder_type"
+    t.string "text", limit: 255
+    t.string "reminder_type", limit: 255
     t.integer "remindable_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -560,8 +571,8 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
   end
 
   create_table "roles", id: :serial, force: :cascade do |t|
-    t.string "name"
-    t.string "short_name"
+    t.string "name", limit: 255
+    t.string "short_name", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "parent_id"
@@ -569,16 +580,17 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
 
   create_table "sessions", id: :serial, force: :cascade do |t|
     t.integer "user_id"
-    t.string "session_id"
+    t.string "session_id", limit: 255
     t.datetime "login_date"
     t.datetime "logout_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "expired", default: false
     t.index ["session_id"], name: "index_sessions_on_session_id"
   end
 
   create_table "settings", id: :serial, force: :cascade do |t|
-    t.string "var", null: false
+    t.string "var", limit: 255, null: false
     t.text "value"
     t.integer "thing_id"
     t.string "thing_type", limit: 30
@@ -639,25 +651,25 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
   create_table "useractions", id: :serial, force: :cascade do |t|
     t.integer "user_id"
     t.integer "action_id"
-    t.string "type"
+    t.string "type", limit: 255
     t.text "params"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
-    t.string "login"
-    t.string "email"
+    t.string "login", limit: 255
+    t.string "email", limit: 255
     t.string "crypted_password", limit: 40
     t.string "salt", limit: 40
     t.string "activation_code", limit: 40
     t.datetime "activated_at"
     t.string "password_reset_code", limit: 40
     t.boolean "enabled", default: true
-    t.string "firstName"
-    t.string "lastName"
-    t.string "type"
-    t.string "status", default: "created"
+    t.string "firstName", limit: 255
+    t.string "lastName", limit: 255
+    t.string "type", limit: 255
+    t.string "status", limit: 255, default: "created"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "organization_id"
