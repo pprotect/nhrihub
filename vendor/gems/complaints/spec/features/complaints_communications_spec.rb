@@ -97,7 +97,7 @@ feature "complaints communications", :js => true do
     # ActiveRecord stores the date field as Postgres "timestamp without time zone" type, with UTC being assumed
     raw_persisted_date = ActiveRecord::Base.connection.execute("select date from communications where note='Some note text'")[0]["date"]
     expect(raw_persisted_date).to eq "2016-05-19 07:00:00"
-    expect(communication.date.inspect).to eq "Thu, 19 May 2016 00:00:00 PDT -07:00"
+    expect(communication.date.in_time_zone("Pacific Time (US & Canada)")).to eq "Thu, 19 May 2016 00:00:00 PDT -07:00"
     expect(communication.direction).to eq "sent"
     expect(communication.user.first_last_name).to eq User.first.first_last_name
     expect(communication.note).to eq "Some note text"

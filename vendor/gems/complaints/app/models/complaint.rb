@@ -1,4 +1,5 @@
 require Complaints::Engine.root.join('app', 'domain_models', 'cache')
+require 'case_reference'
 
 class Complaint < ActiveRecord::Base
   include Cache
@@ -88,7 +89,8 @@ class Complaint < ActiveRecord::Base
 
   def self.since_date(from)
     return no_filter if from.blank?
-    where("complaints.date_received >= ?", Time.parse(from).beginning_of_day) # need to convert the argument to UTC
+    time_from = Time.zone.local_to_utc(Time.parse(from)).beginning_of_day
+    where("complaints.date_received >= ?", time_from)
   end
 
   def self.before_date(to)
