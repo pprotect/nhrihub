@@ -22,10 +22,12 @@ script.
       t : I18n.translations.en
     }},
     clear_all: function() {
+      console.log('clear all')
       event.stopPropagation();
       return this.parent.clear_all(this.get('collection'));
     },
     select_all: function() {
+      console.log('select all')
       event.stopPropagation();
       return this.parent.select_all(this.get('collection'));
     }

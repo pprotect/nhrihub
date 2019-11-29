@@ -507,10 +507,45 @@ feature "filter by performance indicators", :js => true do
         expect(pi[:class]).not_to match(/checked/)
       end
       expect(number_of_rendered_projects).to eq 0
+      page.find('#performance_indicator_filter_select .performance_indicator_select', text: Project.first.performance_indicators.first.description).click
+      wait_for_ajax
+      expect(number_of_rendered_projects).to eq 1
       page.find(:xpath, ".//button[contains(.,'Select all')]").click
       page.all('.performance_indicator_select .performance_indicator .fa-check').each do |pi|
         expect(pi[:class]).to match(/checked/)
       end
+      expect(number_of_rendered_projects).to eq 2
+      page.find(:xpath, ".//button[contains(.,'Clear all')]").click
+      wait_for_ajax
+      expect(number_of_rendered_projects).to eq 0
+      clear_filter_fields
+      wait_for_ajax
+      expect(number_of_rendered_projects).to eq 2
+    end
+
+    it "filter behaviour should be consistent regardless of sequence of operations" do
+      expect(number_of_rendered_projects).to eq 2
+      page.find('.performance_indicator_select').click
+      #clear all
+      page.find(:xpath, ".//button[contains(.,'Clear all')]").click
+      wait_for_ajax
+      expect(number_of_rendered_projects).to eq 0
+      #reset filter
+      clear_filter_fields
+      wait_for_ajax
+      expect(number_of_rendered_projects).to eq 2
+      #clear all
+      page.find('.performance_indicator_select').click
+      page.find(:xpath, ".//button[contains(.,'Clear all')]").click
+      wait_for_ajax
+      expect(number_of_rendered_projects).to eq 0
+      # check one dropdown option
+      page.find('#performance_indicator_filter_select .performance_indicator_select', text: Project.first.performance_indicators.first.description).click
+      wait_for_ajax
+      expect(number_of_rendered_projects).to eq 1
+      #reset filter
+      clear_filter_fields
+      wait_for_ajax
       expect(number_of_rendered_projects).to eq 2
     end
   end

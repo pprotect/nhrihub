@@ -123,10 +123,11 @@ script.
       return this.parent.compact();
     },
     clear_filter: function() {
+      console.log("reset filter")
       window.history.pushState({
         foo: "bar"
       }, "unused title string", window.location.origin + window.location.pathname);
-      return this.set('filter_criteria', window.default_filter_criteria);
+      return this.set('filter_criteria', $.extend({},window.default_filter_criteria));
     },
     set_filter_from_query_string: function() {
       var filter_criteria, search_string;
