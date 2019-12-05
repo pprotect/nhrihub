@@ -48,6 +48,8 @@ class Controller < ActiveRecord::Base
   def self.find_or_create_from_file(controller_file)
     where(:controller_name => controller_file.model_string).first ||
       create_from_file(controller_file)
+  rescue ActiveRecord::StatementInvalid
+    # occurs when migrating to initialize database in a new app
   end
 
 end
