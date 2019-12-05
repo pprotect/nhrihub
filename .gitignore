@@ -22,6 +22,8 @@
 # capistrano configuration
 config/deploy/demo.rb
 config/deploy/ws.rb
+config/deploy/cma.rb
+config/deploy/ppsa.rb
 
 app/assets/images/banner_logo.png
 app/assets/stylesheets/theme.scss
@@ -66,5 +68,7 @@ db/structure_backup.sql
 
 
 config/site_specific_linked_files/ws/
+config/site_specific_linked_files/cma/
+config/site_specific_linked_files/ppsa/
 **/node_modules
 .vimrc
