@@ -63,7 +63,7 @@ group :development do
   gem 'sshkit', '~> 1.5'
   # for github pages:
   gem 'jekyll'
-  gem 'jekyll-theme-tactile', :git => 'git@github.com:pages-themes/tactile.git' # b/c latest version is not available on Rubygems atm
+  gem 'jekyll-theme-tactile', :git => 'https://github.com/pages-themes/tactile.git' # b/c latest version is not available on Rubygems atm
 end
 
 gem 'haml-rails'
@@ -109,8 +109,8 @@ gem 'acme_plugin', "~> 0.0.10"
 gem 'rubocop-faker'
 
 gem "refile", :git => "https://github.com/refile/refile.git", :ref => "d7a42", require: "refile/rails" # for rails5 compatibility
-gem "rack" #, git: "https://github.com/rack/rack.git" # also for sinatra 2.0.0-alpha support
-gem "rack-protection" #, git: "https://github.com/sinatra/rack-protection.git"
+gem "rack"
+gem "rack-protection"
 gem "rails-settings-cached", '~> 0.4.2'
 gem "underscore-rails"
 gem "capistrano-linked-files"
@@ -123,7 +123,7 @@ gem "flamegraph"
 gem "stackprof", :require => false
 gem "webpacker", '~> 4.0.7'
 gem "bulk_cache_fetcher" # used in complaints module
-gem "get_back", :git => "git@github.com:lazylester/get_back.git"
+gem "get_back", :git => "https://github.com/lazylester/get_back.git"
 #gem "get_back", :path => "../get_back"
 
 ### NHRI Modules:

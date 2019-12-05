@@ -1,20 +1,4 @@
 GIT
-  remote: git@github.com:lazylester/get_back.git
-  revision: 04a26715cc85c9077443fdc7f4a97448e58cc2f4
-  specs:
-    get_back (0.0.1)
-      httparty
-      rails (~> 6.0.0)
-
-GIT
-  remote: git@github.com:pages-themes/tactile.git
-  revision: 54f483b8cd69f45f3750b5ce1074f7a445e827a4
-  specs:
-    jekyll-theme-tactile (0.1.1)
-      jekyll (> 3.5, < 5.0)
-      jekyll-seo-tag (~> 2.0)
-
-GIT
   remote: https://github.com/asiapacificforum/surus.git
   revision: 36cb18a62a207dcc0755c44de48f8f3adb2a3add
   ref: 36cb18a
@@ -23,11 +7,27 @@ GIT
       activerecord (> 4.1)
 
 GIT
+  remote: https://github.com/lazylester/get_back.git
+  revision: 04a26715cc85c9077443fdc7f4a97448e58cc2f4
+  specs:
+    get_back (0.0.1)
+      httparty
+      rails (~> 6.0.0)
+
+GIT
   remote: https://github.com/lazylester/message_block.git
   revision: cb7dc71a9f2ae71be8940788f43632c9b1057318
   specs:
     message_block (1.0.4)
       rails (>= 3.0.0)
+
+GIT
+  remote: https://github.com/pages-themes/tactile.git
+  revision: 54f483b8cd69f45f3750b5ce1074f7a445e827a4
+  specs:
+    jekyll-theme-tactile (0.1.1)
+      jekyll (> 3.5, < 5.0)
+      jekyll-seo-tag (~> 2.0)
 
 GIT
   remote: https://github.com/refile/refile.git
