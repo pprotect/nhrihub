@@ -49,7 +49,7 @@ class ControllerFile < File
   end
 
   def last_modified_in_model
-    controller_model.last_modified
+    controller_model&.last_modified
   end
 
   def initialize(path, controller_model=nil)
