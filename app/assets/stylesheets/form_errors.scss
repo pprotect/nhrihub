@@ -23,3 +23,8 @@ $error_red : #a94442;
   color : $error_red;
   font-size : larger;
 }
+
+.required:after{
+  position : absolute;
+  top: -4px;
+}

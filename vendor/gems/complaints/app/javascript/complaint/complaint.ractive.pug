@@ -32,9 +32,9 @@ script#new_complaint_template(type = 'text/ractive')
                 | {{ t.lastName_error_message }}
       .row.form-group('class-has-error' = 'dob_error')
         .col-md-2
-          span.required 
+          div.required 
             | {{ t.dob }}
-          span dd/mm/yyyy
+          div dd/mm/yyyy
         .col-md-2
           input.form-control#dob(value = '{{dob}}', 'on-keydown'="@this.remove_attribute_error('dob')", style="width:112px;")
           span.help-block.error#dob_error 
