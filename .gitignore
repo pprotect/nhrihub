@@ -65,6 +65,7 @@ docs/.sass-cache
 db/backups
 db/schema_bkp.rb
 db/structure_backup.sql
+shared/*
 
 
 config/site_specific_linked_files/ws/
