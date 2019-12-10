@@ -252,14 +252,14 @@ RSpec.configure do |config| # rspec-expectations config goes here. You can use a
       DatabaseCleaner.strategy = example.metadata[:js] ? :truncation : :transaction
       #DatabaseCleaner.strategy = example.metadata[:js] ? :deletion : :transaction
       DatabaseCleaner.start
-      Rails.root.join('tmp', 'cache').children.each{|dir| FileUtils.remove_dir(dir) unless dir.to_s.match(/assets/)}
+      Rails.root.join('tmp', 'cache').children.each{|dir| FileUtils.remove_dir(dir, true) unless dir.to_s.match(/assets/)}
     rescue DatabaseCleaner::NoORMDetected
     end
   end
   config.after(:each) do
     begin
       DatabaseCleaner.clean
-      Rails.root.join('tmp', 'cache').children.each{|dir| FileUtils.remove_dir(dir) unless dir.to_s.match(/assets/)}
+      Rails.root.join('tmp', 'cache').children.each{|dir| FileUtils.remove_dir(dir, true) unless dir.to_s.match(/assets/)}
       Rails.root.join('tmp', 'uploads', 'store').children.each{|file| FileUtils.rm(file)}
     rescue DatabaseCleaner::NoORMDetected
     end
