@@ -45,6 +45,7 @@ config/site_specific_linked_files/current_config.yml
 vendor/gems/authengine/app/views/authengine/user_mailer/signup_notification.en.html.erb
 vendor/gems/complaints/tmp/**/*
 vendor/gems/complaints/public/complaints_packs/**/*
+vendor/gems/projects/public/projects_packs/**/*
 storage/
 
 coverage
