@@ -21,6 +21,53 @@ en:
       delete_complaint_confirmation_message: "Are you sure you want to delete complaint "
       delete_document_confirmation_message: "Are you sure you want to delete the document "
 
+    new:
+      heading: "%{type} Complaint Intake"
+      phone: "phone"
+      face_to_face : "face to face"
+      email: "email"
+      letter: "letter"
+      sent: "Sent"
+      received: "Received"
+      delete_communication_confirmation_message: "Are you sure you want to delete this communication?"
+      delete_complaint_confirmation_message: "Are you sure you want to delete complaint "
+      delete_document_confirmation_message: "Are you sure you want to delete the document "
+
+    show:
+      heading: 'Complaint, case reference: %{case_reference}'
+      phone: "phone"
+      face_to_face : "face to face"
+      email: "email"
+      letter: "letter"
+      sent: "Sent"
+      received: "Received"
+      delete_communication_confirmation_message: "Are you sure you want to delete this communication?"
+      delete_complaint_confirmation_message: "Are you sure you want to delete complaint "
+      delete_document_confirmation_message: "Are you sure you want to delete the document "
+
+    complaint:
+      heading: 'Complaint, case reference: %{case_reference}'
+      case_reference: 'Case reference'
+      date_received: 'Date received'
+      current_assignee: 'Current assignee'
+      status: 'Status'
+      complainant: 'Complainant'
+      dob: 'Date of birth'
+      gender: 'Gender'
+      email: 'Email'
+      village: 'Village'
+      phone: 'Phone'
+      details: 'Details'
+      desired_outcome: 'Desired outcome'
+      complained_to_subject_agency: 'Complained to subject agency?'
+      assignees_history: 'History of assignees'
+      mandate: 'Mandate'
+      complaint_basis: 'Complaint basis'
+      agency: 'Agency'
+      documents: 'Documents'
+      'on': 'on'
+      by: 'by'
+
   complaint_admin:
     show:
       heading: "Complaints Configuration"
@@ -45,18 +92,19 @@ en:
     add_file: "Add file"
     add_document: "Add document"
     agency: "Agency(ies)"
+    area: "Area"
     assignee: 'Assignee'
     assignee_error_message: "You must designate an assignee"
     assignees_history: "History of assignees"
     by: 'by'
     case_reference: "Ref"
-    chiefly_title : "Chiefly title"
+    title : "Title"
     closed: "Closed"
     communications : "Communications"
     compact: 'Compact'
     complainant: 'Complainant'
     complained_to_subject_agency : 'Complained to subject agency?'
-    complaint_basis: "Subarea(s)"
+    subareas: "Subarea(s)"
     complaint_basis_error_message : "You must select at least one subarea"
     complaint_documents : 'Complaint documents'
     current_assignee: 'Current assignee'
@@ -80,8 +128,7 @@ en:
     lastName : "Last name"
     lastName_error_message : "You must enter a last name"
     male : "Male"
-    mandate: "Area(s)"
-    mandate_id_error_message: "You must select an area"
+    complaint_area_id_error_message: "You must select an area"
     no : "No"
     notes : "Notes"
     'on': 'on' # b/c on is a keyword in yaml and the translation borks

@@ -1,4 +1,4 @@
-| {{#areas}}
+| {{#all_complaint_areas}}
 .col-md-3(id='{{name.underscore()}}_area', style="padding-top:0;")
   label
     | {{name}}:
@@ -10,7 +10,7 @@
     .col-md-4
       input(id="subarea_{{id}}",  type='checkbox', name="{{subarea_ids}}", value='{{id}}', 'on-change'="@this.remove_error()")
   | {{/subareas}}
-| {{/areas}}
+| {{/all_complaint_areas}}
 
 script.
   export default Ractive.extend({

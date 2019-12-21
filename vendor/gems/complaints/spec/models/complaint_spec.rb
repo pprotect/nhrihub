@@ -6,11 +6,16 @@ describe "complaint" do
     before do
       @complaint = Complaint.create({:status_changes_attributes => [{:name => nil}]})
     end
+
     it "should create a status_change and link to 'Under Evaluation' complaint status" do
       expect(@complaint.status_changes.length).to eq 1
       expect(@complaint.complaint_statuses.length).to eq 1
       expect(@complaint.complaint_statuses.first.name).to eq "Under Evaluation"
       expect(@complaint.current_status_humanized).to eq "Under Evaluation"
+    end
+
+    it "should create a complaint with unassigned agency when none is specified" do
+      expect(@complaint.agencies.first.name).to eq "Unassigned"
     end
   end
 

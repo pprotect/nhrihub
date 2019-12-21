@@ -18,7 +18,7 @@ module ComplaintsSpecSetupHelpers
   end
 
   def populate_database
-    create_mandates
+    create_complaint_areas
     create_agencies
     create_staff
     create_complaint_statuses
@@ -32,12 +32,11 @@ module ComplaintsSpecSetupHelpers
                       :village => Faker::Address.city,
                       :phone => Faker::PhoneNumber.phone_number,
                       :dob => "19/08/1950",
-                      :complaint_areas => [gg_area],
                       :complaint_subareas => gg_subareas + hr_subareas + siu_subareas,
                       :desired_outcome => Faker::Lorem.sentence,
                       :details => Faker::Lorem.sentence,
                       :complaint_documents => complaint_docs,
-                      :mandate_id => _mandate_id,
+                      :complaint_area_id => _complaint_area_id,
                       :agencies => _agencies,
                       :communications => _communications)
     FactoryBot.create(:complaint, :closed,
@@ -47,12 +46,11 @@ module ComplaintsSpecSetupHelpers
                       :village => Faker::Address.city,
                       :phone => Faker::PhoneNumber.phone_number,
                       :dob => "19/08/1950",
-                      :complaint_areas => [hr_area],
                       :complaint_subareas => hr_subareas,
                       :desired_outcome => Faker::Lorem.sentence,
                       :details => Faker::Lorem.sentence,
                       :complaint_documents => complaint_docs,
-                      :mandate_id => _mandate_id,
+                      :complaint_area_id => _complaint_area_id,
                       :agencies => _agencies,
                       :communications => _communications)
     set_file_defaults
@@ -63,19 +61,19 @@ module ComplaintsSpecSetupHelpers
     assignees = [admin, admin]
     FactoryBot.create(:complaint, :open, :assigned_to => assignees,
                       #:case_reference => "c12-22",
-                      :complaint_areas => [hr_area],
+                      :complaint_area => hr_area,
                       :complaint_subareas => hr_subareas,
                       :agencies => [Agency.first]
                      )
     FactoryBot.create(:complaint, :open, :assigned_to => assignees,
                       #:case_reference => "c12-33",
-                      :complaint_areas => [hr_area],
+                      :complaint_area => hr_area,
                       :complaint_subareas => hr_subareas,
                       :agencies => [Agency.first]
                      )
     @complaint = FactoryBot.create(:complaint, :open, :assigned_to => assignees,
                                    #:case_reference => "c12-55",
-                                   :complaint_areas => [hr_area],
+                                   :complaint_area => hr_area,
                                    :complaint_subareas => hr_subareas,
                                    :agencies => [Agency.first]
                                   )
@@ -94,9 +92,9 @@ module ComplaintsSpecSetupHelpers
     end
   end
 
-  def create_mandates
-    Mandate::DefaultNames.each do |name|
-      FactoryBot.create(:mandate, :name => name)
+  def create_complaint_areas
+    ComplaintArea::DefaultNames.each do |name|
+      FactoryBot.create(:complaint_area, :name => name)
     end
   end
 
@@ -104,6 +102,7 @@ module ComplaintsSpecSetupHelpers
     hr_subareas
     gg_subareas
     siu_subareas
+    cc_subareas
   end
 
   def create_complaint_statuses
@@ -116,8 +115,8 @@ module ComplaintsSpecSetupHelpers
     [ FactoryBot.create(:communication) ]
   end
 
-  def _mandate_id
-    Mandate.human_rights.first.id
+  def _complaint_area_id
+    ComplaintArea.find_or_create_by( :name => "Human Rights").id
   end
 
   def _agencies
@@ -158,9 +157,19 @@ module ComplaintsSpecSetupHelpers
     ComplaintArea.find_or_create_by(:name => "Special Investigations Unit")
   end
 
+  def cc_area
+    ComplaintArea.find_or_create_by(:name => "Corporate Services")
+  end
+
   def siu_subareas
     ["Unreasonable delay", "Not properly investigated"].collect do |name|
       ComplaintSubarea.find_or_create_by(name: name, area_id: siu_area.id)
+    end
+  end
+
+  def cc_subareas
+    ["Bish", "Bash", "Bosh"].collect do |name|
+      ComplaintSubarea.find_or_create_by(name: name, area_id: cc_area.id)
     end
   end
 

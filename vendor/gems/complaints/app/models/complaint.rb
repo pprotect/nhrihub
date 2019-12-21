@@ -1,18 +1,16 @@
-require Complaints::Engine.root.join('app', 'domain_models', 'cache')
-require 'case_reference'
+#require Complaints::Engine.root.join('app', 'domain_models', 'cache')
+#require 'case_reference'
 
 class Complaint < ActiveRecord::Base
-  include Cache
+  #include Cache
   include Rails.application.routes.url_helpers
-  has_many :complaint_complaint_areas, :dependent => :destroy
-  has_many :complaint_areas, :through => :complaint_complaint_areas
+  belongs_to :complaint_area
   has_many :complaint_complaint_subareas, :dependent => :destroy
   has_many :complaint_subareas, :through => :complaint_complaint_subareas
   has_many :reminders, :as => :remindable, :autosave => true, :dependent => :destroy, :inverse_of => :remindable
   has_many :notes, :as => :notable, :autosave => true, :dependent => :destroy, :inverse_of => :notable
   has_many :assigns, :autosave => true, :dependent => :destroy, after_add: :notify_assignee
   has_many :assignees, :through => :assigns
-  belongs_to :mandate # == areas
   has_many :status_changes, :dependent => :destroy
   accepts_nested_attributes_for :status_changes
   has_many :complaint_statuses, :through => :status_changes
@@ -39,10 +37,29 @@ class Complaint < ActiveRecord::Base
     assign.notify_assignee if assigns.size > 1
   end
 
+  def self.default_index_query_params(user_id)
+    { selected_assignee_id:        user_id,
+      selected_status_ids:         ComplaintStatus.default.map(&:id),
+      selected_complaint_area_ids: ComplaintArea.pluck(:id),
+      selected_subarea_ids:        ComplaintSubarea.pluck(:id),
+      selected_agency_ids:         Agency.unscoped.pluck(:id) }
+  end
+
   def self.filtered(query)
+      logger.info "for_assignee: #{for_assignee(query[:selected_assignee_id]).length}"
+      logger.info "with_status: #{with_status(query[:selected_status_ids]).length}"
+      logger.info "with_complaint_area_ids: #{with_complaint_area_ids(query[:selected_complaint_area_ids]).length}"
+      logger.info "with_case_reference_match: #{with_case_reference_match(query[:case_reference]).length}"
+      logger.info "with_complainant_match: #{with_complainant_match(query[:complainant]).length}"
+      logger.info "since_date: #{since_date(query[:from]).length}"
+      logger.info "before_date: #{before_date(query[:to]).length}"
+      logger.info "with_village: #{with_village(query[:village]).length}"
+      logger.info "with_phone: #{with_phone(query[:phone]).length}"
+      logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
+      logger.info "with_agencies: #{with_agencies(query[:selected_agency_ids]).length}"
     for_assignee(query[:selected_assignee_id]).
       with_status(query[:selected_status_ids]).
-      with_mandates(query[:selected_mandate_ids]).
+      with_complaint_area_ids(query[:selected_complaint_area_ids]).
       with_case_reference_match(query[:case_reference]).
       with_complainant_match(query[:complainant]).
       since_date(query[:from]).
@@ -71,9 +88,9 @@ class Complaint < ActiveRecord::Base
       where( "complaint_complaint_subareas.subarea_id in (?)", selected_subarea_ids)
   end
 
-  def self.with_mandates(selected_mandate_ids)
-    return no_filter if Mandate.count.zero?
-    where(mandate_id: selected_mandate_ids)
+  def self.with_complaint_area_ids(selected_complaint_area_ids)
+    return no_filter if ComplaintArea.count.zero?
+    where(complaint_area_id: selected_complaint_area_ids)
   end
 
   def self.with_phone(phone_fragment)
@@ -104,18 +121,16 @@ class Complaint < ActiveRecord::Base
     where(sql)
   end
 
-  def self.index_page_associations(ids, query)
+  def self.index_page_associations(query)
     filtered(query).
       includes({:assigns => :assignee},
-        :mandate,
+        :complaint_area,
         {:status_changes => [:user, :complaint_status]},
-        {:complaint_complaint_areas=>:complaint_area},
         {:complaint_agencies => :agency},
         {:communications => [:user, :communication_documents, :communicants]},
         :complaint_documents,
         {:reminders => :user},
-        {:notes =>[:author, :editor]}).
-      where(id: ids)
+        {:notes =>[:author, :editor]})
   end
 
   def self.with_case_reference_match(case_ref_fragment)
@@ -176,6 +191,9 @@ class Complaint < ActiveRecord::Base
     if complaint.date_received.nil? || complaint.date_received == "undefined" || complaint.date_received == "null"
       complaint.date_received = Time.current
     end
+    if complaint.agencies.empty?
+      complaint.agencies << Agency.unscoped.find_or_create_by(name: "Unassigned")
+    end
   end
 
   def <=>(other)
@@ -194,8 +212,7 @@ class Complaint < ActiveRecord::Base
                         :dob,
                         :current_status_humanized,
                         :attached_documents,
-                        :mandate_id,
-                        :area_ids,
+                        :complaint_area_id,
                         :subarea_ids,
                         :area_subarea_ids,
                         :agency_ids,
@@ -204,8 +221,7 @@ class Complaint < ActiveRecord::Base
   end
 
 
-  # supports the checkbox selectors for areas and subareas
-  alias_method :area_ids, :complaint_area_ids
+  # supports the checkbox selectors for subareas
   alias_method :subarea_ids, :complaint_subarea_ids
   alias_method :subarea_ids=, :complaint_subarea_ids=
 

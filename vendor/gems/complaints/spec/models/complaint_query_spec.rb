@@ -92,21 +92,21 @@ describe "scope class methods" do
     let(:siu_area_id){ComplaintArea.find_or_create_by(:name => "Special Investigations Unit").id}
     let(:siu_subarea_ids){ ComplaintSubarea.where(:area_id => siu_area_id).pluck(:id) }
     let(:user){ FactoryBot.create(:user) }
-    let(:mandate){ Mandate.first }
+    let(:complaint_area){ ComplaintArea.first }
     let(:ids){ Complaint.pluck(:id) }
     let(:query){
       {:selected_assignee_id=>user.id,
        :selected_status_ids=>ComplaintStatus.pluck(:id),
-       :selected_mandate_ids=>Mandate.pluck(:id),
+       :selected_complaint_area_ids=>ComplaintArea.pluck(:id),
        :selected_agency_ids => Agency.pluck(:id),
        :selected_area_ids => ComplaintArea.pluck(:id),
        :selected_subarea_ids => ComplaintSubarea.pluck(:id)
       }
     }
-    let(:complaints){ Complaint.index_page_associations(Complaint.pluck(:id), query) }
+    let(:complaints){ Complaint.index_page_associations(query) }
 
     before do
-      create_mandates
+      create_complaint_areas
       create_agencies
       populate_areas_subareas
       complaint_area = ComplaintArea.first
@@ -114,9 +114,8 @@ describe "scope class methods" do
       FactoryBot.create(:complaint,
                         :open,
                         assigned_to: user,
-                        mandate_id: mandate.id,
+                        complaint_area_id: complaint_area.id,
                         agencies: [Agency.first],
-                        complaint_areas: [complaint_area],
                         complaint_subareas: [complaint_subarea] )
     end
 
@@ -131,10 +130,10 @@ describe "scope class methods" do
       expect(compound_scope).to eq 1
     end
 
-    it "should return single matching complaints when combined with with_mandates scope" do
+    it "should return single matching complaints when combined with with_complaint_areas scope" do
       compound_scope = Complaint.
                          with_subareas(siu_subarea_ids + gg_subarea_ids).
-                         with_mandates([mandate.id]).
+                         where(complaint_area_id: complaint_area.id).
                          distinct.
                          count
       expect(compound_scope).to eq 1
@@ -154,11 +153,11 @@ describe "selects complaints matching the selected subarea" do
   let(:query){
     {:selected_assignee_id=>user.id,
      :selected_status_ids=>ComplaintStatus.pluck(:id),
-     :selected_mandate_ids=>Mandate.pluck(:id),
+     :selected_complaint_area_ids=>ComplaintArea.pluck(:id),
      :selected_agency_ids=>Agency.pluck(:id),
      :selected_subarea_ids => [foo_subarea.id, bar_subarea.id] }
   }
-  let(:complaints){ Complaint.index_page_associations(Complaint.pluck(:id), query) }
+  let(:complaints){ Complaint.index_page_associations(query) }
   let(:area){ FactoryBot.create(:complaint_area) }
   let(:foo_subarea) { FactoryBot.create(:complaint_subarea, area_id: area.id, name: 'foo')}
   let(:bar_subarea)  { FactoryBot.create(:complaint_subarea, area_id: area.id, name: 'bar')}
@@ -166,11 +165,11 @@ describe "selects complaints matching the selected subarea" do
 
   before do
     create_agencies
-    create_mandates
-    mandate_id = Mandate.first.id
-    @foo_complaint = FactoryBot.create(:complaint, :open, agencies: [Agency.first], mandate_id: mandate_id, complaint_subareas: [foo_subarea], assigned_to: user)
-    @bar_complaint = FactoryBot.create(:complaint,:open, agencies: [Agency.first], mandate_id: mandate_id, complaint_subareas: [bar_subarea],  assigned_to: user)
-    @baz_complaint = FactoryBot.create(:complaint, :open, agencies: [Agency.first], mandate_id: mandate_id, complaint_subareas: [baz_subarea],  assigned_to: user)
+    create_complaint_areas
+    complaint_area_id = ComplaintArea.first.id
+    @foo_complaint = FactoryBot.create(:complaint, :open, agencies: [Agency.first], complaint_area_id: complaint_area_id, complaint_subareas: [foo_subarea], assigned_to: user)
+    @bar_complaint = FactoryBot.create(:complaint,:open, agencies: [Agency.first], complaint_area_id: complaint_area_id, complaint_subareas: [bar_subarea],  assigned_to: user)
+    @baz_complaint = FactoryBot.create(:complaint, :open, agencies: [Agency.first], complaint_area_id: complaint_area_id, complaint_subareas: [baz_subarea],  assigned_to: user)
   end
 
   it "should return complaints with subareas indicated by the query" do
@@ -185,5 +184,34 @@ describe "selects complaints matching the selected subarea" do
   it "should return complaints with subareas requested by the query" do
     query[:selected_subarea_ids] = []
     expect(complaints).to eq []
+  end
+end
+
+describe "selects complaints matching the selected agency" do
+  include ComplaintsSpecSetupHelpers
+
+  let(:user){ FactoryBot.create(:user) }
+  let(:query){
+    {:selected_assignee_id=>user.id,
+     :selected_status_ids=>ComplaintStatus.pluck(:id),
+     :selected_complaint_area_ids=>ComplaintArea.pluck(:id),
+     :selected_agency_ids=>Agency.pluck(:id),
+     :selected_subarea_ids => [foo_subarea.id, bar_subarea.id] }
+  }
+  let(:complaints){ Complaint.index_page_associations(query) }
+  let(:unassigned_agency) { Agency.unscoped.where(name: "Unassigned").first }
+
+  before do
+    create_agencies
+    create_complaint_areas
+    complaint_area_id = ComplaintArea.first.id
+    @foo_complaint = FactoryBot.create(:complaint, :open, assigned_to: user)
+    @bar_complaint = FactoryBot.create(:complaint,:open, agencies: [Agency.first], assigned_to: user)
+  end
+
+  it "should do some darn thing useful" do
+    expect(@foo_complaint.agency_ids).to include unassigned_agency.id
+    expect(Complaint.with_agencies([unassigned_agency.id])).to eq [ @foo_complaint ]
+    expect(Complaint.with_agencies([Agency.first.id])).to eq [ @bar_complaint ]
   end
 end

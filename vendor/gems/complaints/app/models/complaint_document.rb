@@ -20,4 +20,13 @@ class ComplaintDocument < ActiveRecord::Base
   def serialization_key
     self.class.serialization_key
   end
+
+  def truncated_filename
+    if original_filename.length > 50
+      base, extension = original_filename.split('.');
+      base.slice(0,40)+"..."+extension;
+    else
+      original_filename
+    end
+  end
 end

@@ -1,0 +1,31 @@
+= stylesheet_link_tag 'complaints'
+#complaint
+#confirm_delete_modal_container
+#reminder
+#note
+#communication
+#single_note
+#documents
+
+=# render partial: 'complaint'
+
+:coffeescript
+  @complaint_data = #{@complaint.to_json.html_safe}
+  @source_areas = #{@areas.to_json.html_safe}
+  @source_subareas = #{@subareas.to_json.html_safe}
+  @source_all_agencies = #{@agencies.to_json.html_safe}
+  @source_all_staff = #{@staff.to_json.html_safe}
+  @i18n =
+    tooltip_messages:
+      face_to_face : "#{t('.face_to_face')}"
+      letter: "#{t('.letter')}"
+      phone: "#{t('.phone')}"
+      email: "#{t('.email')}"
+      sent: "#{t('.sent')}"
+      received: "#{t('.received')}"
+    delete_communication_confirmation_message: "#{t('.delete_communication_confirmation_message')}"
+    delete_complaint_confirmation_message: "#{t('.delete_complaint_confirmation_message')}"
+    delete_document_confirmation_message: "#{t('.delete_document_confirmation_message')}"
+    heading: "#{t('.heading', case_reference: @complaint.case_reference)}"
+
+= javascript_pack_tag 'show_complaint'

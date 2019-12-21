@@ -75,3 +75,21 @@ class String
     self.gsub(/\s*/,'')
   end
 end
+
+class TrueClass
+  def y_n
+    'yes'
+  end
+end
+
+class FalseClass
+  def y_n
+    'no'
+  end
+end
+
+class NilClass
+  def y_n
+    'no'
+  end
+end

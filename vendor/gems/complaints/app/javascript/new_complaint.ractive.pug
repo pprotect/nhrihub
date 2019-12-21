@@ -1,0 +1,363 @@
+script#file_selector_template(type='text/ractive' src='../../../../../app/views/shared/_file_selector_template.html')
+
+.row.well.well-sm.new_complaint
+  .col-md-12
+    .row
+      .col-md-12
+        span.required_before 
+          | {{ t.required }}
+    .row
+      .col-md-2
+        span 
+        | {{ t.complainant }}
+      .col-md-6(style = 'padding-top:0px')
+        .row
+          .col-md-4.form-group(style = 'padding-top:0px;')
+            label(for = 'title', style = 'font-weight:normal') 
+              | {{ t.title }}
+            input.form-control#title(value = '{{title}}')
+          .col-md-4.form-group('class-has-error' = 'firstName_error', style = 'padding-top:0px;')
+            label.required(for = 'firstName', style = 'font-weight:normal') 
+              | {{ t.first_name }}
+            input.form-control#firstName(value = '{{firstName}}', 'on-keydown'="@this.remove_attribute_error('firstName')")
+            span.help-block.error#firstName_error 
+              | {{ t.firstName_error_message }}
+          .col-md-4.form-group('class-has-error' = 'lastName_error', style = 'padding-top:0px;')
+            label.required(for = 'lastName', style = 'font-weight:normal') 
+              | {{ t.lastName }}
+            input.form-control#lastName(value = '{{lastName}}', 'on-keydown'="@this.remove_attribute_error('lastName')")
+            span.help-block.error#lastName_error 
+              | {{ t.lastName_error_message }}
+    .row.form-group('class-has-error' = 'dob_error')
+      .col-md-2
+        div.required 
+          | {{ t.dob }}
+        div dd/mm/yyyy
+      .col-md-2
+        input.form-control#dob(value = '{{dob}}', 'on-keydown'="@this.remove_attribute_error('dob')", style="width:112px;")
+        span.help-block.error#dob_error 
+          | {{ t.dob_error_message }}
+      .col-md-7
+        span(style = "margin-right:16px") 
+          | {{ t.gender }}
+        form(style = "display:inline")
+          label(style = 'font-weight:normal')
+            span(style = "margin-right:6px;") 
+              | {{ t.male }}
+            input#m(type='radio', name='{{gender}}', value='M')
+          label(style = 'font-weight:normal')
+            span(style = "margin-right:6px; margin-left:12px;") 
+              | {{ t.female }}
+            input#f(type='radio', name='{{gender}}', value='F')
+          label(style = 'font-weight:normal')
+            span(style = "margin-right:6px; margin-left:12px;") 
+              | {{ t.other }}
+            input#o(type='radio', name='{{gender}}', value='O')
+    .row.form-group('class-has-error' = 'village_error')
+      .col-md-2
+        span.required 
+          | {{ t.village }}
+      .col-md-6
+        input.form-control#village(value = '{{village}}', 'on-keydown'="@this.remove_attribute_error('village')")
+        span.help-block.error#village_error 
+          | {{ t.village_error_message }}
+    .row.form-group
+      .col-md-2
+        span 
+          | {{ t.email }}
+      .col-md-6
+        input.form-control#email(value = '{{email}}')
+    .row.form-group
+      .col-md-2
+        span 
+          | {{ t.phone }}
+      .col-md-6
+        input.form-control#phone(value = '{{phone}}')
+    .row.form-group('class-has-error' = 'details_error')
+      .col-md-2
+        span.required 
+          | {{ t.details }}
+      .col-md-6
+        textarea.form-control#complaint_details(value = '{{details}}', 'on-keydown'="@this.remove_attribute_error('details')")
+        span.help-block.error#details_error 
+          | {{ t.details_error_message }}
+    .row.form-group
+      .col-md-2
+        span 
+          | {{ t.desired_outcome }}
+      .col-md-6
+        input.form-control#desired_outcome(value = '{{desired_outcome}}')
+    .row.form-group
+      .col-md-2
+        span 
+          | {{ t.complained_to_subject_agency }}
+      .col-md-2
+        form
+          label(style = "font-weight:normal;") 
+            | {{ t.yes }}
+            input#complained_to_subject_agency_yes(type = 'radio', name = '{{complained_to_subject_agency}}', value = 'true')
+          label(style = "font-weight:normal;") 
+            | {{ t.no }}
+            input#complained_to_subject_agency_no(type = 'radio', name = '{{complained_to_subject_agency}}', value = 'false')
+      .col-md-2 
+        | {{ t.date_received }}
+      .col-md-2
+        input#date_received(type = 'text', name = "{{date_received}}", "as-single_month_datepicker"=true)
+    .row.form-group('class-has-error' = 'new_assignee_id_error')
+      .col-md-2
+        label.required 
+          | {{ t.assignee }}
+      .col-md-6
+        <assigneeSelector editing=false new_assignee_id='{{new_assignee_id}}' all_staff='{{all_staff}}' />
+        span.help-block.error#new_assignee_id_error 
+          | {{ t.assignee_error_message }}
+    .row.form-group('class-has-error' = 'complaint_area_id_error')
+      .col-md-2
+        label.required {{ t.area }}
+      .col-md-10
+        .row
+          <areasSelector complaint_area_id='{{complaint_area_id}}' />
+        span.help-block.error#complaint_area_id_error 
+          | {{ t.complaint_area_id_error_message }}
+    .row.form-group('class-has-error' = 'subarea_id_count_error')
+      .col-md-2
+        label.required {{ t.subareas }}
+      .col-md-10
+        .row
+          <subareaSelector subarea_ids='{{subarea_ids}}' all_complaint_areas='{{all_complaint_areas}}' />
+        span.help-block.error#subarea_id_count_error 
+          | {{ t.complaint_basis_error_message }}
+    .row
+      .col-md-2
+        label 
+          | {{ t.agency }}
+      .col-md-10
+        <agenciesSelector agency_ids='{{agency_ids}}' all_agencies_in_sixes='{{all_agencies_in_sixes}}'/>
+    .panel.panel-default#documents
+      .panel-heading 
+        | {{ t.complaint_documents }}
+      .panel-body
+        | {{> file_selector_template {key : 'complaint'} }}
+        <attachedDocuments parent_type='{{parent_type}}' maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' attached_documents='{{attached_documents}}' key='complaint' named_document_datalist='{{complaint_named_documents_titles}}' />
+    .row
+      .col-sm-3.col-sm-offset-3(style = "text-align:center;")
+        .btn.btn-danger.btn-sm#cancel_complaint("on-click" = "@this.cancel_add_complaint()")
+          i.fa.fa-remove.fa-lg(style = "color:white")
+          span(style = "color:white")
+            | {{ t.cancel }}
+      .col-sm-3(style = "text-align:center;")
+        .btn.btn-success.btn-sm#save_complaint(style = "color:white;", "on-click" = "@this.save_complaint()")
+          i.fa.fa-check.fa-lg(style = "color:white")
+          span
+            | {{ t.save }}
+        .form-group('class-has-error' = 'has_errors')
+          span#complaint_error.help-block.error
+            | {{ t.form_error }}
+    .row.collapse('data-toggle'='edit', style = "margin-top:30px;")
+      .col-sm-3.col-sm-offset-3.edit(style = "text-align:center;")
+        .btn.btn-danger.btn-sm.edit_cancel#edit_cancel
+          i.fa.fa-remove.fa-lg(style = "color:white")
+          span(style = "color:white")
+            | {{ t.cancel }}
+      .col-sm-3.edit(style = "text-align:center;")
+        .btn.btn-success.btn-sm.save_complaint#edit_save(style = "color:white;")
+          i.fa.fa-check.fa-lg(style = "color:white")
+          span
+            | {{ t.save }}
+        .form-group('class-has-error' = 'has_errors')
+          span#complaint_error.help-block.error
+            | {{ t.form_error }}
+
+script.
+  import translations from 'translations.js'
+  import 'jquery-ui/ui/widgets/datepicker'
+  import AreasSelector from 'areas_selector'
+  import AgenciesSelector from 'agencies_selector'
+  import Communications from 'communications.ractive.pug'
+  import AssigneeSelector from 'assignee_selector'
+  import ComplaintDocuments from 'complaint_documents'
+  import SubareaSelector from 'subarea_selector.ractive.pug'
+  import Validator from 'validator'
+  var RactiveLocalMethods = require("exports-loader?local_methods!ractive_local_methods")
+  window.$ = window.jQuery = $ // it's the only method I could get to work for making $ available globally!
+  window._ = _
+
+  const Persistence = {
+    save_complaint() {
+      if (this.validate()) {
+        const data = this.formData();
+        return $.ajax({
+          // thanks to http://stackoverflow.com/a/22987941/451893
+          //xhr: @progress_bar_create.bind(@)
+          method : 'post',
+          data,
+          url : Routes.complaints_path(current_locale),
+          success : this.save_complaint_callback,
+          context : this,
+          processData : false,
+          contentType : false
+        });
+      }
+    },
+    // in ractive_local_methods, returns a FormData instance
+    formData() {
+      return this.asFormData(this.get('persistent_attributes'));
+    },
+    save_complaint_callback(response, status, jqxhr){
+      $('.container').html(response)
+      var complaint_id = $('#complaint_id').text()
+      history.pushState({page:"save_complaint_callback", content: response},"whatever","/en/complaints/"+complaint_id)
+    },
+  }
+
+
+  export default Ractive.extend({
+    el : '#complaint',
+    template : $TEMPLATE,
+    data() {
+      return {
+        t : translations.t('complaint'),
+        assigns : [],
+        firstName : "",
+        lastName : "",
+        attached_documents : [],
+        current_assignee : "",
+        current_assignee_id : "",
+        new_assignee_id : "0",
+        formatted_date : "",
+        subarea_ids : [],
+        id : null,
+        complaint_area_id : null,
+        agency_ids : [],
+        notes : [],
+        phone : "",
+        reminders : [],
+        current_status_humanized : "Under Evaluation",
+        village : "",
+        complained_to_subject_agency : false,
+        date_received : null,
+        dob : null,
+        date_of_birth : null
+      }
+    },
+    components : {
+      areasSelector : AreasSelector,
+      agenciesSelector : AgenciesSelector,
+      assigneeSelector : AssigneeSelector,
+      attachedDocuments : ComplaintDocuments,
+      subareaSelector: SubareaSelector,
+    },
+    oninit() {
+      return this.set({
+        serialization_key:'complaint'
+      });
+    },
+    onconfig() {
+      return this.validator = new Validator(this);
+    },
+    computed : {
+      reminders_count() {
+        const reminders = this.get('reminders');
+        if (_.isUndefined(reminders)) { return 0; } else { return reminders.length; }
+      },
+      notes_count() {
+        const notes = this.get('notes');
+        if (_.isUndefined(notes)) { return 0; } else { return notes.length; }
+      },
+      communications_count() {
+        const comms = this.get('communications');
+        if (_.isUndefined(comms)) { return 0; } else { return comms.length; }
+      },
+      persistent_attributes() {
+        return ['village','phone','complaint_area_id',
+          'current_status_humanized', 'new_assignee_id', 'subarea_ids',
+          'agency_ids', 'attached_documents_attributes', 'details',
+          'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
+          'firstName', 'lastName', 'title'];
+      },
+      formatted_date : {
+        get() {
+          const date_received = this.get('date'); // it's a formatted version of date_received
+          if (_.isEmpty(date_received)) {
+            return "";
+          } else {
+            return this.get('date');
+          }
+        },
+        set(val){
+          return this.set('date', val);
+        }
+      },
+      has_errors() {
+        return this.validator.has_errors();
+      },
+      complaint_area_name() {
+        if(_.isNull(this.get('complaint_area_id'))){return null}
+        const complaint_area = _(this.get('all_complaint_areas')).find(complaint_area=>complaint_area.id==this.get('complaint_area_id'))
+        return complaint_area.name;
+      },
+      create_reminder_url() {
+        if (this.get('persisted')) { return Routes.complaint_reminders_path('en', this.get('id')); }
+      },
+      create_note_url() {
+        if (this.get('persisted')) { return Routes.complaint_notes_path('en', this.get('id')); }
+      },
+      subarea_id_count() { // aka subareas
+        const sa = this.get('subarea_ids');
+        const sal = _.isUndefined(sa) ? 0 : sa.length;
+        return sal;
+      },
+      validation_criteria() {
+        return {
+          firstName : ['notBlank'],
+          lastName : ['notBlank'],
+          village : ['notBlank'],
+          complaint_area_id : 'numeric',
+          subarea_id_count : 'nonZero',
+          new_assignee_id : ['nonZero', {if : () => !this.get('editing')}],
+          dob: () => {
+            const date_regex = new RegExp(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); // dd/mm/yyyy
+            const match = date_regex.exec(this.get('dob'));
+            const valid_day = match && (parseInt(match[1]) <= 31);
+            const valid_month = match && (parseInt(match[2]) <= 12);
+            const valid_year = match && (parseInt(match[3]) <= (new Date).getFullYear()) && (parseInt(match[3]) >= 1900 );
+            return !_.isNull(match) && valid_day && valid_month && valid_year;
+          },
+          details : 'notBlank'
+        };
+      },
+      error_vector() {
+        return {
+          firstName_error : this.get('firstName_error'),
+          lastName_error : this.get('lastName_error'),
+          village_error : this.get('village_error'),
+          new_assignee_id_error : this.get('new_assignee_id_error'),
+          complaint_area_id_error : this.get('complaint_area_id_error'),
+          subarea_id_count_error : this.get('subarea_id_count_error'),
+          dob_error : this.get('dob_error'),
+          details_error : this.get('details_error')
+        };
+      }
+    },
+    validate() {
+      return this.validator.validate();
+    },
+    remove_attribute_error(attribute){
+      return this.set(attribute+"_error",false);
+    },
+    add_file(file){
+      const attached_document = {
+        id : null,
+        complaint_id : this.get('id'),
+        file,
+        title: '',
+        file_id : '',
+        url : '',
+        original_filename : file.name,
+        filesize : file.size,
+        original_type : file.type,
+        serialization_key : 'complaint[complaint_documents_attributes][]'
+      };
+      return this.unshift('attached_documents', attached_document);
+    }
+  }).extend(Persistence)

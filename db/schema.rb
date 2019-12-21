@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_30_215908) do
+ActiveRecord::Schema.define(version: 2019_12_21_233522) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -235,21 +235,6 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
     t.datetime "updated_at"
   end
 
-  create_table "complaint_complaint_areas", force: :cascade do |t|
-    t.integer "complaint_id"
-    t.integer "area_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "complaint_complaint_bases", id: :serial, force: :cascade do |t|
-    t.integer "complaint_id"
-    t.integer "complaint_basis_id"
-    t.string "type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "complaint_complaint_subareas", force: :cascade do |t|
     t.integer "complaint_id"
     t.integer "subarea_id"
@@ -292,17 +277,33 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
     t.boolean "complained_to_subject_agency"
     t.datetime "date_received"
     t.boolean "imported", default: false
-    t.integer "mandate_id"
+    t.integer "complaint_area_id"
     t.string "email"
     t.string "gender", limit: 1
     t.date "dob"
     t.text "details"
     t.string "firstName"
     t.string "lastName"
-    t.string "chiefly_title"
+    t.string "title"
     t.string "occupation"
     t.string "employer"
     t.string "case_reference_alt"
+    t.integer "id_type", limit: 2, default: 0
+    t.bigint "id_value"
+    t.string "critical_reference_number_type"
+    t.string "critical_reference_number_value"
+    t.integer "complaint_type", limit: 2, default: 0
+    t.string "organization_name"
+    t.string "organization_registration_number"
+    t.string "physical_address"
+    t.string "postal_address"
+    t.string "city"
+    t.string "province"
+    t.string "postal_code"
+    t.string "cell_phone"
+    t.string "home_phone"
+    t.string "fax"
+    t.integer "preferred_means", limit: 2
     t.index ["case_reference"], name: "index_complaints_on_case_reference", unique: true
   end
 
@@ -463,6 +464,20 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
     t.integer "value"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "office_groups", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "offices", force: :cascade do |t|
+    t.integer "office_group_id"
+    t.string "name"
+    t.string "short_name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "organizations", id: :serial, force: :cascade do |t|
@@ -679,6 +694,9 @@ ActiveRecord::Schema.define(version: 2019_10_30_215908) do
     t.string "public_key_handle"
     t.string "replacement_token_registration_code"
     t.string "unsubscribe_code", limit: 40
+    t.integer "office_id", limit: 2
+    t.string "prefix", limit: 8
+    t.string "title"
     t.index ["login"], name: "index_users_on_login"
   end
 

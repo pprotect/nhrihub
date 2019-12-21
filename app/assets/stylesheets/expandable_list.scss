@@ -1,6 +1,6 @@
 @import 'theme';
 
-.expandable_well {
+.well {
   background-image: -webkit-linear-gradient(top, $well_bg_light 0%, $well_bg_dark 100%);
   background-image: linear-gradient(to bottom, $well_bg_light 0%, $well_bg_dark 100%);
   border-color: $well_border;

@@ -3,4 +3,4 @@
   I18n.load_path += Dir.glob(Rails.root.join("config","locales","**","*.yml"))
   I18n.load_path += Dir.glob(Rails.root.join("vendor","gems","**","config","locales","**","*.yml"))
   Rails.application.config.i18n.default_locale = I18n.default_locale = ENV['RAILS_I18N_LOCALE'] || :en
-  I18n.available_locales = [:en, :fr]
+  I18n.available_locales = [:en, :fr, 'en-ZA']

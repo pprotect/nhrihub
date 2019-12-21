@@ -72,15 +72,14 @@
           span.filter-option.pull-left 
             | {{ t.select_area }}
           span.caret
-        ul.dropdown-menu#mandate_filter_select
-          | {{#all_mandates}}
-          <mandateFilterSelect id='{{id}}' name='{{name}}' filter_criteria='{{filter_criteria}}' />
-          | {{/all_mandates}}
+        ul.dropdown-menu#area_filter_select
+          | {{#areas}}
+          <areaFilterSelect id='{{id}}' name='{{name}}' filter_criteria='{{filter_criteria}}' />
+          | {{/areas}}
     .col-md-2
       .btn-group.select
         button.btn.btn-default.dropdown-toggle(type='button', 'data-toggle'='dropdown')
-          span.filter-option.pull-left 
-            | {{ t.select_basis }}
+          span.filter-option.pull-left {{ t.select_basis }}
           span.caret
         ul.dropdown-menu
           <selectClear t='{{t}}' collection='{{['selected_subarea_ids']}}'/>
@@ -113,7 +112,7 @@ style.
 script.
   import SubareaFilterSelect from 'subarea_filter_select'
   import AgencyFilterSelect from 'agency_filter_select'
-  import MandateFilterSelect from 'mandate_filter_select'
+  import AreaFilterSelect from 'area_filter_select'
   import AssigneeFilterSelect from 'assignee_filter_select'
   import StatusFilterSelect from 'status_filter_select'
   import translations from 'translations.js'
@@ -125,7 +124,7 @@ script.
     components : {
       subareaFilterSelect: SubareaFilterSelect,
       agencyFilterSelect : AgencyFilterSelect,
-      mandateFilterSelect : MandateFilterSelect,
+      areaFilterSelect : AreaFilterSelect,
       assigneeFilterSelect : AssigneeFilterSelect,
       statusFilterSelect : StatusFilterSelect,
       selectClear : SelectClear,
@@ -139,16 +138,17 @@ script.
       'filter_criteria': {
         handler(value, old, path, idx){
           if(!_.isUndefined(old)){
-            this.parent.load();
+            console.log("filter_criteria change observed")
+            this.parent.fetch();
           }
         }
       }
     },
     clear_filter() {
-      complaints_page_data().filter_criteria.case_reference = null
+      //complaints_page_data().filter_criteria.case_reference = null
       this.set('filter_criteria',$.extend(true,{},complaints_page_data().filter_criteria));
       window.history.pushState({foo: "bar"},"unused title string",window.location.origin + window.location.pathname);
-      complaints.load();
+      //complaints.fetch();
       //return this.set_filter_from_query_string();
     },
     set_filter_from_query_string() {
@@ -159,11 +159,11 @@ script.
     clear_all(name){
       var params = {};
       if(_.isArray(name)){
-        name.forEach(function(n){ 
-          params['filter_criteria.'+n] = [""];
+        name.forEach(function(n){
+          params['filter_criteria.'+n] = ["0"];
         })
       }else{
-        params['filter_criteria.'+name] = [""];
+        params['filter_criteria.'+name] = ["0"];
       }
       this.set(params);
     },

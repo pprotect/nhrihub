@@ -38,6 +38,8 @@
       = render :partial => "shared/flash_error"
       #jflash
       = yield
+    .assets
+      = yield :assets
     .attribution= attribution
     %script{id: 'simple-navigation-bootstrap-hack'}
       $('.dropdown-toggle').removeAttr('data-target')

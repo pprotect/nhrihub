@@ -1,6 +1,6 @@
 <filterControls filter_criteria='{{filter_criteria}}' />
 | {{#complaints}}
-<complaint area_ids='{{area_ids}}' subarea_ids='{{subarea_ids}}' area_subarea_ids='{{area_subarea_ids}}' new_assignee_id='0' date_of_birth='{{date_of_birth}}' dob='{{dob}}' editing=false expanded=false agency_ids='{{agency_ids}}' assigns='{{assigns}}' attached_documents='{{attached_documents}}' case_reference='{{case_reference}}' chiefly_title='{{chiefly_title}}' communications='{{communications}}' complained_to_subject_agency='{{complained_to_subject_agency}}' complaint_named_documents_titles='{{complaint_named_documents_titles}}' complainant_error='{{complainant_error}}' current_assignee_id='{{current_assignee_id}}' current_assignee_name='{{current_assignee_name}}' current_status_humanized='{{current_status_humanized}}' date='{{date}}' date_received='{{date_received}}' desired_outcome='{{desired_outcome}}' details='{{details}}' date_of_birth='{{date_of_birth}}' email='{{email}}' employer='{{employer}}' firstName='{{firstName}}' filter_criteria='{{filter_criteria}}' gender='{{gender}}' id='{{id}}' lastName='{{lastName}}' mandate_id='{{mandate_id}}' notes='{{notes}}' occupation='{{occupation}}' phone='{{phone}}' reminders='{{reminders}}' status_changes='{{status_changes}}' village='{{village}}' age='{{age}}' />
+<complaint area_ids='{{area_ids}}' subarea_ids='{{subarea_ids}}' area_subarea_ids='{{area_subarea_ids}}' new_assignee_id='0' date_of_birth='{{date_of_birth}}' dob='{{dob}}' editing=false expanded=false agency_ids='{{agency_ids}}' assigns='{{assigns}}' attached_documents='{{attached_documents}}' case_reference='{{case_reference}}' title='{{title}}' communications='{{communications}}' complained_to_subject_agency='{{complained_to_subject_agency}}' complaint_named_documents_titles='{{complaint_named_documents_titles}}' complainant_error='{{complainant_error}}' current_assignee_id='{{current_assignee_id}}' current_assignee_name='{{current_assignee_name}}' current_status_humanized='{{current_status_humanized}}' date='{{date}}' date_received='{{date_received}}' desired_outcome='{{desired_outcome}}' details='{{details}}' date_of_birth='{{date_of_birth}}' email='{{email}}' employer='{{employer}}' firstName='{{firstName}}' filter_criteria='{{filter_criteria}}' gender='{{gender}}' id='{{id}}' lastName='{{lastName}}' mandate_id='{{mandate_id}}' notes='{{notes}}' occupation='{{occupation}}' phone='{{phone}}' reminders='{{reminders}}' status_changes='{{status_changes}}' village='{{village}}' age='{{age}}' />
 | {{/complaints}}
 
 script.
@@ -15,16 +15,36 @@ script.
     data() {
       return $.extend(true,{},complaints_page_data());
     },
-    refresh : function(data, statusText, xhr){
-      complaints.set('complaints', data)
+    oninit : function(){
+      console.log('oninit');
+      var params = _.extend({},this.get('filter_criteria'))
+      this.set('current_query',params)
+      history.replaceState({filter_criteria: this.get('filter_criteria')},
+                            "some text",
+                            Routes.complaints_path(current_locale,this.get('current_query')));
     },
-    load: function(){
+    refresh : function(data, statusText, xhr){
+      this.set('complaints', data);
+      history.replaceState({filter_criteria: this.get('filter_criteria')},
+                            "some text",
+                            Routes.complaints_path(current_locale,this.get('current_query')));
+    },
+    fetch: function(){
       var params = _.extend({},this.get('filter_criteria'))
       if(_.isEmpty(params.selected_status_ids)){params.selected_status_ids = [""]} // hack to send "empty" array indicating no status was checked
-      if(_.isEmpty(params.selected_mandate_ids)){params.selected_mandate_ids = [""]} // hack to send "empty" array indicating no status was checked
+      if(_.isEmpty(params.selected_complaint_area_ids)){params.selected_complaint_area_ids = [""]} // hack to send "empty" array indicating no status was checked
       if(_.isEmpty(params.selected_subarea_ids)){params.selected_subarea_ids = [""]} // hack to send "empty" array indicating no status was checked
       if(_.isEmpty(params.selected_agency_ids)){params.selected_agency_ids = [""]} // hack to send "empty" array indicating no status was checked
-      $.get(window.url, params , this.refresh, 'json')
+      this.set('current_query',params)
+      console.log("fetch")
+      console.log(params)
+      $.ajax({
+        url: Routes.complaints_path('en'),
+        data: params,
+        success: this.refresh,
+        dataType: 'json',
+        context: this
+      })
     },
     components : {
       complaint : Complaint,
@@ -33,50 +53,52 @@ script.
     computed : {
       selected_agency_ids() { return this.findComponent('filterControls').get('agency_ids'); }
     },
-    new_complaint() {
-      if (!this.add_complaint_active()) {
-        const new_complaint = {
-          assigns : [],
-          firstName : "",
-          lastName : "",
-          attached_documents : [],
-          current_assignee : "",
-          current_assignee_id : "",
-          new_assignee_id : "0",
-          formatted_date : "",
-          subarea_ids : [],
-          id : null,
-          mandate_id : null,
-          agency_ids : [],
-          notes : [],
-          phone : "",
-          reminders : [],
-          current_status_humanized : "Under Evaluation",
-          village : "",
-          complained_to_subject_agency : false,
-          date_received : null,
-          dob : null,
-          date_of_birth : null
-        };
-        UserInput.claim_user_input_request(this,'cancel_add_complaint');
-        return this.unshift('complaints',new_complaint);
-      }
-    },
-    cancel_add_complaint() {
-      const new_complaint = _(this.findAllComponents('complaint')).find(complaint=> !complaint.get('persisted'));
-      return this.remove(new_complaint._guid);
-    },
+    //new_complaint() {
+      //if (!this.add_complaint_active()) {
+        //const new_complaint = {
+          //assigns : [],
+          //firstName : "",
+          //lastName : "",
+          //attached_documents : [],
+          //current_assignee : "",
+          //current_assignee_id : "",
+          //new_assignee_id : "0",
+          //formatted_date : "",
+          //subarea_ids : [],
+          //id : null,
+          //mandate_id : null,
+          //agency_ids : [],
+          //notes : [],
+          //phone : "",
+          //reminders : [],
+          //current_status_humanized : "Under Evaluation",
+          //village : "",
+          //complained_to_subject_agency : false,
+          //date_received : null,
+          //dob : null,
+          //date_of_birth : null
+        //};
+        //UserInput.claim_user_input_request(this,'cancel_add_complaint');
+        //return this.unshift('complaints',new_complaint);
+      //}
+    //},
+    //cancel_add_complaint() {
+      //const new_complaint = _(this.findAllComponents('complaint')).find(complaint=> !complaint.get('persisted'));
+      //return this.remove(new_complaint._guid);
+    //},
     remove(guid){
       const complaint_guids = _(this.findAllComponents('complaint')).map(complaint=> complaint._guid);
       const index = complaint_guids.indexOf(guid);
       return this.splice('complaints',index,1);
     },
-    add_complaint_active() {
-      return !_.isEmpty(this.findAllComponents('complaint')) && !this.findAllComponents('complaint')[0].get('persisted');
-    },
+    //add_complaint_active() {
+      //return !_.isEmpty(this.findAllComponents('complaint')) && !this.findAllComponents('complaint')[0].get('persisted');
+    //},
+    //next function is for testing purposes
     set_filter_criteria_from_date(selectedDate){
       return this.set('filter_criteria.from',selectedDate);
     },
+    //next function is for testing purposes
     set_filter_criteria_to_date(selectedDate){
       return this.set('filter_criteria.to',selectedDate);
     },

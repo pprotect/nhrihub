@@ -13,7 +13,7 @@ module ComplaintsSpecHelpers
   def set_filter_controls_text_field(name,value)
   # in the tests below we set ractive values directly b/c setting the
   # input values results in an ajax request for each character typed
-    script = "complaints.set('filter_criteria.#{name}','#{value}')"
+    script = "complaints_page.set('filter_criteria.#{name}','#{value}')"
     page.execute_script(script)
     wait_for_ajax
   end
@@ -142,9 +142,9 @@ module ComplaintsSpecHelpers
     end
   end
 
-  def uncheck_mandate(text)
-    uncheck(text)
-  end
+  #def uncheck_mandate(text)
+    #uncheck(text)
+  #end
 
   def check_subarea(group, text)
     subarea_checkbox(group, text).set(true)
@@ -166,8 +166,9 @@ module ComplaintsSpecHelpers
     page.find('.area', text: "Special Investigations Unit")
   end
 
-  def save_complaint
-    find('#save_complaint')
+  def save_complaint(wait = true)
+    find('#save_complaint').click
+    wait_for_ajax if wait
   end
 
   def agencies
@@ -202,25 +203,16 @@ module ComplaintsSpecHelpers
     open_dropdown('Select assignee')
     sleep(0.2) # javascript
     select_option(name).click
-  end
-
-  #def select_subarea(name)
-    #open_dropdown('Select complaint basis')
-    #select_option(name).click
-  #end
-
-  def expand
-    sleep(0.4)
-    all('.complaint #expand').first.click
-  end
-
-  def add_complaint
-    find('#add_complaint').click
+    wait_for_ajax
   end
 
   def open_communications_modal
     page.find('.case_reference', :text => Complaint.first.case_reference) # hack to make sure the page is loaded and rendered
     page.all('#complaints .complaint .fa-comments-o')[0].click
+  end
+
+  def show_complaint
+    find('.show_complaint').click
   end
 
   def select_datepicker_date(id,year,month,day)
@@ -239,7 +231,9 @@ module ComplaintsSpecHelpers
   end
 
   def open_dropdown(name)
-    page.find("#complaints_controls button", :text => name).click
+    unless page.has_selector?('.select.open button#assignee_select')
+      page.find("#complaints_controls button", :text => name).click
+    end
   end
 
   def clear_options(name)
@@ -256,6 +250,18 @@ module ComplaintsSpecHelpers
     end
     page.find('#select_all', visible: true).click
     wait_for_ajax
+  end
+
+  def select_assignee_dropdown_should_be_checked_for(first_last_name)
+    open_dropdown('Select assignee')
+    checked_assignee = page.all('li.selected a span')[0].text
+    expect(checked_assignee).to eq first_last_name
+  end
+
+  def complaints_should_be_assigned_to(name)
+    page.all('span.current_assignee').map(&:text).each do |assignee|
+      expect(assignee).to eq (name)
+    end
   end
 
 end

@@ -4,6 +4,7 @@ class ComplaintSubarea < Subarea
   scope :good_governance, ->{ joins(:complaint_area).merge(ComplaintArea.good_governance) }
   scope :human_rights, ->{ joins(:complaint_area).merge(ComplaintArea.human_rights) }
   scope :special_investigations_unit, ->{ joins(:complaint_area).merge(ComplaintArea.special_investigations_unit) }
+  scope :corporate_services, ->{ joins(:complaint_area).merge(ComplaintArea.corporate_services) }
 
   def url
     Rails.application.routes.url_helpers.complaint_area_subarea_path(:en,area_id,id) if persisted?
