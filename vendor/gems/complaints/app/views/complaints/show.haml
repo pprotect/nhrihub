@@ -7,8 +7,6 @@
 #single_note
 #documents
 
-=# render partial: 'complaint'
-
 :coffeescript
   @complaint_data = #{@complaint.to_json.html_safe}
   @source_areas = #{@areas.to_json.html_safe}

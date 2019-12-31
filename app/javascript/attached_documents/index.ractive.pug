@@ -1,13 +1,16 @@
 | {{#if attached_documents}}
 .row
-  .col-md-6.title title
-  .col-md-4.filename filename
+  .col-md-6.title
+    label Title
+  .col-md-4.filename
+    label Filename
 | {{/if}}
 | {{#attached_documents}}
-attachedDocument(key='{{key}}' parent_type='{{../../parent_type}}' permitted_filetypes='{{permitted_filetypes}}' maximum_filesize='{{maximum_filesize}}' communication_id='{{communication_id}}' file='{{file}}' file_id='{{file_id}}' original_filename='{{original_filename}}' filesize='{{filesize}}' id='{{id}}' lastModifiedDate='{{lastModifiedDate}}' original_type='{{original_type}}' serialization_key='{{serialization_key}}' title='{{title}}' user_id='{{user_id}}')
+<attachedDocument key='{{key}}' parent_type='{{../../parent_type}}' permitted_filetypes='{{permitted_filetypes}}' maximum_filesize='{{maximum_filesize}}' communication_id='{{communication_id}}' file='{{file}}' file_id='{{file_id}}' original_filename='{{original_filename}}' filesize='{{filesize}}' id='{{id}}' lastModifiedDate='{{lastModifiedDate}}' original_type='{{original_type}}' serialization_key='{{serialization_key}}' title='{{title}}' user_id='{{user_id}}' />
 | {{/attached_documents}}
 | {{^attached_documents}}
-div(style = 'padding-left:15px;') no documents
+.row
+  .col-md-3 no documents
 | {{/attached_documents}}
 
 script.
