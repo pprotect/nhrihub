@@ -2,7 +2,7 @@ require 'rspec/core/shared_context'
 require 'application_helpers'
 require 'reminders_spec_common_helpers'
 require 'notes_spec_common_helpers'
-require 'complaints_reminders_setup_helpers'
+#require 'complaints_reminders_setup_helpers'
 
 module ComplaintsSpecHelpers
   extend RSpec::Core::SharedContext
@@ -263,5 +263,4 @@ module ComplaintsSpecHelpers
       expect(assignee).to eq (name)
     end
   end
-
 end

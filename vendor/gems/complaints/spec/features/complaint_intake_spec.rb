@@ -1,25 +1,16 @@
 require 'rails_helper'
 $:.unshift File.expand_path '../../helpers', __FILE__
 require 'login_helpers'
-require 'download_helpers'
 require 'complaints_spec_setup_helpers'
 require 'navigation_helpers'
 require 'complaints_spec_helpers'
 require 'upload_file_helpers'
-require 'complaints_context_notes_spec_helpers'
-require 'complaints_communications_spec_helpers'
 require 'active_storage_helpers'
 require 'parse_email_helpers'
 require 'area_subarea_common_helpers'
 
 feature "complaint pages navigation", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
-  include ComplaintsSpecSetupHelpers
-  include ComplaintsSpecHelpers
-  include UploadFileHelpers
-  include ActiveStorageHelpers
-  include ParseEmailHelpers
-  include AreaSubareaCommonHelpers
 
   before do
     visit home_path('en')
@@ -133,18 +124,6 @@ feature "complaints index", :js => true do
     expect(find('#complaint .gender').text).to eq "M"
     expect(find('#complaint .complained_to_subject_agency').text).to eq "yes"
     expect(find('#complaint .date_received').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
-
-    #within good_governance_area do
-      #Complaint.last.complaint_subareas.good_governance.map(&:name).each do |subarea_name|
-        #expect(page).to have_selector('.subarea', :text => subarea_name)
-      #end
-    #end
-
-    #within human_rights_area do
-      #Complaint.last.complaint_subareas.human_rights.map(&:name).each do |subarea_name|
-        #expect(page).to have_selector('.subarea', :text => subarea_name)
-      #end
-    #end
 
     within special_investigations_unit_area do
       Complaint.last.complaint_subareas.special_investigations_unit.map(&:name).each do |subarea_name|

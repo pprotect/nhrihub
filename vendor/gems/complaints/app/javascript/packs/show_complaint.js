@@ -4,7 +4,7 @@ _.extend(Ractive.defaults.data, {
   //all_agencies : source_all_agencies,
   all_subareas : source_subareas,
   //fade: window.env!='test',
-  //all_users : source_all_users,
+  all_users : source_all_users,
   ////all_mandates : source_all_mandates,
   all_complaint_areas : source_areas,
   ////subareas : source_subareas,
