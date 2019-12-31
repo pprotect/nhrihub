@@ -39,10 +39,10 @@ class ComplaintsController < ApplicationController
     #@human_rights_complaint_bases = Nhri::ComplaintBasis.all
     #@special_investigations_unit_complaint_bases = Siu::ComplaintBasis.all
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
-    #@maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
-    #@permitted_filetypes = ComplaintDocument.permitted_filetypes
-    #@communication_maximum_filesize    = CommunicationDocument.maximum_filesize * 1000000
-    #@communication_permitted_filetypes = CommunicationDocument.permitted_filetypes
+    @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
+    @permitted_filetypes = ComplaintDocument.permitted_filetypes
+    @communication_maximum_filesize    = CommunicationDocument.maximum_filesize * 1000000
+    @communication_permitted_filetypes = CommunicationDocument.permitted_filetypes
     @statuses = ComplaintStatus.select(:id, :name).all
     respond_to do |format|
       format.json do
@@ -129,11 +129,6 @@ class ComplaintsController < ApplicationController
   private
   def default_params
     Complaint.default_index_query_params(current_user.id)
-    #{selected_assignee_id: current_user.id,
-     #selected_status_ids: ComplaintStatus.default.map(&:id),
-     #selected_complaint_area_ids: ComplaintArea.pluck(:id),
-     #selected_subarea_ids: ComplaintSubarea.pluck(:id),
-     #selected_agency_ids: Agency.unscoped.pluck(:id) }
   end
 
   def index_query_params

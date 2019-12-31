@@ -344,7 +344,7 @@ class Complaint < ActiveRecord::Base
   end
 
   def complainant_full_name
-    [chiefly_title, firstName, lastName].join(' ')
+    [title, firstName, lastName].join(' ')
   end
 
   def gender_full_text

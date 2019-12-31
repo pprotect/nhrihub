@@ -152,7 +152,7 @@ FactoryBot.define do
 
     trait :with_fixed_associations do
       after :build do |complaint|
-        complaint.complaint_area << ComplaintArea.all.sample
+        complaint.complaint_area = ComplaintArea.all.sample
         complaint.complaint_subareas << ComplaintSubarea.all
         complaint.status_changes << FactoryBot.create(:status_change, :open, :change_date => DateTime.now, :user_id => User.all.sample.id)
         complaint.complaint_area_id = ComplaintArea.pluck(:id).sample(1)

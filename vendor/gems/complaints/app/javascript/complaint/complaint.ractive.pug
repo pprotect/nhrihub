@@ -31,9 +31,9 @@ script#complaint_detail(type='text/ractive', src='complaint_detail.html')
           .col-md-3
             label {{ t.complainant }}
           .col-md-9
-            | {{#chiefly_title}}
-            span.chiefly_title {{ chiefly_title }}
-            | {{/chiefly_title}}
+            | {{#title}}
+            span.title {{ title }}
+            | {{/title}}
             span.firstName {{ firstName }}
             span.lastName {{ lastName }}
       .col-md-3.actions
@@ -52,7 +52,7 @@ script#complaint_detail(type='text/ractive', src='complaint_detail.html')
             i.fa.fa-sm.fa-file-word-o.word_document('on-click'='@this.generate_word_doc()', 'data-toggle' = 'tooltip', title = '{{ t.download }}')
 
 style.
-  .firstName, .chiefly_title {margin-right: .25em;}
+  .firstName, .title {margin-right: .25em;}
 
 script(type='text/javascript').
   import Mandates from 'mandates'
@@ -169,7 +169,7 @@ script(type='text/javascript').
           'current_status_humanized', 'new_assignee_id', 'subarea_ids',
           'agency_ids', 'attached_documents_attributes', 'details',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
-          'firstName', 'lastName', 'chiefly_title'];
+          'firstName', 'lastName', 'title'];
       },
       url() {
         if (this.get('persisted')) { return Routes.complaint_path(current_locale, this.get('id')); }

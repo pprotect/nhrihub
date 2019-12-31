@@ -15,9 +15,9 @@ script#new_complaint_template(type = 'text/ractive')
         .col-md-6(style = 'padding-top:0px')
           .row
             .col-md-4.form-group(style = 'padding-top:0px;')
-              label(for = 'chiefly_title', style = 'font-weight:normal') 
-                | {{ t.chiefly_title }}
-              input.form-control#chiefly_title(value = '{{chiefly_title}}')
+              label(for = 'title', style = 'font-weight:normal') 
+                | {{ t.title }}
+              input.form-control#title(value = '{{title}}')
             .col-md-4.form-group('class-has-error' = 'firstName_error', style = 'padding-top:0px;')
               label.required(for = 'firstName', style = 'font-weight:normal') 
                 | {{ t.first_name }}
@@ -237,8 +237,8 @@ script#show_complaint_template(type = 'text/ractive')
                   | {{ t.complainant }}
             .col-md-9('data-toggle'='edit')
               .no_edit.in
-                span.chiefly_title
-                  | {{ chiefly_title }}
+                span.title
+                  | {{ title }}
                 span.firstName
                   | {{ firstName }}
                 span.lastName
@@ -246,9 +246,9 @@ script#show_complaint_template(type = 'text/ractive')
               .edit
                 .row
                   .col-md-4.form-group
-                    label(for = 'chiefly_title')
-                      | {{ t.chiefly_title }}
-                    input.form-control#chiefly_title(value = '{{chiefly_title}}')
+                    label(for = 'title')
+                      | {{ t.title }}
+                    input.form-control#title(value = '{{title}}')
                   .col-md-4.form-group('class-has-error' = 'firstName_error')
                     label.required(for = 'firstName')
                       | {{ t.first_name }}
@@ -307,7 +307,7 @@ script#show_complaint_template(type = 'text/ractive')
 | {{/if}}
 
 style.
-  .firstName, .chiefly_title {margin-right: .25em;}
+  .firstName, .title {margin-right: .25em;}
 
 script(type='text/javascript').
   import Mandates from 'mandates'
@@ -424,7 +424,7 @@ script(type='text/javascript').
           'current_status_humanized', 'new_assignee_id', 'subarea_ids',
           'agency_ids', 'attached_documents_attributes', 'details',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
-          'firstName', 'lastName', 'chiefly_title'];
+          'firstName', 'lastName', 'title'];
       },
       url() {
         if (this.get('persisted')) { return Routes.complaint_path(current_locale, this.get('id')); }

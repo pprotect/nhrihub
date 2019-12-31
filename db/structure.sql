@@ -778,7 +778,7 @@ CREATE TABLE complaints (
     details text,
     "firstName" character varying,
     "lastName" character varying,
-    chiefly_title character varying,
+    title character varying,
     occupation character varying,
     employer character varying
 );
