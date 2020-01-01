@@ -13,7 +13,7 @@ module.exports = {
         if(this.get('array_source')){
           return this.get(this.source).indexOf(this.get('id')) !== -1;
         }else{
-          return this.get(this.source) === this.get('id');
+          return this.get(this.source) == this.get('id');
         }
       },
       set(val){

@@ -12,6 +12,13 @@ en:
       adv_council: 'Advisory council'
       headings: 'Human rights indicators'
       complaints: 'Complaints'
+      compl:
+        intake: 'Intake'
+        list: 'List'
+        intk:
+          individual: 'Individual'
+          organization: 'Organization'
+          own_motion: 'Own Motion'
       pro:
         pro: 'Human rights protection and promotion'
       icc:

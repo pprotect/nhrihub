@@ -53,7 +53,7 @@ class ComplaintsSeedData
     completed_complaint_status = FactoryBot.create(:complaint_status, :id => 2, :name => "Completed")
 
     FactoryBot.create(:complaint,
-                       :chiefly_title => "Arjuna",
+                       :title => "Arjuna",
                        :firstName => "Camilla",
                        :lastName  => "Lebsack",
                        :village => "Katherineborough",
@@ -69,7 +69,7 @@ class ComplaintsSeedData
                                                               :complaint_status_id => active_complaint_status.id)])
 
     FactoryBot.create(:complaint,
-                       :chiefly_title => "Arjuna",
+                       :title => "Arjuna",
                        :firstName => "Bo",
                        :lastName  => "McCullough",
                        :village => "Conroytown",
@@ -85,7 +85,7 @@ class ComplaintsSeedData
                                                               :complaint_status_id => active_complaint_status.id)])
 
     FactoryBot.create(:complaint,
-                       :chiefly_title => "Arjuna",
+                       :title => "Arjuna",
                        :firstName => "Ned",
                        :lastName  => "Kessler",
                        :village => "Port Janiya",
@@ -101,7 +101,7 @@ class ComplaintsSeedData
                                                               :complaint_status_id => completed_complaint_status.id)])
 
     FactoryBot.create(:complaint,
-                       :chiefly_title => "Arjuna",
+                       :title => "Arjuna",
                        :firstName => "Marissa",
                        :lastName  => "Yost",
                        :village => "Parkerfurt",

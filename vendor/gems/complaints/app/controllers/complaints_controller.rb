@@ -6,39 +6,38 @@ class ComplaintsController < ApplicationController
       #ids = uncached_keys_and_ids.values
       #Complaint.index_page_associations(current_user, ids).map(&:to_json)
     #end
-    complaints = Complaint.index_page_associations(Complaint.pluck(:id), index_query_params)
+    complaints = Complaint.index_page_associations(index_query_params)
+    logger.info "complaints length: #{complaints.length}"
 
     @areas = ComplaintArea.all
     @subareas = ComplaintSubarea.all
-    @selected_status_ids = index_query_params[:selected_status_ids]
-    @selected_assignee_id = index_query_params[:selected_assignee_id]
-    @mandates = Mandate.all.sort_by(&:name)
+    @selected_status_ids = default_params[:selected_status_ids]
+    @selected_assignee_id = current_user.id
+    @complaint_areas = ComplaintArea.all.sort_by(&:name)
     @filter_criteria = {
-      complainant: "",
+      complainant: nil,
       from: nil,
       to: nil,
-      case_reference: params[:case_reference],
+      case_reference: nil,
       village: nil,
-      phone_number: "",
-      basis_ids: [],
-      selected_agency_ids: Agency.pluck(:id),
-      current_assignee_id: 0,
+      phone: nil,
+      selected_agency_ids: Agency.unscoped.pluck(:id),
       selected_assignee_id: @selected_assignee_id,
-      selected_subarea_ids: index_query_params[:selected_subarea_ids],
+      selected_subarea_ids: @subareas.map(&:id),
       selected_status_ids: @selected_status_ids,
-      selected_mandate_ids: @mandates.pluck(:id)
+      selected_complaint_area_ids: @complaint_areas.map(&:id)
     }
     @complaints = "[#{complaints.map(&:to_json).join(", ").html_safe}]".html_safe
 
-    @agencies = Agency.all
-    @complaint_bases = [ StrategicPlans::ComplaintBasis.named_list,
-                         GoodGovernance::ComplaintBasis.named_list,
-                         Nhri::ComplaintBasis.named_list,
-                         Siu::ComplaintBasis.named_list ]
+    @agencies = Agency.unassigned_first
+    #@complaint_bases = [ StrategicPlans::ComplaintBasis.named_list,
+                         #GoodGovernance::ComplaintBasis.named_list,
+                         #Nhri::ComplaintBasis.named_list,
+                         #Siu::ComplaintBasis.named_list ]
     @users = User.all
-    @good_governance_complaint_bases = GoodGovernance::ComplaintBasis.all
-    @human_rights_complaint_bases = Nhri::ComplaintBasis.all
-    @special_investigations_unit_complaint_bases = Siu::ComplaintBasis.all
+    #@good_governance_complaint_bases = GoodGovernance::ComplaintBasis.all
+    #@human_rights_complaint_bases = Nhri::ComplaintBasis.all
+    #@special_investigations_unit_complaint_bases = Siu::ComplaintBasis.all
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
     @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
     @permitted_filetypes = ComplaintDocument.permitted_filetypes
@@ -60,12 +59,13 @@ class ComplaintsController < ApplicationController
 
   def create
     params[:complaint].delete(:current_status_humanized)
-    complaint = Complaint.new(complaint_params)
-    complaint.status_changes_attributes = [{:user_id => current_user.id, :name => "Under Evaluation"}]
-    if complaint.save
-      render :json => complaint, :status => 200
+    @complaint = Complaint.new(complaint_params)
+    @complaint.status_changes_attributes = [{:user_id => current_user.id, :name => "Under Evaluation"}]
+    if @complaint.save
+      #render :json => complaint, :status => 200
+      render @complaint, :status => 200
     else
-      render :plain => complaint.errors.full_messages, :status => 500
+      render :plain => @complaint.errors.full_messages, :status => 500
     end
   end
 
@@ -90,40 +90,65 @@ class ComplaintsController < ApplicationController
 
   def show
     @complaint = Complaint.find(params[:id])
+    @areas = ComplaintArea.all
+    @subareas = ComplaintSubarea.all
+    @agencies = Agency.unscoped.all
+    @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
     respond_to do |format|
       format.docx do
         send_file ComplaintReport.new(@complaint,current_user).docfile
       end
+      format.html do
+        render :show, :layout => 'application_webpack'
+      end
     end
+  end
+
+  def new
+    @title = t('.heading', type: params[:type].titlecase)
+    @areas = ComplaintArea.all
+    @subareas = ComplaintSubarea.all
+    @agencies = Agency.all
+    @complaint_bases = [ StrategicPlans::ComplaintBasis.named_list,
+                         GoodGovernance::ComplaintBasis.named_list,
+                         Nhri::ComplaintBasis.named_list,
+                         Siu::ComplaintBasis.named_list ]
+    @users = User.all
+    @good_governance_complaint_bases = GoodGovernance::ComplaintBasis.all
+    @human_rights_complaint_bases = Nhri::ComplaintBasis.all
+    @special_investigations_unit_complaint_bases = Siu::ComplaintBasis.all
+    @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
+    @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
+    @permitted_filetypes = ComplaintDocument.permitted_filetypes
+    @communication_maximum_filesize    = CommunicationDocument.maximum_filesize * 1000000
+    @communication_permitted_filetypes = CommunicationDocument.permitted_filetypes
+    @statuses = ComplaintStatus.select(:id, :name).all
+    render :new, :layout => 'application_webpack'
   end
 
   private
   def default_params
-    {selected_assignee_id: current_user.id,
-     selected_status_ids: ComplaintStatus.default.map(&:id),
-     selected_mandate_ids: Mandate.pluck(:id),
-     selected_subarea_ids: ComplaintSubarea.pluck(:id),
-     selected_agency_ids: Agency.pluck(:id)}
+    Complaint.default_index_query_params(current_user.id)
   end
 
   def index_query_params
     params.
-      permit(:complainant, :from, :to, :case_reference, :village, :phone_number, :phone,
-             :current_assignee_id, :selected_assignee_id, :locale, :mandate_id,
-             :selected_status_ids => [], :selected_mandate_ids => [],
+      permit(:complainant, :from, :to, :case_reference, :village, :phone,
+             :selected_assignee_id, :locale, :mandate_id, :type,
+             :selected_status_ids => [], :selected_complaint_area_ids => [],
              :selected_subarea_ids => [],
              :selected_agency_ids => [] ).
       with_defaults(default_params).
       slice(:selected_assignee_id, :selected_status_ids, :complainant,
-            :from, :to, :village, :phone, :selected_mandate_ids,
+            :from, :to, :village, :phone, :selected_complaint_area_ids,
             :selected_subarea_ids, :case_reference,
             :selected_agency_ids )
   end
 
   def complaint_params
-    params.require(:complaint).permit( :firstName, :lastName, :chiefly_title, :village, :phone, :new_assignee_id,
+    params.require(:complaint).permit( :firstName, :lastName, :title, :village, :phone, :new_assignee_id,
                                        :dob, :email, :complained_to_subject_agency, :desired_outcome, :gender, :details,
-                                       :date, :imported, :mandate_id,
+                                       :date, :imported, :complaint_area_id,
                                        :subarea_ids => [],
                                        :status_changes_attributes => [:user_id, :name],
                                        :agency_ids => [],

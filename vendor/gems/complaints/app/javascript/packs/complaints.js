@@ -25,34 +25,35 @@ require("@rails/ujs").start()
 _.extend(Ractive.defaults.data, {
   fade: window.env!='test',
   all_users : source_all_users,
-  all_mandates : source_all_mandates,
+  //all_mandates : source_all_mandates,
   areas : source_areas,
   subareas : source_subareas,
-  complaint_bases : source_complaint_bases,
+  //complaint_bases : source_complaint_bases,
   all_agencies : source_all_agencies,
-  all_agencies_in_sixes : _.chain(source_all_agencies).groupBy(function(el,i){return Math.floor(i/6)}).toArray().value(),
+  //all_agencies_in_sixes : _.chain(source_all_agencies).groupBy(function(el,i){return Math.floor(i/6)}).toArray().value(),
   all_staff : source_all_staff,
   permitted_filetypes : source_permitted_filetypes,
   maximum_filesize : source_maximum_filesize,
   communication_permitted_filetypes : source_communication_permitted_filetypes,
   communication_maximum_filesize : source_communication_maximum_filesize,
   statuses : source_statuses,
-  local : function(gmt_date){ return $.datepicker.formatDate("M d, yy", new Date(gmt_date)); }
+  local : function(gmt_date){ return $.datepicker.formatDate("M d, yy", new Date(gmt_date)); },
+  i18n: i18n
 })
 
-window.start_page = function(){ window.complaints = new Ractive(complaints_options) }
+window.start_page = function(){ window.complaints_page = new Ractive(complaints_options) }
 window.page_ready = false;
 
 $(function() {
   start_page();
-  filter_criteria_datepicker.start(complaints);
+  filter_criteria_datepicker.start(complaints_page);
   // so that a state object is present when returnng to the initial state with the back button
   // this is so we can discriminate returning to the page from page load
-  return history.replaceState({bish:"bosh"},"bash",window.location);
+  return history.replaceState({filter_criteria:complaints_page.get('filter_criteria')},"bash",window.location);
 });
 
 window.onpopstate = function(event){
   if (event.state) { // to ensure that it doesn't trigger on page load, it's a problem with phantomjs but not with chrome
-    return window.complaints.findComponent('filterControls').set_filter_from_query_string();
+    return window.complaints_page.set('filter_criteria',event.state.filter_criteria)
   }
 };

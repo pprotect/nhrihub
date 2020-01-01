@@ -1,6 +1,13 @@
 SimpleNavigation::Configuration.run do |navigation|
   navigation.items do |primary|
-    primary.item :compl, t('layout.nav.complaints'), complaints_path
+    primary.item :compl, t('layout.nav.complaints') do |compl|
+      compl.item :intake, t('layout.nav.compl.intake'), class: 'dropdown-submenu' do |intake|
+        intake.item :individual, t('layout.nav.compl.intk.individual'), complaint_intake_path(:individual)
+        intake.item :organization, t('layout.nav.compl.intk.organization'), complaint_intake_path(:organization)
+        intake.item :own_motion, t('layout.nav.compl.intk.own_motion'), complaint_intake_path(:own_motion)
+      end
+      compl.item :list, t('layout.nav.compl.list'), complaints_path(Complaint.default_index_query_params(current_user.id))
+    end
     primary.item :proj, t('layout.nav.projects'), projects_path
     primary.item :doc, t('layout.nav.int_docs'), internal_documents_path
     primary.item :nhri, t('layout.nav.nhri') do |nhri|

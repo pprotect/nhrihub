@@ -13,7 +13,7 @@ module ComplaintsRemindersSetupHelpers
   end
 
   def populate_database
-    create_mandates
+    create_complaint_areas
     create_subareas
     create_agencies
     create_complaint_statuses

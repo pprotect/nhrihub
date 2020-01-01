@@ -148,7 +148,7 @@ describe "complaints index page", ->
 
     it "when filter_criteria.complainant has a value matching chiefly title", ->
       complaints.set('complaints',[]) # I can't figure out why this is necessary, but without it chiefly title does not get set in the next line!
-      complaints.set('complaints',[{chiefly_title: "Katanga", firstName : "Mandela", lastName : "Mugube"}])
+      complaints.set('complaints',[{title: "Katanga", firstName : "Mandela", lastName : "Mugube"}])
       complaints.set('filter_criteria.complainant'," k")
       complaint = complaints.findComponent('complaint')
       expect(complaint.matches_complainant()).to.be.true

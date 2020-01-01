@@ -9,6 +9,8 @@ module NotesSpecCommonHelpers
 
   def open_notes_modal
     notes_icon.click
+    # this is a very ugly hack to work around the problem where the popover is visible in test mode only:
+    page.execute_script("$('i.fa-info-circle').popover('hide')")
     expect(page).to have_selector('#note .modal h4', :text => 'Notes', :visible => true)
   end
 

@@ -51,8 +51,11 @@ class Validator
     @validatee.set(attribute+"_error", _.isEmpty(@validatee.get(attribute)))
     !@validatee.get(attribute+"_error")
   lessThan : (attribute,param)->
-    @validatee.set(attribute+"_error", @validatee.get(attribute) > param)
-    !@validatee.get(attribute+"_error")
+    if _.isUndefined(param) || _.isNull(param)
+      return @validatee.set('unconfigured_validation_parameter_error',true)
+    else
+      @validatee.set(attribute+"_error", @validatee.get(attribute) > param)
+      !@validatee.get(attribute+"_error")
   numeric : (attribute)->
     @validatee.set(attribute+"_error", _.isNaN(parseInt(@validatee.get(attribute))))
     !@validatee.get(attribute+"_error")
@@ -61,20 +64,23 @@ class Validator
     #console.log "validate nonZero #{attribute} value #{parseInt(@validatee.get(attribute))} result #{@validatee.get(attribute+'_error')}"
     !@validatee.get(attribute+"_error")
   match : (attribute,param)->
-    value = @validatee.get(attribute)
-    if _.isArray(param)
-      if @nonEmpty("unconfigured_validation_parameter",param)
-        match = _(param).any (val)->
-          re = new RegExp(val)
-          re.test value
-      else
-        # don't trigger match error if params are empty
-        match = true
+    if _.isUndefined(param) || _.isNull(param)
+      return @validatee.set('unconfigured_validation_parameter_error',true)
     else
-      re = new RegExp(param)
-      match = re.test value
-    @validatee.set(attribute+"_error", !match)
-    !@validatee.get(attribute+"_error")
+      value = @validatee.get(attribute)
+      if _.isArray(param)
+        if @nonEmpty("unconfigured_validation_parameter",param)
+          match = _(param).any (val)->
+            re = new RegExp(val)
+            re.test value
+        else
+          # don't trigger match error if params are empty
+          match = true
+      else
+        re = new RegExp(param)
+        match = re.test value
+      @validatee.set(attribute+"_error", !match)
+      !@validatee.get(attribute+"_error")
   nonEmpty : (attribute,param)->
     @validatee.set(attribute+"_error", _.isEmpty(param))
     !@validatee.get(attribute+"_error")

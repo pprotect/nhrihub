@@ -1,5 +1,5 @@
 .media_appearance.well {
-  @extend .expandable_well // in main app, expandable_list
+  @extend .well // in main app
 }
 
 form.mandates label, .subarea label {

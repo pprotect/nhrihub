@@ -102,6 +102,7 @@ div:not(.collapsed)[data-toggle='collapse'] .fa-folder-o:before {
   @extend .fa;
   @extend .fa-pencil-square-o;
   @extend .fa-lg;
+  vertical-align: 0%;
 }
 
 .monitor_icon {
@@ -115,6 +116,14 @@ div:not(.collapsed)[data-toggle='collapse'] .fa-folder-o:before {
   @extend .fa;
   @extend .fa-trash-o;
   @extend .fa-lg;
+  vertical-align: 0%;
+}
+
+.eye_icon {
+  @extend .fa;
+  @extend .fa-eye;
+  @extend .fa-lg;
+  vertical-align: 0%;
 }
 
 .delete_icon_sm {

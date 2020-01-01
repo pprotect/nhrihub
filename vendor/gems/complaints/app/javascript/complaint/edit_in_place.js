@@ -11,9 +11,6 @@ const EditInPlace = function(node,id){
     error() {
       return console.log("Changes were not saved, for some reason");
     },
-    before_edit_start : () => {
-      ractive.expand();
-    }
   });
   return {
     teardown : id=> {

@@ -1,317 +1,62 @@
 script#file_selector_template(type='text/ractive' src='../../../../../../app/views/shared/_file_selector_template.html')
 script#complaint_detail(type='text/ractive', src='complaint_detail.html')
 
-script#new_complaint_template(type = 'text/ractive')
-  .row.well.well-sm.expandable_well.new_complaint.editable_container(intro = 'slide')
-    .col-md-12
-      .row
-        .col-md-12
-          span.required_before 
-            | {{ t.required }}
-      .row
-        .col-md-2
-          span 
-          | {{ t.complainant }}
-        .col-md-6(style = 'padding-top:0px')
-          .row
-            .col-md-4.form-group(style = 'padding-top:0px;')
-              label(for = 'chiefly_title', style = 'font-weight:normal') 
-                | {{ t.chiefly_title }}
-              input.form-control#chiefly_title(value = '{{chiefly_title}}')
-            .col-md-4.form-group('class-has-error' = 'firstName_error', style = 'padding-top:0px;')
-              label.required(for = 'firstName', style = 'font-weight:normal') 
-                | {{ t.first_name }}
-              input.form-control#firstName(value = '{{firstName}}', 'on-keydown'="@this.remove_attribute_error('firstName')")
-              span.help-block.error#firstName_error 
-                | {{ t.firstName_error_message }}
-            .col-md-4.form-group('class-has-error' = 'lastName_error', style = 'padding-top:0px;')
-              label.required(for = 'lastName', style = 'font-weight:normal') 
-                | {{ t.lastName }}
-              input.form-control#lastName(value = '{{lastName}}', 'on-keydown'="@this.remove_attribute_error('lastName')")
-              span.help-block.error#lastName_error 
-                | {{ t.lastName_error_message }}
-      .row.form-group('class-has-error' = 'dob_error')
-        .col-md-2
-          div.required 
-            | {{ t.dob }}
-          div dd/mm/yyyy
-        .col-md-2
-          input.form-control#dob(value = '{{dob}}', 'on-keydown'="@this.remove_attribute_error('dob')", style="width:112px;")
-          span.help-block.error#dob_error 
-            | {{ t.dob_error_message }}
-        .col-md-7
-          span(style = "margin-right:16px") 
-            | {{ t.gender }}
-          form(style = "display:inline")
-            label(style = 'font-weight:normal')
-              span(style = "margin-right:6px;") 
-                | {{ t.male }}
-              input#m(type='radio', name='{{gender}}', value='M')
-            label(style = 'font-weight:normal')
-              span(style = "margin-right:6px; margin-left:12px;") 
-                | {{ t.female }}
-              input#f(type='radio', name='{{gender}}', value='F')
-            label(style = 'font-weight:normal')
-              span(style = "margin-right:6px; margin-left:12px;") 
-                | {{ t.other }}
-              input#o(type='radio', name='{{gender}}', value='O')
-      .row.form-group('class-has-error' = 'village_error')
-        .col-md-2
-          span.required 
-            | {{ t.village }}
-        .col-md-6
-          input.form-control#village(value = '{{village}}', 'on-keydown'="@this.remove_attribute_error('village')")
-          span.help-block.error#village_error 
-            | {{ t.village_error_message }}
-      .row.form-group
-        .col-md-2
-          span 
-            | {{ t.email }}
-        .col-md-6
-          input.form-control#email(value = '{{email}}')
-      .row.form-group
-        .col-md-2
-          span 
-            | {{ t.phone }}
-        .col-md-6
-          input.form-control#phone(value = '{{phone}}')
-      .row.form-group('class-has-error' = 'details_error')
-        .col-md-2
-          span.required 
-            | {{ t.details }}
-        .col-md-6
-          textarea.form-control#complaint_details(value = '{{details}}', 'on-keydown'="@this.remove_attribute_error('details')")
-          span.help-block.error#details_error 
-            | {{ t.details_error_message }}
-      .row.form-group
-        .col-md-2
-          span 
-            | {{ t.desired_outcome }}
-        .col-md-6
-          input.form-control#desired_outcome(value = '{{desired_outcome}}')
-      .row.form-group
-        .col-md-2
-          span 
-            | {{ t.complained_to_subject_agency }}
-        .col-md-2
-          form
-            label(style = "font-weight:normal;") 
-              | {{ t.yes }}
-              input#complained_to_subject_agency_yes(type = 'radio', name = '{{complained_to_subject_agency}}', value = 'true')
-            label(style = "font-weight:normal;") 
-              | {{ t.no }}
-              input#complained_to_subject_agency_no(type = 'radio', name = '{{complained_to_subject_agency}}', value = 'false')
-        .col-md-2 
-          | {{ t.date_received }}
-        .col-md-2
-          input#date_received(type = 'text', name = "{{date_received}}", "as-single_month_datepicker"=true)
-      .row.form-group('class-has-error' = 'new_assignee_id_error')
-        .col-md-2
-          label.required 
-            | {{ t.assignee }}
-        .col-md-6
-          <assigneeSelector editing=false new_assignee_id='{{new_assignee_id}}' all_staff='{{all_staff}}' />
-          span.help-block.error#new_assignee_id_error 
-            | {{ t.assignee_error_message }}
-      .row.form-group('class-has-error' = 'mandate_id_error')
-        .col-md-2
-          label.required 
-            | {{ t.mandate }}
-        .col-md-10
-          .row
-            <mandatesSelector mandate_id='{{mandate_id}}' />
-          span.help-block.error#mandate_id_error 
-            | {{ t.mandate_id_error_message }}
-      .row.form-group('class-has-error' = 'subarea_id_count_error')
-        .col-md-2
-          label.required 
-            | {{ t.complaint_basis }}
-        .col-md-10
-          .row
-            <subareaSelector subarea_ids='{{subarea_ids}}' areas='{{areas}}' />
-          span.help-block.error#subarea_id_count_error 
-            | {{ t.complaint_basis_error_message }}
-      .row
-        .col-md-2
-          label 
-            | {{ t.agency }}
-        .col-md-10
-          <agenciesSelector agency_ids='{{agency_ids}}' all_agencies_in_sixes='{{all_agencies_in_sixes}}'/>
-      .panel.panel-default#documents
-        .panel-heading 
-          | {{ t.complaint_documents }}
-        .panel-body
-          | {{> file_selector_template {key : 'complaint'} }}
-          <attachedDocuments parent_type='{{parent_type}}' maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' attached_documents='{{attached_documents}}' key='complaint' named_document_datalist='{{complaint_named_documents_titles}}' />
-      .row
-        .col-sm-3.col-sm-offset-3(style = "text-align:center;")
-          .btn.btn-danger.btn-sm#cancel_complaint("on-click" = "@this.cancel_add_complaint()")
-            i.fa.fa-remove.fa-lg(style = "color:white")
-            span(style = "color:white")
-              | {{ t.cancel }}
-        .col-sm-3(style = "text-align:center;")
-          .btn.btn-success.btn-sm#save_complaint(style = "color:white;", "on-click" = "@this.save_complaint()")
-            i.fa.fa-check.fa-lg(style = "color:white")
-            span
-              | {{ t.save }}
-          .form-group('class-has-error' = 'has_errors')
-            span#complaint_error.help-block.error
-              | {{ t.form_error }}
-      .row.collapse('data-toggle'='edit', style = "margin-top:30px;")
-        .col-sm-3.col-sm-offset-3.edit(style = "text-align:center;")
-          .btn.btn-danger.btn-sm.edit_cancel#edit_cancel
-            i.fa.fa-remove.fa-lg(style = "color:white")
-            span(style = "color:white")
-              | {{ t.cancel }}
-        .col-sm-3.edit(style = "text-align:center;")
-          .btn.btn-success.btn-sm.save_complaint#edit_save(style = "color:white;")
-            i.fa.fa-check.fa-lg(style = "color:white")
-            span
-              | {{ t.save }}
-          .form-group('class-has-error' = 'has_errors')
-            span#complaint_error.help-block.error
-              | {{ t.form_error }}
-
-script#show_complaint_template(type = 'text/ractive')
-  .row.well.well-sm.expandable_well.complaint.editable_container('as-inpage_edit'='id')
-    .col-md-12('data-toggle' = 'edit')
-      .fade.edit
-        span.required_before 
-          | {{ t.required }}
-    .col-md-12
-      .row.basic_info
-        .col-md-2
-          .row
-            .col-md-12
-              label
-                | {{ t.case_reference }}
-              span.case_reference(style='margin-left:12px;')
-                | {{ case_reference }}
-        .col-md-7
-          .row('data-toggle' = 'edit')
-            .col-md-3
-              label
-                | {{ t.date_received }}
-            .col-md-9.date_received
-              .no_edit.in
-                | {{formatted_date}}
-              .edit
-                input#date_received(type = 'text', as-single_month_datepicker=true, value = "{{formatted_date}}", style = "position:relative; z-index:12")
-          .row
-            .col-md-3
-              label
-                | {{ t.current_assignee }}
-            .col-md-9
-              span.current_assignee
-                | {{ current_assignee_name }}
-          .row('data-toggle'= 'edit')
-            .col-md-3
-              label
-                | {{ t.status }}
-            .col-md-9
-              .fade.no_edit.in#status_changes
-                | {{#status_changes}}
-                <statusChange status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
-                | {{/status_changes}}
-              .fade.edit#current_status
-                form
-                  label(style='font-weight:normal; margin-right:12px')
-                    | {{ t.evaluation }}
-                    input#under_evaluation(type = 'radio', name ='{{current_status_humanized}}', value ='Under Evaluation', style='margin-left:6px')
-                  label(style='font-weight:normal; margin-right:12px')
-                    | {{ t.open }}
-                    input#open(type = 'radio', name ='{{current_status_humanized}}', value ='Open', style='margin-left:6px')
-                  label(style='font-weight:normal; margin-right:12px')
-                    | {{ t.suspended }}
-                    input#suspended(type = 'radio', name ='{{current_status_humanized}}', value ='Suspended', style='margin-left:6px')
-                  label(style='font-weight:normal')
-                    | {{ t.closed }}
-                    input#closed(type = 'radio', name ='{{current_status_humanized}}', value ='Closed', style='margin-left:6px')
-          .row
-            .col-md-3('data-toggle' = 'edit')
-              .no_edit.in
-                label
-                  | {{ t.complainant }}
-              .edit
-                label
-                  | {{ t.complainant }}
-            .col-md-9('data-toggle'='edit')
-              .no_edit.in
-                span.chiefly_title
-                  | {{ chiefly_title }}
-                span.firstName
-                  | {{ firstName }}
-                span.lastName
-                  | {{ lastName }}
-              .edit
-                .row
-                  .col-md-4.form-group
-                    label(for = 'chiefly_title')
-                      | {{ t.chiefly_title }}
-                    input.form-control#chiefly_title(value = '{{chiefly_title}}')
-                  .col-md-4.form-group('class-has-error' = 'firstName_error')
-                    label.required(for = 'firstName')
-                      | {{ t.first_name }}
-                    input.form-control#firstName(value = '{{firstName}}', 'on-keydown'="@this.remove_attribute_error('firstName')")
-                    span.help-block.error#firstName_error
-                      | {{ t.firstName_error_message }}
-                  .col-md-4.form-group('class-has-error' = 'lastName_error')
-                    label.required(for = 'lastName')
-                      | {{ t.lastName }}
-                    input.form-control#lastName(value = '{{lastName}}', 'on-keydown'="@this.remove_attribute_error('lastName')")
-                    span.help-block.error#lastName_error
-                      | {{ t.lastName_error_message }}
-        .col-md-3.actions
-          .row(style = "margin-left:0px;")
-            .col-md-1.col-md-offset-2('data-toggle'= 'edit')
-              .no_edit.in
-                .alarm_icon.counter('data-count'="{{reminders_count}}", 'on-click' = "@this.show_reminders_panel()", 'data-toggle' = 'tooltip', title = '{{ t.reminders }}')
-              .edit
-            .col-md-1('data-toggle'= 'edit')
-              .no_edit.in
-                .note_icon.show_notes.counter('data-count'='{{notes_count}}', 'on-click' = "@this.show_notes_panel()", 'data-toggle' = 'tooltip', title = '{{ t.notes }}')
-              .edit
-            .col-md-1('data-toggle'= 'edit')
-              .no_edit.in
-                i.fa.fa-comments-o.fa-lg.counter('data-count'='{{communications_count}}', 'on-click' = '@this.show_communications_panel()', style = "position:relative;", 'data-toggle' = 'tooltip', title = '{{ t.communications }}')
-              .fade.edit
-            .col-md-1.icon('data-toggle' = 'edit')
-              .fade.edit
-              .fade.no_edit.in
-                i.fa.fa-pencil-square-o#edit_start(style = "position:relative; top:1px;", 'data-toggle' = 'tooltip', title = '{{ t.edit }}')
-            .col-md-1('data-toggle'= 'edit')
-              .no_edit.in
-                i.fa.fa-sm.fa-trash-o.delete_icon('on-click'='@this.show_confirm_delete_modal()', 'data-toggle' = 'tooltip', title = '{{ t.delete }}')
-              .edit
-            .col-md-1('data-toggle'= 'edit')
-              .no_edit.in
-                i.fa.fa-sm.fa-file-word-o.word_document('on-click'='@this.generate_word_doc()', 'data-toggle' = 'tooltip', title = '{{ t.download }}')
-              .edit
-            .col-md-1('data-toggle'= 'collapse', href = ".collapse{{id}}", style = "width:45px;")
-              div('data-toggle'= 'edit')
-                .no_edit.in
-                  | {{#if expanded}}
-                  i#compact('on-click'='@this.compact()', 'data-toggle'='tooltip', title= '{{ t.compact }}', style = "position:relative; top:3px;")
-                  | {{else}}
-                  i#expand('on-click'='@this.expand()', 'data-toggle'='tooltip', title= '{{ t.expand }}', style = "position:relative; top:3px;")
-                  | {{/if}}
-                .edit
-      | {{#if expanded}}
-      | {{> complaint_detail }}
-      | {{/if}}
-
-| {{#if persisted }}
-| {{> show_complaint_template}}
-| {{else}}
-| {{> new_complaint_template}}
-| {{/if}}
+.row.well.well-sm.well.complaint
+  .col-md-12
+    .row.basic_info
+      .col-md-2
+        .row
+          .col-md-12
+            label {{ t.case_reference }}
+            span.case_reference(style='margin-left:12px;') {{ case_reference }}
+      .col-md-7
+        .row
+          .col-md-3
+            label {{ t.date_received }}
+          .col-md-9.date_received {{formatted_date}}
+        .row
+          .col-md-3
+            label {{ t.current_assignee }}
+          .col-md-9
+            span.current_assignee {{ current_assignee_name }}
+        .row
+          .col-md-3
+            label {{ t.status }}
+          .col-md-9
+            #status_changes
+              | {{#status_changes}}
+              <statusChange status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
+              | {{/status_changes}}
+        .row
+          .col-md-3
+            label {{ t.complainant }}
+          .col-md-9
+            | {{#title}}
+            span.title {{ title }}
+            | {{/title}}
+            span.firstName {{ firstName }}
+            span.lastName {{ lastName }}
+      .col-md-3.actions
+        .row(style = "margin-left:0px;")
+          .col-md-1.col-md-offset-2
+            .i.eye_icon.show_complaint('on-click' = '@this.show_complaint()', 'data-toggle' = 'tooltip', title='{{t.show_complaint}}')
+          .col-md-1
+            .alarm_icon.counter('data-count'="{{reminders_count}}", 'on-click' = "@this.show_reminders_panel()", 'data-toggle' = 'tooltip', title = '{{ t.reminders }}')
+          .col-md-1
+            .note_icon.show_notes.counter('data-count'='{{notes_count}}', 'on-click' = "@this.show_notes_panel()", 'data-toggle' = 'tooltip', title = '{{ t.notes }}')
+          .col-md-1
+            i.fa.fa-comments-o.fa-lg.counter('data-count'='{{communications_count}}', 'on-click' = '@this.show_communications_panel()', style = "position:relative;", 'data-toggle' = 'tooltip', title = '{{ t.communications }}')
+          .col-md-1
+            i.fa-sm.delete_icon('on-click'='@this.show_confirm_delete_modal()', 'data-toggle' = 'tooltip', title = '{{ t.delete }}')
+          .col-md-1
+            i.fa.fa-sm.fa-file-word-o.word_document('on-click'='@this.generate_word_doc()', 'data-toggle' = 'tooltip', title = '{{ t.download }}')
 
 style.
-  .firstName, .chiefly_title {margin-right: .25em;}
+  .firstName, .title {margin-right: .25em;}
 
 script(type='text/javascript').
   import Mandates from 'mandates'
-  import MandatesSelector from 'mandates_selector'
+  import MandatesSelector from 'areas_selector'
   import Area from 'area'
   import Agencies from 'agencies'
   import AgenciesSelector from 'agencies_selector'
@@ -420,11 +165,11 @@ script(type='text/javascript').
         return !(_.isNull(this.get('id')) || _.isUndefined(this.get('id')));
       },
       persistent_attributes() {
-        return ['village','phone','mandate_id',
+        return ['village','phone','complaint_area_id',
           'current_status_humanized', 'new_assignee_id', 'subarea_ids',
           'agency_ids', 'attached_documents_attributes', 'details',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
-          'firstName', 'lastName', 'chiefly_title'];
+          'firstName', 'lastName', 'title'];
       },
       url() {
         if (this.get('persisted')) { return Routes.complaint_path(current_locale, this.get('id')); }
@@ -446,8 +191,8 @@ script(type='text/javascript').
         return this.validator.has_errors();
       },
       mandate_name() {
-        if(_.isNull(this.get('mandate_id'))){return null}
-        const mandate = _(this.get('all_mandates')).find(mandate=>mandate.id==this.get('mandate_id'))
+        if(_.isNull(this.get('complaint_area_id'))){return null}
+        const mandate = _(this.get('all_mandates')).find(mandate=>mandate.id==this.get('complaint_area_id'))
         return mandate.name;
       },
       create_reminder_url() {
@@ -466,7 +211,7 @@ script(type='text/javascript').
           firstName : ['notBlank'],
           lastName : ['notBlank'],
           village : ['notBlank'],
-          mandate_id : 'numeric',
+          complaint_area_id : 'numeric',
           subarea_id_count : 'nonZero',
           new_assignee_id : ['nonZero', {if : () => !this.get('editing')}],
           dob: () => {
@@ -486,7 +231,7 @@ script(type='text/javascript').
           lastName_error : this.get('lastName_error'),
           village_error : this.get('village_error'),
           new_assignee_id_error : this.get('new_assignee_id_error'),
-          mandate_id_error : this.get('mandate_id_error'),
+          complaint_area_id_error : this.get('complaint_area_id_error'),
           subarea_id_count_error : this.get('subarea_id_count_error'),
           dob_error : this.get('dob_error'),
           details_error : this.get('details_error')
@@ -530,14 +275,6 @@ script(type='text/javascript').
     generate_word_doc() {
       return window.location = Routes.complaint_path('en',this.get('id'),{format : 'docx'});
     },
-    expand() {
-      this.set('expanded',true);
-      return jQuery(this.findAll('.collapse')).collapse('show');
-    },
-    compact() {
-      this.set('expanded',false);
-      return jQuery(this.findAll('.collapse')).collapse('hide');
-    },
     validate() {
       return this.validator.validate();
     },
@@ -555,6 +292,10 @@ script(type='text/javascript').
     cancel_add_complaint() {
       UserInput.reset();
       return this.parent.shift('complaints');
+    },
+    show_complaint(){
+      var url = Routes.complaint_path(current_locale, this.get('id'));
+      window.location = url;
     },
     remove(guid){
       // required for Ractive 0.8.0, possibly can be removed in later revs

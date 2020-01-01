@@ -1,0 +1,19 @@
+.form
+  | {{#all_complaint_areas}}
+  .col-md-2(style = "padding-top:0;")
+    label(style="font-weight: 400" for="{{key}}")
+      | {{ name }}
+  .col-md-1.mandate(style = "padding-top:0;")
+    input(type = 'radio', name = '{{complaint_area_id}}', value = '{{ id }}', 'on-change'='@this.remove_error()', id = '{{key}}')
+  |  {{/all_complaint_areas}}
+
+script.
+  export default Ractive.extend({
+    template : $TEMPLATE,
+    remove_error() {
+      if (this.parent.get('complaint_area_id') !== 0) {
+        return this.parent.remove_attribute_error('complaint_area_id');
+      }
+    },
+    data(){ return {} },
+  });

@@ -6,7 +6,7 @@ module ComplaintsContextNotesSpecHelpers
   include ComplaintsSpecSetupHelpers
 
   before do
-    create_mandates
+    create_complaint_areas
     create_subareas
     create_complaint_statuses
     create_agencies
