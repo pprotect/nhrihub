@@ -8,99 +8,80 @@ script#file_selector_template(type='text/ractive' src='../../../../../app/views/
           | {{ t.required }}
     .row
       .col-md-2
-        span 
-        | {{ t.complainant }}
+        span.complaint_label {{ t.complainant }}
       .col-md-6(style = 'padding-top:0px')
         .row
           .col-md-4.form-group(style = 'padding-top:0px;')
-            label(for = 'title', style = 'font-weight:normal') 
-              | {{ t.title }}
+            label(for = 'title') {{ t.title }}
             input.form-control#title(value = '{{title}}')
           .col-md-4.form-group('class-has-error' = 'firstName_error', style = 'padding-top:0px;')
-            label.required(for = 'firstName', style = 'font-weight:normal') 
-              | {{ t.first_name }}
+            label.required(for = 'firstName') {{ t.first_name }}
             input.form-control#firstName(value = '{{firstName}}', 'on-keydown'="@this.remove_attribute_error('firstName')")
-            span.help-block.error#firstName_error 
-              | {{ t.firstName_error_message }}
+            span.help-block.error#firstName_error {{ t.firstName_error_message }}
           .col-md-4.form-group('class-has-error' = 'lastName_error', style = 'padding-top:0px;')
-            label.required(for = 'lastName', style = 'font-weight:normal') 
-              | {{ t.lastName }}
+            label.required(for = 'lastName') {{ t.lastName }}
             input.form-control#lastName(value = '{{lastName}}', 'on-keydown'="@this.remove_attribute_error('lastName')")
-            span.help-block.error#lastName_error 
-              | {{ t.lastName_error_message }}
+            span.help-block.error#lastName_error {{ t.lastName_error_message }}
     .row.form-group('class-has-error' = 'dob_error')
       .col-md-2
-        div.required 
-          | {{ t.dob }}
+        div.required.complaint_label {{ t.dob }}
         div dd/mm/yyyy
       .col-md-2
         input.form-control#dob(value = '{{dob}}', 'on-keydown'="@this.remove_attribute_error('dob')", style="width:112px;")
-        span.help-block.error#dob_error 
-          | {{ t.dob_error_message }}
+        span.help-block.error#dob_error {{ t.dob_error_message }}
       .col-md-7
-        span(style = "margin-right:16px") 
-          | {{ t.gender }}
+        span.complaint_label(style = "margin-right:16px;") {{ t.gender }}
         form(style = "display:inline")
-          label(style = 'font-weight:normal')
-            span(style = "margin-right:6px;") 
-              | {{ t.male }}
+          label
+            span(style = "margin-right:6px;") {{ t.male }}
             input#m(type='radio', name='{{gender}}', value='M')
-          label(style = 'font-weight:normal')
-            span(style = "margin-right:6px; margin-left:12px;") 
-              | {{ t.female }}
+          label
+            span(style = "margin-right:6px; margin-left:12px;") {{ t.female }}
             input#f(type='radio', name='{{gender}}', value='F')
-          label(style = 'font-weight:normal')
-            span(style = "margin-right:6px; margin-left:12px;") 
-              | {{ t.other }}
+          label
+            span(style = "margin-right:6px; margin-left:12px;") {{ t.other }}
             input#o(type='radio', name='{{gender}}', value='O')
     .row.form-group('class-has-error' = 'village_error')
       .col-md-2
-        span.required 
-          | {{ t.village }}
+        span.required.complaint_label {{ t.village }}
       .col-md-6
         input.form-control#village(value = '{{village}}', 'on-keydown'="@this.remove_attribute_error('village')")
         span.help-block.error#village_error 
           | {{ t.village_error_message }}
     .row.form-group
       .col-md-2
-        span 
-          | {{ t.email }}
+        span.complaint_label {{ t.email }}
       .col-md-6
         input.form-control#email(value = '{{email}}')
     .row.form-group
       .col-md-2
-        span 
-          | {{ t.phone }}
+        span.complaint_label {{ t.phone }}
       .col-md-6
         input.form-control#phone(value = '{{phone}}')
     .row.form-group('class-has-error' = 'details_error')
       .col-md-2
-        span.required 
-          | {{ t.details }}
+        span.required.complaint_label {{ t.details }}
       .col-md-6
         textarea.form-control#complaint_details(value = '{{details}}', 'on-keydown'="@this.remove_attribute_error('details')")
         span.help-block.error#details_error 
           | {{ t.details_error_message }}
     .row.form-group
       .col-md-2
-        span 
-          | {{ t.desired_outcome }}
+        span.complaint_label {{ t.desired_outcome }}
       .col-md-6
         input.form-control#desired_outcome(value = '{{desired_outcome}}')
     .row.form-group
       .col-md-2
-        span 
-          | {{ t.complained_to_subject_agency }}
+        span.complaint_label {{ t.complained_to_subject_agency }}
       .col-md-2
         form
-          label(style = "font-weight:normal;") 
+          label
             | {{ t.yes }}
             input#complained_to_subject_agency_yes(type = 'radio', name = '{{complained_to_subject_agency}}', value = 'true')
-          label(style = "font-weight:normal;") 
+          label
             | {{ t.no }}
             input#complained_to_subject_agency_no(type = 'radio', name = '{{complained_to_subject_agency}}', value = 'false')
-      .col-md-2 
-        | {{ t.date_received }}
+      .col-md-2.complaint_label {{ t.date_received }}
       .col-md-2
         input#date_received(type = 'text', name = "{{date_received}}", "as-single_month_datepicker"=true)
     .row.form-group('class-has-error' = 'new_assignee_id_error')
@@ -129,13 +110,11 @@ script#file_selector_template(type='text/ractive' src='../../../../../app/views/
           | {{ t.complaint_basis_error_message }}
     .row
       .col-md-2
-        label 
-          | {{ t.agency }}
+        label {{ t.agency }}
       .col-md-10
         <agenciesSelector agency_ids='{{agency_ids}}' all_agencies_in_sixes='{{all_agencies_in_sixes}}'/>
     .panel.panel-default#documents
-      .panel-heading 
-        | {{ t.complaint_documents }}
+      .panel-heading {{ t.complaint_documents }}
       .panel-body
         | {{> file_selector_template {key : 'complaint'} }}
         <attachedDocuments parent_type='{{parent_type}}' maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' attached_documents='{{attached_documents}}' key='complaint' named_document_datalist='{{complaint_named_documents_titles}}' />
@@ -168,6 +147,12 @@ script#file_selector_template(type='text/ractive' src='../../../../../app/views/
           span#complaint_error.help-block.error
             | {{ t.form_error }}
 
+style.
+  .complaint_label, .panel-heading { font-weight: 700; }
+  input[id^='complained_to_subject_agency']{
+    margin-left: 12px;
+    margin-right: 12px;
+  }
 script.
   import translations from 'translations.js'
   import 'jquery-ui/ui/widgets/datepicker'
@@ -214,6 +199,7 @@ script.
   export default Ractive.extend({
     el : '#complaint',
     template : $TEMPLATE,
+    css: $CSS,
     data() {
       return {
         t : translations.t('complaint'),
