@@ -66,6 +66,8 @@ end
 describe "next case reference" do
   let(:current_year){ Date.today.strftime('%y').to_i }
   let(:this_year_case_reference) { CaseReference.new(current_year,22) }
+  let(:formatted_case_reference) { ->(year,sequence){ CaseReferenceFormat%{year:year,sequence:sequence} } }
+
   context "existing Complaints are from previous year" do
     before do
       complaint = Complaint.create
@@ -73,19 +75,18 @@ describe "next case reference" do
     end
 
     it "should start the sequence at 1 with the current year" do
-      expect(Complaint.next_case_reference.to_s).to eq("C#{ current_year }-1")
+      expect(Complaint.next_case_reference.to_s).to eq formatted_case_reference[current_year, 1]
     end
   end
 
   context "existing Complaints are from the current year" do
     before do
-      #Complaint.create(:case_reference => this_year_case_reference)
       complaint = Complaint.create
       complaint.update_attribute(:case_reference, this_year_case_reference)
     end
 
     it "should increment the sequence only" do
-      expect(Complaint.next_case_reference.to_s).to eq("C#{current_year}-23")
+      expect(Complaint.next_case_reference.to_s).to eq formatted_case_reference[current_year, 23]
     end
   end
 
@@ -95,23 +96,29 @@ describe "next case reference" do
     end
 
     it "should create the first case reference for the current year" do
-      expect(Complaint.next_case_reference.to_s).to eq("C#{ current_year }-1")
+      expect(Complaint.next_case_reference.to_s).to eq formatted_case_reference[current_year, 1]
     end
   end
 end
 
 describe "server assignment of case reference" do
+  let(:formatted_case_reference) { ->(year,sequence){ CaseReferenceFormat%{year:year,sequence:sequence} } }
+  let(:current_year){ Date.today.strftime('%y').to_i }
+
   it "should not assign case reference to a new complaint" do
-    expect(Complaint.new.case_reference.year).to be_nil
-    expect(Complaint.new.case_reference.sequence).to be_nil
+    expect(Complaint.new.case_reference.year).to be_zero
+    expect(Complaint.new.case_reference.sequence).to be_zero
   end
 
   it "should assign case reference to a saved complaint" do
-    expect(Complaint.create.reload.case_reference.to_s).to eq "C#{Date.today.strftime('%y')}-1"
+    expect(Complaint.create.reload.case_reference.to_s).to eq formatted_case_reference[current_year, 1]
   end
 end
 
 describe "sort algorithm" do
+  let(:formatted_case_reference) { ->(year,sequence){ CaseReferenceFormat%{year:year,sequence:sequence} } }
+  let(:current_year){ Date.today.strftime('%y').to_i }
+
   before do
     c = Complaint.create
     c.update_attribute(:case_reference, CaseReference.new(17,4))
@@ -128,11 +135,15 @@ describe "sort algorithm" do
   end
 
   it "should sort by ascending case reference" do
-    expect(Complaint.all.sort.pluck(:case_reference).map(&:to_s)).to eq ["C17-4","C16-10","C16-5","C16-2","C16-1","C15-11"]
+    sequenced_case_refs = [[17,4],[16,10],[16,5],[16,2],[16,1],[15,11]].map{|attrs| formatted_case_reference[ *attrs ]}
+    expect(Complaint.all.sort.pluck(:case_reference).map(&:to_s)).to eq sequenced_case_refs
   end
 end
 
 describe "#index_url" do
+  let(:formatted_case_reference) { ->(year,sequence){ CaseReferenceFormat%{year:year,sequence:sequence} } }
+  let(:current_year){ Date.today.strftime('%y').to_i }
+
   before do
     @complaint = Complaint.create
     @complaint.update_attribute(:case_reference,  CaseReference.new(12,35))
@@ -146,7 +157,7 @@ describe "#index_url" do
     expect(url.path).to eq "/en/complaints"
     params = CGI.parse(url.query)
     expect(params.keys.first).to eq "case_reference"
-    expect(params.values.first).to eq ["C12-35"]
+    expect(params.values.first).to eq [formatted_case_reference[12,35]]
   end
 end
 

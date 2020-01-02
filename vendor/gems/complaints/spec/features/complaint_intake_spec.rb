@@ -32,6 +32,9 @@ feature "complaints index", :js => true do
   include ParseEmailHelpers
   include AreaSubareaCommonHelpers
 
+  let(:formatted_case_reference) { ->(year,sequence){ CaseReferenceFormat%{year:year,sequence:sequence} } }
+  let(:current_year){ Date.today.strftime('%y').to_i }
+
   before do
     populate_database
     visit complaint_intake_path('en', 'individual')
@@ -147,7 +150,7 @@ feature "complaints index", :js => true do
     # Email notification
     expect( email.subject ).to eq "Notification of complaint assignment"
     expect( addressee ).to eq user.first_last_name
-    expect( complaint_url ).to match (/\/en\/complaints\?case_reference=c#{Date.today.strftime("%y")}-3$/i)
+    expect( complaint_url ).to match (/#{Regexp.escape complaints_path(:en,case_reference:complaint.case_reference.to_s)}$/i)
     expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
     expect( header_field('From')).to eq "NHRI Hub Administrator<no_reply@nhri-hub.com>"
     expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
@@ -173,8 +176,9 @@ feature "complaints index", :js => true do
       complete_required_fields
       expect{save_complaint}.to change{ Complaint.count }.by(1)
     end
-    year = Date.today.strftime("%y")
-    expect(Complaint.all.sort.map(&:case_reference).map(&:to_s)).to eq (1..17).map{|i| "C#{year}-#{i}"}.reverse
+    assigned_case_references = Complaint.all.sort.map(&:case_reference).map(&:to_s)
+    expected_case_references = (1..17).map{|i| formatted_case_reference[current_year,i] }.reverse
+    expect(assigned_case_references).to eq expected_case_references
   end
 
   it "does not add a new complaint that is invalid" do
@@ -245,5 +249,4 @@ feature "complaints index", :js => true do
     # on the client
     expect(page.find('.date_received').text).to eq Date.today.strftime("%b %-e, %Y")
   end
-
 end

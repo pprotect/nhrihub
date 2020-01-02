@@ -1,17 +1,18 @@
 class CaseReference
   attr_accessor :ref, :year, :sequence
+
   def initialize(year=nil, sequence=nil)
-    @year = year
-    @sequence = sequence
+    @year = year.to_i
+    @sequence = sequence.to_i
   end
 
   def to_s
-    "C#{year}-#{sequence}"
+    CaseReferenceFormat%{year:year,sequence:sequence}
   end
   alias_method :as_json, :to_s
 
   def <=>(other)
-    [other.year.to_i, other.sequence.to_i] <=> [year.to_i,sequence.to_i]
+    [other.year, other.sequence] <=> [year,sequence]
   end
 
   def next_ref
@@ -19,7 +20,7 @@ class CaseReference
   end
 
   def next_year
-    [year.to_i,current_year].max # year may be nil
+    [year,current_year].max # year may be nil
   end
 
   def current_year

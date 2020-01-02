@@ -128,7 +128,7 @@ feature 'edit complaint', js: true do
     user = User.staff.last
     expect( email.subject ).to eq "Notification of complaint assignment"
     expect( addressee ).to eq user.first_last_name
-    expect( complaint_url ).to match (/\/en\/complaints\?case_reference=#{Complaint.first.case_reference}$/)
+    expect( complaint_url ).to match (/#{Regexp.escape complaints_path(:en,case_reference:Complaint.first.case_reference.to_s)}$/i)
     expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
     expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
     expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.reload.unsubscribe_code, host: SITE_URL, protocol: :https)

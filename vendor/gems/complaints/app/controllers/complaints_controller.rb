@@ -16,8 +16,8 @@ class ComplaintsController < ApplicationController
     @complaint_areas = ComplaintArea.all.sort_by(&:name)
     @filter_criteria = {
       complainant: nil,
-      from: nil,
-      to: nil,
+      from: "",
+      to: "",
       case_reference: nil,
       village: nil,
       phone: nil,

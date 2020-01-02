@@ -212,7 +212,7 @@ feature "complaints index", :js => true do
     within first_complaint do
       show_complaint
     end
-    expect(page_heading).to eq "Complaint, case reference: C#{Date.today.strftime("%y")}-1"
+    expect(page_heading).to eq "Complaint, case reference: #{Complaint.first.case_reference}"
     expect(find('.complainant_village').text).to eq Complaint.first.village
     expect(find('.complainant_phone').text).to eq Complaint.first.phone
     expect(find('.complaint_details').text).to eq Complaint.first.details

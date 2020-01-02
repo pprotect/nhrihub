@@ -220,11 +220,13 @@ module ComplaintsSpecHelpers
     page.find(id)
     # not sure why this is necessary, but it is!
     page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
-    page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
-    page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
-    page.execute_script("$('.ui-datepicker-month').prop('selectedIndex',#{month}).trigger('change')")
+    #debugger
+    #page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
+    #debugger
+    #page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
+    page.execute_script("$('select.ui-datepicker-month').prop('selectedIndex',#{month})")
     year_index = page.evaluate_script("_($('.ui-datepicker-year option')).map(function(o){return o.text})").map(&:to_i).find_index(year)
-    page.execute_script("$('.ui-datepicker-year').prop('selectedIndex',#{year_index}).trigger('change')")
+    page.execute_script("$('select.ui-datepicker-year').prop('selectedIndex',#{year_index})")
     page.execute_script("target=$('#ui-datepicker-div td[data-month=#{month}][data-year=#{year}] a').filter(function(){return $(this).text()==#{day}})[0]")
     page.execute_script("$(target).trigger('click')")
     #page.evaluate_script %Q{ $('#{id}').datepicker('hide') } # trigger the onClose handler
