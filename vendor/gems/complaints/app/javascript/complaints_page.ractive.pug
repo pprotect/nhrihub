@@ -95,11 +95,9 @@ script.
       //return !_.isEmpty(this.findAllComponents('complaint')) && !this.findAllComponents('complaint')[0].get('persisted');
     //},
     set_filter_criteria_from_date(selectedDate){
-      console.log("set_filter_criteria_from_date "+selectedDate)
       return this.set('filter_criteria.from',selectedDate);
     },
     set_filter_criteria_to_date(selectedDate){
-      console.log("set_filter_criteria_to_date "+selectedDate)
       return this.set('filter_criteria.to',selectedDate);
     },
     generate_report() {

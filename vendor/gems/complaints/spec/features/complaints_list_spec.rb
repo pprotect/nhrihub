@@ -66,7 +66,8 @@ feature "complaints index query string", js: true do
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
                                                      selected_complaint_area_ids: ComplaintArea.pluck(:id),
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
-                                                     selected_agency_ids: Agency.unscoped.pluck(:id) })
+                                                     selected_agency_ids: Agency.unscoped.pluck(:id),
+                                                     from: 0, to: 0 })
   end
 
   it "defaults to current user as assignee" do
@@ -82,7 +83,8 @@ feature "complaints index query string", js: true do
                                                      selected_assignee_id: @norm.id,
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
-                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id)
+                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id),
+                                                     from: 0, to: 0
                                                     })
     clear_filter_fields
     expect(query_hash(query_string)).to match_hash({
@@ -90,7 +92,8 @@ feature "complaints index query string", js: true do
                                                      selected_assignee_id: @user.id,
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
-                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id)
+                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id),
+                                                     from:0, to: 0
                                                     })
     clear_options('Select agency')
     expect(query_hash(query_string)).to match_hash({
@@ -98,7 +101,8 @@ feature "complaints index query string", js: true do
                                                      selected_assignee_id: @user.id,
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
-                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id)
+                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id),
+                                                     from: 0, to: 0
                                                     })
     select_all_options('Select agency')
     wait_for_ajax
@@ -107,7 +111,8 @@ feature "complaints index query string", js: true do
                                                      selected_assignee_id: @user.id,
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
-                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id)
+                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id),
+                                                     from: 0, to: 0
                                                     })
 
   end

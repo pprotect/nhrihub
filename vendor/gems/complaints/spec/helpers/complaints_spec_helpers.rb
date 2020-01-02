@@ -218,18 +218,14 @@ module ComplaintsSpecHelpers
   def select_datepicker_date(id,year,month,day)
     month = month -1 # js month  monthis 0-indexed
     page.find(id)
-    # not sure why this is necessary, but it is!
+    # seems to be necessary in chrome headless... no idea why!!
     page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
-    #debugger
-    #page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
-    #debugger
-    #page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
-    page.execute_script("$('select.ui-datepicker-month').prop('selectedIndex',#{month})")
-    year_index = page.evaluate_script("_($('.ui-datepicker-year option')).map(function(o){return o.text})").map(&:to_i).find_index(year)
-    page.execute_script("$('select.ui-datepicker-year').prop('selectedIndex',#{year_index})")
+    page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
+    page.execute_script %Q{ $('#{id}').trigger('focus') } # trigger datepicker
+    page.execute_script("$('select.ui-datepicker-year').val(#{year}).trigger('change')")
+    page.execute_script("$('select.ui-datepicker-month').val(#{month}).trigger('change')")
     page.execute_script("target=$('#ui-datepicker-div td[data-month=#{month}][data-year=#{year}] a').filter(function(){return $(this).text()==#{day}})[0]")
     page.execute_script("$(target).trigger('click')")
-    #page.evaluate_script %Q{ $('#{id}').datepicker('hide') } # trigger the onClose handler
   end
 
   def open_dropdown(name)
