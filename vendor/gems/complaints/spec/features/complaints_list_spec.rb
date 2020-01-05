@@ -218,7 +218,7 @@ feature "complaints index", :js => true do
       show_complaint
     end
     expect(page_heading).to eq "Complaint, case reference: #{Complaint.first.case_reference}"
-    expect(find('.complainant_village').text).to eq Complaint.first.village
+    expect(find('.city').text).to eq Complaint.first.city
     expect(find('.complainant_phone').text).to eq Complaint.first.phone
     expect(find('.complaint_details').text).to eq Complaint.first.details
 
@@ -489,7 +489,7 @@ feature "selects complaints by match of date ranges", :js => true do
   end
 end
 
-feature "selects complaints by partial match of village", :js => true do
+feature "selects complaints by partial match of city", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
   include ComplaintsSpecSetupHelpers
@@ -500,17 +500,17 @@ feature "selects complaints by partial match of village", :js => true do
     create_agencies
     user = User.first
     ['Newtown','Someplace','Amityville','Sebastopol'].each do |town|
-      FactoryBot.create(:complaint, :open, :with_associations, agencies: [Agency.first], assigned_to: user, village: town)
+      FactoryBot.create(:complaint, :open, :with_associations, agencies: [Agency.first], assigned_to: user, city: town)
     end
     visit complaints_path(:en)
   end
 
-  it "should return complaints with partial match for village" do
+  it "should return complaints with partial match for city" do
     expect(complaints.count).to eq 4
-    set_filter_controls_text_field('village','s')
+    set_filter_controls_text_field('city','s')
     expect(complaints.count).to eq 2
 
-    set_filter_controls_text_field('village','st')
+    set_filter_controls_text_field('city','st')
     expect(complaints.count).to eq 1
 
     clear_filter_fields

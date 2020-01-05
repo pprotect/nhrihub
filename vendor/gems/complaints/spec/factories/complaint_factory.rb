@@ -75,7 +75,6 @@ FactoryBot.define do
   factory :complaint do
     firstName { first_names }
     lastName { Faker::Name.last_name }
-    village { Faker::Address.city }
     phone { Faker::PhoneNumber.phone_number }
     created_at { DateTime.now.advance(:days => (rand(365) - 730))}
     details { Faker::Lorem.paragraphs(number: 2).join(" ") }
@@ -89,9 +88,8 @@ FactoryBot.define do
     title { Faker::Name.prefix }
     id_type { id_attribute[:type] }
     id_value { id_attribute[:value] }
-    critical_reference_number_type { "prison number" }
-    critical_reference_number_value { rand(10000000)+1000000 }
-    complaint_type { [0,1,2].sample }
+    alt_id_type { Complaint.alt_id_types.keys.sample }
+    alt_id_value { rand(10000000)+1000000 }
     organization_name { Faker::Company.name }
     organization_registration_number { organization_registration }
     physical_address { Faker::Address.street_address }

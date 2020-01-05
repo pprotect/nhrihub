@@ -213,14 +213,14 @@ describe "#as_json" do
       @complaints = JSON.parse(Complaint.all.sort.reverse.to_json) # sorts by case_reference in descending order
       expect(@complaints).to be_an Array
       expect(@complaints.length).to be 2
-      #expect(@complaints.first.keys).to match_array ["id", "case_reference", "village", "phone", "created_at", "updated_at",
+      #expect(@complaints.first.keys).to match_array ["id", "case_reference", "city", "phone", "created_at", "updated_at",
                                                      #"desired_outcome", "complained_to_subject_agency", "date_received",
                                                      #"imported", "mandate_id", "email", "gender", "dob", "details",
                                                      #"firstName", "lastName", "title", "occupation", "employer",
                                                      #"reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name",
                                                      #"date", "date_of_birth", "current_status_humanized", "attached_documents",
                                                      #"status_changes", "agency_ids", "communications", "area_ids", "subarea_ids", "area_subarea_ids"]
-      expect(@complaints.first.keys).to match_array ["id", "case_reference", "village", "phone", "created_at", "updated_at",
+      expect(@complaints.first.keys).to match_array ["id", "case_reference", "city", "phone", "created_at", "updated_at",
                                                      "desired_outcome", "complained_to_subject_agency", "date_received",
                                                      "imported", "email", "gender", "dob", "details",
                                                      "firstName", "lastName", "title", "occupation", "employer",
@@ -234,7 +234,7 @@ describe "#as_json" do
                                                      "id_value", "organization_name", "organization_registration_number"]
       expect(@complaints.first["id"]).to eq Complaint.first.id # Complaint.first sorts by id in ascending order, returns lowest id/case_ref
       expect(@complaints.first["case_reference"]).to eq Complaint.first.case_reference.to_s
-      expect(@complaints.first["village"]).to eq Complaint.first.village
+      expect(@complaints.first["city"]).to eq Complaint.first.city
       expect(@complaints.first["phone"]).to eq Complaint.first.phone
       # compare millisecond values, due to different precision in each value being compared
       expect(DateTime.parse(@complaints.first["created_at"]).strftime("%s")).to eq Complaint.first.created_at.to_datetime.strftime("%s")
@@ -299,7 +299,7 @@ describe "#as_json" do
       @complaints = JSON.parse(Complaint.all.to_json)
       expect(@complaints).to be_an Array
       expect(@complaints.length).to be 2
-      expect(@complaints.first.keys).to match_array ["id", "case_reference", "village", "phone", "created_at", "updated_at",
+      expect(@complaints.first.keys).to match_array ["id", "case_reference", "city", "phone", "created_at", "updated_at",
                                                      "desired_outcome", "complained_to_subject_agency", "date_received",
                                                      "imported", "email", "gender", "dob", "details",
                                                      "firstName", "lastName", "title", "occupation", "employer",

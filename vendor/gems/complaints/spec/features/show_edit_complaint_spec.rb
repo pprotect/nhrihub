@@ -40,7 +40,7 @@ feature 'edit complaint', js: true do
     fill_in('firstName', :with => "Norman")
     fill_in('title', :with => "kahunga")
     fill_in('dob', :with => "19/08/1950")
-    fill_in('village', :with => "Normaltown")
+    fill_in('city', :with => "Normaltown")
     fill_in('phone', :with => "555-1212")
     fill_in('complaint_details', :with => "the boy stood on the burning deck")
     fill_in('desired_outcome', :with => "Things are more better")
@@ -66,7 +66,7 @@ feature 'edit complaint', js: true do
 
     expect{ edit_save }.to change{ Complaint.first.lastName }.to("Normal").
                        and change{ Complaint.first.firstName }.to("Norman").
-                       and change{ Complaint.first.village }.to("Normaltown").
+                       and change{ Complaint.first.city }.to("Normaltown").
                        and change{ Complaint.first.phone }.to("555-1212").
                        and change{ Complaint.first.assignees.count }.by(1).
                        and change{ Complaint.first.complaint_documents.count }.by(1).
@@ -161,7 +161,7 @@ feature 'edit complaint', js: true do
     fill_in('lastName', :with => "Normal")
     fill_in('firstName', :with => "Norman")
     fill_in('title', :with => "barista")
-    fill_in('village', :with => "Normaltown")
+    fill_in('city', :with => "Normaltown")
     fill_in('phone', :with => "555-1212")
     check_subarea(:good_governance, "Private")
     check_subarea(:good_governance, "Contrary to Law")
@@ -183,7 +183,7 @@ feature 'edit complaint', js: true do
     expect(page.find('#lastName').value).to eq original_complaint.lastName
     expect(page.find('#firstName').value).to eq original_complaint.firstName
     expect(page.find('#title').value).to eq original_complaint.title
-    expect(page.find('#village').value).to eq original_complaint.village
+    expect(page.find('#city').value).to eq original_complaint.city
     expect(page.find('#phone').value).to eq original_complaint.phone
     ["Delayed action", "Failure to act", "Contrary to Law", "Oppressive", "Private", "CAT", "ICESCR", "Unreasonable delay", "Not properly investigated"].each do |subarea_name|
       expect(page.find('.subarea', :text => subarea_name).find('input')).to be_checked
@@ -210,7 +210,7 @@ feature 'edit complaint', js: true do
     # COMPLAINANT
     fill_in('lastName', :with => "")
     fill_in('firstName', :with => "")
-    fill_in('village', :with => "")
+    fill_in('city', :with => "")
     fill_in('phone', :with => "555-1212")
     fill_in('dob', :with => "")
     fill_in('complaint_details', :with => "")
@@ -230,7 +230,7 @@ feature 'edit complaint', js: true do
 
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
     expect(page).to have_selector('#lastName_error', :text => "You must enter a last name")
-    expect(page).to have_selector('#village_error', :text => 'You must enter a village')
+    expect(page).to have_selector('#city_error', :text => 'You must enter a city')
     expect(page).to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
     expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
@@ -241,7 +241,7 @@ feature 'edit complaint', js: true do
     edit_complaint
     expect(page).not_to have_selector('#firstName_error', :text => "You must enter a first name")
     expect(page).not_to have_selector('#lastName_error', :text => "You must enter a last name")
-    expect(page).not_to have_selector('#village_error', :text => 'You must enter a village')
+    expect(page).not_to have_selector('#city_error', :text => 'You must enter a city')
     expect(page).not_to have_selector('#mandate_name_error', :text => 'You must select an area')
     expect(page).not_to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
     expect(page).not_to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
@@ -254,7 +254,7 @@ feature 'edit complaint', js: true do
     # COMPLAINANT
     fill_in('lastName', :with => "")
     fill_in('firstName', :with => "")
-    fill_in('village', :with => "")
+    fill_in('city', :with => "")
     fill_in('phone', :with => "555-1212")
     fill_in('dob', :with => "")
     fill_in('complaint_details', :with => "")
@@ -272,7 +272,7 @@ feature 'edit complaint', js: true do
 
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
     expect(page).to have_selector('#lastName_error', :text => "You must enter a last name")
-    expect(page).to have_selector('#village_error', :text => 'You must enter a village')
+    expect(page).to have_selector('#city_error', :text => 'You must enter a city')
     expect(page).to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
     expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
@@ -281,8 +281,8 @@ feature 'edit complaint', js: true do
     expect(page).not_to have_selector('#lastName_error', :text => "You must enter a last name")
     fill_in('firstName', :with => "Norman")
     expect(page).not_to have_selector('#firstName_error', :text => "You must enter a first name")
-    fill_in('village', :with => "Leaden Roding")
-    expect(page).not_to have_selector('#village_error', :text => 'You must enter a village')
+    fill_in('city', :with => "Leaden Roding")
+    expect(page).not_to have_selector('#city_error', :text => 'You must enter a city')
     choose('special_investigations_unit')
     expect(page).not_to have_selector('#mandate_id_error', :text => 'You must select an area')
     check_subarea(:special_investigations_unit, "Unreasonable delay")

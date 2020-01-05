@@ -6,8 +6,8 @@
   .row.labels
     .col-md-2(class-active="@this.is_active('complainant')")
       | {{ t.complainant }}
-    .col-md-2(class-active="@this.is_active('village')")
-      | {{ t.village }}
+    .col-md-2(class-active="@this.is_active('city')")
+      | {{ t.city }}
     .col-md-2(class-active="@this.is_active('phone')")
       | {{ t.phone }}
     .col-md-2(class-active="@this.is_active('case_reference')")
@@ -16,7 +16,7 @@
     .col-md-2
       input.form-control#complainant(name='complainant', value="{{filter_criteria.complainant}}", placeholder ='{{ t.enter_complainant }}')
     .col-md-2
-      input.form-control#village(name='village', value="{{filter_criteria.village}}", placeholder ='{{ t.enter_village }}')
+      input.form-control#city(name='city', value="{{filter_criteria.city}}", placeholder ='{{ t.enter_city }}')
     .col-md-2
       input.form-control#phone(name='phone', value="{{filter_criteria.phone}}", placeholder ='{{ t.phone }}')
     .col-md-2
@@ -190,8 +190,8 @@ script.
         return !_.isEmpty(this.get('filter_criteria.case_reference'))
       }else if(attr == 'complainant'){
         return !_.isEmpty(this.get('filter_criteria.complainant'))
-      }else if(attr == 'village'){
-        return !_.isEmpty(this.get('filter_criteria.village'))
+      }else if(attr == 'city'){
+        return !_.isEmpty(this.get('filter_criteria.city'))
       }else if(attr == 'phone'){
         return !_.isEmpty(this.get('filter_criteria.phone'))
       }else if(attr == 'from'){

@@ -8,7 +8,11 @@ module ComplaintsSpecSetupHelpers
       fill_in('lastName', :with => "Normal")
       fill_in('firstName', :with => "Norman")
       fill_in('dob', :with => "08/09/1950")
-      fill_in('village', :with => "Normaltown")
+      fill_in('city', :with => "Normaltown")
+      fill_in('postal_code', :with => '1234')
+      fill_in('province', :with => 'wtf')
+      choose('Mail')
+      fill_in('postal_address', :with => 'abcd')
       fill_in('complaint_details', :with => "a long story about lots of stuff")
       choose('Special Investigations Unit')
       choose('complained_to_subject_agency_yes')
@@ -27,10 +31,9 @@ module ComplaintsSpecSetupHelpers
     staff_user = User.where(:login => 'staff').first
     FactoryBot.create(:complaint, :open,
                       :assigned_to => [user, staff_user],
-                      #:case_reference => "c12-34",
                       :date_received => DateTime.now.advance(:days => -100),
-                      :village => Faker::Address.city,
-                      :phone => Faker::PhoneNumber.phone_number,
+                      :city => Faker::Address.city,
+                      :home_phone => Faker::PhoneNumber.phone_number,
                       :dob => "19/08/1950",
                       :complaint_subareas => gg_subareas + hr_subareas + siu_subareas,
                       :desired_outcome => Faker::Lorem.sentence,
@@ -43,8 +46,8 @@ module ComplaintsSpecSetupHelpers
                       #:case_reference => "c12-42",
                       :assigned_to => [user, staff_user],
                       :date_received => DateTime.now.advance(:days => -100),
-                      :village => Faker::Address.city,
-                      :phone => Faker::PhoneNumber.phone_number,
+                      :city => Faker::Address.city,
+                      :home_phone => Faker::PhoneNumber.phone_number,
                       :dob => "19/08/1950",
                       :complaint_subareas => hr_subareas,
                       :desired_outcome => Faker::Lorem.sentence,

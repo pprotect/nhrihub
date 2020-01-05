@@ -3,6 +3,12 @@
 
 class Complaint < ActiveRecord::Base
   #include Cache
+
+  enum preferred_means: [:mail, :email, :home_phone, :cell_phone, :fax]
+  enum id_type: ["undefined", "Passport number", "State id"], _prefix: true
+  enum alt_id_type: ["undefined", "pension number", "prison id", "other"], _prefix: true
+
+
   include Rails.application.routes.url_helpers
   belongs_to :complaint_area
   has_many :complaint_complaint_subareas, :dependent => :destroy
@@ -30,6 +36,10 @@ class Complaint < ActiveRecord::Base
     update_column :case_reference, Complaint.next_case_reference
     # must be done after commit b/c case_reference is not final until the last commit
     assigns.last&.notify_assignee
+  end
+
+  def assign_initial_status(user)
+    self.status_changes_attributes = [{:user_id => user.id, :name => "Under Evaluation"}]
   end
 
   def notify_assignee(assign)
@@ -183,7 +193,8 @@ class Complaint < ActiveRecord::Base
     integer_columns = Complaint.columns.select{|c| c.type == :integer}.map(&:name)
     # it's a hack... TODO there must be a better way!
     integer_columns.each do |column_name|
-      complaint.send("#{column_name}=",nil) if complaint.send(column_name).nil? || complaint.send(column_name).zero?
+      ## an integer columm returns a string value from ActiveRecord if it is an enum type
+      complaint.send("#{column_name}=",nil) if complaint.send(column_name).nil? || complaint.send(column_name).zero? unless complaint.send(column_name).is_a?(String)
     end
   end
 
@@ -246,6 +257,12 @@ class Complaint < ActiveRecord::Base
       hash[area_id] << subarea.id
       hash
     end
+  end
+
+  def alt_id_name
+    alt_id_type_other? ?
+      alt_id_other_type :
+      alt_id_type
   end
 
   def agency_ids

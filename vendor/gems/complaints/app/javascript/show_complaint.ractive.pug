@@ -159,23 +159,19 @@ h1 {{i18n.heading}}
             .edit
               input#email.form-control(value = "{{email}}")/
     .row
-      .col-md-12.form-group("class-has-error" = "village_error", "data-toggle" = "edit")
+      .col-md-12.form-group("class-has-error" = "city_error", "data-toggle" = "edit")
         .row
           .col-md-3
             .no_edit.in
-              label
-                | {{ t.village }}
+              label {{ t.city }}
             .edit
-              label.required
-                | {{ t.village }}
+              label.required {{ t.city }}
           .col-md-9
             .no_edit.in
-              span.complainant_village
-                | {{ village }}
+              span.complainant_city {{ city }}
             .edit
-              input#village.form-control("on-keydown" = "@this.remove_attribute_error('village')", value = "{{village}}")/
-              span#village_error.help-block.error
-                | {{ t.village_error_message }}
+              input#city.form-control("on-keydown" = "@this.remove_attribute_error('city')", value = "{{city}}")/
+              span#city_error.help-block.error {{ t.city_error_message }}
     .row
       .col-md-12("data-toggle" = "edit")
         .row
@@ -428,7 +424,7 @@ script(type='text/javascript').
         return !(_.isNull(this.get('id')) || _.isUndefined(this.get('id')));
       },
       persistent_attributes() {
-        return ['village','phone','complaint_area_id',
+        return ['city','phone','complaint_area_id',
           'current_status_humanized', 'new_assignee_id', 'subarea_ids',
           'agency_ids', 'attached_documents_attributes', 'details',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
@@ -473,7 +469,7 @@ script(type='text/javascript').
         return {
           firstName : ['notBlank'],
           lastName : ['notBlank'],
-          village : ['notBlank'],
+          city : ['notBlank'],
           complaint_area_id : 'numeric',
           subarea_id_count : 'nonZero',
           new_assignee_id : ['nonZero', {if : () => !this.get('editing')}],
@@ -492,7 +488,7 @@ script(type='text/javascript').
         return {
           firstName_error : this.get('firstName_error'),
           lastName_error : this.get('lastName_error'),
-          village_error : this.get('village_error'),
+          city_error : this.get('city_error'),
           new_assignee_id_error : this.get('new_assignee_id_error'),
           complaint_area_id_error : this.get('complaint_area_id_error'),
           subarea_id_count_error : this.get('subarea_id_count_error'),

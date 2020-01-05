@@ -1,6 +1,7 @@
 script#file_selector_template(type='text/ractive' src='../../../../../app/views/shared/_file_selector_template.html')
 
 .row.well.well-sm.new_complaint
+  input(type='hidden', name='type', value='{{type}}')
   .col-md-12
     .row
       .col-md-12
@@ -41,30 +42,122 @@ script#file_selector_template(type='text/ractive' src='../../../../../app/views/
           label
             span(style = "margin-right:6px; margin-left:12px;") {{ t.other }}
             input#o(type='radio', name='{{gender}}', value='O')
-    .row.form-group('class-has-error' = 'village_error')
+    .row.form-group(style="padding-top:9px; height:42px;")
+      .col-md-2.complaint_label {{ t.principal_id }}
+      .col-md-3
+        label
+          | {{ t.passport }}
+          input#identify_by_passport(type = 'radio', name = '{{id_type}}', value = 'Passport number')
+        label
+          | {{ t.id }}
+          input#identify_by_id(type = 'radio', name = '{{id_type}}', value = 'State id')
+      .col-md-3
+        input#id_value(type = 'text', name = 'id_value', value= "{{id_value}}")
+    .row.form-group(style="padding-top:9px; height:42px;")
+      .col-md-2.complaint_label {{ t.alternate_id_type }}
+      .col-md-3
+        label
+          | {{ t.pension }}
+          input#identify_by_pension_id(type = 'radio', name = '{{alt_id_type}}', value = 'pension #')
+        label
+          | {{ t.prison }}
+          input#identify_by_prison_id(type = 'radio', name = '{{alt_id_type}}', value = 'prison id')
+        label
+          | {{ t.other }}
+          input#identify_by_other_id(type = 'radio', name = '{{alt_id_type}}', value = 'other')
+      .col-md-4#alt_id_other_type_field('class-visible' = 'other_id_selected' )
+        label {{ t.other_type }}
+        input#alt_id_other_type(type='text', value='{{alt_id_other_type}}')
+    .row.form-group(style="padding-top:9px; height:42px;")
+      .col-md-2.complaint_label {{ t.alternate_id }}
+      .col-md-5
+        input#alt_id_value(type = 'text', name = 'alt_id_value', value = "{{alt_id_value}}")
+    .row.form-group('class-has-error' = 'physical_address_error')
       .col-md-2
-        span.required.complaint_label {{ t.village }}
+        span.required.complaint_label {{ t.physical_address }}
       .col-md-6
-        input.form-control#village(value = '{{village}}', 'on-keydown'="@this.remove_attribute_error('village')")
-        span.help-block.error#village_error 
-          | {{ t.village_error_message }}
-    .row.form-group
+        input.form-control#physical_address(value = '{{physical_address}}', 'on-keydown'="@this.remove_attribute_error('physical_address')")
+        span.help-block.error#physical_address_error
+          | {{ t.physical_address_error_message }}
+    .row.form-group('class-has-error' = 'postal_address_error')
+      .col-md-2
+        span.required.complaint_label {{ t.postal_address }}
+      .col-md-6
+        input.form-control#postal_address(value = '{{postal_address}}', 'on-keydown'="@this.remove_attribute_error('postal_address')")
+        span.help-block.error#postal_address_error {{ t.postal_address_error_message }}
+    .row
+      div.form-group('class-has-error' = 'city_error')
+        .col-md-2
+          span.complaint_label.required {{ t.city }}
+        .col-md-2
+          input.form-control#city(value = '{{city}}', 'on-keydown'="@this.remove_attribute_error('city')")
+          span.help-block.error#city_error {{ t.city_error_message }}
+      div.form-group('class-has-error' = 'province_error')
+        .col-md-2
+          span.complaint_label.required {{ t.province }}
+        .col-md-2
+          input.form-control#province(value = '{{province}}', 'on-keydown'="@this.remove_attribute_error('province')")
+          span.help-block.error#province_error {{ t.province_error_message }}
+      div.form-group('class-has-error' = 'postal_code_error')
+        .col-md-2
+          span.complaint_label.required {{ t.postal_code }}
+        .col-md-2
+          input.form-control#postal_code(value = '{{postal_code}}', 'on-keydown'="@this.remove_attribute_error('postal_code')")
+          span.help-block.error#postal_code_error {{ t.postal_code_error_message }}
+    .row.form-group('class-has-error' = 'email_error')
       .col-md-2
         span.complaint_label {{ t.email }}
       .col-md-6
         input.form-control#email(value = '{{email}}')
-    .row.form-group
+        span.help-block.error#email_error {{ t.email_error_message }}
+    .row.form-group('class-has-error' = 'home_phone_error')
       .col-md-2
-        span.complaint_label {{ t.phone }}
+        span.complaint_label {{ t.home_phone }}
       .col-md-6
-        input.form-control#phone(value = '{{phone}}')
+        input.form-control#home_phone(value = '{{home_phone}}')
+        span.help-block.error#home_phone_error {{ t.home_phone_error_message }}
+    .row.form-group('class-has-error' = 'cell_phone_error')
+      .col-md-2
+        span.complaint_label {{ t.cell_phone }}
+      .col-md-6
+        input.form-control#cell_phone(value = '{{cell_phone}}')
+        span.help-block.error#cell_phone_error {{ t.cell_phone_error_message }}
+    .row.form-group('class-has-error' = 'fax_error')
+      .col-md-2
+        span.complaint_label {{ t.fax }}
+      .col-md-6
+        input.form-control#fax(value = '{{fax}}')
+        span.help-block.error#fax_error {{ t.fax_error_message }}
+    .row.form-group('class-has-error' = 'preferred_means_error')
+      .col-md-2
+        span.complaint_label.required {{ t.preferred_means }}
+      .col-md-10.mail_comms
+        .row
+          .col-md-12
+            label
+              | {{ t.mail_pref }}
+              input#preferred_means_mail(type='radio', name='{{preferred_means}}', value='mail', 'on-change'="@this.remove_attribute_error('preferred_means','postal_address','email','home_phone','cell_phone','fax')")
+            label
+              | {{ t.email_pref }}
+              input#preferred_means_email(type='radio', name='{{preferred_means}}', value='email', 'on-change'="@this.remove_attribute_error('preferred_means','postal_address','email','home_phone','cell_phone','fax')")
+            label
+              | {{ t.home_phone_pref }}
+              input#preferred_means_home_phone(type='radio', name='{{preferred_means}}', value='home_phone', 'on-change'="@this.remove_attribute_error('preferred_means','postal_address','email','home_phone','cell_phone','fax')")
+            label
+              | {{ t.cell_phone_pref }}
+              input#preferred_means_cell_phone(type='radio', name='{{preferred_means}}', value='cell_phone', 'on-change'="@this.remove_attribute_error('preferred_means','postal_address','email','home_phone','cell_phone','fax')")
+            label
+              | {{ t.fax_pref }}
+              input#preferred_means_fax(type='radio', name='{{preferred_means}}', value='fax', 'on-change'="@this.remove_attribute_error('preferred_means','postal_address','email','home_phone','cell_phone','fax')")
+        .row
+          .col-md-12
+            span.help-block.error#preferred_means_error {{ t.preferred_means_error_message }}
     .row.form-group('class-has-error' = 'details_error')
       .col-md-2
         span.required.complaint_label {{ t.details }}
       .col-md-6
         textarea.form-control#complaint_details(value = '{{details}}', 'on-keydown'="@this.remove_attribute_error('details')")
-        span.help-block.error#details_error 
-          | {{ t.details_error_message }}
+        span.help-block.error#details_error {{ t.details_error_message }}
     .row.form-group
       .col-md-2
         span.complaint_label {{ t.desired_outcome }}
@@ -107,7 +200,7 @@ script#file_selector_template(type='text/ractive' src='../../../../../app/views/
         .row
           <subareaSelector subarea_ids='{{subarea_ids}}' all_complaint_areas='{{all_complaint_areas}}' />
         span.help-block.error#subarea_id_count_error 
-          | {{ t.complaint_basis_error_message }}
+          | {{ t.subarea_id_count_error_message }}
     .row
       .col-md-2
         label {{ t.agency }}
@@ -153,6 +246,9 @@ style.
     margin-left: 12px;
     margin-right: 12px;
   }
+  #alt_id_other_type_field.visible { display: block; }
+  #alt_id_other_type_field:not(.visible) { display: none; }
+
 script.
   import translations from 'translations.js'
   import 'jquery-ui/ui/widgets/datepicker'
@@ -202,6 +298,7 @@ script.
     css: $CSS,
     data() {
       return {
+        type : 'individual',
         t : translations.t('complaint'),
         assigns : [],
         firstName : "",
@@ -216,14 +313,14 @@ script.
         complaint_area_id : null,
         agency_ids : [],
         notes : [],
-        phone : "",
+        home_phone : "",
         reminders : [],
-        current_status_humanized : "Under Evaluation",
-        village : "",
+        city : "",
         complained_to_subject_agency : false,
         date_received : null,
         dob : null,
-        date_of_birth : null
+        date_of_birth : null,
+        preferred_means : null
       }
     },
     components : {
@@ -255,8 +352,9 @@ script.
         if (_.isUndefined(comms)) { return 0; } else { return comms.length; }
       },
       persistent_attributes() {
-        return ['village','phone','complaint_area_id',
-          'current_status_humanized', 'new_assignee_id', 'subarea_ids',
+        return ['type', 'city', 'home_phone', 'cell_phone', 'fax', 'province', 'postal_code',
+          'id_type', 'id_value', 'alt_id_type', 'alt_id_value', 'alt_id_other_type', 'complaint_area_id',
+          'physical_address', 'postal_address', 'preferred_means', 'new_assignee_id', 'subarea_ids',
           'agency_ids', 'attached_documents_attributes', 'details',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
           'firstName', 'lastName', 'title'];
@@ -297,7 +395,9 @@ script.
         return {
           firstName : ['notBlank'],
           lastName : ['notBlank'],
-          village : ['notBlank'],
+          city : ['notBlank'],
+          postal_code : ['notBlank'],
+          province : ['notBlank'],
           complaint_area_id : 'numeric',
           subarea_id_count : 'nonZero',
           new_assignee_id : ['nonZero', {if : () => !this.get('editing')}],
@@ -309,27 +409,39 @@ script.
             const valid_year = match && (parseInt(match[3]) <= (new Date).getFullYear()) && (parseInt(match[3]) >= 1900 );
             return !_.isNull(match) && valid_day && valid_month && valid_year;
           },
-          details : 'notBlank'
+          details : ['notBlank'],
+          preferred_means : 'notBlank',
+          postal_address: ['notBlank', {if: ()=>this.get('preferred_means') == 'mail'}],
+          email: ['notBlank', {if: ()=>this.get('preferred_means') == 'email'}],
+          home_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'home_phone'}],
+          cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
+          fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}]
         };
       },
       error_vector() {
         return {
           firstName_error : this.get('firstName_error'),
           lastName_error : this.get('lastName_error'),
-          village_error : this.get('village_error'),
+          city_error : this.get('city_error'),
           new_assignee_id_error : this.get('new_assignee_id_error'),
           complaint_area_id_error : this.get('complaint_area_id_error'),
           subarea_id_count_error : this.get('subarea_id_count_error'),
           dob_error : this.get('dob_error'),
           details_error : this.get('details_error')
         };
+      },
+      other_id_selected() {
+        return this.get('alt_id_type') == 'other';
       }
     },
     validate() {
       return this.validator.validate();
     },
-    remove_attribute_error(attribute){
-      return this.set(attribute+"_error",false);
+    remove_attribute_error(){
+      var that = this
+      _(arguments).each(function(attribute){
+        that.set(attribute+"_error",false);
+      })
     },
     add_file(file){
       const attached_document = {

@@ -53,19 +53,33 @@ feature "complaints index", :js => true do
 
   it "adds a new complaint that is valid" do
     user = User.staff.first
-    within new_complaint do
+      fill_in('title', :with => "Ambassador")
       fill_in('lastName', :with => "Normal")
       fill_in('firstName', :with => "Norman")
       fill_in('dob', :with => "08/09/1950")
+      select_male_gender
+      choose('Passport')
+      fill_in('id_value', :with => "12341234")
+      expect(page).not_to have_selector('#alt_id_other_type', visible: true)
+      choose('identify_by_other_id')
+      expect(page).to have_selector('#alt_id_other_type')
+      fill_in('alt_id_other_type', :with => 'immigration card')
+      fill_in('alt_id_value', :with => '1b2b3bc')
+      fill_in('physical_address', :with => '1311 Santa Rosa Avenue')
+      fill_in('postal_address', :with => '8844 Sebastopol Road')
+      fill_in('city', :with => "Normaltown")
+      fill_in('province', with: 'Gondwanaland')
+      fill_in('postal_code', with: '12345')
       fill_in('email', :with => "norm@acme.co.ws")
-      fill_in('village', :with => "Normaltown")
-      fill_in('phone', :with => "555-1212")
+      fill_in('home_phone', :with => "555-1212")
+      fill_in('cell_phone', :with => "555-1212")
+      fill_in('fax', with: '832-4489')
+      choose('Fax')
       fill_in('complaint_details', :with => "a long story about lots of stuff")
       fill_in('desired_outcome', :with => "Life gets better")
-      fill_in('title', :with => "bossman")
       choose('special_investigations_unit')
-      select_male_gender
       choose('complained_to_subject_agency_yes')
+      select_datepicker_date("#date_received",Date.today.year,Date.today.month,16)
       check_subarea(:good_governance, "Delayed action")
       check_subarea(:human_rights, "CAT")
       check_subarea(:special_investigations_unit, "Unreasonable delay")
@@ -74,8 +88,7 @@ feature "complaints index", :js => true do
       check_agency("ACC")
       attach_file("complaint_fileinput", upload_document)
       fill_in("attached_document_title", :with => "Complaint Document")
-      select_datepicker_date("#date_received",Date.today.year,Date.today.month,16)
-    end
+
     expect(page).to have_selector("#documents .document .filename", :text => "first_upload_file.pdf")
 
     next_ref = Complaint.next_case_reference
@@ -85,20 +98,34 @@ feature "complaints index", :js => true do
                                 .and change{ ActionMailer::Base.deliveries.count }.by(1)
     ## on the server
     complaint = Complaint.last
+    expect(complaint).to be_a(IndividualComplaint)
     expect(complaint.case_reference.year).to eq next_ref.year
     expect(complaint.case_reference.sequence).to eq next_ref.sequence
+    expect(complaint.title).to eq "Ambassador"
     expect(complaint.lastName).to eq "Normal"
     expect(complaint.firstName).to eq "Norman"
-    expect(complaint.title).to eq "bossman"
     expect(complaint.dob).to eq "08/09/1950" # dd/mm/yyyy
     expect(complaint.gender).to eq 'M'
+    expect(complaint.id_type).to eq 'Passport number'
+    expect(complaint.id_value).to eq 12341234
+    expect(complaint.alt_id_type).to eq 'other'
+    expect(complaint.alt_id_other_type).to eq 'immigration card'
+    expect(complaint.alt_id_value).to eq '1b2b3bc'
+    expect(complaint.physical_address).to eq "1311 Santa Rosa Avenue"
+    expect(complaint.postal_address).to eq "8844 Sebastopol Road"
+    expect(complaint.city).to eq "Normaltown"
+    expect(complaint.province).to eq "Gondwanaland"
+    expect(complaint.postal_code).to eq "12345"
     expect(complaint.email).to eq "norm@acme.co.ws"
-    expect(complaint.complained_to_subject_agency).to eq true
-    expect(complaint.village).to eq "Normaltown"
-    expect(complaint.phone).to eq "555-1212"
+    expect(complaint.home_phone).to eq "555-1212"
+    expect(complaint.cell_phone).to eq "555-1212"
+    expect(complaint.fax).to eq "832-4489"
+    expect(complaint.preferred_means).to eq 'fax'
     expect(complaint.details).to eq "a long story about lots of stuff"
     expect(complaint.desired_outcome).to eq "Life gets better"
     expect(complaint.complaint_area.name).to eq 'Special Investigations Unit'
+    expect(complaint.complained_to_subject_agency).to eq true
+    expect(complaint.date_received.to_date).to eq Date.new(Date.today.year, Date.today.month, 16)
     expect(complaint.complaint_subareas.map(&:name)).to match_array ["Delayed action", "CAT", "Unreasonable delay"]
     expect(complaint.current_assignee_name).to eq User.staff.first.first_last_name
     expect(complaint.status_changes.count).to eq 1
@@ -108,25 +135,36 @@ feature "complaints index", :js => true do
     expect(complaint.complaint_documents.count).to eq 1
     expect(complaint.complaint_documents[0].original_filename).to eq "first_upload_file.pdf"
     expect(complaint.complaint_documents[0].title).to eq "Complaint Document"
-    expect(complaint.date_received.to_date).to eq Date.new(Date.today.year, Date.today.month, 16)
 
     ## on the client
     expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
-    expect(find('#complaint .current_assignee').text).to eq user.first_last_name
-    expect(find('#complaint .lastName').text).to eq "Normal"
-    expect(find('#complaint .firstName').text).to eq "Norman"
-    expect(find('#complaint #complainant .title').text).to eq "bossman"
+    expect(find('#complaint #complaint_type').text).to eq "individual complaint"
+    expect(find('#complaint #title').text).to eq "Ambassador"
+    expect(find('#complaint #lastName').text).to eq "Normal"
+    expect(find('#complaint #firstName').text).to eq "Norman"
+    expect(find('#complaint #complainant_dob').text).to eq "Sep 8, 1950"
+    expect(find('#complaint #gender').text).to eq "M"
+    expect(find('#complaint #id_type').text).to eq "Passport number"
+    expect(find('#complaint #id_value').text).to eq "12341234"
+    expect(find('#complaint #alt_id_name').text).to eq 'immigration card'
+    expect(find('#complaint #alt_id_value').text).to eq '1b2b3bc'
+    expect(find('#complaint #physical_address').text).to eq "1311 Santa Rosa Avenue"
+    expect(find('#complaint #postal_address').text).to eq  "8844 Sebastopol Road"
+    expect(find('#complaint #city').text).to eq "Normaltown"
+    expect(find('#complaint #province').text).to eq 'Gondwanaland'
+    expect(find('#complaint #postal_code').text).to eq '12345'
+    expect(find('#complaint #email').text).to eq "norm@acme.co.ws"
+    expect(find('#complaint #home_phone').text).to eq "555-1212"
+    expect(find('#complaint #cell_phone').text).to eq "555-1212"
+    expect(find('#complaint #fax').text).to eq "832-4489"
+    expect(find('#complaint #preferred_means').text).to eq 'fax'
+    expect(find('#complaint #complaint_details').text).to eq "a long story about lots of stuff"
+    expect(find('#complaint #desired_outcome').text).to eq "Life gets better"
+    expect(find('#complaint #complained_to_subject_agency').text).to eq "yes"
+    expect(find('#complaint #date_received').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
+    expect(find('#complaint #current_assignee').text).to eq user.first_last_name
     expect(find('#complaint #status_changes .status_change .status_humanized').text).to eq 'Under Evaluation'
-    expect(find('#complaint .complainant_dob').text).to eq "Sep 8, 1950"
-    expect(find('#complaint .email').text).to eq "norm@acme.co.ws"
-    expect(find('#complaint .complaint_details').text).to eq "a long story about lots of stuff"
-    expect(find('#complaint .desired_outcome').text).to eq "Life gets better"
-    expect(find('#complaint .complainant_village').text).to eq "Normaltown"
-    expect(find('#complaint .complainant_phone').text).to eq "555-1212"
     #expect(find('#complaint .gender').text).to eq "male" # this should work, but I postponed troubleshooting in favour of other activities!
-    expect(find('#complaint .gender').text).to eq "M"
-    expect(find('#complaint .complained_to_subject_agency').text).to eq "yes"
-    expect(find('#complaint .date_received').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
 
     within special_investigations_unit_area do
       Complaint.last.complaint_subareas.special_investigations_unit.map(&:name).each do |subarea_name|
@@ -186,21 +224,62 @@ feature "complaints index", :js => true do
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
     expect(page).to have_selector('#lastName_error', :text => "You must enter a last name")
     expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
-    expect(page).to have_selector('#village_error', :text => 'You must enter a village')
+    expect(page).to have_selector('#city_error', :text => 'You must enter a city')
+    expect(page).to have_selector('#province_error', :text => 'You must enter a province')
+    expect(page).to have_selector('#postal_code_error', :text => 'You must enter a postal code')
     expect(page).to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
     expect(page).to have_selector('#complaint_area_id_error', :text => 'You must select an area')
     expect(page).to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
     expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
+    expect(page).to have_selector('#preferred_means_error', :text => "You must select a preferred means of communication")
     expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
+    expect(page).to have_selector('#province_error', :text => "You must enter a province")
+    expect(page).to have_selector('#postal_code_error', :text => "You must enter a postal code")
     fill_in('lastName', :with => "Normal")
     expect(page).not_to have_selector('#lastName_error', :text => "You must enter a first name")
     fill_in('firstName', :with => "Norman")
     expect(page).not_to have_selector('#firstName_error', :text => "You must enter a last name")
     fill_in('dob', :with => "19/08/1968")
     expect(page).not_to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
-    fill_in('village', :with => "Leaden Roding")
-    expect(page).not_to have_selector('#village_error', :text => 'You must enter a village')
+    fill_in('city', :with => "Leaden Roding")
+    expect(page).not_to have_selector('#city_error', :text => 'You must enter a city')
+    fill_in('province', with: 'Gondwanaland')
+    expect(page).not_to have_selector('#province_error', :text => "You must enter a province")
+    fill_in('postal_code', with: '12345')
+    expect(page).not_to have_selector('#postal_code_error', :text => "You must enter a postal code")
+    # preferred means --mail
+    choose('Mail')
+    save_complaint(false)
+    expect(page).to have_selector('#postal_address_error', :text => "Mail designated as preferred communication means. You must enter a postal address")
+    fill_in("postal_address", with: "some text")
+    expect(page).not_to have_selector('#postal_address_error', :text => "Mail designated as preferred communication means. You must enter a postal address")
+    fill_in("postal_address", with: "")
+    save_complaint(false)
+    expect(page).to have_selector('#postal_address_error', :text => "Mail designated as preferred communication means. You must enter a postal address")
+    choose("Email")
+    expect(page).not_to have_selector('#postal_address_error', :text => "Mail designated as preferred communication means. You must enter a postal address")
+    # preferred means --email
+    save_complaint(false)
+    expect(page).to have_selector('#email_error', :text => "email designated as preferred communication means. You must enter an email")
+    choose("Home phone")
+    expect(page).not_to have_selector('#email_error', :text => "email designated as preferred communication means. You must enter an email")
+    # preferred means --home phone
+    save_complaint(false)
+    expect(page).to have_selector('#home_phone_error', :text => "Home phone designated as preferred communication means. You must enter a home phone number")
+    choose("Cell phone")
+    expect(page).not_to have_selector('#home_phone_error', :text => "Home phone designated as preferred communication means. You must enter a home phone number")
+    # preferred means --cell phone
+    save_complaint(false)
+    expect(page).to have_selector('#cell_phone_error', :text => "Cell phone designated as preferred communication means. You must enter a cell phone number")
+    choose("Fax")
+    expect(page).not_to have_selector('#cell_phone_error', :text => "Cell phone designated as preferred communication means. You must enter a cell phone number")
+    # preferred means --fax
+    save_complaint(false)
+    expect(page).to have_selector('#fax_error', :text => "Fax designated as preferred communication means. You must enter a fax number")
+    choose('Mail')
+    expect(page).not_to have_selector('#fax_error', :text => "Fax designated as preferred communication means. You must enter a fax number")
+
     select(User.admin.first.first_last_name, :from => "assignee")
     expect(page).not_to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
     choose('special_investigations_unit')
@@ -232,14 +311,7 @@ feature "complaints index", :js => true do
   end
 
   it "sets date_received to today's date if it is not provided when adding" do
-    fill_in('lastName', :with => "Normal")
-    fill_in('firstName', :with => "Norman")
-    fill_in('dob', :with => "08/09/1950")
-    fill_in('village', :with => "Normaltown")
-    fill_in('complaint_details', :with => "a long story about lots of stuff")
-    choose('special_investigations_unit')
-    check_subarea(:good_governance, "Delayed action")
-    select(User.admin.first.first_last_name, :from => "assignee")
+    complete_required_fields
     expect{save_complaint}.to change{ Complaint.count }.by(1)
 
     # on the server

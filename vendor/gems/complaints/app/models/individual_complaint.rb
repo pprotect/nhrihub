@@ -1,0 +1,2 @@
+class IndividualComplaint < Complaint
+end

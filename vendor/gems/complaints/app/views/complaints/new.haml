@@ -6,7 +6,6 @@
   @title = "#{@title}"
   @source_areas = #{@areas.to_json.html_safe}
   @source_subareas = #{@subareas.to_json.html_safe}
-  @source_complaints_data = #{@complaints}
   @source_all_mandates = #{@mandates.to_json.html_safe}
   @source_all_agencies = #{@agencies.to_json.html_safe}
   @source_complaint_bases = #{(@complaint_bases || []).map(&:to_h).to_json.html_safe}

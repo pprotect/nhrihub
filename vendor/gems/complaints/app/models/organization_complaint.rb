@@ -1,0 +1,2 @@
+class OrganizationComplaint < Complaint
+end

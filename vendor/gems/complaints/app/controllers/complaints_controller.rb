@@ -19,8 +19,8 @@ class ComplaintsController < ApplicationController
       from: "",
       to: "",
       case_reference: nil,
-      village: nil,
-      phone: nil,
+      city: nil,
+      home_phone: nil,
       selected_agency_ids: Agency.unscoped.pluck(:id),
       selected_assignee_id: @selected_assignee_id,
       selected_subarea_ids: @subareas.map(&:id),
@@ -54,18 +54,6 @@ class ComplaintsController < ApplicationController
       format.docx do
         send_file ComplaintsReport.new(Complaint.all).docfile
       end
-    end
-  end
-
-  def create
-    params[:complaint].delete(:current_status_humanized)
-    @complaint = Complaint.new(complaint_params)
-    @complaint.status_changes_attributes = [{:user_id => current_user.id, :name => "Under Evaluation"}]
-    if @complaint.save
-      #render :json => complaint, :status => 200
-      render @complaint, :status => 200
-    else
-      render :plain => @complaint.errors.full_messages, :status => 500
     end
   end
 
@@ -109,14 +97,14 @@ class ComplaintsController < ApplicationController
     @areas = ComplaintArea.all
     @subareas = ComplaintSubarea.all
     @agencies = Agency.all
-    @complaint_bases = [ StrategicPlans::ComplaintBasis.named_list,
-                         GoodGovernance::ComplaintBasis.named_list,
-                         Nhri::ComplaintBasis.named_list,
-                         Siu::ComplaintBasis.named_list ]
+    #@complaint_bases = [ StrategicPlans::ComplaintBasis.named_list,
+                         #GoodGovernance::ComplaintBasis.named_list,
+                         #Nhri::ComplaintBasis.named_list,
+                         #Siu::ComplaintBasis.named_list ]
     @users = User.all
-    @good_governance_complaint_bases = GoodGovernance::ComplaintBasis.all
-    @human_rights_complaint_bases = Nhri::ComplaintBasis.all
-    @special_investigations_unit_complaint_bases = Siu::ComplaintBasis.all
+    #@good_governance_complaint_bases = GoodGovernance::ComplaintBasis.all
+    #@human_rights_complaint_bases = Nhri::ComplaintBasis.all
+    #@special_investigations_unit_complaint_bases = Siu::ComplaintBasis.all
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
     @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
     @permitted_filetypes = ComplaintDocument.permitted_filetypes
@@ -126,6 +114,18 @@ class ComplaintsController < ApplicationController
     render :new, :layout => 'application_webpack'
   end
 
+  def create
+    type = params[:complaint].delete(:type)               # individual, organization, own_motion
+    klass = "#{type}_complaint".classify.constantize      # IndividualComplaint, OrganizationComplaint, OwnMotionComplaint
+    @complaint = klass.send(:new, complaint_params)       # e.g. IndividualComplaint.new(complaint_params)
+    @complaint.assign_initial_status(current_user)
+    if @complaint.save
+      render partial: "complaints/#{type}_complaint", locals: {complaint: @complaint}, :status => 200
+    else
+      render :plain => @complaint.errors.full_messages, :status => 500
+    end
+  end
+
   private
   def default_params
     Complaint.default_index_query_params(current_user.id)
@@ -133,22 +133,24 @@ class ComplaintsController < ApplicationController
 
   def index_query_params
     params.
-      permit(:complainant, :from, :to, :case_reference, :village, :phone,
+      permit(:complainant, :from, :to, :case_reference, :city, :phone,
              :selected_assignee_id, :locale, :mandate_id, :type,
              :selected_status_ids => [], :selected_complaint_area_ids => [],
              :selected_subarea_ids => [],
              :selected_agency_ids => [] ).
       with_defaults(default_params).
       slice(:selected_assignee_id, :selected_status_ids, :complainant,
-            :from, :to, :village, :phone, :selected_complaint_area_ids,
+            :from, :to, :city, :phone, :selected_complaint_area_ids,
             :selected_subarea_ids, :case_reference,
             :selected_agency_ids )
   end
 
   def complaint_params
-    params.require(:complaint).permit( :firstName, :lastName, :title, :village, :phone, :new_assignee_id,
+    params.require(:complaint).permit( :type, :firstName, :lastName, :title, :city, :home_phone, :new_assignee_id,
                                        :dob, :email, :complained_to_subject_agency, :desired_outcome, :gender, :details,
                                        :date, :imported, :complaint_area_id,
+                                       :cell_phone, :fax, :province, :postal_code, :id_type, :id_value, :alt_id_type, :alt_id_value,
+                                       :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
                                        :subarea_ids => [],
                                        :status_changes_attributes => [:user_id, :name],
                                        :agency_ids => [],
