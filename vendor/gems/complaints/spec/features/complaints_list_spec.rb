@@ -528,10 +528,10 @@ feature "selects complaints by partial match of phone", :js => true do
     create_subareas
     create_agencies
     user = User.first
-    FactoryBot.create(:complaint, :open, :with_associations, agencies: [Agency.first], assigned_to: user, phone: '1284235660ext99')
-    FactoryBot.create(:complaint, :open, :with_associations, agencies: [Agency.first], assigned_to: user, phone: '312988622x34')
-    FactoryBot.create(:complaint, :open, :with_associations, agencies: [Agency.first], assigned_to: user, phone: 'high3235')
-    FactoryBot.create(:complaint, :open, :with_associations, agencies: [Agency.first], assigned_to: user, phone: '432')
+    FactoryBot.create(:complaint, :open, :with_associations, agencies: [Agency.first], assigned_to: user, home_phone: '1284235660ext99', cell_phone: '', fax: '')
+    FactoryBot.create(:complaint, :open, :with_associations, agencies: [Agency.first], assigned_to: user, home_phone: '312988622x34', cell_phone: '', fax: '')
+    FactoryBot.create(:complaint, :open, :with_associations, agencies: [Agency.first], assigned_to: user, home_phone: 'high3235', cell_phone: '', fax: '')
+    FactoryBot.create(:complaint, :open, :with_associations, agencies: [Agency.first], assigned_to: user, home_phone: '432', cell_phone: '', fax: '')
     visit complaints_path(:en)
   end
 
@@ -591,10 +591,10 @@ feature "selects complaints by match of area", :js => true do
       create_subareas
       create_agencies
       user = User.first
-      FactoryBot.create(:complaint, :open, :with_associations, :human_rights, agencies: [Agency.first], assigned_to: user, phone: '1284235660ext99')
-      FactoryBot.create(:complaint, :open, :with_associations, :good_governance, agencies: [Agency.first], assigned_to: user, phone: '312988622x34')
-      FactoryBot.create(:complaint, :open, :with_associations, :special_investigations_unit, agencies: [Agency.first], assigned_to: user, phone: 'high3235')
-      FactoryBot.create(:complaint, :open, :with_associations, :corporate_services, agencies: [Agency.first], assigned_to: user, phone: '432')
+      FactoryBot.create(:complaint, :open, :with_associations, :human_rights, agencies: [Agency.first], assigned_to: user, home_phone: '1284235660ext99', cell_phone: '', fax: '')
+      FactoryBot.create(:complaint, :open, :with_associations, :good_governance, agencies: [Agency.first], assigned_to: user, home_phone: '312988622x34', cell_phone: '', fax: '')
+      FactoryBot.create(:complaint, :open, :with_associations, :special_investigations_unit, agencies: [Agency.first], assigned_to: user, home_phone: 'high3235', cell_phone: '', fax: '')
+      FactoryBot.create(:complaint, :open, :with_associations, :corporate_services, agencies: [Agency.first], assigned_to: user, home_phone: '432', cell_phone: '', fax: '')
       visit complaints_path(:en)
     end
 
@@ -651,9 +651,9 @@ feature "selects complaints matching the selected subarea", :js => true do
       create_complaint_areas
       create_agencies
       user = User.first
-      FactoryBot.create(:complaint, :open, assigned_to: user, agencies: [Agency.first], phone: '1284235660ext99')
-      FactoryBot.create(:complaint, :open, assigned_to: user, agencies: [Agency.first], phone: '312588622x34')
-      FactoryBot.create(:complaint, :open, assigned_to: user, agencies: [Agency.first], phone: 'high3235')
+      FactoryBot.create(:complaint, :open, assigned_to: user, agencies: [Agency.first], home_phone: '1284235660ext99', cell_phone: '', fax: '')
+      FactoryBot.create(:complaint, :open, assigned_to: user, agencies: [Agency.first], home_phone: '312588622x34', cell_phone: '', fax: '')
+      FactoryBot.create(:complaint, :open, assigned_to: user, agencies: [Agency.first], home_phone: 'high3235', cell_phone: '', fax: '')
       visit complaints_path(:en)
     end
 
@@ -745,9 +745,9 @@ feature "selects complaints matching selected agency(-ies)", :js => true do
       create_complaint_areas
       create_subareas
       user = User.first
-      FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, phone: '1284235660ext99')
-      FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, phone: '312588622x34')
-      FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, phone: 'high3235')
+      FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, home_phone: '1284235660ext99', cell_phone: '', fax: '')
+      FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, home_phone: '312588622x34', cell_phone: '', fax: '')
+      FactoryBot.create(:complaint, :open, :with_associations, assigned_to: user, home_phone: 'high3235', cell_phone: '', fax: '')
       visit complaints_path(:en)
     end
 

@@ -86,7 +86,7 @@ describe "scope class methods" do
     end
   end
 
-  describe "query by complaint_basis" do
+  describe "query by complaint_subareas" do
     let(:gg_area_id){ComplaintArea.find_or_create_by(:name => "Good Governance").id}
     let(:gg_subarea_ids){ ComplaintSubarea.where(:area_id => gg_area_id).pluck(:id) }
     let(:siu_area_id){ComplaintArea.find_or_create_by(:name => "Special Investigations Unit").id}
@@ -143,7 +143,6 @@ describe "scope class methods" do
       expect(complaints.length).to eq 1
     end
   end
-
 end
 
 describe "selects complaints matching the selected subarea" do
@@ -213,5 +212,22 @@ describe "selects complaints matching the selected agency" do
     expect(@foo_complaint.agency_ids).to include unassigned_agency.id
     expect(Complaint.with_agencies([unassigned_agency.id])).to eq [ @foo_complaint ]
     expect(Complaint.with_agencies([Agency.first.id])).to eq [ @bar_complaint ]
+  end
+end
+
+describe "selects complaints with home- cell- or fax-number matching" do
+  before do
+    @complaint1 = FactoryBot.create(:complaint, home_phone: "(541) 888-3311", cell_phone: "303 869 8832", fax: "332-1881")
+    @complaint2 = FactoryBot.create(:complaint, home_phone: "(323) 143-9873", cell_phone: "182 889 1324", fax: "(303) 484 8672")
+    @complaint3 = FactoryBot.create(:complaint, home_phone: "183-2387", cell_phone: "(398) 181 3327", fax: "432 1841")
+  end
+
+  it "should match any of the phone numbers against the filter criterion" do
+    expect(Complaint.with_phone("8").map(&:id)).to eq [@complaint1, @complaint2, @complaint3].map(&:id)
+    expect(Complaint.with_phone("88").map(&:id)).to eq [@complaint1, @complaint2].map(&:id)
+    expect(Complaint.with_phone("883").map(&:id)).to eq [@complaint1].map(&:id)
+    expect(Complaint.with_phone("32").map(&:id)).to eq [@complaint1, @complaint2, @complaint3].map(&:id)
+    expect(Complaint.with_phone("321").map(&:id)).to eq [@complaint1, @complaint3].map(&:id)
+    expect(Complaint.with_phone("034").map(&:id)).to eq [@complaint2].map(&:id)
   end
 end

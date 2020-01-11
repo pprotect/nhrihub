@@ -106,7 +106,9 @@ class Complaint < ActiveRecord::Base
   def self.with_phone(phone_fragment)
     digits = phone_fragment&.delete('^0-9')
     return no_filter if digits.nil? || digits.empty?
-    where("complaints.phone ~ '.*#{digits}.*'")
+    #where("complaints.phone ~ '.*#{digits}.*'")
+    digits_regex = digits.chars.join("[^[:digit:]]*")
+    where("home_phone ~ '#{digits_regex}' OR cell_phone ~ '#{digits_regex}' OR fax ~ '#{digits_regex}'")
   end
 
   def self.with_city(city_fragment)
