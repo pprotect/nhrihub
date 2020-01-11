@@ -4,14 +4,10 @@
       h4 
         | {{ t.search }}
   .row.labels
-    .col-md-2(class-active="@this.is_active('complainant')")
-      | {{ t.complainant }}
-    .col-md-2(class-active="@this.is_active('city')")
-      | {{ t.city }}
-    .col-md-2(class-active="@this.is_active('phone')")
-      | {{ t.phone }}
-    .col-md-2(class-active="@this.is_active('case_reference')")
-      | {{ t.case_reference }}
+    .col-md-2(class-active="@this.is_active('complainant')") {{ t.complainant }}
+    .col-md-2(class-active="@this.is_active('city')") {{ t.city }}
+    .col-md-2(class-active="@this.is_active('phone')") {{ t.phone }}
+    .col-md-2(class-active="@this.is_active('case_reference')") {{ t.case_reference }}
   .row(style = "margin-bottom:12px;")
     .col-md-2
       input.form-control#complainant(name='complainant', value="{{filter_criteria.complainant}}", placeholder ='{{ t.enter_complainant }}')
@@ -24,14 +20,10 @@
     .col-md-1(style = 'text-align:center')
       i.erase.fa.fa-refresh('on-click'='@this.clear_filter()', 'data-toggle'='tooltip', 'title' ='{{ t.clear }}')
   .row.labels
-    .col-md-2(class-active="@this.is_active('status')")
-      | {{ t.status }}
-    .col-md-2(class-active="@this.is_active('from')")
-      | {{ t.date_from }}
-    .col-md-2(class-active="@this.is_active('to')")
-      | {{ t.date_to }}
-    .col-md-2(class-active="@this.is_active('agency')")
-      | {{ t.agency }}
+    .col-md-2(class-active="@this.is_active('status')") {{ t.status }}
+    .col-md-2(class-active="@this.is_active('from')") {{ t.date_from }}
+    .col-md-2(class-active="@this.is_active('to')") {{ t.date_to }}
+    .col-md-2(class-active="@this.is_active('agency')") {{ t.agency }}
   .row(style = "margin-bottom:12px;")
     .col-md-2
       .btn-group.select

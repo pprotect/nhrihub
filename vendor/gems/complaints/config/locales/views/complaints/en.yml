@@ -189,6 +189,7 @@ en:
     area : "Area"
     assignee: 'Assignee'
     case_reference: "Case reference"
+    city: "City"
     clear: "reset"
     clear_all: 'Clear all'
     compact_all: 'Compact all'
@@ -196,12 +197,13 @@ en:
     complaint_basis: "Subarea(s)"
     date_from: "Since date:"
     date_to: "Before date:"
+    enter_city: "Enter city"
     enter_complainant: "All or part of name"
     enter_village: "All or part of village"
     expand_all: 'Expand all'
     good_governance: "Good governance"
     human_rights: "Human rights"
-    phone: "phone"
+    phone: "Phone"
     search: "Search for complaints by:"
     select_agency: 'Select agency'
     select_all: 'Select all'
