@@ -100,7 +100,7 @@ en:
 
   complaint:
     add_file: "Add file"
-    add_document: "Add document"
+    add_document: "Add"
     agency: "Agency(ies)"
     alternate_id_type: "Alternate ID type"
     alternate_id: "Alternate ID"

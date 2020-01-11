@@ -82,7 +82,7 @@ class ComplaintsController < ApplicationController
     @type = @complaint.complaint_type.split(' ').first.downcase
     @areas = ComplaintArea.all
     @subareas = ComplaintSubarea.all
-    @agencies = Agency.unscoped.all
+    @agencies = Agency.all
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
     @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
     @permitted_filetypes = ComplaintDocument.permitted_filetypes
