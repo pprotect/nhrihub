@@ -117,6 +117,7 @@ en:
     closed: "Closed"
     communications : "Communications"
     compact: 'Compact'
+    complaint_type: 'Complaint type'
     complainant: 'Complainant'
     complained_to_subject_agency : 'Complained to subject agency?'
     subareas: "Subarea(s)"

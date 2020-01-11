@@ -53,43 +53,43 @@ feature "complaints index", :js => true do
 
   it "adds a new complaint that is valid" do
     user = User.staff.first
-      fill_in('title', :with => "Ambassador")
-      fill_in('lastName', :with => "Normal")
-      fill_in('firstName', :with => "Norman")
-      fill_in('dob', :with => "08/09/1950")
-      select_male_gender
-      choose('Passport')
-      fill_in('id_value', :with => "12341234")
-      expect(page).not_to have_selector('#alt_id_other_type', visible: true)
-      choose('identify_by_other_id')
-      expect(page).to have_selector('#alt_id_other_type')
-      fill_in('alt_id_other_type', :with => 'immigration card')
-      fill_in('alt_id_value', :with => '1b2b3bc')
-      fill_in('physical_address', :with => '1311 Santa Rosa Avenue')
-      fill_in('postal_address', :with => '8844 Sebastopol Road')
-      fill_in('city', :with => "Normaltown")
-      fill_in('province', with: 'Gondwanaland')
-      fill_in('postal_code', with: '12345')
-      fill_in('email', :with => "norm@acme.co.ws")
-      fill_in('home_phone', :with => "555-1212")
-      fill_in('cell_phone', :with => "555-1212")
-      fill_in('fax', with: '832-4489')
-      choose('Fax')
-      fill_in('complaint_details', :with => "a long story about lots of stuff")
-      fill_in('desired_outcome', :with => "Life gets better")
-      choose('special_investigations_unit')
-      choose('complained_to_subject_agency_yes')
-      select_datepicker_date("#date_received",Date.today.year,Date.today.month,16)
-      check_subarea(:good_governance, "Delayed action")
-      check_subarea(:human_rights, "CAT")
-      check_subarea(:special_investigations_unit, "Unreasonable delay")
-      select(user.first_last_name, :from => "assignee")
-      check_agency("SAA")
-      check_agency("ACC")
-      attach_file("complaint_fileinput", upload_document)
-      fill_in("attached_document_title", :with => "Complaint Document")
+    fill_in('title', :with => "Ambassador")
+    fill_in('lastName', :with => "Normal")
+    fill_in('firstName', :with => "Norman")
+    fill_in('dob', :with => "08/09/1950")
+    select_male_gender
+    choose('Passport')
+    fill_in('id_value', :with => "12341234")
+    expect(page).not_to have_selector('#alt_id_other_type', visible: true)
+    choose('identify_by_other_id')
+    expect(page).to have_selector('#alt_id_other_type')
+    fill_in('alt_id_other_type', :with => 'immigration card')
+    fill_in('alt_id_value', :with => '1b2b3bc')
+    fill_in('physical_address', :with => '1311 Santa Rosa Avenue')
+    fill_in('postal_address', :with => '8844 Sebastopol Road')
+    fill_in('city', :with => "Normaltown")
+    fill_in('province', with: 'Gondwanaland')
+    fill_in('postal_code', with: '12345')
+    fill_in('email', :with => "norm@acme.co.ws")
+    fill_in('home_phone', :with => "555-1212")
+    fill_in('cell_phone', :with => "555-1212")
+    fill_in('fax', with: '832-4489')
+    choose('Fax')
+    fill_in('complaint_details', :with => "a long story about lots of stuff")
+    fill_in('desired_outcome', :with => "Life gets better")
+    choose('special_investigations_unit')
+    choose('complained_to_subject_agency_yes')
+    select_datepicker_date("#date_received",Date.today.year,Date.today.month,16)
+    check_subarea(:good_governance, "Delayed action")
+    check_subarea(:human_rights, "CAT")
+    check_subarea(:special_investigations_unit, "Unreasonable delay")
+    select(user.first_last_name, :from => "assignee")
+    check_agency("SAA")
+    check_agency("ACC")
+    attach_file("complaint_fileinput", upload_document)
+    fill_in("attached_document_title", :with => "Complaint Document")
 
-    expect(page).to have_selector("#documents .document .filename", :text => "first_upload_file.pdf")
+    expect(page).to have_selector("#complaint_documents .document .filename", :text => "first_upload_file.pdf")
 
     next_ref = Complaint.next_case_reference
     expect{save_complaint}.to change{ Complaint.count }.by(1)
@@ -138,7 +138,7 @@ feature "complaints index", :js => true do
 
     ## on the client
     expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
-    expect(find('#complaint #complaint_type').text).to eq "individual complaint"
+    expect(find('#complaint #complaint_type').text).to eq "Individual complaint"
     expect(find('#complaint #title').text).to eq "Ambassador"
     expect(find('#complaint #lastName').text).to eq "Normal"
     expect(find('#complaint #firstName').text).to eq "Norman"
@@ -161,7 +161,7 @@ feature "complaints index", :js => true do
     expect(find('#complaint #complaint_details').text).to eq "a long story about lots of stuff"
     expect(find('#complaint #desired_outcome').text).to eq "Life gets better"
     expect(find('#complaint #complained_to_subject_agency').text).to eq "yes"
-    expect(find('#complaint #date_received').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
+    expect(find('#complaint #date').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
     expect(find('#complaint #current_assignee').text).to eq user.first_last_name
     expect(find('#complaint #status_changes .status_change .status_humanized').text).to eq 'Under Evaluation'
     #expect(find('#complaint .gender').text).to eq "male" # this should work, but I postponed troubleshooting in favour of other activities!
@@ -183,7 +183,7 @@ feature "complaints index", :js => true do
       expect(doc.find('.title').text).to eq "Complaint Document"
     end
 
-    expect(page.find('#mandate').text).to match /Special Investigations Unit/
+    expect(page.find('#complaint_area').text).to match /Special Investigations Unit/
 
     # Email notification
     expect( email.subject ).to eq "Notification of complaint assignment"

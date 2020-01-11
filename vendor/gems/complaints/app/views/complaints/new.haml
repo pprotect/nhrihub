@@ -1,9 +1,6 @@
-%h1
-
 #complaint
 
 :coffeescript
-  @title = "#{@title}"
   @source_areas = #{@areas.to_json.html_safe}
   @source_subareas = #{@subareas.to_json.html_safe}
   @source_all_mandates = #{@mandates.to_json.html_safe}
@@ -29,7 +26,12 @@
     delete_communication_confirmation_message: "#{t('.delete_communication_confirmation_message')}"
     delete_complaint_confirmation_message: "#{t('.delete_complaint_confirmation_message')}"
     delete_document_confirmation_message: "#{t('.delete_document_confirmation_message')}"
+    heading : "#{@title}"
+  @complaint_data = #{Complaint.new.to_json.html_safe}
+  @edit = true
+  @type = "#{@type}"
+  @mode = "new_#{@type}_complaint"
 
 -content_for :assets do
   = stylesheet_link_tag 'complaints'
-  = javascript_pack_tag 'new_complaint'
+  = javascript_pack_tag 'show_complaint'

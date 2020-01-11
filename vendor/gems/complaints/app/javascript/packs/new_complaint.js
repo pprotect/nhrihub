@@ -5,9 +5,7 @@ _.extend(Ractive.defaults.data, {
   all_subareas : source_subareas,
   fade: window.env!='test',
   all_users : source_all_users,
-  //all_mandates : source_all_mandates,
   all_complaint_areas : source_areas,
-  //subareas : source_subareas,
   complaint_bases : source_complaint_bases,
   all_agencies : source_all_agencies,
   all_agencies_in_sixes : _.chain(source_all_agencies).groupBy(function(el,i){return Math.floor(i/6)}).toArray().value(),
@@ -41,5 +39,6 @@ $(function() {
   start_page();
   // so that a state object is present when returnng to the initial state with the back button
   // this is so we can discriminate returning to the page from page load
+  complaint.set('type',type)
   history.replaceState({content: "could be anything", page: "new_individual_complaint"},"whatever","/en/complaints/new/individual")
 });

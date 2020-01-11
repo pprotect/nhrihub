@@ -10,7 +10,7 @@ module SingleComplaintNotesSetupHelpers
     create_subareas
     create_complaint_statuses
     create_agencies
-    complaint = FactoryBot.create( :complaint,
+    complaint = FactoryBot.create( :individual_complaint,
                        :open,
                        :with_associations,
                        :agencies => [Agency.first],

@@ -20,7 +20,7 @@ class ComplaintsController < ApplicationController
       to: "",
       case_reference: nil,
       city: nil,
-      home_phone: nil,
+      phone: "",
       selected_agency_ids: Agency.unscoped.pluck(:id),
       selected_assignee_id: @selected_assignee_id,
       selected_subarea_ids: @subareas.map(&:id),
@@ -58,6 +58,7 @@ class ComplaintsController < ApplicationController
   end
 
   def update
+    params[:complaint].delete(:type) # ignore type on update... it will be correct
     complaint = Complaint.find(params[:id])
     params[:complaint][:status_changes_attributes] = [{:user_id => current_user.id, :name => params[:complaint].delete(:current_status_humanized)}]
     if complaint.update(complaint_params)
@@ -78,10 +79,16 @@ class ComplaintsController < ApplicationController
 
   def show
     @complaint = Complaint.find(params[:id])
+    @type = @complaint.complaint_type.split(' ').first.downcase
     @areas = ComplaintArea.all
     @subareas = ComplaintSubarea.all
     @agencies = Agency.unscoped.all
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
+    @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
+    @permitted_filetypes = ComplaintDocument.permitted_filetypes
+    @communication_maximum_filesize    = CommunicationDocument.maximum_filesize * 1000000
+    @communication_permitted_filetypes = CommunicationDocument.permitted_filetypes
+    @statuses = ComplaintStatus.select(:id, :name).all
     respond_to do |format|
       format.docx do
         send_file ComplaintReport.new(@complaint,current_user).docfile
@@ -93,6 +100,7 @@ class ComplaintsController < ApplicationController
   end
 
   def new
+    @type = params[:type]
     @title = t('.heading', type: params[:type].titlecase)
     @areas = ComplaintArea.all
     @subareas = ComplaintSubarea.all
@@ -120,7 +128,10 @@ class ComplaintsController < ApplicationController
     @complaint = klass.send(:new, complaint_params)       # e.g. IndividualComplaint.new(complaint_params)
     @complaint.assign_initial_status(current_user)
     if @complaint.save
-      render partial: "complaints/#{type}_complaint", locals: {complaint: @complaint}, :status => 200
+      # piggy back the page heading on the complaint object
+      # TODO maybe not the best way... create it dynamically in the client?
+      @complaint.heading = t('.show.heading',case_reference: @complaint.case_reference)
+      render json: @complaint, status: 200
     else
       render :plain => @complaint.errors.full_messages, :status => 500
     end
@@ -146,7 +157,7 @@ class ComplaintsController < ApplicationController
   end
 
   def complaint_params
-    params.require(:complaint).permit( :type, :firstName, :lastName, :title, :city, :home_phone, :new_assignee_id,
+    params.require(:complaint).permit( :firstName, :lastName, :title, :city, :home_phone, :new_assignee_id,
                                        :dob, :email, :complained_to_subject_agency, :desired_outcome, :gender, :details,
                                        :date, :imported, :complaint_area_id,
                                        :cell_phone, :fax, :province, :postal_code, :id_type, :id_value, :alt_id_type, :alt_id_value,

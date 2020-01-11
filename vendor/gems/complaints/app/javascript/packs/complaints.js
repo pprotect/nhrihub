@@ -17,7 +17,7 @@ window.complaints_page_data = function(){
   }
 };
 
-import complaints_options from '../complaints_page.ractive.pug'
+import complaints_options from '../complaints.ractive.pug'
 var filter_criteria_datepicker = require("exports-loader?filter_criteria_datepicker!filter_criteria_datepicker")
 
 require("@rails/ujs").start()
@@ -25,12 +25,9 @@ require("@rails/ujs").start()
 _.extend(Ractive.defaults.data, {
   fade: window.env!='test',
   all_users : source_all_users,
-  //all_mandates : source_all_mandates,
   areas : source_areas,
   subareas : source_subareas,
-  //complaint_bases : source_complaint_bases,
   all_agencies : source_all_agencies,
-  //all_agencies_in_sixes : _.chain(source_all_agencies).groupBy(function(el,i){return Math.floor(i/6)}).toArray().value(),
   all_staff : source_all_staff,
   permitted_filetypes : source_permitted_filetypes,
   maximum_filesize : source_maximum_filesize,

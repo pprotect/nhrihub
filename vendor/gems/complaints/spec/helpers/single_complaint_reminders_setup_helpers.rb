@@ -17,7 +17,7 @@ module SingleComplaintRemindersSetupHelpers
     create_subareas
     create_agencies
     create_complaint_statuses
-    @complaint = FactoryBot.create( :complaint,
+    @complaint = FactoryBot.create( :individual_complaint,
                        :open,
                        :with_associations,
                        :assigned_to => [User.where(:login => 'admin').first, User.where(:login => 'admin').first],

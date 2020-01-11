@@ -126,7 +126,7 @@ module ComplaintsSpecHelpers
   end
 
   def edit_save
-    find('.save_complaint').click
+    find('#edit_save').click
     wait_for_ajax
   end
 

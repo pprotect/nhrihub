@@ -26,7 +26,7 @@ class Complaint < ActiveRecord::Base
   accepts_nested_attributes_for :complaint_documents
   has_many :communications, :dependent => :destroy
 
-  attr_accessor :witness_name
+  attr_accessor :witness_name, :heading
 
   # why after_commit iso after_create? see https://dev.mikamai.com/2016/01/19/postgresql-transaction-and-rails-callbacks/
   after_commit :generate_case_reference, on: :create
@@ -63,7 +63,7 @@ class Complaint < ActiveRecord::Base
       logger.info "with_complainant_match: #{with_complainant_match(query[:complainant]).length}"
       logger.info "since_date: #{since_date(query[:from]).length}"
       logger.info "before_date: #{before_date(query[:to]).length}"
-      logger.info "with_village: #{with_village(query[:village]).length}"
+      logger.info "with_city: #{with_city(query[:city]).length}"
       logger.info "with_phone: #{with_phone(query[:phone]).length}"
       logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
       logger.info "with_agencies: #{with_agencies(query[:selected_agency_ids]).length}"
@@ -74,7 +74,7 @@ class Complaint < ActiveRecord::Base
       with_complainant_match(query[:complainant]).
       since_date(query[:from]).
       before_date(query[:to]).
-      with_village(query[:village]).
+      with_city(query[:city]).
       with_phone(query[:phone]).
       with_subareas(query[:selected_subarea_ids]).
       with_agencies(query[:selected_agency_ids])
@@ -109,9 +109,9 @@ class Complaint < ActiveRecord::Base
     where("complaints.phone ~ '.*#{digits}.*'")
   end
 
-  def self.with_village(village_fragment)
-    return no_filter if village_fragment.blank?
-    where("\"complaints\".\"village\" ~* '.*#{village_fragment}.*'")
+  def self.with_city(city_fragment)
+    return no_filter if city_fragment.blank?
+    where("\"complaints\".\"city\" ~* '.*#{city_fragment}.*'")
   end
 
   def self.since_date(from)
@@ -211,24 +211,31 @@ class Complaint < ActiveRecord::Base
     case_reference <=> other.case_reference
   end
 
+  def complaint_type
+    type&.underscore&.humanize
+  end
+
   def as_json(options = {})
-    super( :except => [:case_reference_alt],
-           :methods => [:reminders,
-                        :notes,
-                        :assigns,
-                        :current_assignee_id,
-                        :current_assignee_name,
-                        :date,
-                        :date_of_birth,
-                        :dob,
-                        :current_status_humanized,
-                        :attached_documents,
-                        :complaint_area_id,
-                        :subarea_ids,
-                        :area_subarea_ids,
-                        :agency_ids,
-                        :status_changes,
-                        :communications])
+    opts = { :except => [:case_reference_alt],
+             :methods => [:complaint_type,
+                          :heading,
+                          :reminders,
+                          :notes,
+                          :assigns,
+                          :current_assignee_id,
+                          :current_assignee_name,
+                          :date,
+                          :date_of_birth,
+                          :dob,
+                          :current_status_humanized,
+                          :attached_documents,
+                          :complaint_area_id,
+                          :subarea_ids,
+                          :area_subarea_ids,
+                          :agency_ids,
+                          :status_changes,
+                          :communications] }
+    super(opts)
   end
 
 

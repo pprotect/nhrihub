@@ -1,5 +1,4 @@
 script#file_selector_template(type='text/ractive' src='../../../../../../app/views/shared/_file_selector_template.html')
-script#complaint_detail(type='text/ractive', src='complaint_detail.html')
 
 .row.well.well-sm.well.complaint
   .col-md-12
@@ -55,8 +54,6 @@ style.
   .firstName, .title {margin-right: .25em;}
 
 script(type='text/javascript').
-  import Mandates from 'mandates'
-  import MandatesSelector from 'areas_selector'
   import Area from 'area'
   import Agencies from 'agencies'
   import AgenciesSelector from 'agencies_selector'
@@ -260,8 +257,6 @@ script(type='text/javascript').
       t : translations.t('complaint')
     }},
     components : {
-      mandates : Mandates,
-      mandatesSelector : MandatesSelector,
       agencies : Agencies,
       agenciesSelector : AgenciesSelector,
       area : Area,

@@ -32,7 +32,7 @@ RSpec::Matchers.define :match_hash do |expected|
     key_match = actual.keys.sort == expected.keys.sort
     value_match = actual.keys.all? do |k|
       if actual[k].is_a?(Array)
-        match = actual[k].sort == expected[k].sort
+        actual[k].sort == expected[k].sort
       else
         actual[k] == expected[k]
       end
@@ -67,7 +67,7 @@ feature "complaints index query string", js: true do
                                                      selected_complaint_area_ids: ComplaintArea.pluck(:id),
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_agency_ids: Agency.unscoped.pluck(:id),
-                                                     from: 0, to: 0 })
+                                                     from: 0, to: 0, phone: 0 })
   end
 
   it "defaults to current user as assignee" do
@@ -84,7 +84,7 @@ feature "complaints index query string", js: true do
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
                                                      selected_complaint_area_ids: ComplaintArea.pluck(:id),
-                                                     from: 0, to: 0
+                                                     from: 0, to: 0, phone: 0
                                                     })
     clear_filter_fields
     expect(query_hash(query_string)).to match_hash({
@@ -93,7 +93,7 @@ feature "complaints index query string", js: true do
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
                                                      selected_complaint_area_ids: ComplaintArea.pluck(:id),
-                                                     from:0, to: 0
+                                                     from:0, to: 0, phone: 0
                                                     })
     clear_options('Select agency')
     expect(query_hash(query_string)).to match_hash({
@@ -102,7 +102,7 @@ feature "complaints index query string", js: true do
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
                                                      selected_complaint_area_ids: ComplaintArea.pluck(:id),
-                                                     from: 0, to: 0
+                                                     from: 0, to: 0, phone: 0
                                                     })
     select_all_options('Select agency')
     wait_for_ajax
@@ -112,7 +112,7 @@ feature "complaints index query string", js: true do
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
                                                      selected_complaint_area_ids: ComplaintArea.pluck(:id),
-                                                     from: 0, to: 0
+                                                     from: 0, to: 0, phone: 0
                                                     })
 
   end
@@ -218,9 +218,9 @@ feature "complaints index", :js => true do
       show_complaint
     end
     expect(page_heading).to eq "Complaint, case reference: #{Complaint.first.case_reference}"
-    expect(find('.city').text).to eq Complaint.first.city
-    expect(find('.complainant_phone').text).to eq Complaint.first.phone
-    expect(find('.complaint_details').text).to eq Complaint.first.details
+    expect(find('#city').text).to eq Complaint.first.city
+    expect(find('#home_phone').text).to eq Complaint.first.home_phone
+    expect(find('#complaint_details').text).to eq Complaint.first.details
 
       within assignee_history do
         Complaint.first.assigns.map(&:name).each do |name|

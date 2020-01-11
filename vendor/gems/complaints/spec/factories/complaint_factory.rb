@@ -227,5 +227,9 @@ FactoryBot.define do
         complaint.status_changes = [FactoryBot.create(:status_change, :under_evaluation, change_date: 4.days.ago)]
       end
     end
+
+    factory :individual_complaint do
+      type { 'IndividualComplaint' }
+    end
   end
 end
