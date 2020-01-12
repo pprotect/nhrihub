@@ -1,0 +1,499 @@
+script#file_selector_template(type='text/ractive' src='../../../../../app/views/shared/_file_selector_template.html')
+
+.row.editable_container('as-inpage_edit'='id')
+  .row
+    .col-md-8
+      h1 {{heading}}
+    .col-md-4.actions
+      .row(style='margin-top:28px; margin-bottom:10px; font-size:1.3em')
+        .col-md-2('data-toggle'= 'edit')
+          .no_edit.in
+            .alarm_icon.counter('data-count'="{{reminders_count}}", 'on-click' = "@this.show_reminders_panel()", 'data-toggle' = 'tooltip', title = '{{ t.reminders }}', style='background-size:23px; width:24px; height:24px;')
+          .edit
+        .col-md-2('data-toggle'= 'edit')
+          .no_edit.in
+            .note_icon.show_notes.counter('data-count'='{{notes_count}}', 'on-click' = "@this.show_notes_panel()", 'data-toggle' = 'tooltip', title = '{{ t.notes }}', style='background-size:23px; width:24px; height:24px;')
+          .edit
+        .col-md-2('data-toggle'= 'edit')
+          .no_edit.in
+            i.fa.fa-comments-o.fa-lg.counter('data-count'='{{communications_count}}', 'on-click' = '@this.show_communications_panel()', style = "position:relative;", 'data-toggle' = 'tooltip', title = '{{ t.communications }}')
+          .fade.edit
+        .col-md-2.icon('data-toggle' = 'edit')
+          .fade.edit
+          .fade.no_edit.in
+            i.fa.fa-pencil-square-o#edit_start(style = "position:relative; top:1px;", 'data-toggle' = 'tooltip', title = '{{ t.edit }}')
+        .col-md-2('data-toggle'= 'edit')
+          .no_edit.in
+            i.fa.fa-sm.fa-trash-o.delete_icon('on-click'='@this.show_confirm_delete_modal()', 'data-toggle' = 'tooltip', title = '{{ t.delete }}')
+          .edit
+        .col-md-2('data-toggle'= 'edit')
+          .no_edit.in
+            i.fa.fa-sm.fa-file-word-o.word_document('on-click'='@this.generate_word_doc()', 'data-toggle' = 'tooltip', title = '{{ t.download }}')
+          .edit
+
+  .row.well.well-sm
+    input(type='hidden', name='type', value='{{type}}')
+    .col-md-12('data-toggle' = 'edit')
+      .fade.edit
+        span.required_before {{ t.required }}
+
+    .col-md-10.col-md-offset-1
+
+      .row('class-hidden'='new_complaint')
+        .col-md-2.complaint_label  {{ t.complaint_type }}
+        .col-md-6#complaint_type {{ complaint_type }}
+
+      .row('data-toggle' = 'edit')
+        .col-md-2
+          label {{ t.date_received }}
+        .col-md-8.date_received
+          .no_edit.in#date {{formatted_date}}
+          .edit
+            input#date_received(autocomplete='off', type = 'text', value = "{{date}}", "as-single_month_datepicker"=true)
+
+      .row('class-hidden'='new_complaint')
+        .col-md-2
+          label {{ t.current_assignee }}
+        .col-md-10
+          span#current_assignee {{ current_assignee_name }}
+
+      .row('data-toggle'= 'edit')
+        .col-md-2
+          label
+            | {{ t.status }}
+        .col-md-10
+          .fade.no_edit.in#status_changes
+            | {{#status_changes}}
+            <statusChange status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
+            | {{/status_changes}}
+          .fade.edit#current_status
+            form
+              label(style='font-weight:normal; margin-right:12px')
+                | {{ t.evaluation }}
+                input#under_evaluation(type = 'radio', name ='{{current_status_humanized}}', value ='Under Evaluation', style='margin-left:6px')
+              label(style='font-weight:normal; margin-right:12px')
+                | {{ t.open }}
+                input#open(type = 'radio', name ='{{current_status_humanized}}', value ='Open', style='margin-left:6px')
+              label(style='font-weight:normal; margin-right:12px')
+                | {{ t.suspended }}
+                input#suspended(type = 'radio', name ='{{current_status_humanized}}', value ='Suspended', style='margin-left:6px')
+              label(style='font-weight:normal')
+                | {{ t.closed }}
+                input#closed(type = 'radio', name ='{{current_status_humanized}}', value ='Closed', style='margin-left:6px')
+
+      .row
+        .col-md-2('data-toggle' = 'edit')
+          label {{ t.complainant }}
+        .col-md-9.complainant('data-toggle'='edit')
+          .no_edit.in
+            span#title {{ title }}
+            span#firstName {{ firstName }}
+            span#lastName {{ lastName }}
+          .edit
+            .row
+              .col-md-4.form-group
+                label(for = 'title')
+                  | {{ t.title }}
+                input.form-control#title(autocomplete='off', value = '{{title}}')
+              .col-md-4.form-group('class-has-error' = 'firstName_error')
+                label.required(for = 'firstName') {{ t.first_name }}
+                input.form-control#firstName(autocomplete='off', value = '{{firstName}}', 'on-keydown'="@this.remove_attribute_error('firstName')")
+                span.help-block.error#firstName_error {{ t.firstName_error_message }}
+              .col-md-4.form-group('class-has-error' = 'lastName_error')
+                label.required(for = 'lastName') {{ t.lastName }}
+                input.form-control#lastName(autocomplete='off', value = '{{lastName}}', 'on-keydown'="@this.remove_attribute_error('lastName')")
+                span.help-block.error#lastName_error {{ t.lastName_error_message }}
+
+      .row
+        .col-md-12.form-group("class-has-error" = "dob_error", "data-toggle" = "edit", style='padding-top:0px; padding-bottom:0px;')
+          .row.no_edit.in
+            .col-md-2
+              label {{ t.dob }}
+            .col-md-3
+              span#complainant_dob {{ date_of_birth }}
+            .col-md-2('style' = "text-align:right")
+              label {{ t.gender }}
+            .col-md-4
+              span#gender {{gender}}
+          .row.edit
+            .col-md-2
+              label.required {{ t.dob }}
+            .col-md-2
+              input#dob.form-control(autocomplete='off', placeholder="dd/mm/yyyy", "on-keydown" = "@this.remove_attribute_error('dob')", style = "width:112px", value = "{{dob}}")/
+              span#dob_error.help-block.error {{ t.dob_error_message }}
+            .col-md-2(style = "text-align:right")
+              label {{ t.gender }}
+            .col-md-5
+              form
+                label(style = "font-weight:normal")
+                  span(style = "margin-right:6px") {{ t.male }}
+                  input#m(name = "{{gender}}", type = "radio", value = "M")
+                label(style = "font-weight:normal")
+                  span(style = "margin-right:6px; margin-left:12px") {{ t.female }}
+                  input#f(name = "{{gender}}", type = "radio", value = "F")
+                label(style = "font-weight:normal")
+                  span(style = "margin-right:6px; margin-left:12px") {{ t.other }}
+                  input#o(name = "{{gender}}", type = "radio", value = "O")
+
+      .row.form-group( 'data-toggle' = 'edit')
+        .col-md-2.complaint_label {{ t.principal_id }}
+        .col-md-3.edit
+          label
+            | {{ t.passport }}
+            input#identify_by_passport(type = 'radio', name = '{{id_type}}', value = 'Passport number')
+          label
+            | {{ t.id }}
+            input#identify_by_id(type = 'radio', name = '{{id_type}}', value = 'State id')
+        .col-md-3.edit
+          input#id_value(autocomplete='off', type = 'text', name = 'id_value', value= "{{id_value}}")
+        .col-md-3.no_edit.in#id_type {{ id_type }}
+        .col-md-3.no_edit.in#id_value {{ id_value }}
+
+      .row.form-group
+        .col-md-2.complaint_label {{ t.alternate_id_type }}
+        .col-md-4('data-toggle' = 'edit')
+          .edit
+            label
+              | {{ t.pension }}
+              input#identify_by_pension_id(type = 'radio', name = '{{alt_id_type}}', value = 'pension #')
+            label
+              | {{ t.prison }}
+              input#identify_by_prison_id(type = 'radio', name = '{{alt_id_type}}', value = 'prison id')
+            label
+              | {{ t.other }}
+              input#identify_by_other_id(type = 'radio', name = '{{alt_id_type}}', value = 'other')
+          .no_edit.in#alt_id_name {{ alt_id_name }}
+        .col-md-4#alt_id_other_type_field('class-visible' = 'other_id_selected' , 'data-toggle'='edit')
+          .edit
+            label {{ t.other_type }}
+            input#alt_id_other_type(autocomplete='off', type='text', value='{{alt_id_other_type}}')
+
+      .row.form-group( 'data-toggle'='edit')
+        .col-md-2.complaint_label {{ t.alternate_id }}
+        .col-md-5
+          .edit
+            input#alt_id_value(autocomplete='off', type = 'text', name = 'alt_id_value', value = "{{alt_id_value}}")
+          .no_edit.in#alt_id_value {{ alt_id_value }}
+
+      .row.form-group('class-has-error' = 'physical_address_error', 'data-toggle' = 'edit')
+        .col-md-2
+          .edit
+            span.required.complaint_label {{ t.physical_address }}
+          .no_edit.in
+            span.complaint_label {{ t.physical_address }}
+        .col-md-6
+          .edit
+            input.form-control#physical_address(autocomplete='off', value = '{{physical_address}}', 'on-keydown'="@this.remove_attribute_error('physical_address')")
+            span.help-block.error#physical_address_error {{ t.physical_address_error_message }}
+          .no_edit.in
+            span#physical_address {{ physical_address }}
+
+      .row.form-group('class-has-error' = 'postal_address_error', 'data-toggle'='edit')
+        .col-md-2
+          .edit
+            span.required.complaint_label {{ t.postal_address }}
+          .no_edit.in
+            span.complaint_label {{ t.postal_address }}
+        .col-md-6
+          .edit
+            input.form-control#postal_address(autocomplete='off', value = '{{postal_address}}', 'on-keydown'="@this.remove_attribute_error('postal_address')")
+            span.help-block.error#postal_address_error {{ t.postal_address_error_message }}
+          .no_edit.in
+            span#postal_address {{ postal_address }}
+
+      .row
+        div.form-group('class-has-error' = 'city_error', "data-toggle"="edit")
+          .col-md-2
+            .no_edit.in
+              label {{ t.city }}
+            .edit
+              label.required {{ t.city }}
+          .col-md-2
+            .no_edit.in
+              span#city {{ city }}
+            .edit
+              input#city.form-control(autocomplete='off', "on-keydown" = "@this.remove_attribute_error('city')", value = "{{city}}")/
+              span#city_error.help-block.error {{ t.city_error_message }}
+
+        div.form-group('class-has-error' = 'province_error', 'data-toggle'='edit')
+          .col-md-2
+            .edit
+              span.complaint_label.required {{ t.province }}
+            .no_edit.in
+              span.complaint_label {{ t.province }}
+          .col-md-2
+            .edit
+              input.form-control#province(autocomplete='off', value = '{{province}}', 'on-keydown'="@this.remove_attribute_error('province')")
+              span.help-block.error#province_error {{ t.province_error_message }}
+            .no_edit.in#province {{ province }}
+
+        div.form-group('class-has-error' = 'postal_code_error', 'data-toggle'='edit')
+          .col-md-2
+            .edit
+              span.complaint_label.required {{ t.postal_code }}
+            .no_edit.in
+              span.complaint_label {{ t.postal_code }}
+          .col-md-2
+            .edit
+              input.form-control#postal_code(autocomplete='off', value = '{{postal_code}}', 'on-keydown'="@this.remove_attribute_error('postal_code')")
+              span.help-block.error#postal_code_error {{ t.postal_code_error_message }}
+            .no_edit.in#postal_code {{ postal_code }}
+
+      .row.form-group('class-has-error' = 'email_error', 'data-toggle' = 'edit')
+        .col-md-2
+          span.complaint_label {{ t.email }}
+        .col-md-6
+          .no_edit.in
+            span#email {{ email }}
+          .edit
+            input.form-control#email(autocomplete='off', value = '{{email}}')
+            span.help-block.error#email_error {{ t.email_error_message }}
+
+      .row.form-group('class-has-error' = 'home_phone_error', 'data-toggle'='edit')
+        .col-md-2
+          span.complaint_label {{ t.home_phone }}
+        .col-md-6
+          .edit
+            input.form-control#home_phone(autocomplete='off', value = '{{home_phone}}')
+            span.help-block.error#home_phone_error {{ t.home_phone_error_message }}
+          .no_edit.in#home_phone {{ home_phone }}
+
+      .row.form-group('class-has-error' = 'cell_phone_error', 'data-toggle'='edit')
+        .col-md-2
+          span.complaint_label {{ t.cell_phone }}
+        .col-md-6
+          .edit
+            input.form-control#cell_phone(autocomplete='off', value = '{{cell_phone}}')
+            span.help-block.error#cell_phone_error {{ t.cell_phone_error_message }}
+          .no_edit.in#cell_phone {{ cell_phone }}
+
+      .row.form-group('class-has-error' = 'fax_error', 'data-toggle'='edit')
+        .col-md-2
+          span.complaint_label {{ t.fax }}
+        .col-md-6
+          .edit
+            input.form-control#fax(autocomplete='off', value = '{{fax}}')
+            span.help-block.error#fax_error {{ t.fax_error_message }}
+          .no_edit.in#fax {{ fax }}
+
+      .row.form-group('class-has-error' = 'preferred_means_error', 'data-toggle'='edit')
+        .col-md-2
+          .edit
+            span.complaint_label.required {{ t.preferred_means }}
+          .no_edit.in
+            span.complaint_label {{ t.preferred_means }}
+        .col-md-10.mail_comms
+          .edit
+            .row
+              .col-md-12
+                label
+                  | {{ t.mail_pref }}
+                  input#preferred_means_mail(type='radio', name='{{preferred_means}}', value='mail', 'on-change'="@this.remove_attribute_error('preferred_means','postal_address','email','home_phone','cell_phone','fax')")
+                label
+                  | {{ t.email_pref }}
+                  input#preferred_means_email(type='radio', name='{{preferred_means}}', value='email', 'on-change'="@this.remove_attribute_error('preferred_means','postal_address','email','home_phone','cell_phone','fax')")
+                label
+                  | {{ t.home_phone_pref }}
+                  input#preferred_means_home_phone(type='radio', name='{{preferred_means}}', value='home_phone', 'on-change'="@this.remove_attribute_error('preferred_means','postal_address','email','home_phone','cell_phone','fax')")
+                label
+                  | {{ t.cell_phone_pref }}
+                  input#preferred_means_cell_phone(type='radio', name='{{preferred_means}}', value='cell_phone', 'on-change'="@this.remove_attribute_error('preferred_means','postal_address','email','home_phone','cell_phone','fax')")
+                label
+                  | {{ t.fax_pref }}
+                  input#preferred_means_fax(type='radio', name='{{preferred_means}}', value='fax', 'on-change'="@this.remove_attribute_error('preferred_means','postal_address','email','home_phone','cell_phone','fax')")
+            .row
+              .col-md-12
+                span.help-block.error#preferred_means_error {{ t.preferred_means_error_message }}
+          .no_edit.in#preferred_means {{ preferred_means }}
+
+      .row.form-group("class-has-error" = "details_error", "data-toggle" = "edit")
+        .col-md-2
+          .no_edit.in
+            label {{ t.details }}
+          .edit
+            label.required {{ t.details }}
+        .col-md-9
+          .no_edit.in
+            span#complaint_details {{ details }}
+          .edit
+            input#complaint_details.form-control(autocomplete='off', "on-keydown" = "@this.remove_attribute_error('details')", value = "{{details}}")/
+            span#details_error.help-block.error
+              | {{ t.details_error_message }}
+
+      .row("data-toggle" = "edit")
+        .col-md-2
+          label {{ t.desired_outcome }}
+        .col-md-9
+          .no_edit.in
+            span#desired_outcome {{ desired_outcome }}
+          .edit
+            input#desired_outcome.form-control(autocomplete='off', value = "{{desired_outcome}}")/
+
+      .row("data-toggle" = "edit")
+        .col-md-2
+          label {{ t.complained_to_subject_agency }}
+        .col-md-3
+          .no_edit.in
+            span#complained_to_subject_agency {{#if complained_to_subject_agency }} yes {{else}} no {{/if}}
+          .edit
+            form
+              label(style = "font-weight:normal; margin-right:12px")
+                | {{ t.yes }}
+                input#complained_to_subject_agency_yes(name = "{{complained_to_subject_agency}}", style = "margin-left:6px", type = "radio", value = "true")/
+              label(style = "font-weight:normal")
+                | {{ t.no }}
+                input#complained_to_subject_agency_no(name = "{{complained_to_subject_agency}}", style = "margin-left:6px", type = "radio", value = "false")/
+
+      .row.form-group('class-has-error' = 'new_assignee_id_error')
+        .col-md-2
+          label('class-hidden' = 'new_complaint') {{ t.assignees_history }}
+          label('class-hidden' = 'update_complaint') {{ t.assignee }}
+        .col-md-5("data-toggle" = "edit")
+          <assignees assigns = "{{assigns}}"  />
+          .no_edit.in
+          .edit
+            <assigneeSelector editing = {{update_complaint}} new_assignee_id = "{{new_assignee_id}}" />
+            span.help-block.error#new_assignee_id_error {{ t.assignee_error_message }}
+
+      .row.form-group("class-has-error" = "complaint_area_id_error", "data-toggle" = "edit")
+        .col-md-2
+          .no_edit.in
+            label {{ t.area }}
+          .edit.required
+            label {{ t.area }}
+        .col-md-9
+          #complaint_area.no_edit.in {{ complaint_area_name }}
+          .edit
+            .row
+              <areasSelector complaint_area_id = "{{complaint_area_id}}" />
+            span#complaint_area_id_error.help-block.error {{ t.complaint_area_id_error_message }}
+
+      .row.form-group("class-has-error" = "subarea_id_count_error", "data-toggle" = "edit")
+        .col-md-2
+          .no_edit.in
+            label {{ t.subareas }}
+          .edit.required
+            label {{ t.subareas }}
+        .col-md-9
+          .no_edit.in
+            | {{#area_subarea_ids:id}}
+            <area area_ids = "{{area_ids}}" area_subarea_ids = "{{area_subarea_ids}}" areas = "{{all_complaint_areas}}" id = "{{parseInt(id)}}" subarea_ids = "{{this}}" subareas = "{{all_subareas}}" />
+            | {{/area_subarea_ids}}
+          .edit
+            .row
+              <subareaSelector all_complaint_areas = "{{all_complaint_areas}}" subarea_ids = "{{subarea_ids}}" />
+            span#subarea_id_count_error.help-block.error {{ t.subarea_id_count_error_message }}
+
+      .row("data-toggle" = "edit")
+        .col-md-2
+          label
+            | {{ t.agency }}
+        .col-md-9
+          #agencies.no_edit.in.comma-list(style = "display:flex")
+            <agencies agency_ids = "{{agency_ids}}" />
+          .edit
+            <agenciesSelector agency_ids = "{{agency_ids}}" all_agencies_in_sixes = "{{all_agencies_in_sixes}}" />
+
+      .row("data-toggle" = "edit")
+        .col-md-2
+          label {{ t.documents }}
+          span.edit.fileupload 
+            span.btn.btn-xs.btn-success.fileinput-button
+              i.fa.fa-plus.fa-lg( style = "color:white; margin-right: 4px;")
+              span {{ t.add_document }}
+            input.hidden_fileinput(id = "complaint_fileinput", multiple = "multiple", name = "complaint_file", type = "file", "as-ractive_fileupload" = true)
+        #complaint_documents.col-md-10
+          .no_edit.in
+          <attachedDocuments attached_documents = "{{attached_documents}}" key = "complaint" maximum_filesize = "{{maximum_filesize}}" permitted_filetypes = "{{permitted_filetypes}}" />
+
+      .row("data-toggle" = "edit", style = "margin-top:30px")
+        .col-md-6.col-md-offset-3(style='display:flex; justify-content:space-evenly;')
+          .edit(style = "text-align:center", 'class-hidden'='new_complaint')
+            #edit_cancel.btn.btn-danger.btn-sm.edit_cancel
+              i.fa.fa-remove.fa-lg
+              span(style = "color:white") {{ t.cancel }}
+          .edit(style = "text-align:center")
+            .btn.btn-success.btn-sm#save_complaint(style = "color:white;", "on-click" = "@this.save_complaint()", 'class-hidden'='update_complaint')
+              i.fa.fa-check.fa-lg
+              span {{ t.save }}
+            .btn.btn-success.btn-sm#edit_save(style = "color:white;", 'class-hidden'='new_complaint')
+              i.fa.fa-check.fa-lg
+              span {{ t.save }}
+            .form-group("class-has-error" = "has_errors")
+              span#complaint_error.help-block.error {{ t.form_error }}
+
+style.
+  .complainant #firstName, #complainant #title {margin-right: .25em;}
+  #alt_id_other_type_field.visible { display: block; }
+  #alt_id_other_type_field:not(.visible) { display: none; }
+  .complaint_label { font-weight: 700; }
+  #identify_by_pension_id, #identify_by_prison_id, #identify_by_other_id {
+    margin-left:12px;
+    margin-right:12px;
+  }
+  #alt_id_other_type {
+    margin-left: 12px;
+  }
+  #save_complaint .fa, #edit_save .fa, #edit_cancel .fa {
+    color: white;
+    margin-right: 6px;
+    position: relative;
+    top: -1px;
+  }
+  .fileinput-button {
+    position: relative;
+    top: -2px;
+  }
+
+script(type='text/javascript').
+  var EditInPlace = require("exports-loader?EditInPlace!edit_in_place")
+  //import '../../../../../app/assets/javascripts/local_node_modules/bootstrap-multimodal/js/multimodal.js'
+  //import reminders from 'reminders.ractive.pug'
+  //import notes from 'notes.ractive.pug'
+  //import 'bootstrap'
+  window.$ = window.jQuery = $ // it's the only method I could get to work for making $ available globally!
+  window._ = _
+  import ComplaintBase from 'complaint_base'
+
+  export default ComplaintBase.extend({
+    template : $TEMPLATE,
+    css: $CSS,
+    computed : {
+      persistent_attributes() {
+        return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
+          'city','province','postal_code','complaint_area_id',
+          'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
+          'current_status_humanized', 'new_assignee_id', 'subarea_ids',
+          'agency_ids', 'attached_documents_attributes', 'details',
+          'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
+          'firstName', 'lastName', 'title', 'type'];
+      },
+      validation_criteria() {
+        return {
+          firstName : ['notBlank'],
+          lastName : ['notBlank'],
+          city : ['notBlank'],
+          postal_code : ['notBlank'],
+          province : ['notBlank'],
+          complaint_area_id : 'numeric',
+          subarea_id_count : 'nonZero',
+          new_assignee_id: ['nonZero', {if : () => {return (this.get('new_complaint') && this.get('editing'))}}],
+          dob: () => {
+            const date_regex = new RegExp(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); // dd/mm/yyyy
+            const match = date_regex.exec(this.get('dob'));
+            const valid_day = match && (parseInt(match[1]) <= 31);
+            const valid_month = match && (parseInt(match[2]) <= 12);
+            const valid_year = match && (parseInt(match[3]) <= (new Date).getFullYear()) && (parseInt(match[3]) >= 1900 );
+            return !_.isNull(match) && valid_day && valid_month && valid_year;
+          },
+          details : ['notBlank'],
+          preferred_means : 'notBlank',
+          postal_address: ['notBlank', {if: ()=>this.get('preferred_means') == 'mail'}],
+          email: ['notBlank', {if: ()=>this.get('preferred_means') == 'email'}],
+          home_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'home_phone'}],
+          cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
+          fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}]
+        };
+      },
+    },
+    })

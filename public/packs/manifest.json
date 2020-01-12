@@ -2,13 +2,9 @@
   "entrypoints": {
     "shared": {
       "js": [
-        "/packs/js/shared-8433ed57e32f03406ab1.js"
-      ],
-      "js.map": [
-        "/packs/js/shared-8433ed57e32f03406ab1.js.map"
+        "/packs/js/shared-4d396b729d5045818cde.js"
       ]
     }
   },
-  "shared.js": "/packs/js/shared-8433ed57e32f03406ab1.js",
-  "shared.js.map": "/packs/js/shared-8433ed57e32f03406ab1.js.map"
+  "shared.js": "/packs/js/shared-4d396b729d5045818cde.js"
 }

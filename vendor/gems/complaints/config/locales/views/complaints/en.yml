@@ -99,6 +99,9 @@ en:
       areas: "Areas and subareas"
 
   complaint:
+    individual_complaint_intake_heading: "Individual Complaint Intake"
+    organization_complaint_intake_heading: "Organization Complaint Intake"
+    own_motion_complaint_intake_heading: "Own Motion Complaint Intake"
     add_file: "Add file"
     add_document: "Add"
     agency: "Agency(ies)"

@@ -15,9 +15,17 @@ _.extend(Ractive.defaults.data, {
   i18n: window.i18n
 })
 
-import Complaint from '../complaint.ractive.pug'
+import IndividualComplaint from '../individual_complaint.ractive.pug'
+import OrganizationComplaint from '../organization_complaint.ractive.pug'
+import OwnMotionComplaint from '../own_motion_complaint.ractive.pug'
 window.start_page = function(){
-  window.complaint = new Complaint({data: complaint_data})
+  if(type == "individual"){
+    window.complaint = new IndividualComplaint({data: complaint_data}) }
+  else if(type == "organization"){
+    window.complaint = new OrganizationComplaint({data: complaint_data}) }
+  else if(type == "own_motion"){
+    window.complaint = new OwnMotionComplaint({data: complaint_data}) }
+  complaint.set({heading: i18n.heading, type: type});
 }
 
 window.onpopstate = function(event) {
@@ -27,7 +35,6 @@ window.onpopstate = function(event) {
 
 $(function() {
   start_page();
-  complaint.set({heading: i18n.heading, type: type});
   // capture complaint data for current url
   history.replaceState({content: complaint_data, page: mode},"whatever",window.location.pathname)
 });
