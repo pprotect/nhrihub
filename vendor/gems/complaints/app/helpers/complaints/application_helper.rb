@@ -7,9 +7,7 @@ module Complaints
     def webpacker_instance(name)
       if name == "complaints"
         Complaints.webpacker
-      elsif name == "new_complaint"
-        Complaints.webpacker
-      elsif name == "show_complaint"
+      elsif name == "complaint"
         Complaints.webpacker
       elsif name == "projects"
         Projects.webpacker

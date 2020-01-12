@@ -15,7 +15,7 @@ _.extend(Ractive.defaults.data, {
   i18n: window.i18n
 })
 
-import Complaint from '../show_complaint.ractive.pug'
+import Complaint from '../complaint.ractive.pug'
 window.start_page = function(){
   window.complaint = new Complaint({data: complaint_data})
 }
