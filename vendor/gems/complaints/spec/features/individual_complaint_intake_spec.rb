@@ -20,6 +20,8 @@ feature "complaint pages navigation", :js => true do
     page.find('.nav #compl a.dropdown-toggle').hover
     expect(page).to have_selector('.nav #compl .dropdown-menu #intake', text: 'Intake')
     expect(page).to have_selector('.nav #compl .dropdown-menu #list', text: 'List')
+    page.find('.nav #compl .dropdown-menu #intake').hover
+    expect(page).to have_selector('.nav #compl .dropdown-menu #individual', text: 'Individual')
   end
 end
 
@@ -42,7 +44,7 @@ feature "complaints index", :js => true do
 
   it "adds a new complaint that is valid" do
     expect( page_heading ).to eq "Individual Complaint Intake"
-    complete_required_fields
+    complete_required_fields(:individual)
     expect{save_complaint}.to change{ Complaint.count }.by(1)
 
     # on the server
@@ -202,7 +204,7 @@ feature "complaints index", :js => true do
     expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
     page.go_back
     expect( page_heading ).to eq "Individual Complaint Intake"
-    complete_required_fields
+    complete_required_fields(:individual)
     next_ref = Complaint.next_case_reference # capture the expected value before saving
     expect{save_complaint}.to change{ Complaint.count }.by(1)
     expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
@@ -211,7 +213,7 @@ feature "complaints index", :js => true do
   it "adds 15 complaints and increments case reference for each" do #b/c there was a bug
     15.times do |i|
       visit complaint_intake_path('en', 'individual')
-      complete_required_fields
+      complete_required_fields(:individual)
       expect{save_complaint}.to change{ Complaint.count }.by(1)
     end
     assigned_case_references = Complaint.all.sort.map(&:case_reference).map(&:to_s)
@@ -311,7 +313,7 @@ feature "complaints index", :js => true do
   end
 
   it "sets date_received to today's date if it is not provided when adding" do
-    complete_required_fields
+    complete_required_fields(:individual)
     expect{save_complaint}.to change{ Complaint.count }.by(1)
 
     # on the server

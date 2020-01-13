@@ -3,7 +3,49 @@ require 'rspec/core/shared_context'
 module ComplaintsSpecSetupHelpers
   extend RSpec::Core::SharedContext
 
-  def complete_required_fields
+  def complete_required_fields(complaint_type)
+    case complaint_type
+    when :individual
+      complete_individual_complaint_required_fields
+    when :organization
+      complete_organization_complaint_required_fields
+    when :own_motion
+      complete_own_motion_complaint_required_fields
+    end
+
+  end
+
+  def complete_own_motion_complaint_required_fields
+    fill_in('branch_name', :with => 'Gauteng')
+    fill_in('unit_name', :with => 'SAMC')
+    fill_in('complaint_details', :with => "a long story about lots of stuff")
+    choose('Special Investigations Unit')
+    choose('complained_to_subject_agency_yes')
+    check_subarea(:good_governance, "Delayed action")
+    select(User.admin.first.first_last_name, :from => "assignee")
+  end
+
+  def complete_organization_complaint_required_fields
+    fill_in('organization_name', :with => "Acme Corp.")
+    fill_in('contact_first_name', :with => "Norman")
+    fill_in('contact_last_name', :with => "Normal")
+    fill_in('postal_address', :with => 'abcd')
+    fill_in('physical_address', :with => 'abcd')
+    fill_in('city', :with => "Normaltown")
+    fill_in('province', :with => 'wtf')
+    fill_in('postal_code', :with => '1234')
+    fill_in('contact_email', :with => 'norm@acme.com')
+    fill_in('contact_phone', :with => '(132) 887-2389')
+    fill_in('contact_fax', :with => '(132) 887-2389')
+    choose('Mail')
+    fill_in('complaint_details', :with => "a long story about lots of stuff")
+    choose('Special Investigations Unit')
+    choose('complained_to_subject_agency_yes')
+    check_subarea(:good_governance, "Delayed action")
+    select(User.admin.first.first_last_name, :from => "assignee")
+  end
+
+  def complete_individual_complaint_required_fields
     fill_in('lastName', :with => "Normal")
     fill_in('firstName', :with => "Norman")
     fill_in('dob', :with => "08/09/1950")

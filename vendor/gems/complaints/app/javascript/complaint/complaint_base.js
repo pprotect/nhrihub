@@ -1,4 +1,5 @@
-//import 'jquery-ui/ui/widgets/datepicker'
+var EditInPlace = require("exports-loader?EditInPlace!edit_in_place")
+import 'jquery-ui/ui/widgets/datepicker'
 import EditBackup from 'edit_backup'
 import AreasSelector from 'complaint/areas_selector'
 import Agencies from 'agencies'
@@ -19,6 +20,9 @@ import translations from 'translations.js'
 import Validator from 'validator'
 var SingleMonthDatepicker = require("exports-loader?SingleMonthDatepicker!single_month_datepicker.coffee")
 Ractive.decorators.single_month_datepicker = SingleMonthDatepicker
+import reminders from 'reminders.ractive.pug'
+import notes from 'notes.ractive.pug'
+import 'bootstrap'
 
 export default Ractive.extend({
   el: '#complaint',
@@ -40,15 +44,6 @@ export default Ractive.extend({
     },
     persisted() {
       return !(_.isNull(this.get('id')) || _.isUndefined(this.get('id')));
-    },
-    persistent_attributes() {
-      return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
-        'city','province','postal_code','complaint_area_id',
-        'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
-        'current_status_humanized', 'new_assignee_id', 'subarea_ids',
-        'agency_ids', 'attached_documents_attributes', 'details',
-        'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
-        'firstName', 'lastName', 'title', 'type'];
     },
     url() {
       if (this.get('persisted')) { return Routes.complaint_path(current_locale, this.get('id')); }
@@ -84,33 +79,6 @@ export default Ractive.extend({
       const sa = this.get('subarea_ids');
       const sal = _.isUndefined(sa) ? 0 : sa.length;
       return sal;
-    },
-    validation_criteria() {
-      return {
-        firstName : ['notBlank'],
-        lastName : ['notBlank'],
-        city : ['notBlank'],
-        postal_code : ['notBlank'],
-        province : ['notBlank'],
-        complaint_area_id : 'numeric',
-        subarea_id_count : 'nonZero',
-        new_assignee_id: ['nonZero', {if : () => {return (this.get('new_complaint') && this.get('editing'))}}],
-        dob: () => {
-          const date_regex = new RegExp(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); // dd/mm/yyyy
-          const match = date_regex.exec(this.get('dob'));
-          const valid_day = match && (parseInt(match[1]) <= 31);
-          const valid_month = match && (parseInt(match[2]) <= 12);
-          const valid_year = match && (parseInt(match[3]) <= (new Date).getFullYear()) && (parseInt(match[3]) >= 1900 );
-          return !_.isNull(match) && valid_day && valid_month && valid_year;
-        },
-        details : ['notBlank'],
-        preferred_means : 'notBlank',
-        postal_address: ['notBlank', {if: ()=>this.get('preferred_means') == 'mail'}],
-        email: ['notBlank', {if: ()=>this.get('preferred_means') == 'email'}],
-        home_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'home_phone'}],
-        cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
-        fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}]
-      };
     },
     error_vector() {
       return {

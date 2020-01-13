@@ -112,6 +112,9 @@ script(type='text/javascript').
   import Note from 'single_note_modal.js'
   import ConfirmDeleteModal from 'confirm_delete_modal'
   import 'jquery-ui/ui/widgets/datepicker'
+  // not sure why this is required here... for some reason the decorator is not defined otherwise!
+  var SingleMonthDatepicker = require("exports-loader?SingleMonthDatepicker!single_month_datepicker.coffee")
+  Ractive.decorators.single_month_datepicker = SingleMonthDatepicker
   import 'file_input_decorator.coffee'
   import I18n from 'translations.js'
   import documents from 'documents.ractive.pug'

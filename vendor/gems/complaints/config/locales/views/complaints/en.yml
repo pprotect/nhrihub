@@ -128,6 +128,11 @@ en:
     complaint_area_id_error_message: "You must select an area"
     complaint_documents : 'Complaint documents'
     current_assignee: 'Current assignee'
+    contact: "Contact person"
+    contact_email: "Contact email"
+    contact_phone: "Contact phone"
+    contact_cell_phone: "Contact cell phone"
+    contact_fax: "Contact fax"
     date_received : "Date received"
     delete : "Delete"
     desired_outcome : 'Desired outcome'
@@ -159,6 +164,7 @@ en:
     notes : "Notes"
     'on': 'on' # b/c on is a keyword in yaml and the translation borks
     open: "Open"
+    organization_name: "Organization name"
     other : "Other"
     other_type : "Other ID type"
     phone: 'Phone'
