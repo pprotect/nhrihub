@@ -68,6 +68,9 @@ Rails.application.routes.draw do
     exceptions.each do |exception|
       get exception, :to => "errors##{exception}"
     end
+    resources :office_group, :only => [:create, :destroy] do
+      resources :office, :only => [:create, :destroy]
+    end
   end
   # Catch all requests without a locale and redirect to the default...
   # see https://dhampik.com/blog/rails-routes-tricks-with-locales for explanation

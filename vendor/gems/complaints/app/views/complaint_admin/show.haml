@@ -3,6 +3,9 @@
 .message_block
 %h1=t('.heading')
 
+%h4=t('.offices')
+= render :partial => 'office_group_office_config'
+
 %h4=t('.areas')
 = render :partial => 'shared/area_subarea_config'
 

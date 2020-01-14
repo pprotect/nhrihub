@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_03_185333) do
+ActiveRecord::Schema.define(version: 2020_01_13_170355) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -303,6 +303,7 @@ ActiveRecord::Schema.define(version: 2020_01_03_185333) do
     t.integer "alt_id_type", limit: 2
     t.string "alt_id_value"
     t.string "alt_id_other_type"
+    t.integer "initiating_branch_id"
     t.index ["case_reference"], name: "index_complaints_on_case_reference", unique: true
   end
 

@@ -17,5 +17,8 @@ class ComplaintAdminController < ApplicationController
     @areas = ComplaintArea.all
     @create_subarea_url = complaint_area_subareas_path(I18n.locale, "area_id")
     @create_area_url = complaint_areas_path(I18n.locale)
+    @office_groups = OfficeGroup.all
+    @create_office_url = office_group_office_index_path("office_group_id")
+    @create_office_group_url = office_group_index_path
   end
 end

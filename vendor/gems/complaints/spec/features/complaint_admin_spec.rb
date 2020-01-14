@@ -5,6 +5,8 @@ require 'complaint_context_file_admin_spec_helpers'
 require 'communication_context_file_admin_spec_helpers'
 require 'file_admin_behaviour'
 require 'area_subarea_admin'
+require 'office_group_admin'
+#require 'shared_behaviours/area_subarea_admin'
 
 feature "complaint bases admin", :js => true do
   let(:area_model){ ComplaintArea }
@@ -105,4 +107,15 @@ feature "agency admin", :js => true do
     find('h1').click # click anywhere, 'body' doesn't seem to work anymore
     expect(page).not_to have_selector('#delete_disallowed')
   end
+end
+
+feature "complaint area/subarea admin", :js => true do
+  let(:area_model){ ComplaintArea }
+  let(:subarea_model){ ComplaintSubarea }
+  let(:admin_page){ complaint_admin_path('en') }
+  it_behaves_like 'area subarea admin'
+end
+
+feature "Office and OfficeGroup admin", :js => true do
+  it_behaves_like "office and office group admin"
 end

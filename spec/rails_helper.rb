@@ -8,7 +8,7 @@ require File.expand_path('../helpers/application_helpers',__FILE__)
 
 $:.unshift File.expand_path '../helpers', __FILE__
 $:.unshift File.expand_path '../shared_behaviours', __FILE__
-Dir.glob(Rails.root.join('vendor','gems','**','spec','helpers')).each do |path|
+Dir.glob(Rails.root.join('vendor','gems','**','spec','{helpers,shared_behaviours}')).each do |path|
   $:.unshift path
 end
 Dir.glob(Rails.root.join('vendor','gems','**','spec','helpers','*')).each do |path|

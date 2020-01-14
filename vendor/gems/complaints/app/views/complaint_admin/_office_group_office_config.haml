@@ -1,0 +1,174 @@
+.admin.well
+  .row
+    .col-md-8= t('.office_groups')
+  .row
+    .col-md-12.office_groups.panel-group#accordion
+
+%script#office_group_template{:type => 'ractive/template'}
+  {{#if persisted }}
+  {{>persisted_office_group_template}}
+  {{else}}
+  {{>new_office_group_template}}
+  {{/if}}
+
+%script#persisted_office_group_template{:type => 'ractive/template'}
+  .panel.panel-default{:style => "border-color: #B5AD8B;"}
+    .row.office_group.panel-heading{:style => 'margin-left:0px; width:100%; border-bottom-right-radius:3px; background-image: -webkit-linear-gradient(top, #F5F5F5 0%, #E8E8E8 100%); background-image: -o-linear-gradient(top, whitesmoke 0%, #e8e8e8 100%); background-image: linear-gradient(to bottom, #DBD2AB 0%, #D4CCA8 100%);'}
+      .col-md-4.text {{ name }}
+      .col-md-2
+        %a#offices_link{'data-toggle'=>:collapse, 'data-parent'=>'#accordion', :href => '#collapse_{{ id }}'}
+          %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show offices'}
+      .col-md-4
+        %a.delete_office_group{:href => '#', 'on-click' => '@this.delete_office_group()'.html_safe}= t('defaults.delete') 
+    .row.panel-collapse.collapse{:id => 'collapse_{{ id }}', :style => 'margin-left:0px; margin-right:0px; background-color: #D8D0AA'}
+      .col-md-12{:style => "margin-left:15px"}
+        {{#offices}}
+        <office url='{{url}}' id='{{id}}' name='{{name}}' />
+        {{/offices}}
+
+%script#new_office_group_template{:type => 'ractive/template'}
+  .row.form-group{:class => "{{#office_group_error}}has-error{{/}}", :style => "margin-top:15px;"}
+    .col-md-2
+      %button.btn.btn-success.btn-xs#add_office_group{:style => 'line-height:1.8; position:relative; top:2px;', 'on-click'=>'@this.create()'.html_safe}= t('.add_office_group')
+    .col-md-4
+      = text_field_tag :name, '{{name}}', :id => 'office_group_name', :class => 'form-control', :placeholder => t('.enter_office_group_text'), :style => "height: 28px; padding: 6px 12px;", 'on-keydown'=>'@this.remove_errors()'.html_safe, 'autocomplete'=>'off'
+      %span.help-block#office_group_error{:style => "font-size:0.8em; padding-left:4px; position:relative; top:-4px; width:100%;"}= t('.office_group_error_message')
+
+%script#office_groups_template{:type => 'ractive/template'}
+  {{#office_groups}}
+  <officegroup url='{{url}}' id='{{id}}' name='{{name}}' offices='{{offices}}' />
+  {{/office_groups}}
+
+%script#office_template{:type => 'ractive/template'}
+  {{#if persisted }}
+  {{>persisted_office_template}}
+  {{else}}
+  {{>new_office_template}}
+  {{/if}}
+
+%script#persisted_office_template{:type => 'ractive/template'}
+  .row.office
+    .col-md-5.col-md-offset-1.name {{ name }}
+    .col-md-3
+      %a.delete_office{:href => '#', 'on-click' => '@this.delete_office()'.html_safe}= t('defaults.delete') 
+
+%script#new_office_template{:type => 'ractive/template'}
+  .row.form-group{:class => "{{#office_error}}has-error{{/}}", :style => "padding-top:6px; padding-bottom:6px;"}
+    .col-md-1
+      %button.btn.btn-success.btn-xs#add_office{:style => 'line-height:1.8; position:relative; top:2px;', 'on-click'=>'@this.create()'.html_safe}= t('.add_office')
+    .col-md-4
+      = text_field_tag :name, '{{name}}', :id => 'office_name', :placeholder => t('.enter_office_text'), :class => 'form-control', :style => "height:28px; padding:6px 12px;", 'on-keydown'=>'@this.remove_errors()'.html_safe, 'autocomplete'=>'off'
+      %span.help-block#office_error{:style => "font-size:0.8em; padding-left:4px; position:relative; top:-4px; width:100%;"}= t('.office_error_message')
+
+:coffeescript
+  $ ->
+    Ractive.DEBUG = false
+
+    office_groups_data =  #{@office_groups.to_json.html_safe}
+    create_office_url = "#{ @create_office_url}"
+    create_office_group_url = "#{ @create_office_group_url }"
+
+    Office = Ractive.extend
+      template : '#office_template'
+      computed :
+        persisted : ->
+          !isNaN(parseInt(@get('id')))
+      create: ->
+        create_office_url = create_office_url.replace(/office_group_id/, @parent.get('id'))
+        if @valid()
+          $.ajax
+            type : 'post'
+            url : create_office_url
+            data : {office : {name : @get('name')}}
+            dataType : 'json'
+            success : @update
+            context : @
+      valid : ->
+        @set('name', @get('name').trim())
+        if @get('name') == ""
+          @set("office_error",true)
+          false
+        else
+          true
+      update : (response, statusText, jqxhr)->
+        office_groups.update(response)
+      remove_errors : ->
+        @set("office_error",false)
+      delete_office : ->
+        @event.original.preventDefault()
+        delete_office_url = @get('url')
+        $.ajax
+          type : 'post'
+          url : delete_office_url
+          data : {'_method' : 'delete'}
+          dataType : 'json'
+          success : @delete_office_callback
+          context : @
+      delete_office_callback : (response, status, xhr) ->
+        @parent.delete(@)
+
+    OfficeGroup = Ractive.extend
+      template : '#office_group_template'
+      components :
+        office : Office
+      computed :
+        persisted : ->
+          !isNaN(parseInt(@get('id')))
+      onconfig : ->
+        if @get('persisted')
+          @add_new_office_form()
+      create: ->
+        if @valid()
+          $.ajax
+            type : 'post'
+            url : create_office_group_url
+            data : {office_group : {name : @get('name')}}
+            dataType : 'json'
+            success : @update
+            context : @
+      valid : ->
+        @set('name', @get('name').trim())
+        if @get('name') == ""
+          @set("office_group_error",true)
+          false
+        else
+          true
+      update : (response, statusText, jqxhr)->
+        office_groups.update(response)
+      remove_errors : ->
+        @set("office_group_error",false)
+      delete_office_group : ->
+        @event.original.preventDefault()
+        delete_office_group_url = @get('url')
+        $.ajax
+          type : 'post'
+          url : delete_office_group_url
+          data : {'_method' : 'delete'}
+          dataType : 'json'
+          success : @delete_office_group_callback
+          context : @
+      delete_office_group_callback : (response, status, xhr) ->
+        @parent.delete(@)
+      delete : (office)->
+        index = _(@findAllComponents('office')).indexOf(office)
+        @splice('offices', index, 1)
+      add_new_office_form : ->
+        @push('offices',{id : null, name : ""})
+
+    window.office_groups = new Ractive
+      el : '.office_groups'
+      template : '#office_groups_template'
+      data :
+        office_groups : office_groups_data
+      components :
+        officegroup : OfficeGroup
+      onconfig : ->
+        @push('office_groups',{id : null, name : "", offices : []})
+      update : (office_groups)->
+        @set('office_groups',office_groups)
+        @push('office_groups',{id : null, name : "", offices : []})
+        _(@findAllComponents('officegroup')).each (office_group)->
+          office_group.add_new_office_form()
+      delete : (office_group)->
+        index = _(@findAllComponents('officegroup')).indexOf(office_group)
+        @splice('office_groups', index, 1)

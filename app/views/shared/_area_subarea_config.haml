@@ -14,7 +14,7 @@
 %script#persisted_area_template{:type => 'ractive/template'}
   .panel.panel-default{:style => "border-color: #B5AD8B;"}
     .row.area.panel-heading{:style => 'margin-left:0px; width:100%; border-bottom-right-radius:3px; background-image: -webkit-linear-gradient(top, #F5F5F5 0%, #E8E8E8 100%); background-image: -o-linear-gradient(top, whitesmoke 0%, #e8e8e8 100%); background-image: linear-gradient(to bottom, #DBD2AB 0%, #D4CCA8 100%);'}
-      .col-md-3.text {{ name }}
+      .col-md-4.text {{ name }}
       .col-md-2
         %a#subareas_link{'data-toggle'=>:collapse, 'data-parent'=>'#accordion', :href => '#collapse_{{ id }}'}
           %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show subareas'}
@@ -48,8 +48,7 @@
 
 %script#persisted_subarea_template{:type => 'ractive/template'}
   .row.subarea
-    .col-md-3
-    .col-md-3.name {{ name }}
+    .col-md-5.col-md-offset-1.name {{ name }}
     .col-md-3
       %a.delete_subarea{:href => '#', 'on-click' => '@this.delete_subarea()'.html_safe}= t('defaults.delete') 
 

@@ -97,6 +97,15 @@ en:
       abbrev: "abbreviation"
       full_name: "full name"
       areas: "Areas and subareas"
+      offices: "Offices and Branches"
+    office_group_office_config:
+      office_groups: "Office Groups"
+      add_office_group: "Add office group"
+      enter_office_group_text: "Enter office group text"
+      office_group_error_message: "Office group can't be blank"
+      office_error_message: "Office can't be blank"
+      add_office: "Add office"
+      enter_office_text: "Enter office text"
 
   complaint:
     individual_complaint_intake_heading: "Individual Complaint Intake"

@@ -3,7 +3,7 @@ class SubareasController < ApplicationController
     params[:subarea][:area_id] = params[:area_id]
     subarea = subject_subarea.new(subarea_params)
     if subarea.save
-      render :json => subject_area.all
+      render :json => Area.all
     else
       head :internal_server_error
     end
@@ -12,7 +12,7 @@ class SubareasController < ApplicationController
   def destroy
     subarea = subject_subarea.find(params[:id])
     if subarea.destroy
-      render :json => subject_area.all, :status => 200
+      render :json => Area.all, :status => 200
     else
       head :internal_server_error
     end

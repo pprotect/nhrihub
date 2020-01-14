@@ -16,7 +16,7 @@ module ComplaintsSpecSetupHelpers
   end
 
   def complete_own_motion_complaint_required_fields
-    fill_in('branch_name', :with => 'Gauteng')
+    select('initiating_branch', :with => 'Gauteng')
     fill_in('unit_name', :with => 'SAMC')
     fill_in('complaint_details', :with => "a long story about lots of stuff")
     choose('Special Investigations Unit')
