@@ -67,6 +67,8 @@ feature "complaints index", :js => true do
     fill_in('contact_phone', :with => "555-1212")
     fill_in('contact_cell_phone', :with => "555-1212")
     fill_in('contact_fax', with: '832-4489')
+    fill_in('organization_name', :with => 'Acme Corp')
+    fill_in('organization_registration_number', :with => '1234abcd')
     choose('Fax')
     fill_in('complaint_details', :with => "a long story about lots of stuff")
     fill_in('desired_outcome', :with => "Life gets better")
@@ -106,6 +108,8 @@ feature "complaints index", :js => true do
     expect(complaint.home_phone).to eq "555-1212"
     expect(complaint.cell_phone).to eq "555-1212"
     expect(complaint.fax).to eq "832-4489"
+    expect(complaint.organization_name).to eq "Acme Corp"
+    expect(complaint.organization_registration_number).to eq '1234abcd'
     expect(complaint.preferred_means).to eq 'fax'
     expect(complaint.details).to eq "a long story about lots of stuff"
     expect(complaint.desired_outcome).to eq "Life gets better"
@@ -137,6 +141,8 @@ feature "complaints index", :js => true do
     expect(find('#complaint #home_phone').text).to eq "555-1212"
     expect(find('#complaint #cell_phone').text).to eq "555-1212"
     expect(find('#complaint #fax').text).to eq "832-4489"
+    expect(find('#complaint #organization_name').text).to eq "Acme Corp"
+    expect(find('#complaint #organization_registration_number').text).to eq "1234abcd"
     expect(find('#complaint #preferred_means').text).to eq 'fax'
     expect(find('#complaint #complaint_details').text).to eq "a long story about lots of stuff"
     expect(find('#complaint #desired_outcome').text).to eq "Life gets better"

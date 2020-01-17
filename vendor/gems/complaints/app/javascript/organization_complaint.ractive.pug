@@ -87,6 +87,13 @@
             input.form-control#organization_name(autocomplete='none', name='organization_name', value='{{organization_name}}')
           .no_edit.in
             span#organization_name {{ organization_name }}
+        .col-md-4
+          label {{ t.organization_registration_number }}
+        .col-md-3('data-toggle' = 'edit')
+          .edit
+            input.form-control#organization_registration_number(autocomplete='none', name='organization_registration_number', value='{{organization_registration_number}}')
+          .no_edit.in
+            span#organization_registration_number {{ organization_registration_number }}
 
       .row
         .col-md-2
@@ -405,6 +412,7 @@ script(type='text/javascript').
         return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
           'city','province','postal_code','complaint_area_id',
           'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
+          'organization_name', 'organization_registration_number',
           'current_status_humanized', 'new_assignee_id', 'subarea_ids',
           'agency_ids', 'attached_documents_attributes', 'details',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',

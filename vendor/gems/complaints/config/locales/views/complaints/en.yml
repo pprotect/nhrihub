@@ -109,6 +109,7 @@ en:
     'on': 'on' # b/c on is a keyword in yaml and the translation borks
     open: "Open"
     organization_name: 'Organization name'
+    organization_registration_number: 'Company/CC/Trust registration number'
     physical_address: 'Physical Address'
     phone: 'Phone'
     phone_pref: 'Phone'
