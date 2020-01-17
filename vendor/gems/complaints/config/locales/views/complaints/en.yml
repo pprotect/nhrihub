@@ -1,82 +1,18 @@
 en:
   complaints:
-    complaints_templates:
-      reference: 'Ref'
-      title : "Title"
-      filename : "File name"
-      no_documents : "no documents"
-
-      # filter controls:
-
     index:
-      phone: "phone"
       heading: "Complaints"
-      add_complaint: "Add complaint"
-      face_to_face : "face to face"
-      email: "email"
-      letter: "letter"
-      sent: "Sent"
-      received: "Received"
-      delete_communication_confirmation_message: "Are you sure you want to delete this communication?"
       delete_complaint_confirmation_message: "Are you sure you want to delete complaint "
-      delete_document_confirmation_message: "Are you sure you want to delete the document "
+      delete_communication_confirmation_message: "Are you sure you want to delete this communication?"
 
     new:
       heading: "%{type} Complaint Intake"
-      phone: "phone"
-      face_to_face : "face to face"
-      email: "email"
-      letter: "letter"
-      sent: "Sent"
-      received: "Received"
-      delete_communication_confirmation_message: "Are you sure you want to delete this communication?"
-      delete_complaint_confirmation_message: "Are you sure you want to delete complaint "
-      delete_document_confirmation_message: "Are you sure you want to delete the document "
 
     show:
       heading: 'Complaint, case reference: %{case_reference}'
-      phone: "phone"
-      face_to_face : "face to face"
-      email: "email"
-      letter: "letter"
-      sent: "Sent"
-      received: "Received"
-      delete_communication_confirmation_message: "Are you sure you want to delete this communication?"
-      delete_complaint_confirmation_message: "Are you sure you want to delete complaint "
-      delete_document_confirmation_message: "Are you sure you want to delete the document "
 
-    individual_complaint: # a partial
-      'on': 'on'
-      agency: 'Agency'
-      assignees_history: 'History of assignees'
-      by: 'by'
-      case_reference: 'Case reference'
-      city: 'City'
-      complainant: 'Complainant'
-      complained_to_subject_agency: 'Complained to subject agency?'
-      complaint_basis: 'Complaint basis'
-      complaint_type: 'Complaint type'
-      current_assignee: 'Current assignee'
-      date_received: 'Date received'
-      desired_outcome: 'Desired outcome'
-      details: 'Details'
-      dob: 'Date of birth'
-      documents: 'Documents'
-      email: 'Email'
-      gender: 'Gender'
-      heading: 'Complaint, case reference: %{case_reference}'
-      home_phone: 'Home phone'
-      cell_phone: 'Cell phone'
-      fax: 'Fax'
-      individual_complaint: 'individual complaint'
-      mandate: 'Mandate'
-      phone: 'Phone'
-      physical_address: 'Physical address'
-      postal_address: 'Postal address'
-      postal_code: 'Postal code'
-      preferred_means: 'Preferred means of communication'
-      province: 'Province'
-      status: 'Status'
+    complaint:
+      delete_complaint_confirmation_message: "Are you sure you want to delete complaint "
 
   complaint_admin:
     show:
@@ -108,9 +44,6 @@ en:
       enter_office_text: "Enter office text"
 
   complaint:
-    individual_complaint_intake_heading: "Individual Complaint Intake"
-    organization_complaint_intake_heading: "Organization Complaint Intake"
-    own_motion_complaint_intake_heading: "Own Motion Complaint Intake"
     add_file: "Add file"
     add_document: "Add"
     agency: "Agency(ies)"
@@ -165,6 +98,8 @@ en:
     home_phone: 'Home phone'
     home_phone_pref: 'Home phone'
     id: 'SA ID'
+    initiating_branch: 'Initiating branch'
+    initiating_office: 'Initiating office'
     lastName : "Last name"
     lastName_error_message : "You must enter a last name"
     mail_pref: "Mail"
@@ -173,12 +108,7 @@ en:
     notes : "Notes"
     'on': 'on' # b/c on is a keyword in yaml and the translation borks
     open: "Open"
-    organization_name: "Organization name"
-    other : "Other"
-    other_type : "Other ID type"
-    phone: 'Phone'
-    passport: 'Passport'
-    pension: 'Pension #'
+    organization_name: 'Organization name'
     physical_address: 'Physical Address'
     postal_address: 'Postal Address'
     postal_code: 'Postal Code'
@@ -190,12 +120,18 @@ en:
     cell_phone_error_message: "Cell phone designated as preferred communication means. You must enter a cell phone number"
     fax_error_message: "Fax designated as preferred communication means. You must enter a fax number"
     preferred_means: 'Preferred means of communication'
+    other: 'Other'
+    other_type: 'Other type'
+    passport: 'Passport'
+    pension: 'Pension ID'
     prison: 'Prison ID'
     principal_id: 'Principal ID'
     province: 'Province'
     province_error_message: 'You must enter a province'
     reminders : "Reminders"
     required : "Required"
+    select_initiating_branch: "Select initiating branch"
+    select_initiating_office: "Select initiating office"
     status: 'Status'
     subarea_id_count_error_message : "You must select at least one subarea"
     suspended : "Suspended"

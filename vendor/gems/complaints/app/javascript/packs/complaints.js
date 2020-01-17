@@ -11,7 +11,6 @@ window.complaints_page_data = function(){
   return {
     complaints : source_complaints_data,
     filter_criteria: source_filter_criteria,
-    next_case_reference : source_next_case_reference,
     all_agencies : source_all_agencies,
     all_subareas : source_subareas
   }

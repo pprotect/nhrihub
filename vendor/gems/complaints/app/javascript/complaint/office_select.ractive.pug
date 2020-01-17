@@ -1,0 +1,9 @@
+include ../filter_controls/filter_select_template.pug
+
+script.
+  import Toggle from '../filter_controls/toggle'
+
+  export default Ractive.extend({
+    template : $TEMPLATE,
+    source: 'initiating_branch_id'
+    }).extend(Toggle)

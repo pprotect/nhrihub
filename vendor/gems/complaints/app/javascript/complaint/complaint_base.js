@@ -110,6 +110,7 @@ export default Ractive.extend({
     }
   },
   oninit() {
+    console.log('set serialization key')
     this.set({
       editing : false,
       serialization_key:'complaint',

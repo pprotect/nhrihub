@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_13_170355) do
+ActiveRecord::Schema.define(version: 2020_01_16_170524) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -304,6 +304,7 @@ ActiveRecord::Schema.define(version: 2020_01_13_170355) do
     t.string "alt_id_value"
     t.string "alt_id_other_type"
     t.integer "initiating_branch_id"
+    t.integer "initiating_office_id"
     t.index ["case_reference"], name: "index_complaints_on_case_reference", unique: true
   end
 
@@ -478,6 +479,7 @@ ActiveRecord::Schema.define(version: 2020_01_13_170355) do
     t.string "short_name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "province_id"
   end
 
   create_table "organizations", id: :serial, force: :cascade do |t|
@@ -560,6 +562,12 @@ ActiveRecord::Schema.define(version: 2020_01_13_170355) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "mandate_id"
+  end
+
+  create_table "provinces", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "reminders", id: :serial, force: :cascade do |t|

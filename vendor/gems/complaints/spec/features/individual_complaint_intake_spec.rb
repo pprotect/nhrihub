@@ -210,17 +210,6 @@ feature "complaints index", :js => true do
     expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
   end
 
-  it "adds 15 complaints and increments case reference for each" do #b/c there was a bug
-    15.times do |i|
-      visit complaint_intake_path('en', 'individual')
-      complete_required_fields(:individual)
-      expect{save_complaint}.to change{ Complaint.count }.by(1)
-    end
-    assigned_case_references = Complaint.all.sort.map(&:case_reference).map(&:to_s)
-    expected_case_references = (1..17).map{|i| formatted_case_reference[current_year,i] }.reverse
-    expect(assigned_case_references).to eq expected_case_references
-  end
-
   it "does not add a new complaint that is invalid" do
     save_complaint(false)
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")

@@ -4,20 +4,34 @@ module ComplaintsSpecSetupHelpers
   extend RSpec::Core::SharedContext
 
   def complete_required_fields(complaint_type)
-    case complaint_type
-    when :individual
-      complete_individual_complaint_required_fields
-    when :organization
-      complete_organization_complaint_required_fields
-    when :own_motion
-      complete_own_motion_complaint_required_fields
-    end
-
+    send("complete_#{complaint_type}_complaint_required_fields")
   end
 
   def complete_own_motion_complaint_required_fields
-    select('initiating_branch', :with => 'Gauteng')
-    fill_in('unit_name', :with => 'SAMC')
+    page.find('#initiating_office_select').click
+    sleep(0.2) # javascript
+    page.find(:xpath, ".//li[./a/span/text()='Gauteng']")
+    page.find('#initiating_office_select').click
+
+    page.find('#initiating_branch_select').click
+    sleep(0.2) # javascript
+    page.find(:xpath, ".//li[contains(./a/span/text(),'Administrative Justice')]")
+    page.find('#initiating_branch_select').click
+
+    #Subject/beneficiary
+    fill_in('firstName', :with => "Norman")
+    fill_in('lastName', :with => "Normal")
+    fill_in('postal_address', :with => 'abcd')
+    fill_in('physical_address', :with => 'abcd')
+    fill_in('city', :with => "Normaltown")
+    fill_in('province', :with => 'wtf')
+    fill_in('postal_code', :with => '1234')
+    fill_in('email', :with => 'norm@acme.com')
+    fill_in('home_phone', :with => '(132) 887-2389')
+    fill_in('cell_phone', :with => '(132) 887-2389')
+    fill_in('fax', :with => '(132) 887-2389')
+    choose('Mail')
+
     fill_in('complaint_details', :with => "a long story about lots of stuff")
     choose('Special Investigations Unit')
     choose('complained_to_subject_agency_yes')
@@ -62,6 +76,7 @@ module ComplaintsSpecSetupHelpers
   end
 
   def populate_database
+    create_offices
     create_complaint_areas
     create_agencies
     create_staff
@@ -96,6 +111,20 @@ module ComplaintsSpecSetupHelpers
                       :agencies => _agencies,
                       :communications => _communications)
     set_file_defaults
+  end
+
+  def create_offices
+    STAFF.group_by{|s| s[:group]}.each do |office_group,offices|
+      group = OfficeGroup.find_or_create_by(:name => office_group.titlecase) unless office_group.nil?
+      offices.map{|o| o[:office]}.uniq.each do |oname|
+        if group&.name =~ /provinc/i
+          province = Province.find_or_create_by(:name => oname)
+          Office.find_or_create_by(:office_group_id => group&.id, :province_id => province&.id )
+        else
+          Office.find_or_create_by(:name => oname, :office_group_id => group&.id)
+        end
+      end
+    end
   end
 
   def create_complaints

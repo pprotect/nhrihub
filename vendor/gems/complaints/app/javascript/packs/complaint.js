@@ -12,6 +12,8 @@ _.extend(Ractive.defaults.data, {
   communication_permitted_filetypes : source_communication_permitted_filetypes,
   communication_maximum_filesize : source_communication_maximum_filesize,
   statuses : source_statuses,
+  office_groups : source_office_groups,
+  branches : source_branches,
   i18n: window.i18n
 })
 

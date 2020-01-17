@@ -39,11 +39,11 @@ feature "complaints index", :js => true do
 
   before do
     populate_database
-    visit complaint_intake_path('en', 'individual')
+    visit complaint_intake_path('en', 'own_motion')
   end
 
   it "adds a new complaint that is valid" do
-    expect( page_heading ).to eq "Individual Complaint Intake"
+    expect( page_heading ).to eq "Own Motion Complaint Intake"
     complete_required_fields(:own_motion)
     expect{save_complaint}.to change{ Complaint.count }.by(1)
 
@@ -58,15 +58,6 @@ feature "complaints index", :js => true do
     fill_in('title', :with => "Ambassador")
     fill_in('lastName', :with => "Normal")
     fill_in('firstName', :with => "Norman")
-    fill_in('dob', :with => "08/09/1950")
-    select_male_gender
-    choose('Passport')
-    fill_in('id_value', :with => "12341234")
-    expect(page).not_to have_selector('#alt_id_other_type', visible: true)
-    choose('identify_by_other_id')
-    expect(page).to have_selector('#alt_id_other_type')
-    fill_in('alt_id_other_type', :with => 'immigration card')
-    fill_in('alt_id_value', :with => '1b2b3bc')
     fill_in('physical_address', :with => '1311 Santa Rosa Avenue')
     fill_in('postal_address', :with => '8844 Sebastopol Road')
     fill_in('city', :with => "Normaltown")
@@ -100,19 +91,12 @@ feature "complaints index", :js => true do
                                 .and change{ ActionMailer::Base.deliveries.count }.by(1)
     ## on the server
     complaint = Complaint.last
-    expect(complaint).to be_a(IndividualComplaint)
+    expect(complaint).to be_a(OwnMotionComplaint)
     expect(complaint.case_reference.year).to eq next_ref.year
     expect(complaint.case_reference.sequence).to eq next_ref.sequence
     expect(complaint.title).to eq "Ambassador"
     expect(complaint.lastName).to eq "Normal"
     expect(complaint.firstName).to eq "Norman"
-    expect(complaint.dob).to eq "08/09/1950" # dd/mm/yyyy
-    expect(complaint.gender).to eq 'M'
-    expect(complaint.id_type).to eq 'Passport number'
-    expect(complaint.id_value).to eq 12341234
-    expect(complaint.alt_id_type).to eq 'other'
-    expect(complaint.alt_id_other_type).to eq 'immigration card'
-    expect(complaint.alt_id_value).to eq '1b2b3bc'
     expect(complaint.physical_address).to eq "1311 Santa Rosa Avenue"
     expect(complaint.postal_address).to eq "8844 Sebastopol Road"
     expect(complaint.city).to eq "Normaltown"
@@ -140,16 +124,10 @@ feature "complaints index", :js => true do
 
     ## on the client
     expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
-    expect(find('#complaint #complaint_type').text).to eq "Individual complaint"
+    expect(find('#complaint #complaint_type').text).to eq "Own motion complaint"
     expect(find('#complaint #title').text).to eq "Ambassador"
     expect(find('#complaint #lastName').text).to eq "Normal"
     expect(find('#complaint #firstName').text).to eq "Norman"
-    expect(find('#complaint #complainant_dob').text).to eq "Sep 8, 1950"
-    expect(find('#complaint #gender').text).to eq "M"
-    expect(find('#complaint #id_type').text).to eq "Passport number"
-    expect(find('#complaint #id_value').text).to eq "12341234"
-    expect(find('#complaint #alt_id_name').text).to eq 'immigration card'
-    expect(find('#complaint #alt_id_value').text).to eq '1b2b3bc'
     expect(find('#complaint #physical_address').text).to eq "1311 Santa Rosa Avenue"
     expect(find('#complaint #postal_address').text).to eq  "8844 Sebastopol Road"
     expect(find('#complaint #city').text).to eq "Normaltown"
@@ -199,40 +177,27 @@ feature "complaints index", :js => true do
 
     # back button
     page.go_back
-    expect( page_heading ).to eq "Individual Complaint Intake"
+    expect( page_heading ).to eq "Own Motion Complaint Intake"
     page.go_forward
     expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
     page.go_back
-    expect( page_heading ).to eq "Individual Complaint Intake"
+    expect( page_heading ).to eq "Own Motion Complaint Intake"
     complete_required_fields(:own_motion)
     next_ref = Complaint.next_case_reference # capture the expected value before saving
     expect{save_complaint}.to change{ Complaint.count }.by(1)
     expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
   end
 
-  it "adds 15 complaints and increments case reference for each" do #b/c there was a bug
-    15.times do |i|
-      visit complaint_intake_path('en', 'individual')
-      complete_required_fields(:own_motion)
-      expect{save_complaint}.to change{ Complaint.count }.by(1)
-    end
-    assigned_case_references = Complaint.all.sort.map(&:case_reference).map(&:to_s)
-    expected_case_references = (1..17).map{|i| formatted_case_reference[current_year,i] }.reverse
-    expect(assigned_case_references).to eq expected_case_references
-  end
-
   it "does not add a new complaint that is invalid" do
     save_complaint(false)
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
     expect(page).to have_selector('#lastName_error', :text => "You must enter a last name")
-    expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     expect(page).to have_selector('#city_error', :text => 'You must enter a city')
     expect(page).to have_selector('#province_error', :text => 'You must enter a province')
     expect(page).to have_selector('#postal_code_error', :text => 'You must enter a postal code')
     expect(page).to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
     expect(page).to have_selector('#complaint_area_id_error', :text => 'You must select an area')
     expect(page).to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
-    expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
     expect(page).to have_selector('#preferred_means_error', :text => "You must select a preferred means of communication")
     expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
@@ -242,8 +207,6 @@ feature "complaints index", :js => true do
     expect(page).not_to have_selector('#lastName_error', :text => "You must enter a first name")
     fill_in('firstName', :with => "Norman")
     expect(page).not_to have_selector('#firstName_error', :text => "You must enter a last name")
-    fill_in('dob', :with => "19/08/1968")
-    expect(page).not_to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     fill_in('city', :with => "Leaden Roding")
     expect(page).not_to have_selector('#city_error', :text => 'You must enter a city')
     fill_in('province', with: 'Gondwanaland')
@@ -303,7 +266,7 @@ feature "complaints index", :js => true do
 
   it "flags as invalid when file attachment is unpermitted filetype" do
     SiteConfig["complaint_document.filetypes"]=["doc"]
-    visit complaint_intake_path('en', 'individual')
+    visit complaint_intake_path('en', 'own_motion')
 
     attach_file("complaint_fileinput", upload_image)
     expect(page).to have_css('#original_type_error', :text => "File type not allowed")

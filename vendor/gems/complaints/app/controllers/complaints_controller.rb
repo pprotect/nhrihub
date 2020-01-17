@@ -30,14 +30,7 @@ class ComplaintsController < ApplicationController
     @complaints = "[#{complaints.map(&:to_json).join(", ").html_safe}]".html_safe
 
     @agencies = Agency.unassigned_first
-    #@complaint_bases = [ StrategicPlans::ComplaintBasis.named_list,
-                         #GoodGovernance::ComplaintBasis.named_list,
-                         #Nhri::ComplaintBasis.named_list,
-                         #Siu::ComplaintBasis.named_list ]
     @users = User.all
-    #@good_governance_complaint_bases = GoodGovernance::ComplaintBasis.all
-    #@human_rights_complaint_bases = Nhri::ComplaintBasis.all
-    #@special_investigations_unit_complaint_bases = Siu::ComplaintBasis.all
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
     @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
     @permitted_filetypes = ComplaintDocument.permitted_filetypes
@@ -78,48 +71,30 @@ class ComplaintsController < ApplicationController
   end
 
   def show
+    populate_associations
     @complaint = Complaint.find(params[:id])
+    @title = t('.heading', case_reference: @complaint.case_reference)
     @type = @complaint.complaint_type.split(' ').first.downcase
-    @areas = ComplaintArea.all
-    @subareas = ComplaintSubarea.all
-    @agencies = Agency.all
-    @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
-    @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
-    @permitted_filetypes = ComplaintDocument.permitted_filetypes
-    @communication_maximum_filesize    = CommunicationDocument.maximum_filesize * 1000000
-    @communication_permitted_filetypes = CommunicationDocument.permitted_filetypes
-    @statuses = ComplaintStatus.select(:id, :name).all
+    @edit = false
+    @mode = "show_complaint"
     respond_to do |format|
       format.docx do
         send_file ComplaintReport.new(@complaint,current_user).docfile
       end
       format.html do
-        render :show, :layout => 'application_webpack'
+        render :complaint, :layout => 'application_webpack'
       end
     end
   end
 
   def new
+    populate_associations
     @type = params[:type]
+    @complaint = Complaint.new
+    @edit = true
+    @mode = "new_#{@type}_complaint"
     @title = t('.heading', type: params[:type].titlecase)
-    @areas = ComplaintArea.all
-    @subareas = ComplaintSubarea.all
-    @agencies = Agency.all
-    #@complaint_bases = [ StrategicPlans::ComplaintBasis.named_list,
-                         #GoodGovernance::ComplaintBasis.named_list,
-                         #Nhri::ComplaintBasis.named_list,
-                         #Siu::ComplaintBasis.named_list ]
-    @users = User.all
-    #@good_governance_complaint_bases = GoodGovernance::ComplaintBasis.all
-    #@human_rights_complaint_bases = Nhri::ComplaintBasis.all
-    #@special_investigations_unit_complaint_bases = Siu::ComplaintBasis.all
-    @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
-    @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
-    @permitted_filetypes = ComplaintDocument.permitted_filetypes
-    @communication_maximum_filesize    = CommunicationDocument.maximum_filesize * 1000000
-    @communication_permitted_filetypes = CommunicationDocument.permitted_filetypes
-    @statuses = ComplaintStatus.select(:id, :name).all
-    render :new, :layout => 'application_webpack'
+    render :complaint, :layout => 'application_webpack'
   end
 
   def create
@@ -138,6 +113,20 @@ class ComplaintsController < ApplicationController
   end
 
   private
+  def populate_associations
+    @areas = ComplaintArea.all
+    @subareas = ComplaintSubarea.all
+    @agencies = Agency.all
+    @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
+    @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
+    @permitted_filetypes = ComplaintDocument.permitted_filetypes
+    @communication_maximum_filesize    = CommunicationDocument.maximum_filesize * 1000000
+    @communication_permitted_filetypes = CommunicationDocument.permitted_filetypes
+    @statuses = ComplaintStatus.select(:id, :name).all
+    @office_groups = OfficeGroup.regional_provincial
+    @branches = Office.branches
+  end
+
   def default_params
     Complaint.default_index_query_params(current_user.id)
   end
