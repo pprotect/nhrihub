@@ -47,7 +47,7 @@
         .col-md-8.date_received
           .no_edit.in#date {{formatted_date}}
           .edit
-            input#date_received(type = 'text', value = "{{date}}", "as-single_month_datepicker"=true)
+            input#date_received(autocomplete='none', type = 'text', value = "{{date}}", "as-single_month_datepicker"=true)
 
       .row('class-hidden'='new_complaint')
         .col-md-2
@@ -126,17 +126,17 @@
               .col-md-4.form-group
                 label(for = 'title')
                   | {{ t.title }}
-                input.form-control#title(value = '{{title}}')
+                input.form-control#title(autocomplete='none', value = '{{title}}')
               .col-md-4.form-group('class-has-error' = 'firstName_error')
                 label.required(for = 'firstName')
                   | {{ t.first_name }}
-                input.form-control#firstName(value = '{{firstName}}', 'on-keydown'="@this.remove_attribute_error('firstName')")
+                input.form-control#firstName(autocomplete='none', value = '{{firstName}}', 'on-keydown'="@this.remove_attribute_error('firstName')")
                 span.help-block.error#firstName_error
                   | {{ t.firstName_error_message }}
               .col-md-4.form-group('class-has-error' = 'lastName_error')
                 label.required(for = 'lastName')
                   | {{ t.lastName }}
-                input.form-control#lastName(value = '{{lastName}}', 'on-keydown'="@this.remove_attribute_error('lastName')")
+                input.form-control#lastName(autocomplete='none', value = '{{lastName}}', 'on-keydown'="@this.remove_attribute_error('lastName')")
                 span.help-block.error#lastName_error
                   | {{ t.lastName_error_message }}
 
@@ -148,7 +148,7 @@
             span.complaint_label {{ t.physical_address }}
         .col-md-6
           .edit
-            input.form-control#physical_address(value = '{{physical_address}}', 'on-keydown'="@this.remove_attribute_error('physical_address')")
+            input.form-control#physical_address(autocomplete='none', value = '{{physical_address}}', 'on-keydown'="@this.remove_attribute_error('physical_address')")
             span.help-block.error#physical_address_error {{ t.physical_address_error_message }}
           .no_edit.in
             span#physical_address {{ physical_address }}
@@ -161,7 +161,7 @@
             span.complaint_label {{ t.postal_address }}
         .col-md-6
           .edit
-            input.form-control#postal_address(value = '{{postal_address}}', 'on-keydown'="@this.remove_attribute_error('postal_address')")
+            input.form-control#postal_address(autocomplete='none', value = '{{postal_address}}', 'on-keydown'="@this.remove_attribute_error('postal_address')")
             span.help-block.error#postal_address_error {{ t.postal_address_error_message }}
           .no_edit.in
             span#postal_address {{ postal_address }}
@@ -177,7 +177,7 @@
             .no_edit.in
               span#city {{ city }}
             .edit
-              input#city.form-control("on-keydown" = "@this.remove_attribute_error('city')", value = "{{city}}")/
+              input#city.form-control(autocomplete='none', "on-keydown" = "@this.remove_attribute_error('city')", value = "{{city}}")/
               span#city_error.help-block.error {{ t.city_error_message }}
 
         div.form-group('class-has-error' = 'province_error', 'data-toggle'='edit')
@@ -188,7 +188,7 @@
               span.complaint_label {{ t.province }}
           .col-md-2
             .edit
-              input.form-control#province(value = '{{province}}', 'on-keydown'="@this.remove_attribute_error('province')")
+              input.form-control#province(autocomplete='none', value = '{{province}}', 'on-keydown'="@this.remove_attribute_error('province')")
               span.help-block.error#province_error {{ t.province_error_message }}
             .no_edit.in#province {{ province }}
 
@@ -200,7 +200,7 @@
               span.complaint_label {{ t.postal_code }}
           .col-md-2
             .edit
-              input.form-control#postal_code(value = '{{postal_code}}', 'on-keydown'="@this.remove_attribute_error('postal_code')")
+              input.form-control#postal_code(autocomplete='none', value = '{{postal_code}}', 'on-keydown'="@this.remove_attribute_error('postal_code')")
               span.help-block.error#postal_code_error {{ t.postal_code_error_message }}
             .no_edit.in#postal_code {{ postal_code }}
 
@@ -211,7 +211,7 @@
           .no_edit.in
             span#email {{ email }}
           .edit
-            input.form-control#email(value = '{{email}}')
+            input.form-control#email(autocomplete='none', value = '{{email}}')
             span.help-block.error#email_error {{ t.email_error_message }}
 
       .row.form-group('class-has-error' = 'home_phone_error', 'data-toggle'='edit')
@@ -219,7 +219,7 @@
           span.complaint_label {{ t.phone }}
         .col-md-6
           .edit
-            input.form-control#home_phone(value = '{{home_phone}}')
+            input.form-control#home_phone(autocomplete='none', value = '{{home_phone}}')
             span.help-block.error#home_phone_error {{ t.home_phone_error_message }}
           .no_edit.in#home_phone {{ home_phone }}
 
@@ -228,7 +228,7 @@
           span.complaint_label {{ t.cell_phone }}
         .col-md-6
           .edit
-            input.form-control#cell_phone(value = '{{cell_phone}}')
+            input.form-control#cell_phone(autocomplete='none', value = '{{cell_phone}}')
             span.help-block.error#cell_phone_error {{ t.cell_phone_error_message }}
           .no_edit.in#cell_phone {{ cell_phone }}
 
@@ -237,7 +237,7 @@
           span.complaint_label {{ t.fax }}
         .col-md-6
           .edit
-            input.form-control#fax(value = '{{fax}}')
+            input.form-control#fax(autocomplete='none', value = '{{fax}}')
             span.help-block.error#fax_error {{ t.fax_error_message }}
           .no_edit.in#fax {{ fax }}
 
@@ -281,7 +281,7 @@
           .no_edit.in
             span#complaint_details {{ details }}
           .edit
-            input#complaint_details.form-control("on-keydown" = "@this.remove_attribute_error('details')", value = "{{details}}")/
+            input#complaint_details.form-control(autocomplete='none', "on-keydown" = "@this.remove_attribute_error('details')", value = "{{details}}")/
             span#details_error.help-block.error
               | {{ t.details_error_message }}
 
@@ -292,7 +292,7 @@
           .no_edit.in
             span#desired_outcome {{ desired_outcome }}
           .edit
-            input#desired_outcome.form-control(value = "{{desired_outcome}}")/
+            input#desired_outcome.form-control(autocomplete='none', value = "{{desired_outcome}}")/
 
       .row("data-toggle" = "edit")
         .col-md-2
