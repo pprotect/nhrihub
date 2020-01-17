@@ -143,7 +143,7 @@
             | {{ t.id }}
             input#identify_by_id(type = 'radio', name = '{{id_type}}', value = 'State id')
         .col-md-3.edit
-          input#id_value(autocomplete='none', type = 'text', name = 'id_value', value= "{{id_value}}")
+          input.form-control#id_value(autocomplete='none', type = 'text', name = 'id_value', value= "{{id_value}}")
         .col-md-3.no_edit.in#id_type {{ id_type }}
         .col-md-3.no_edit.in#id_value {{ id_value }}
 
@@ -164,13 +164,13 @@
         .col-md-4#alt_id_other_type_field('class-visible' = 'other_id_selected' , 'data-toggle'='edit')
           .edit
             label {{ t.other_type }}
-            input#alt_id_other_type(autocomplete='none', type='text', value='{{alt_id_other_type}}')
+            input.form-control#alt_id_other_type(autocomplete='none', type='text', value='{{alt_id_other_type}}')
 
       .row.form-group( 'data-toggle'='edit')
         .col-md-2.complaint_label {{ t.alternate_id }}
         .col-md-5
           .edit
-            input#alt_id_value(autocomplete='none', type = 'text', name = 'alt_id_value', value = "{{alt_id_value}}")
+            input.form-control#alt_id_value(autocomplete='none', type = 'text', name = 'alt_id_value', value = "{{alt_id_value}}")
           .no_edit.in#alt_id_value {{ alt_id_value }}
 
       .row.form-group('class-has-error' = 'physical_address_error', 'data-toggle' = 'edit')
@@ -421,6 +421,8 @@
               span#complaint_error.help-block.error {{ t.form_error }}
 
 style.
+  #alt_id_other_type_field label { width: 120px; }
+  #alt_id_other_type_field .edit { display: flex;}
   .complainant #firstName, #complainant #title {margin-right: .25em;}
   .complainant .edit .col-md-4{
     padding-top:0px;
@@ -450,6 +452,9 @@ style.
   }
   #date_received {
     height: 34px;
+  }
+  input#id_value {
+    margin-top: -8px;
   }
 
 script(type='text/javascript').
