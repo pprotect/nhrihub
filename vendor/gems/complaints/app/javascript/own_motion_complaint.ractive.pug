@@ -47,7 +47,7 @@
         .col-md-8.date_received
           .no_edit.in#date {{formatted_date}}
           .edit
-            input#date_received(autocomplete='none', type = 'text', value = "{{date}}", "as-single_month_datepicker"=true)
+            input#date_received(autocomplete='off', type = 'text', value = "{{date}}", "as-single_month_datepicker"=true)
 
       .row('class-hidden'='new_complaint')
         .col-md-2
@@ -389,6 +389,12 @@
 
 style.
   .complainant #firstName, #complainant #title {margin-right: .25em;}
+  .complainant .edit .col-md-4{
+    padding-top:0px;
+  }
+  .complainant .edit .col-md-4:nth-of-type(2), .complainant .edit .col-md-4:nth-of-type(3){
+    margin-top: -5px;
+  }
   #alt_id_other_type_field.visible { display: block; }
   #alt_id_other_type_field:not(.visible) { display: none; }
   .complaint_label { font-weight: 700; }
