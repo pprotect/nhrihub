@@ -4,8 +4,8 @@ fr:
       index:
         page_title: 'Gestion de utilisateurs'
         heading: 'Gestion de utilisateurs'
-        firstname: 'Prénom'
-        lastname: 'Nom de famille'
+        name: 'Nom/Prénom'
+        office: 'Bureau'
         roles: 'rôle(s)'
         last_login: 'Dernière date de connexion'
         enabled: 'Permis?'

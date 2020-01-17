@@ -8,7 +8,6 @@ RSpec.shared_examples  "office and office group admin" do
     include OfficeGroupOfficeAdminCommonHelpers
 
     before do
-      create_default_office_groups
       visit complaint_admin_path('en') 
     end
 

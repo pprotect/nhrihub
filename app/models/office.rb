@@ -5,6 +5,20 @@ class Office < ActiveRecord::Base
   scope :branches, ->{ joins(:office_group).merge(OfficeGroup.head_office) }
   scope :not_branches, -> { joins(:office_group).merge(OfficeGroup.not_head_office) }
 
+  def to_s
+    return "#{name} (Provincial)" if provincial?
+    return "#{name} (Regional)" if regional?
+    name
+  end
+
+  def provincial?
+    office_group&.provincial?
+  end
+
+  def regional?
+    office_group&.regional?
+  end
+
   def as_json(options={})
     super(except: [:created_at, :updated_at], methods: [:url])
   end

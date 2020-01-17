@@ -2,7 +2,7 @@
   .row
     .col-md-8= t('.areas')
   .row
-    .col-md-12.areas.panel-group#accordion
+    .col-md-12.areas.panel-group#area_subarea_accordion
 
 %script#area_template{:type => 'ractive/template'}
   {{#if persisted }}
@@ -16,11 +16,11 @@
     .row.area.panel-heading{:style => 'margin-left:0px; width:100%; border-bottom-right-radius:3px; background-image: -webkit-linear-gradient(top, #F5F5F5 0%, #E8E8E8 100%); background-image: -o-linear-gradient(top, whitesmoke 0%, #e8e8e8 100%); background-image: linear-gradient(to bottom, #DBD2AB 0%, #D4CCA8 100%);'}
       .col-md-4.text {{ name }}
       .col-md-2
-        %a#subareas_link{'data-toggle'=>:collapse, 'data-parent'=>'#accordion', :href => '#collapse_{{ id }}'}
+        %a#subareas_link{'data-toggle'=>:collapse, 'data-parent'=>'#area_subarea_accordion', :href => '#subarea_collapse_{{ id }}'}
           %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show subareas'}
       .col-md-4
         %a.delete_area{:href => '#', 'on-click' => '@this.delete_area()'.html_safe}= t('defaults.delete') 
-    .row.panel-collapse.collapse{:id => 'collapse_{{ id }}', :style => 'margin-left:0px; margin-right:0px; background-color: #D8D0AA'}
+    .row.panel-collapse.collapse{:id => 'subarea_collapse_{{ id }}', :style => 'margin-left:0px; margin-right:0px; background-color: #D8D0AA'}
       .col-md-12{:style => "margin-left:15px"}
         {{#subareas}}
         <subarea url='{{url}}' id='{{id}}' name='{{name}}' />

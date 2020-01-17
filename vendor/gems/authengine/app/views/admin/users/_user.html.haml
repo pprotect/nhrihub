@@ -1,6 +1,6 @@
 %tr{:class => "user #{cycle('odd', 'even')} fade in"}
-  %td= user.firstName
-  %td= user.lastName
+  %td= user.last_first_name
+  %td= user.office_affiliation
   %td= user.roles.map(&:name).join(', ')
   %td= user.last_login ? user.last_login.to_date.to_formatted_s(:app_default) : t('.no_prev')
   %td{:style => "padding-left:10px"}= user.enabled ? t('defaults.y') : t('defaults.n')
@@ -23,5 +23,4 @@
       = link_to t('.reset_password'), admin_send_change_password_email_path(user), :method => :post
     - else
       = link_to t('.resend_registration'), admin_resend_registration_email_path(user), :method => :post
-  %td{:style => "padding-left:10px"}= link_to t('.lost_token'), admin_send_lost_token_email_path(user), :method => :post
 

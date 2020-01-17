@@ -4,6 +4,14 @@ class OfficeGroup < ActiveRecord::Base
   scope :head_office, ->{ where("office_groups.name ilike 'head%' ") }
   scope :regional_provincial, ->{ where("office_groups.name not ilike 'head%' ") }
 
+  def provincial?
+    name=~/provinc/i
+  end
+
+  def regional?
+    name=~/region/i
+  end
+
   def url
     Rails.application.routes.url_helpers.office_group_path(:en,id) if persisted?
   end

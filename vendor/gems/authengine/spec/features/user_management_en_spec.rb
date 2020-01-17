@@ -6,13 +6,11 @@ require_relative '../helpers/user_management_helpers'
 require 'unactivated_user_helpers'
 require 'async_helper'
 require 'role_presets_helper'
-require 'organization_presets_helper'
 require 'parse_email_helpers'
 
 feature "Manage users", :js => true do
   include ApplicationHelpers
   include RolePresetsHelper
-  include OrganizationPresetsHelper
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include NavigationHelpers
   include UserManagementHelpers
@@ -39,6 +37,7 @@ feature "Manage users", :js => true do
     fill_in("First name", :with => "Norman")
     fill_in("Last name", :with => "Normal")
     fill_in("Email", :with => "norm@normco.com")
+    select("Gauteng", :from => 'user_office_id')
     # ensure that mail was actually sent
     expect{click_button("Save")}.to change { email_count }.by(1)
     expect(page_heading).to eq "Manage users"
@@ -144,12 +143,11 @@ feature "Manage users", :js => true do
     fill_in "First name", :with => "Anastacia"
     fill_in "Last name", :with => "Friesen"
     fill_in "Email", :with => "ole_medhurst@parisianschamberger.info"
-    select "Government of Illyria", :from => "Organization"
+    select "George", :from => "Office"
     click_button "Save"
     expect(page_heading).to eq "Manage users"
     within(:xpath, ".//tr[contains(td[3],'staff')]") do
-      expect( find(:xpath, './td[1]').text ).to eq 'Anastacia'
-      expect( find(:xpath, './td[2]').text ).to eq 'Friesen'
+      expect( find(:xpath, './td[1]').text ).to eq 'Friesen, Anastacia'
     end
   end
 end
@@ -254,53 +252,53 @@ feature "user account activation", :js => true do
   end
 end
 
-feature "user lost token replacement and registration", :js => true do
-  include LoggedInEnAdminUserHelper # logs in as admin
-  include NavigationHelpers
-  include UserManagementHelpers
-  include ParseEmailHelpers
+#feature "user lost token replacement and registration", :js => true do
+  #include LoggedInEnAdminUserHelper # logs in as admin
+  #include NavigationHelpers
+  #include UserManagementHelpers
+  #include ParseEmailHelpers
 
-  before do
-    visit '/en'
-    toggle_navigation_dropdown("Admin")
-    select_dropdown_menu_item("Manage users")
-  end
+  #before do
+    #visit '/en'
+    #toggle_navigation_dropdown("Admin")
+    #select_dropdown_menu_item("Manage users")
+  #end
 
-  scenario "normal operation" do
-    user = User.staff.first
-    within(:xpath, ".//tr[contains(td[3],'staff')]") do
-      expect{ click_link('lost access token') }.to change { email_count }.by 1
-      expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
-      user = user.reload # b/c a new unsubscribe_code is generated
-      expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.unsubscribe_code, host: SITE_URL, protocol: :https)
-      expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/#{user.unsubscribe_code}$/) # unsubscribe code
-    end
-    expect(page_heading).to eq "Manage users"
-    expect(flash_message).to match /A token registration email has been sent to/
+  #scenario "normal operation" do
+    #user = User.staff.first
+    #within(:xpath, ".//tr[contains(td[3],'staff')]") do
+      #expect{ click_link('lost access token') }.to change { email_count }.by 1
+      #expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
+      #user = user.reload # b/c a new unsubscribe_code is generated
+      #expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.unsubscribe_code, host: SITE_URL, protocol: :https)
+      #expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/#{user.unsubscribe_code}$/) # unsubscribe code
+    #end
+    #expect(page_heading).to eq "Manage users"
+    #expect(flash_message).to match /A token registration email has been sent to/
 
-    # disable access by the lost token
-    expect( user.public_key ).to be_nil
-    expect( user.public_key_handle ).to be_nil
-    expect( user.replacement_token_registration_code ).not_to be_nil
-    # b/c otherwise the login fields will not be rendered, as another mock simulates always logged-in
-    allow_any_instance_of(Authengine::SessionsController).to receive(:logged_in?).and_return(false)
-    click_link('Logout')
-    # user whose token was lost responds to the link in the email
-    visit(replacement_token_registration_link)
-    expect(page_heading).to match /Register new token for/
-    fill_in "user_login", :with => "staff"
-    fill_in "user_password", :with => "password"
-    register_button.click
-    expect(flash_message).to eq "Your new token has been registered, you may login below."
-    user.reload
-    expect( user.public_key ).not_to be_nil
-    expect( user.public_key_handle ).not_to be_nil
-    expect( user.replacement_token_registration_code ).to be_nil
-    fill_in "User name", :with => "staff"
-    fill_in "Password", :with => "password"
-    login_button.click
-    sleep(0.2)
-    expect(flash_message).to eq "Logged in successfully"
+    ## disable access by the lost token
+    #expect( user.public_key ).to be_nil
+    #expect( user.public_key_handle ).to be_nil
+    #expect( user.replacement_token_registration_code ).not_to be_nil
+    ## b/c otherwise the login fields will not be rendered, as another mock simulates always logged-in
+    #allow_any_instance_of(Authengine::SessionsController).to receive(:logged_in?).and_return(false)
+    #click_link('Logout')
+    ## user whose token was lost responds to the link in the email
+    #visit(replacement_token_registration_link)
+    #expect(page_heading).to match /Register new token for/
+    #fill_in "user_login", :with => "staff"
+    #fill_in "user_password", :with => "password"
+    #register_button.click
+    #expect(flash_message).to eq "Your new token has been registered, you may login below."
+    #user.reload
+    #expect( user.public_key ).not_to be_nil
+    #expect( user.public_key_handle ).not_to be_nil
+    #expect( user.replacement_token_registration_code ).to be_nil
+    #fill_in "User name", :with => "staff"
+    #fill_in "Password", :with => "password"
+    #login_button.click
+    #sleep(0.2)
+    #expect(flash_message).to eq "Logged in successfully"
 
-  end
-end
+  #end
+#end

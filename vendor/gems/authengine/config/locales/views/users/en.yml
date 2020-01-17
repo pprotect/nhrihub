@@ -4,8 +4,8 @@ en:
       # view
       index:
         heading: 'Manage users'
-        firstname: 'First Name'
-        lastname: 'Last Name'
+        name: 'Names, last/first'
+        office: 'Office'
         roles: 'Role(s)'
         last_login: 'Last login date'
         enabled: 'Enabled?'

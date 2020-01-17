@@ -107,6 +107,7 @@ class User < ActiveRecord::Base
   has_many :useractions, :dependent=>:delete_all
   has_many :actions, :through=>:useractions
   belongs_to :organization
+  belongs_to :office
   has_many :sessions
   has_many :internal_documents
   has_many :reminders
@@ -168,6 +169,14 @@ class User < ActiveRecord::Base
     firstName+' '+lastName
   end
   alias_method :to_s, :first_last_name
+
+  def last_first_name
+    lastName+', '+firstName
+  end
+
+  def office_affiliation
+    office&.to_s
+  end
 
   def as_json(options={})
     if options.empty?

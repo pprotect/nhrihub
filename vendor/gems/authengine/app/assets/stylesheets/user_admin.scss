@@ -1,0 +1,9 @@
+@import 'theme.scss';
+
+.disabled {
+  pointer-events : none;
+  color : #8797a5;
+}
+.container, .table-condensed { width: 1300px; }
+.odd { background-color: $site_bg_shade; }
+

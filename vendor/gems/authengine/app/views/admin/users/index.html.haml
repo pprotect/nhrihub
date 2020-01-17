@@ -1,20 +1,15 @@
-:css
-  .disabled {
-    pointer-events : none;
-    color : #8797a5;
-  }
-
+=stylesheet_link_tag 'user_admin'
 = message_block :on => :all
 = render :partial => 'confirm_delete_modal'
 %h1= t('.heading')
-%table.table.table-condensed#users{:style => "width: 1000px"}
+%table.table.table-condensed#users
   %tr
-    %th= t '.firstname'
-    %th= t '.lastname'
+    %th= t '.name'
+    %th= t '.office'
     %th= t '.roles'
     %th= t '.last_login'
     %th{:colspan=>"2"}= t '.enabled'
-    %th{:colspan=>"5"}= t '.manage'
+    %th{:colspan=>"6"}= t '.manage'
   = render :partial => 'user', :collection => @users
 %p= link_to t('.new_user'), new_admin_user_path
 

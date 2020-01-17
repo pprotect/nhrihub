@@ -14,6 +14,21 @@ module RegisteredUserHelper
     allow_any_instance_of(AuthorizedSystem).to receive(:permitted?).and_return(true)
     allow_any_instance_of(ApplicationController).to receive(:action_permitted?).and_return(true)
     allow_any_instance_of(ApplicationHelper).to receive(:permissions_granted?).and_return(true)
+    populate_offices
+  end
+
+  def populate_offices
+    STAFF.group_by{|s| s[:group]}.each do |office_group,offices|
+      group = OfficeGroup.find_or_create_by(:name => office_group.titlecase) unless office_group.nil?
+      offices.map{|o| o[:office]}.uniq.each do |oname|
+        if group&.name =~ /provinc/i
+          province = Province.find_or_create_by(:name => oname)
+          Office.find_or_create_by(:office_group_id => group&.id, :province_id => province&.id )
+        else
+          Office.find_or_create_by(:name => oname, :office_group_id => group&.id)
+        end
+      end
+    end
   end
 
   def remove_user_two_factor_authentication_credentials(user)

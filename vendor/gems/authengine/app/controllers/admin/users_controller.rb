@@ -28,6 +28,7 @@ class Admin::UsersController < ApplicationController
     @user = User.new
     @user.user_roles.build
     @roles = Role.except_developer
+    @office_groups = OfficeGroup.all
   end
 
 # users may only be created by the administrator from the index page
@@ -46,6 +47,7 @@ class Admin::UsersController < ApplicationController
   def edit # edit a user profile with id given
     @user = User.find(params[:id])
     @title = t('.heading', :name => @user.first_last_name)
+    @office_groups = OfficeGroup.all
   end
 
   def edit_self # edit profile of current user
@@ -282,7 +284,7 @@ private
     attrs = [ :email,
               :firstName,
               :lastName,
-              :organization_id,
+              :office_id,
               :user_roles_attributes => [:role_id] ]
     params.require(:user).permit(attrs)
   end

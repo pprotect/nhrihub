@@ -30,7 +30,7 @@ module AreaSubareaAdminCommonHelpers
   def open_accordion_for_area(text)
     target_area = area_called(text)
     target_area.find('#subareas_link').click
-    accordion_element = target_area.find(:xpath, "./parent::*/div[contains(@class,'collapse')]")['id']
+    accordion_element = target_area.find(:xpath,'../div[contains(@class,"collapse")]', :visible=>false)[:id]
     wait_for_accordion("#"+accordion_element)
   end
 

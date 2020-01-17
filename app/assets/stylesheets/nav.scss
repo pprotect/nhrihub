@@ -1,12 +1,4 @@
-
-// define all the colors for the navbar menu, top-level items
-$nav_text : #F2F2E7;
-// hover
-$nav_hover: lighten($banner_bg, 8%);
-$nav_hover_text : lighten($nav_text, 8%);
-// active
-$nav_active: lighten($nav_hover, 8%);
-$nav_active_text : #645252;
+@import 'theme.scss';
 
 .navbar {
   border: none;

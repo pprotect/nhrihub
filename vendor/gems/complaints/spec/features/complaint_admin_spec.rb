@@ -6,7 +6,6 @@ require 'communication_context_file_admin_spec_helpers'
 require 'file_admin_behaviour'
 require 'area_subarea_admin'
 require 'office_group_admin'
-#require 'shared_behaviours/area_subarea_admin'
 
 feature "complaint bases admin", :js => true do
   let(:area_model){ ComplaintArea }
