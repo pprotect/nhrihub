@@ -73,7 +73,7 @@ feature "complaints index query string", js: true do
   it "defaults to current user as assignee" do
     open_dropdown('Select assignee')
     sleep(0.2) # javascript
-    expect( page.find(:xpath, "//li[contains(./a/span,'#{@user.first_last_name}')]")[:class]).to match /selected/
+    expect( page.find(:xpath, "//li[contains(./a/div,'#{@user.first_last_name}')]")[:class]).to match /selected/
   end
 
   it "records query params in url query string" do
@@ -159,15 +159,15 @@ feature "complaints index", :js => true do
   it "populates filter select dropdown selectors" do
     open_dropdown 'Select area'
     Mandate.all.each do |mandate|
-      expect(page).to have_selector('#mandate_filter_select li a span', :text => mandate.name)
+      expect(page).to have_selector('#mandate_filter_select li a div', :text => mandate.name)
     end
     page.find('button', :text => 'Select assignee').click
     User.staff.all.each do |user|
-      expect(page).to have_selector('#assignee_filter_select li a span', :text => user.first_last_name)
+      expect(page).to have_selector('#assignee_filter_select li a div', :text => user.first_last_name)
     end
     page.find('button', :text => 'Select agency').click
     Agency.unscoped.all.each do |agency|
-      expect(page).to have_selector('#agency_filter_select li a span', :text => agency.name)
+      expect(page).to have_selector('#agency_filter_select li a div', :text => agency.name)
     end
   end
 
@@ -567,7 +567,7 @@ feature "selects complaints by match of area", :js => true do
     it "should return complaints matching the selected complaint_areas" do
       open_dropdown 'Select area'
       ComplaintArea.all.each do |area|
-        expect(page).to have_selector('#area_filter_select li.selected a span', :text => area.name)
+        expect(page).to have_selector('#area_filter_select li.selected a div', :text => area.name)
       end
       expect(complaints.count).to eq 4
       select_option('Corporate Services').click #deselect

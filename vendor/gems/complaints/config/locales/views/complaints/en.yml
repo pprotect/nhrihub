@@ -110,6 +110,8 @@ en:
     open: "Open"
     organization_name: 'Organization name'
     physical_address: 'Physical Address'
+    phone: 'Phone'
+    phone_pref: 'Phone'
     postal_address: 'Postal Address'
     postal_code: 'Postal Code'
     postal_code_error_message: 'You must enter a postal code'
@@ -134,6 +136,7 @@ en:
     select_initiating_office: "Select initiating office"
     status: 'Status'
     subarea_id_count_error_message : "You must select at least one subarea"
+    subject_beneficiary: "Subject/Beneficiary"
     suspended : "Suspended"
     yes : "Yes"
     village_error_message : "You must enter a village"

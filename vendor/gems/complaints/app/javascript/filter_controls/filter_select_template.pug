@@ -1,5 +1,4 @@
 li('class-selected' = 'selected')
   a.opt('on-click'='@this.toggle()')
-    span(id='{{id}}')
-      | {{name}}
-    span.fa.fa-check
+    div(id='{{id}}') {{name}}
+    div.fa.fa-check

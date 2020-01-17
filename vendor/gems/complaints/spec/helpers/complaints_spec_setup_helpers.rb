@@ -10,12 +10,12 @@ module ComplaintsSpecSetupHelpers
   def complete_own_motion_complaint_required_fields
     page.find('#initiating_office_select').click
     sleep(0.2) # javascript
-    page.find(:xpath, ".//li[./a/span/text()='Gauteng']")
+    page.find(:xpath, ".//li[./a/div/text()='Gauteng']")
     page.find('#initiating_office_select').click
 
     page.find('#initiating_branch_select').click
     sleep(0.2) # javascript
-    page.find(:xpath, ".//li[contains(./a/span/text(),'Administrative Justice')]")
+    page.find(:xpath, ".//li[contains(./a/div/text(),'Administrative Justice')]")
     page.find('#initiating_branch_select').click
 
     #Subject/beneficiary

@@ -227,7 +227,7 @@ feature "complaints index", :js => true do
     # preferred means --email
     save_complaint(false)
     expect(page).to have_selector('#email_error', :text => "email designated as preferred communication means. You must enter an email")
-    choose("Home phone")
+    choose("Phone")
     expect(page).not_to have_selector('#email_error', :text => "email designated as preferred communication means. You must enter an email")
     # preferred means --home phone
     save_complaint(false)

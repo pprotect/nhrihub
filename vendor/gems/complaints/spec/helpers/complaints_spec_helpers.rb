@@ -88,7 +88,7 @@ module ComplaintsSpecHelpers
   end
 
   def select_option(name)
-    page.find(:xpath, ".//li[./a/span/text()='#{name}']")
+    page.find(:xpath, ".//li[./a/div/text()='#{name}']")
   end
 
   def current_status
@@ -252,7 +252,7 @@ module ComplaintsSpecHelpers
 
   def select_assignee_dropdown_should_be_checked_for(first_last_name)
     open_dropdown('Select assignee')
-    checked_assignee = page.all('li.selected a span')[0].text
+    checked_assignee = page.all('li.selected a div')[0].text
     expect(checked_assignee).to eq first_last_name
   end
 

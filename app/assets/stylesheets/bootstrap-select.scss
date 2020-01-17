@@ -27,7 +27,7 @@
       position: relative;
       font-size : 14px;
 
-      &.selected a span.fa-check {
+      &.selected a div.fa-check {
         position: absolute;
         display: inline-block;
         right: 15px;
@@ -41,15 +41,17 @@
         -ms-user-select: none;
         user-select: none;
         padding : 0px;
+        display : flex;
         &.opt {
           position: relative;
           padding-left: 2.25em;
         }
-        & span.text {
+        & div.text {
           display: inline-block;
           margin-right: 34px;
         }
-        & span.fa-check {
+        & div.fa-check {
+          margin-left: 12px;
           display: none;
         }
       }
@@ -71,7 +73,7 @@
             padding-left:20px;
           }
 
-          &.selected span.fa-check {
+          &.selected div.fa-check {
             position: absolute;
             display: inline-block;
             right: 15px;

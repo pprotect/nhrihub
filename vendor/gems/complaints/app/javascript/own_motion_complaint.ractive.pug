@@ -65,7 +65,7 @@
               button.btn.btn-default.dropdown-toggle#initiating_branch_select(type='button', 'data-toggle'='dropdown')
                 span.filter-option.pull-left {{ t.select_initiating_branch }}
                 span.caret
-              ul.dropdown-menu
+              ul.dropdown-menu.single_level
                 | {{#branches}}
                 <officeselect initiating_branch_id='{{~/initiating_branch_id}}' name='{{name}}' id='{{id}}' />
                 | {{/branches}}
@@ -115,7 +115,7 @@
 
       .row
         .col-md-2('data-toggle' = 'edit')
-          label {{ t.complainant }}
+          label {{ t.subject_beneficiary }}
         .col-md-9.complainant('data-toggle'='edit')
           .no_edit.in
             span#title {{ title }}
@@ -216,7 +216,7 @@
 
       .row.form-group('class-has-error' = 'home_phone_error', 'data-toggle'='edit')
         .col-md-2
-          span.complaint_label {{ t.home_phone }}
+          span.complaint_label {{ t.phone }}
         .col-md-6
           .edit
             input.form-control#home_phone(value = '{{home_phone}}')
@@ -258,7 +258,7 @@
                   | {{ t.email_pref }}
                   input#preferred_means_email(type='radio', name='{{preferred_means}}', value='email', 'on-change'="@this.remove_attribute_error('preferred_means','postal_address','email','home_phone','cell_phone','fax')")
                 label
-                  | {{ t.home_phone_pref }}
+                  | {{ t.phone_pref }}
                   input#preferred_means_home_phone(type='radio', name='{{preferred_means}}', value='home_phone', 'on-change'="@this.remove_attribute_error('preferred_means','postal_address','email','home_phone','cell_phone','fax')")
                 label
                   | {{ t.cell_phone_pref }}
@@ -411,6 +411,10 @@ style.
   }
   #date_received {
     height: 34px;
+  }
+  .single_level>li>a.opt {
+    padding-left: 1em !important;
+    width: 400px;
   }
 
 script(type='text/javascript').

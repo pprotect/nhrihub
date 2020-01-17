@@ -224,7 +224,7 @@ describe "#as_json" do
                                                      "alt_id_type", "physical_address",
                                                      "postal_address", "postal_code", "preferred_means", "province",
                                                      "alt_id_value", "alt_id_other_type", "fax", "home_phone", "id_type",
-                                                     "id_value", "organization_name", "organization_registration_number"]
+                                                     "id_value", "organization_name", "organization_registration_number", "initiating_branch_id", "initiating_office_id"]
       expect(@complaints.first["id"]).to eq Complaint.first.id # Complaint.first sorts by id in ascending order, returns lowest id/case_ref
       expect(@complaints.first["case_reference"]).to eq Complaint.first.case_reference.to_s
       expect(@complaints.first["city"]).to eq Complaint.first.city
@@ -303,7 +303,7 @@ describe "#as_json" do
                                                      "alt_id_type", "physical_address",
                                                      "postal_address", "postal_code", "preferred_means", "province",
                                                      "alt_id_value", "alt_id_other_type", "fax", "home_phone", "id_type",
-                                                     "id_value", "organization_name", "organization_registration_number"]
+                                                     "id_value", "organization_name", "organization_registration_number", "initiating_branch_id", "initiating_office_id"]
       expect(@complaints.first["reminders"]).to be_empty
       expect(@complaints.first["notes"]).to be_empty
       expect(@complaints.first["assigns"]).to be_empty
