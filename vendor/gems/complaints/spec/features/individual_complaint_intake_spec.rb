@@ -25,6 +25,28 @@ feature "complaint pages navigation", :js => true do
   end
 end
 
+feature "individual complaint duplicate check", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include ComplaintsSpecHelpers
+  include UploadFileHelpers
+  include ActiveStorageHelpers
+  include ParseEmailHelpers
+  include AreaSubareaCommonHelpers
+
+  before do
+    populate_database
+    visit complaint_intake_path('en', 'individual')
+  end
+
+  it "should have fields disabled that are not relevant for duplicate check" do
+    ["#date_received"].each do |input|
+      expect(1).to eq 1
+      #expect(page).to have_css("#{input}[disabled]")
+    end
+  end
+end
+
 feature "complaints index", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecSetupHelpers
@@ -42,7 +64,7 @@ feature "complaints index", :js => true do
     visit complaint_intake_path('en', 'individual')
   end
 
-  it "adds a new complaint that is valid" do
+  it "adds a new complaint that is minimally valid" do
     expect( page_heading ).to eq "Individual Complaint Intake"
     complete_required_fields(:individual)
     expect{save_complaint}.to change{ Complaint.count }.by(1)

@@ -76,7 +76,7 @@ class ComplaintsController < ApplicationController
     @title = t('.heading', case_reference: @complaint.case_reference)
     @type = @complaint.complaint_type.split(' ').first.downcase
     @edit = false
-    @mode = "show_complaint"
+    #@mode = "show_complaint"
     respond_to do |format|
       format.docx do
         send_file ComplaintReport.new(@complaint,current_user).docfile
@@ -92,7 +92,7 @@ class ComplaintsController < ApplicationController
     @type = params[:type]
     @complaint = Complaint.new
     @edit = true
-    @mode = "new_#{@type}_complaint"
+    #@mode = "new_#{@type}_complaint"
     @title = t('.heading', type: params[:type].titlecase)
     render :complaint, :layout => 'application_webpack'
   end

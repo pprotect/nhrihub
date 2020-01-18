@@ -38,6 +38,6 @@ window.onpopstate = function(event) {
 $(function() {
   start_page();
   // capture complaint data for current url
-  history.replaceState({content: complaint_data, page: mode},"whatever",window.location.pathname)
+  history.replaceState({content: complaint_data},"whatever",window.location.pathname)
 });
 

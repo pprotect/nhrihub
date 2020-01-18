@@ -25,7 +25,7 @@ feature "complaint pages navigation", :js => true do
   end
 end
 
-feature "complaints index", :js => true do
+feature "organization complaint intake", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecSetupHelpers
   include ComplaintsSpecHelpers

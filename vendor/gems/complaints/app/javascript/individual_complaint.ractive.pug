@@ -90,8 +90,7 @@
           .edit
             .row
               .col-md-4.form-group
-                label(for = 'title')
-                  | {{ t.title }}
+                label(for = 'title') {{ t.title }}
                 input.form-control#title(autocomplete='none', value = '{{title}}')
               .col-md-4.form-group('class-has-error' = 'firstName_error')
                 label.required(for = 'firstName') {{ t.first_name }}
