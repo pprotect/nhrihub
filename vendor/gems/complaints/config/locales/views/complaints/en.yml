@@ -51,8 +51,11 @@ en:
     modal_title: "Possible duplicates"
     matching_complainant: "Matches Complainant"
     matching_agency: "Matches Agency"
+    no_complainant_match: "no possible duplicates for complainant"
+    no_agency_match: "no possible duplicates for agency"
 
   complaint:
+    register_heading: "%{type} Complaint Intake"
     add_file: "Add file"
     add_document: "Add"
     agency: "Agency(ies)"
@@ -67,6 +70,7 @@ en:
     cell_phone: "Cell phone"
     cell_phone_pref: "Cell phone"
     check_dupes: "Check possible duplication"
+    proceed_to_intake: "Proceed with intake"
     city: 'City'
     title : "Title"
     closed: "Closed"

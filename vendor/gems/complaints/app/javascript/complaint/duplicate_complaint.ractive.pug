@@ -1,5 +1,6 @@
 .row
-  .col-md-3 {{case_reference}}
+  .col-md-3
+    a.possible_duplicate(href='{{url}}', target='_blank') {{case_reference}}
 
 script(type='text/javascript').
   export default Ractive.extend({

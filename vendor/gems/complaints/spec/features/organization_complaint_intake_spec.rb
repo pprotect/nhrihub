@@ -39,7 +39,7 @@ feature "organization complaint intake", :js => true do
 
   before do
     populate_database
-    visit complaint_intake_path('en', 'organization')
+    visit complaint_register_path('en', 'organization')
   end
 
   it "adds a new complaint that is valid" do
@@ -272,7 +272,7 @@ feature "organization complaint intake", :js => true do
 
   it "flags as invalid when file attachment is unpermitted filetype" do
     SiteConfig["complaint_document.filetypes"]=["doc"]
-    visit complaint_intake_path('en', 'organization')
+    visit complaint_register_path('en', 'organization')
 
     attach_file("complaint_fileinput", upload_image)
     expect(page).to have_css('#original_type_error', :text => "File type not allowed")

@@ -42,6 +42,14 @@ feature "complaint register", :js => true do
     visit complaint_register_path('en', 'individual')
   end
 
+  it "initiates registration via duplicate complaints check" do
+    visit complaint_intake_path('en', 'individual')
+    page.find("#proceed_to_intake").click
+    expect(page_heading).to eq "Individual Complaint Intake"
+    complete_required_fields(:individual)
+    expect{save_complaint}.to change{ Complaint.count }.by(1)
+  end
+
   it "adds a new complaint that is minimally valid" do
     expect( page_heading ).to eq "Individual Complaint Intake"
     complete_required_fields(:individual)

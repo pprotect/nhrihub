@@ -8,19 +8,25 @@
       .modal-body
         .row
           .col-md-3
-            h4 {{ t.matching_complainant }}
+            h5 {{ t.matching_complainant }}
         .row
-          .col-md-9.col-md-offset-1
+          .col-md-9.col-md-offset-1#complainant_match_list
             | {{#complainantMatch }}
-            <duplicateComplaint case_reference='{{case_reference}}' />
+            <duplicateComplaint url='{{url}}' case_reference='{{case_reference}}' />
+            | {{/complainantMatch }}
+            | {{^complainantMatch }}
+            | {{ t.no_complainant_match }}
             | {{/complainantMatch }}
         .row
           .col-md-3
-            h4 {{ t.matching_agency }}
+            h5 {{ t.matching_agency }}
         .row
-          .col-md-9.col-md-offset-1
+          .col-md-9.col-md-offset-1#agency_match_list
             | {{#agencyMatch }}
-            <duplicateComplaint case_reference='{{case_reference}}' />
+            <duplicateComplaint url='{{url}}' case_reference='{{case_reference}}' />
+            | {{/agencyMatch }}
+            | {{^agencyMatch }}
+            | {{ t.no_agency_match }}
             | {{/agencyMatch }}
       .modal-footer
 

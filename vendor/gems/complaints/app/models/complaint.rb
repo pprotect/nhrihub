@@ -58,7 +58,7 @@ class Complaint < ActiveRecord::Base
 
   def self.possible_duplicates(params)
     { complainant_match: Complaint.with_duplicate_complainant(params).map{|c| c.becomes(DuplicateComplaint)},
-      agency_match: Complaint.with_agencies(params[:agency_ids]).sort_by(&:case_reference).map{|c| c.becomes(DuplicateComplaint)} }
+      agency_match: Complaint.with_agencies(params[:agency_ids], match: :exact).sort_by(&:case_reference).map{|c| c.becomes(DuplicateComplaint)} }
   end
 
   def self.filtered(query)
@@ -152,7 +152,8 @@ class Complaint < ActiveRecord::Base
   end
 
   def as_json(options = {})
-    if options.blank?
+    # these fields are included in options when json: complaint is called in a controller
+    if options.except(:status, :prefixes, :template, :layout).blank?
       options = { :methods => [:complaint_type,
                            :heading,
                            :reminders,
@@ -298,6 +299,10 @@ class Complaint < ActiveRecord::Base
 
   def remindable_url(remindable_id)
     complaint_reminder_path('en',id,remindable_id)
+  end
+
+  def url
+    complaint_path('en', self)
   end
 
   def index_url

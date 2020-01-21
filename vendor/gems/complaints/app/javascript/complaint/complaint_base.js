@@ -24,6 +24,7 @@ import reminders from 'reminders.ractive.pug'
 import notes from 'notes.ractive.pug'
 import 'bootstrap'
 import DupeList from 'dupe_list.ractive.pug'
+import 'string.coffee'
 
 export default Ractive.extend({
   el: '#complaint',
@@ -47,7 +48,11 @@ export default Ractive.extend({
       return !(_.isNull(this.get('id')) || _.isUndefined(this.get('id')));
     },
     url() {
-      if (this.get('persisted')) { return Routes.complaint_path(current_locale, this.get('id')); }
+      if (this.get('persisted')) {
+        return Routes.complaint_path(current_locale, this.get('id'));
+      }else{
+        return Routes.complaint_register_path(current_locale, type)
+      }
     },
     formatted_date : {
       get() {
@@ -137,9 +142,12 @@ export default Ractive.extend({
     if(this.get('new_complaint')){ this.editor.edit_start($('.editable_container')) }
     if(this.get('intake')){ this.disable_non_dupe_check_inputs(); }
   },
-  data : function(){ return {
-    t : translations.t('complaint')
-  }},
+  data : function(){
+    return {
+      t : translations.t('complaint'),
+      register_heading : translations.t('complaint.register_heading',{type: type.titlecase()})
+    }
+  },
   components : {
     areasSelector : AreasSelector,
     agencies : Agencies,
@@ -152,6 +160,15 @@ export default Ractive.extend({
     subareaSelector: SubareaSelector,
     dupeList: DupeList,
     //progressBar : ProgressBar
+  },
+  proceed_to_intake(){
+    history.pushState({},"anything",this.get('url'));
+    this.enable_all_inputs();
+    complaint.set('heading',this.get('register_heading'));
+  },
+  enable_all_inputs(){
+    $(this.el).find('input, select').attr('disabled',false)
+    $(this.el).find('.fileinput-button').attr('disabled',false)
   },
   disable_non_dupe_check_inputs(){
     $(this.el).find('input:not(.dupe_check), select:not(.dupe_check)').attr('disabled',true)

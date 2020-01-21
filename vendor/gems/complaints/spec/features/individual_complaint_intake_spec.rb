@@ -34,9 +34,12 @@ feature "individual complaint duplicate check", :js => true do
   include ParseEmailHelpers
   include AreaSubareaCommonHelpers
 
+  let(:complaint1){ Complaint.first }
+  let(:complaint2){ Complaint.last }
+
   before do
     populate_database
-    visit complaint_register_path('en', 'individual')
+    visit complaint_intake_path('en', 'individual')
   end
 
   it "should indicate first step duplicate check" do
@@ -88,8 +91,27 @@ feature "individual complaint duplicate check", :js => true do
     end
   end
 
-  it "should show duplicate check as the next action" do
-    expect(page).to have_selector(".btn#check_dupes")
-    expect(page).not_to have_selector(".btn#save_complaint")
+  it "should show duplicates matching the selected agency" do
+    check("SAA")
+    page.find(".btn#check_dupes").click
+    wait_for_ajax
+    expect(page).to have_selector('h4.modal-title', text: "Possible duplicates")
+    expect(page).to have_selector('#complainant_match_list', text: "no possible duplicates for complainant")
+    expect(page).to have_selector('a.possible_duplicate', text: complaint1.case_reference)
+    expect(page).to have_selector('a.possible_duplicate', text: complaint2.case_reference)
+  end
+
+  it "should show duplicates matching the entered email" do
+    fill_in('email', with: "bish@bash.com")
+    page.find(".btn#check_dupes").click
+    wait_for_ajax
+    expect(page).to have_selector('h4.modal-title', text: "Possible duplicates")
+    expect(page).to have_selector('#agency_match_list', text: "no possible duplicates for agency")
+    expect(page).to have_selector('.possible_duplicate', count: 1)
+  end
+
+  it "should permit switch to intake" do
+    page.find("#proceed_to_intake").click
+    expect(page_heading).to eq "Individual Complaint Intake"
   end
 end
