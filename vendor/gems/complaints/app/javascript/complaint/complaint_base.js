@@ -23,6 +23,7 @@ Ractive.decorators.single_month_datepicker = SingleMonthDatepicker
 import reminders from 'reminders.ractive.pug'
 import notes from 'notes.ractive.pug'
 import 'bootstrap'
+import DupeList from 'dupe_list.ractive.pug'
 
 export default Ractive.extend({
   el: '#complaint',
@@ -75,7 +76,7 @@ export default Ractive.extend({
     create_note_url() {
       if (this.get('persisted')) { return Routes.complaint_notes_path('en', this.get('id')); }
     },
-    subarea_id_count() { // aka subareas
+    subarea_id_count() {
       const sa = this.get('subarea_ids');
       const sal = _.isUndefined(sa) ? 0 : sa.length;
       return sal;
@@ -95,6 +96,12 @@ export default Ractive.extend({
     new_complaint(){
       return _.isNull(this.get('id'))
     },
+    intake(){
+      return this.get('mode')=='intake';
+    },
+    register(){
+      return !this.get('intake');
+    },
     update_complaint(){
       return !this.get('new_complaint')
     },
@@ -107,10 +114,16 @@ export default Ractive.extend({
       }else{
         return this.get('alt_id_type')
       }
+    },
+    duplication_query(){
+      var attrs = this.get('dupe_check_attributes');
+      var that = this;
+      var query = {};
+      _(attrs).map(function(attr){query["match["+attr+"]"]=that.get(attr)})
+      return query
     }
   },
   oninit() {
-    console.log('set serialization key')
     this.set({
       editing : false,
       serialization_key:'complaint',
@@ -122,6 +135,7 @@ export default Ractive.extend({
   },
   oncomplete(){ 
     if(this.get('new_complaint')){ this.editor.edit_start($('.editable_container')) }
+    if(this.get('intake')){ this.disable_non_dupe_check_inputs(); }
   },
   data : function(){ return {
     t : translations.t('complaint')
@@ -136,7 +150,29 @@ export default Ractive.extend({
     attachedDocuments : ComplaintDocuments,
     statusChange : StatusChange,
     subareaSelector: SubareaSelector,
+    dupeList: DupeList,
     //progressBar : ProgressBar
+  },
+  disable_non_dupe_check_inputs(){
+    $(this.el).find('input:not(.dupe_check), select:not(.dupe_check)').attr('disabled',true)
+    $(this.el).find('.fileinput-button').attr('disabled',true)
+  },
+  check_dupes(){
+    const data = $.param(this.get('duplication_query'));
+    return $.ajax({
+      method : 'get',
+      data,
+      url : Routes.duplicate_complaints_path('en'),
+      success : this.fetch_dupes_callback,
+      context : this,
+      processData : false,
+      contentType : false
+    });
+  },
+  fetch_dupes_callback(response, status, jqxhr){
+    this.set('agencyMatch', response.agency_match)
+    this.set('complainantMatch', response.complainant_match)
+    this.findComponent("dupeList").showModal()
   },
   generate_word_doc() {
     return window.location = Routes.complaint_path('en',this.get('id'),{format : 'docx'});

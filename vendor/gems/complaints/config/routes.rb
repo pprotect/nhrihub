@@ -7,7 +7,9 @@ Rails.application.routes.draw do
     resources :complaint_documents, :only => [:destroy, :show]
     resource :complaint_admin, :only => :show, :to => 'complaint_admin#show'
     resources :complaints
-    get 'complaints/new/:type', to: 'complaints#new', as: "complaint_intake"
+    get 'complaints/new/:type', to: 'complaints#new', as: "complaint_register"
+    get 'duplicate_complaints', to: 'duplicate_complaints#index'
+    get 'duplicate_complaints/new/:type', to: 'duplicate_complaints#new', as: "complaint_intake"
     resources :complaints do
       notes_reminder_concern('complaint')
       resources :communications, :controller => "complaint/communications"

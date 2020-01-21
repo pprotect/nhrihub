@@ -8,7 +8,7 @@
           span('data-toggle'="tooltip", 'data-placement'="bottom", title='{{.full_name}}')
             | {{.name}}
       .col-md-1
-        input(id='agency_{{.id}}', type = 'checkbox', name = '{{../../../agency_ids}}', value = '{{.id}}')
+        input.dupe_check(id='agency_{{.id}}', type = 'checkbox', name = '{{../../../agency_ids}}', value = '{{.id}}')
       | {{/}}
     | {{/all_agencies_in_sixes}}
 

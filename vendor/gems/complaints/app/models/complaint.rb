@@ -3,6 +3,7 @@
 
 class Complaint < ActiveRecord::Base
   #include Cache
+  include ComplaintQuery
 
   enum preferred_means: [:mail, :email, :home_phone, :cell_phone, :fax]
   enum id_type: ["undefined", "Passport number", "State id"], _prefix: true
@@ -55,12 +56,17 @@ class Complaint < ActiveRecord::Base
       selected_agency_ids:         Agency.unscoped.pluck(:id) }
   end
 
+  def self.possible_duplicates(params)
+    { complainant_match: Complaint.with_duplicate_complainant(params).map{|c| c.becomes(DuplicateComplaint)},
+      agency_match: Complaint.with_agencies(params[:agency_ids]).sort_by(&:case_reference).map{|c| c.becomes(DuplicateComplaint)} }
+  end
+
   def self.filtered(query)
       logger.info "for_assignee: #{for_assignee(query[:selected_assignee_id]).length}"
       logger.info "with_status: #{with_status(query[:selected_status_ids]).length}"
       logger.info "with_complaint_area_ids: #{with_complaint_area_ids(query[:selected_complaint_area_ids]).length}"
       logger.info "with_case_reference_match: #{with_case_reference_match(query[:case_reference]).length}"
-      logger.info "with_complainant_match: #{with_complainant_match(query[:complainant]).length}"
+      logger.info "with_complainant_fragment_match: #{with_complainant_fragment_match(query[:complainant]).length}"
       logger.info "since_date: #{since_date(query[:from]).length}"
       logger.info "before_date: #{before_date(query[:to]).length}"
       logger.info "with_city: #{with_city(query[:city]).length}"
@@ -71,66 +77,13 @@ class Complaint < ActiveRecord::Base
       with_status(query[:selected_status_ids]).
       with_complaint_area_ids(query[:selected_complaint_area_ids]).
       with_case_reference_match(query[:case_reference]).
-      with_complainant_match(query[:complainant]).
+      with_complainant_fragment_match(query[:complainant]).
       since_date(query[:from]).
       before_date(query[:to]).
       with_city(query[:city]).
       with_phone(query[:phone]).
       with_subareas(query[:selected_subarea_ids]).
       with_agencies(query[:selected_agency_ids])
-  end
-
-  def self.with_agencies(selected_agency_ids)
-    return no_filter if Agency.count.zero?
-    selected_agency_ids = nil if selected_agency_ids.delete_if(&:blank?).empty?
-    joins(:complaint_agencies).where("complaint_agencies.agency_id in (?)", selected_agency_ids)
-  end
-
-  def self.no_filter
-    where("1=1")
-  end
-
-  def self.with_subareas(selected_subarea_ids)
-    return no_filter if ComplaintSubarea.count.zero?
-    selected_subarea_ids = nil if selected_subarea_ids.delete_if(&:blank?).empty?
-
-    joins(:complaint_complaint_subareas).
-      where( "complaint_complaint_subareas.subarea_id in (?)", selected_subarea_ids)
-  end
-
-  def self.with_complaint_area_ids(selected_complaint_area_ids)
-    return no_filter if ComplaintArea.count.zero?
-    where(complaint_area_id: selected_complaint_area_ids)
-  end
-
-  def self.with_phone(phone_fragment)
-    digits = phone_fragment&.delete('^0-9')
-    return no_filter if digits.nil? || digits.empty?
-    #where("complaints.phone ~ '.*#{digits}.*'")
-    digits_regex = digits.chars.join("[^[:digit:]]*")
-    where("home_phone ~ '#{digits_regex}' OR cell_phone ~ '#{digits_regex}' OR fax ~ '#{digits_regex}'")
-  end
-
-  def self.with_city(city_fragment)
-    return no_filter if city_fragment.blank?
-    where("\"complaints\".\"city\" ~* '.*#{city_fragment}.*'")
-  end
-
-  def self.since_date(from)
-    return no_filter if from.blank?
-    time_from = Time.zone.local_to_utc(Time.parse(from)).beginning_of_day
-    where("complaints.date_received >= ?", time_from)
-  end
-
-  def self.before_date(to)
-    return no_filter if to.blank?
-    where("complaints.date_received <= ?", Time.parse(to).end_of_day)
-  end
-
-  def self.with_complainant_match(complainant_fragment)
-    return no_filter if complainant_fragment.blank?
-    sql = "\"complaints\".\"firstName\" || ' ' || \"complaints\".\"lastName\" ~* '.*#{complainant_fragment}.*'"
-    where(sql)
   end
 
   def self.index_page_associations(query)
@@ -143,25 +96,6 @@ class Complaint < ActiveRecord::Base
         :complaint_documents,
         {:reminders => :user},
         {:notes =>[:author, :editor]})
-  end
-
-  def self.with_case_reference_match(case_ref_fragment)
-    sql = CaseReference.sql_match(case_ref_fragment)
-    where(sql)
-  end
-
-  # can take either an array of strings or symbols
-  # or cant take a single string or symbol
-  def self.with_status(status_ids)
-    joins(:status_changes => :complaint_status).
-      merge(StatusChange.most_recent_for_complaint).
-      merge(ComplaintStatus.with_status(status_ids))
-  end
-
-  def self.for_assignee(user_id = nil)
-    user_id && !user_id.blank? ?
-      select('distinct complaints.id, complaints.*, assigns.created_at, assigns.user_id, assigns.complaint_id').joins(:assigns).merge(Assign.most_recent_for_assignee(user_id)) :
-      where("1=0")
   end
 
   def status_changes_attributes=(attrs)
@@ -218,26 +152,27 @@ class Complaint < ActiveRecord::Base
   end
 
   def as_json(options = {})
-    opts = { :except => [:case_reference_alt],
-             :methods => [:complaint_type,
-                          :heading,
-                          :reminders,
-                          :notes,
-                          :assigns,
-                          :current_assignee_id,
-                          :current_assignee_name,
-                          :date,
-                          :date_of_birth,
-                          :dob,
-                          :current_status_humanized,
-                          :attached_documents,
-                          :complaint_area_id,
-                          :subarea_ids,
-                          :area_subarea_ids,
-                          :agency_ids,
-                          :status_changes,
-                          :communications] }
-    super(opts)
+    if options.blank?
+      options = { :methods => [:complaint_type,
+                           :heading,
+                           :reminders,
+                           :notes,
+                           :assigns,
+                           :current_assignee_id,
+                           :current_assignee_name,
+                           :date,
+                           :date_of_birth,
+                           :dob,
+                           :current_status_humanized,
+                           :attached_documents,
+                           :complaint_area_id,
+                           :subarea_ids,
+                           :area_subarea_ids,
+                           :agency_ids,
+                           :status_changes,
+                           :communications] }
+    end
+    super(options)
   end
 
 

@@ -1,4 +1,8 @@
 en:
+  duplicate_complaints:
+    new:
+      heading: "%{type} Complaint Intake: Duplicate Check"
+
   complaints:
     index:
       heading: "Complaints"
@@ -43,6 +47,11 @@ en:
       add_office: "Add office"
       enter_office_text: "Enter office text"
 
+  dupe_list:
+    modal_title: "Possible duplicates"
+    matching_complainant: "Matches Complainant"
+    matching_agency: "Matches Agency"
+
   complaint:
     add_file: "Add file"
     add_document: "Add"
@@ -57,6 +66,7 @@ en:
     case_reference: "Ref"
     cell_phone: "Cell phone"
     cell_phone_pref: "Cell phone"
+    check_dupes: "Check possible duplication"
     city: 'City'
     title : "Title"
     closed: "Closed"

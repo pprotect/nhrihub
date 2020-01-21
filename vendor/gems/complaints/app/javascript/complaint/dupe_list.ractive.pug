@@ -1,0 +1,45 @@
+.modal.fade#dupe_list_modal(role = 'dialog')
+  .modal-dialog.modal-lg(role = 'document')
+    .modal-content
+      .modal-header
+        button.close(type="button", data-dismiss='modal')
+          span &times
+        h4.modal-title#dupe_list_title {{ t.modal_title }}
+      .modal-body
+        .row
+          .col-md-3
+            h4 {{ t.matching_complainant }}
+        .row
+          .col-md-9.col-md-offset-1
+            | {{#complainantMatch }}
+            <duplicateComplaint case_reference='{{case_reference}}' />
+            | {{/complainantMatch }}
+        .row
+          .col-md-3
+            h4 {{ t.matching_agency }}
+        .row
+          .col-md-9.col-md-offset-1
+            | {{#agencyMatch }}
+            <duplicateComplaint case_reference='{{case_reference}}' />
+            | {{/agencyMatch }}
+      .modal-footer
+
+script(type='text/javascript').
+  import translations from 'translations.js'
+  import DuplicateComplaint from 'duplicate_complaint.ractive.pug'
+
+  export default Ractive.extend({
+    template : $TEMPLATE,
+    data : function(){ return {
+      t : translations.t('dupe_list'),
+    }},
+    showModal(){
+      $(this.find('#dupe_list_modal')).modal('show');
+    },
+    hideModal(){
+      $(this.find('#dupe_list_modal')).modal('hide');
+    },
+    components : {
+      duplicateComplaint : DuplicateComplaint
+    },
+  })

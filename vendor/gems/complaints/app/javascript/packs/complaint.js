@@ -21,6 +21,9 @@ import IndividualComplaint from '../individual_complaint.ractive.pug'
 import OrganizationComplaint from '../organization_complaint.ractive.pug'
 import OwnMotionComplaint from '../own_motion_complaint.ractive.pug'
 window.start_page = function(){
+  if((typeof mode) != 'undefined'){
+    complaint_data["mode"] = mode
+  }
   if(type == "individual"){
     window.complaint = new IndividualComplaint({data: complaint_data}) }
   else if(type == "organization"){
