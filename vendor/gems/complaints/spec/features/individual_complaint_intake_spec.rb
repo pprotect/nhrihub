@@ -38,7 +38,7 @@ feature "individual complaint duplicate check", :js => true do
   let(:complaint2){ Complaint.last }
 
   before do
-    populate_database
+    populate_database(:individual_complaint)
     visit complaint_intake_path('en', 'individual')
   end
 
@@ -73,7 +73,7 @@ feature "individual complaint duplicate check", :js => true do
       expect(page).to have_css("##{input}[disabled]")
     end
 
-    hidden_fields = %w[complaint_type complaint_fileinput alt_id_other_type]
+    hidden_fields = %w[complaint_fileinput alt_id_other_type]
     hidden_fields.each do |input|
       expect(page).to have_css("##{input}[disabled]", visible:false)
     end

@@ -31,7 +31,6 @@
           .edit
 
   .row.well.well-sm
-    input#complaint_type(type='hidden', name='type', value='{{type}}')
     .col-md-12('data-toggle' = 'edit')
       .fade.edit
         span.required_before {{ t.required }}
@@ -487,7 +486,7 @@ script(type='text/javascript').
     css: $CSS,
     computed : {
       dupe_check_attributes() {
-        return ['id_value', 'alt_id_value', 'lastName', 'email', 'agency_ids'];
+        return ['type', 'id_value', 'alt_id_value', 'lastName', 'email', 'agency_ids'];
       },
       persistent_attributes() {
         return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',

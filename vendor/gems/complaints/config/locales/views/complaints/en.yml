@@ -87,6 +87,7 @@ en:
     contact: "Contact person"
     contact_email: "Contact email"
     contact_phone: "Contact phone"
+    contact_phone_pref: "Contact phone"
     contact_cell_phone: "Contact cell phone"
     contact_fax: "Contact fax"
     date_received : "Date received"

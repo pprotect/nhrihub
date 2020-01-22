@@ -89,13 +89,23 @@ module ComplaintQuery
     # "lastName"=>"McMurtry",
     # "email"=>"norm@acme.co.za",
     # "agency_ids"=>["439", "433", "434", "435"]}
-    def with_duplicate_complainant(params)
+    def with_duplicate_individual_complainant(params)
       params = params.to_h.symbolize_keys
       query = []
       query << '"complaints"."id_value" = :id_value' unless params[:id_value].blank?
       query << '"complaints"."alt_id_value" = :alt_id_value' unless params[:alt_id_value].blank?
       query << '"complaints"."lastName" = :lastName' unless params[:lastName].blank?
       query << '"complaints"."email" = :email' unless params[:email].blank?
+      query = query.join(' or ')
+      query = "1 = 0" if query.blank?
+      where(query, params).sort_by(&:case_reference)
+    end
+
+    def with_duplicate_organization_complainant(params)
+      params = params.to_h.symbolize_keys
+      query = []
+      query << '"complaints"."organization_name" = :organization_name' unless params[:organization_name].blank?
+      query << '"complaints"."organization_registration_number" = :organization_registration_number' unless params[:organization_registration_number].blank?
       query = query.join(' or ')
       query = "1 = 0" if query.blank?
       where(query, params).sort_by(&:case_reference)

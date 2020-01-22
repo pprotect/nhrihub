@@ -75,7 +75,7 @@ module ComplaintsSpecSetupHelpers
     select(User.admin.first.first_last_name, :from => "assignee")
   end
 
-  def populate_database
+  def populate_database(type)
     create_offices
     create_complaint_areas
     create_agencies
@@ -84,7 +84,7 @@ module ComplaintsSpecSetupHelpers
     populate_areas_subareas
     user = User.where(:login => 'admin').first
     staff_user = User.where(:login => 'staff').first
-    FactoryBot.create(:individual_complaint, :open,
+    FactoryBot.create( type, :open,
                       :assigned_to => [user, staff_user],
                       :date_received => DateTime.now.advance(:days => -100),
                       :city => Faker::Address.city,
@@ -97,8 +97,10 @@ module ComplaintsSpecSetupHelpers
                       :complaint_documents => complaint_docs,
                       :complaint_area_id => _complaint_area_id,
                       :agencies => _agencies,
-                      :communications => _communications)
-    FactoryBot.create(:individual_complaint, :closed,
+                      :communications => _communications,
+                      :organization_name => "Acme Corp",
+                      :organization_registration_number => "12341234")
+    FactoryBot.create( type, :closed,
                       :assigned_to => [user, staff_user],
                       :date_received => DateTime.now.advance(:days => -100),
                       :city => Faker::Address.city,
@@ -111,7 +113,9 @@ module ComplaintsSpecSetupHelpers
                       :complaint_documents => complaint_docs,
                       :complaint_area_id => _complaint_area_id,
                       :agencies => _agencies,
-                      :communications => _communications)
+                      :communications => _communications,
+                      :organization_name => Faker::Company.name,
+                      :organization_registration_number => "56785678")
     set_file_defaults
   end
 

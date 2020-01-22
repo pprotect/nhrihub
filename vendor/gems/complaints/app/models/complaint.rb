@@ -57,8 +57,12 @@ class Complaint < ActiveRecord::Base
   end
 
   def self.possible_duplicates(params)
-    { complainant_match: Complaint.with_duplicate_complainant(params).map{|c| c.becomes(DuplicateComplaint)},
-      agency_match: Complaint.with_agencies(params[:agency_ids], match: :exact).sort_by(&:case_reference).map{|c| c.becomes(DuplicateComplaint)} }
+    agency_match = Complaint.with_agencies(params[:agency_ids], match: :exact).sort_by(&:case_reference).map{|c| c.becomes(DuplicateComplaint)}
+    source = params[:type]
+    complainant_match = Complaint.
+                           send(:"with_duplicate_#{source}_complainant",params).
+                           map{|c| c.becomes(DuplicateComplaint)}
+    { complainant_match: complainant_match, agency_match: agency_match }
   end
 
   def self.filtered(query)

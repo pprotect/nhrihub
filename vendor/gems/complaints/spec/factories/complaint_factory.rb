@@ -231,5 +231,11 @@ FactoryBot.define do
     factory :individual_complaint do
       type { 'IndividualComplaint' }
     end
+
+    factory :organization_complaint do
+      type { 'OrganizationComplaint' }
+      organization_name { Faker::Company.name }
+      organization_registration_number {  10000000 + rand(10000000) }
+    end
   end
 end
