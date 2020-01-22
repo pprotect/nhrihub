@@ -111,5 +111,15 @@ module ComplaintQuery
       where(query, params).sort_by(&:case_reference)
     end
 
+    def with_duplicate_own_motion_complainant(params)
+      params = params.to_h.symbolize_keys
+      query = []
+      query << '"complaints"."initiating_branch_id" = :initiating_branch_id' unless params[:initiating_branch_id].blank?
+      query << '"complaints"."initiating_office_id" = :initiating_office_id' unless params[:initiating_office_id].blank?
+      query = query.join(' or ')
+      query = "1 = 0" if query.blank?
+      where(query, params).sort_by(&:case_reference)
+    end
+
   end
 end

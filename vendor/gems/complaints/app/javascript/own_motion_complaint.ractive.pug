@@ -1,3 +1,4 @@
+<dupeList complainantMatch = '{{complainantMatch}}' agencyMatch = '{{agencyMatch}}' />
 .row.editable_container('as-inpage_edit'='id')
   .row
     .col-md-8
@@ -47,7 +48,7 @@
         .col-md-8.date_received
           .no_edit.in#date {{formatted_date}}
           .edit
-            input#date_received(autocomplete='off', type = 'text', value = "{{date}}", "as-single_month_datepicker"=true)
+            input.form-control#date_received(autocomplete='off', type = 'text', value = "{{date}}", "as-single_month_datepicker"=true)
 
       .row('class-hidden'='new_complaint')
         .col-md-2
@@ -372,22 +373,39 @@
           <attachedDocuments attached_documents = "{{attached_documents}}" key = "complaint" maximum_filesize = "{{maximum_filesize}}" permitted_filetypes = "{{permitted_filetypes}}" />
 
       .row("data-toggle" = "edit", style = "margin-top:30px")
-        .col-md-6.col-md-offset-3(style='display:flex; justify-content:space-evenly;')
+        .col-md-6.col-md-offset-3#buttons('class-hidden'='intake')
           .edit(style = "text-align:center", 'class-hidden'='new_complaint')
             #edit_cancel.btn.btn-danger.btn-sm.edit_cancel
               i.fa.fa-remove.fa-lg
               span(style = "color:white") {{ t.cancel }}
           .edit(style = "text-align:center")
-            .btn.btn-success.btn-sm#save_complaint(style = "color:white;", "on-click" = "@this.save_complaint()", 'class-hidden'='update_complaint')
+            .btn.btn-success.btn-sm#save_complaint("on-click" = "@this.save_complaint()", 'class-hidden'='update_complaint')
               i.fa.fa-check.fa-lg
               span {{ t.save }}
-            .btn.btn-success.btn-sm#edit_save(style = "color:white;", 'class-hidden'='new_complaint')
+            .btn.btn-success.btn-sm#edit_save('class-hidden'='new_complaint')
               i.fa.fa-check.fa-lg
               span {{ t.save }}
             .form-group("class-has-error" = "has_errors")
               span#complaint_error.help-block.error {{ t.form_error }}
+        .col-md-6.col-md-offset-3#buttons('class-hidden'='register')
+          .edit
+            .btn.btn-success.btn-sm#check_dupes("on-click" = "@this.check_dupes()")
+              i.fa.fa-check.fa-lg
+              span {{ t.check_dupes }}
+          .edit
+            .btn.btn-success.btn-sm#proceed_to_intake("on-click" = "@this.proceed_to_intake()")
+              i.fa.fa-check.fa-lg
+              span {{ t.proceed_to_intake }}
+          .edit
+            .btn.btn-success.btn-sm#save_complaint("on-click" = "@this.save_complaint()", 'class-hidden'='update_complaint')
+              i.fa.fa-check.fa-lg
+              span {{ t.save }}
 
 style.
+  #buttons {
+    display:flex;
+    justify-content:space-evenly;
+  }
   .complainant #firstName, #complainant #title {margin-right: .25em;}
   .complainant .edit .col-md-4{
     padding-top:0px;
@@ -405,7 +423,7 @@ style.
   #alt_id_other_type {
     margin-left: 12px;
   }
-  #save_complaint .fa, #edit_save .fa, #edit_cancel .fa {
+  #save_complaint .fa, #edit_save .fa, #edit_cancel .fa, #check_dupes .fa, .fileinput-button .fa, #proceed_to_intake .fa {
     color: white;
     margin-right: 6px;
     position: relative;
@@ -422,6 +440,12 @@ style.
     padding-left: 1em !important;
     width: 400px;
   }
+  #date_received {
+    width: inherit;
+  }
+  .form-control[disabled]{
+    background-color: #e2dfdf;
+  }
 
 script(type='text/javascript').
   window.$ = window.jQuery = $ // it's the only method I could get to work for making $ available globally!
@@ -434,6 +458,9 @@ script(type='text/javascript').
     template : $TEMPLATE,
     css: $CSS,
     computed : {
+      dupe_check_attributes() {
+        return ['type', 'initiating_branch_id', 'initiating_office_id', 'agency_ids'];
+      },
       persistent_attributes() {
         return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
           'city','province','postal_code','complaint_area_id',

@@ -145,7 +145,7 @@ export default Ractive.extend({
   data : function(){
     return {
       t : translations.t('complaint'),
-      register_heading : translations.t('complaint.register_heading',{type: type.titlecase()})
+      register_heading : translations.t('complaint.register_heading',{type: type.humanize().titlecase()})
     }
   },
   components : {

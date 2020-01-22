@@ -31,6 +31,7 @@ class DuplicateComplaintsController < ApplicationController
 
   def complaint_duplicate_params
     params.require(:match).permit(:type, :organization_name, :organization_registration_number,
+                                  :initiating_branch_id, :initiating_office_id,
                                   :id_value, :alt_id_value, :lastName, :email, :agency_ids => [])
   end
 end

@@ -237,5 +237,9 @@ FactoryBot.define do
       organization_name { Faker::Company.name }
       organization_registration_number {  10000000 + rand(10000000) }
     end
+
+    factory :own_motion do
+      type { 'OwnMotionComplaint' }
+    end
   end
 end

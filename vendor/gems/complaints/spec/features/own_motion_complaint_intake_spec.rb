@@ -38,7 +38,7 @@ feature "own motion complaint duplicate check", :js => true do
   let(:complaint2){ Complaint.last }
 
   before do
-    populate_database
+    populate_database(:own_motion)
     visit complaint_intake_path('en', 'own_motion')
   end
 
@@ -47,24 +47,20 @@ feature "own motion complaint duplicate check", :js => true do
   end
 
   it "should have fields disabled that are not relevant for duplicate check" do
-    disabled_text_fields = %w[date_received title firstName dob
+    disabled_text_fields = %w[date_received title firstName
                               physical_address postal_address city province postal_code
                               home_phone cell_phone fax complaint_details desired_outcome
                               assignee ]
 
-    enabled_text_fields = %w[id_value alt_id_value lastName email]
 
     status_checkboxes = %w[under_evaluation open suspended closed ]
-    gender_checkboxes = %w[m f o]
-    id_checkboxes = %w[identify_by_passport identify_by_id identify_by_pension_id
-                       identify_by_prison_id identify_by_other_id ]
     preferred_means_checkboxes = %w[preferred_means_mail preferred_means_email
                                     preferred_means_home_phone preferred_means_cell_phone
                                     preferred_means_fax]
     complained_checkboxes = %w[complained_to_subject_agency_yes complained_to_subject_agency_no]
     area_checkboxes = %w[good_governance special_investigations_unit human_rights]
 
-    (status_checkboxes + gender_checkboxes + id_checkboxes +
+    (status_checkboxes +
      preferred_means_checkboxes + complained_checkboxes + area_checkboxes).each do |checkbox|
       expect(page.find("##{checkbox}")[:disabled]).to eq "true"
     end
@@ -73,7 +69,7 @@ feature "own motion complaint duplicate check", :js => true do
       expect(page).to have_css("##{input}[disabled]")
     end
 
-    hidden_fields = %w[complaint_type complaint_fileinput alt_id_other_type]
+    hidden_fields = %w[complaint_fileinput]
     hidden_fields.each do |input|
       expect(page).to have_css("##{input}[disabled]", visible:false)
     end
@@ -86,9 +82,6 @@ feature "own motion complaint duplicate check", :js => true do
       expect(subarea_checkbox[:disabled]).to eq "true"
     end
 
-    enabled_text_fields.each do |input|
-      expect(page.find("##{input}")[:disabled]).to eq "false"
-    end
   end
 
   it "should show duplicates matching the selected agency" do
@@ -99,15 +92,6 @@ feature "own motion complaint duplicate check", :js => true do
     expect(page).to have_selector('#complainant_match_list', text: "no possible duplicates for complainant")
     expect(page).to have_selector('a.possible_duplicate', text: complaint1.case_reference)
     expect(page).to have_selector('a.possible_duplicate', text: complaint2.case_reference)
-  end
-
-  it "should show duplicates matching the entered email" do
-    fill_in('email', with: "bish@bash.com")
-    page.find(".btn#check_dupes").click
-    wait_for_ajax
-    expect(page).to have_selector('h4.modal-title', text: "Possible duplicates")
-    expect(page).to have_selector('#agency_match_list', text: "no possible duplicates for agency")
-    expect(page).to have_selector('.possible_duplicate', count: 1)
   end
 
   it "should permit switch to intake" do
