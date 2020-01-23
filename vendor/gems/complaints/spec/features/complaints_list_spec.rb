@@ -124,7 +124,7 @@ feature "complaints index with multiple complaints", :js => true do
   include ComplaintsSpecSetupHelpers
 
   before do
-    populate_database
+    populate_database(:individual_complaint)
     FactoryBot.create(:complaint, :open, :assigned_to => [@user, @staff_user])
     FactoryBot.create(:complaint, :closed, :assigned_to => [@user, @staff_user])
     FactoryBot.create(:complaint, :open, :assigned_to => [@staff_user, @user])
@@ -152,7 +152,7 @@ feature "complaints index", :js => true do
   include AreaSubareaCommonHelpers
 
   before do
-    populate_database
+    populate_database(:individual_complaint)
     visit complaints_path('en')
   end
 
@@ -289,7 +289,7 @@ feature "reloads complaints if a different assignee is selected", js: true do
   let(:signed_in_user){ User.first.first_last_name }
 
   before do
-    populate_database
+    populate_database(:individual_complaint)
     user = FactoryBot.create(:user, firstName: "Norman", lastName: "Normal")
     @norms_complaint = FactoryBot.create(:complaint, :under_evaluation, :with_associations, :assigned_to => user)
     visit complaints_path('en')

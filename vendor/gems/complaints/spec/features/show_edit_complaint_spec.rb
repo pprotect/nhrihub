@@ -18,7 +18,7 @@ feature 'edit complaint', js: true do
   include ParseEmailHelpers
 
   before do
-    populate_database
+    populate_database(:individual_complaint)
     visit complaint_path(:en, IndividualComplaint.first.id)
   end
 

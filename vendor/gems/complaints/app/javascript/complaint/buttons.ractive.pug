@@ -1,0 +1,88 @@
+div#buttons("data-toggle" = "edit")
+  .edit('class-hidden'='edit_cancel_hidden')
+    .btn.btn-danger.btn-sm#edit_cancel
+      i.fa.fa-remove.fa-lg
+      span {{ t.cancel }}
+  .edit('class-hidden'='edit_save_hidden')
+    .btn.btn-success.btn-sm#edit_save
+      i.fa.fa-check.fa-lg
+      span {{ t.save }}
+    .form-group("class-has-error" = "has_errors")
+      span#complaint_error.help-block.error {{ t.form_error }}
+  .edit('class-hidden'='check_dupes_hidden')
+    .btn.btn-success.btn-sm#check_dupes("on-click" = "@this.check_dupes()")
+      i.fa.fa-check.fa-lg
+      span {{ t.check_dupes }}
+  .edit('class-hidden'='proceed_to_intake_hidden')
+    .btn.btn-success.btn-sm#proceed_to_intake("on-click" = "@this.proceed_to_intake()", 'class-disabled'='proceed_to_intake_disabled')
+      i.fa.fa-check.fa-lg
+      span {{ t.proceed_to_intake }}
+  .edit('class-hidden'='save_complaint_hidden')
+    .btn.btn-success.btn-sm#save_complaint("on-click" = "@this.save_complaint()", 'class-disabled'='save_complaint_disabled')
+      i.fa.fa-check.fa-lg
+      span {{ t.save }}
+    .form-group#form_error("class-has-error" = "has_errors")
+      span#complaint_error.help-block.error {{ t.form_error }}
+
+style.
+  #buttons {
+    display:flex;
+    justify-content:space-evenly;
+    margin-top: 30px;
+  }
+  #buttons .edit {
+    width: 230px;
+    text-align: center;
+  }
+  #save_complaint .fa,
+  #edit_save .fa,
+  #edit_cancel .fa,
+  #check_dupes .fa,
+  #proceed_to_intake .fa {
+    color: white;
+    margin-right: 6px;
+    position: relative;
+    top: -1px;
+  }
+
+script(type='text/javascript').
+  import translations from 'translations.js'
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    data : function(){
+      return {
+        t : translations.t('complaint'),
+        map:{
+          check_dupes:      {intake: 'show',    register: 'show',    show: 'hide', edit: 'hide'},
+          proceed_to_intake:{intake: 'show',    register: 'disable', show: 'hide', edit: 'hide'},
+          edit:             {intake: 'hide',    register: 'hide',    show: 'show', edit: 'show'},
+          save_complaint:   {intake: 'disable', register: 'show',    show: 'hide', edit: 'hide'},
+        }
+      }
+    },
+    computed : {
+      check_dupes_hidden()         { return this.get('map.check_dupes')[this.get('mode')]=='hide'},
+      proceed_to_intake_hidden()   { return this.get('map.proceed_to_intake')[this.get('mode')]=='hide'},
+      proceed_to_intake_disabled() { return this.get('map.proceed_to_intake')[this.get('mode')]=='disable'},
+      save_complaint_hidden()      { return this.get('map.save_complaint')[this.get('mode')]=='hide'},
+      save_complaint_disabled()    { return this.get('map.save_complaint')[this.get('mode')]=='disable'},
+      edit_show()                  { return (this.get('map.edit')[this.get('mode')]=='show') && this.get('editing')},
+      edit_save_hidden()           { return !this.get('edit_show')},
+      edit_cancel_hidden()         { return !this.get('edit_show')},
+    },
+    check_dupes(){
+      this.parent.check_dupes();
+    },
+    proceed_to_intake(){
+      if(!$(this.event.node).hasClass('disabled')){
+        this.parent.proceed_to_intake();
+      }
+    },
+    save_complaint(){
+      if(!$(this.event.node).hasClass('disabled')){
+        this.parent.save_complaint();
+      }
+    }
+  })

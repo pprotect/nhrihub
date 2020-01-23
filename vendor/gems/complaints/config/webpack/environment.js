@@ -7,6 +7,11 @@ environment.config.set('output.path', resolve(config.public_root_path, config.pu
 
 const webpack = require('webpack')
 
+environment.loaders.append('inline jade element', {
+  test: /\.jade$/,
+  use: 'jade-loader'
+})
+
 environment.loaders.append('ractive_component', {
   test: /\.ractive\.html$/,
   use: 'ractive-bin-loader'

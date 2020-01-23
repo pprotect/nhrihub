@@ -69,7 +69,7 @@ en:
     case_reference: "Ref"
     cell_phone: "Cell phone"
     cell_phone_pref: "Cell phone"
-    check_dupes: "Check possible duplication"
+    check_dupes: "Check duplication"
     proceed_to_intake: "Proceed with intake"
     city: 'City'
     title : "Title"
@@ -135,6 +135,8 @@ en:
     postal_address_error_message: "Mail designated as preferred communication means. You must enter a postal address"
     email_error_message: "email designated as preferred communication means. You must enter an email"
     home_phone_error_message: "Home phone designated as preferred communication means. You must enter a home phone number"
+    phone_error_message: "Phone designated as preferred communication means. You must enter a phone number"
+    contact_phone_error_message: "Contact phone designated as preferred communication means. You must enter a contact phone number"
     cell_phone_error_message: "Cell phone designated as preferred communication means. You must enter a cell phone number"
     fax_error_message: "Fax designated as preferred communication means. You must enter a fax number"
     preferred_means: 'Preferred means of communication'

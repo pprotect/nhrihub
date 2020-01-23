@@ -238,7 +238,7 @@ FactoryBot.define do
       organization_registration_number {  10000000 + rand(10000000) }
     end
 
-    factory :own_motion do
+    factory :own_motion_complaint do
       type { 'OwnMotionComplaint' }
     end
   end

@@ -38,7 +38,7 @@ feature "complaint register", :js => true do
   let(:current_year){ Date.today.strftime('%y').to_i }
 
   before do
-    populate_database
+    populate_database(:individual_complaint)
     visit complaint_register_path('en', 'individual')
   end
 

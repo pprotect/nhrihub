@@ -403,40 +403,9 @@
           .no_edit.in
           <attachedDocuments attached_documents = "{{attached_documents}}" key = "complaint" maximum_filesize = "{{maximum_filesize}}" permitted_filetypes = "{{permitted_filetypes}}" />
 
-      .row("data-toggle" = "edit", style = "margin-top:30px")
-        .col-md-6.col-md-offset-3#buttons('class-hidden'='intake')
-          .edit(style = "text-align:center", 'class-hidden'='new_complaint')
-            #edit_cancel.btn.btn-danger.btn-sm.edit_cancel
-              i.fa.fa-remove.fa-lg
-              span(style = "color:white") {{ t.cancel }}
-          .edit(style = "text-align:center")
-            .btn.btn-success.btn-sm#save_complaint("on-click" = "@this.save_complaint()", 'class-hidden'='update_complaint')
-              i.fa.fa-check.fa-lg
-              span {{ t.save }}
-            .btn.btn-success.btn-sm#edit_save('class-hidden'='new_complaint')
-              i.fa.fa-check.fa-lg
-              span {{ t.save }}
-            .form-group("class-has-error" = "has_errors")
-              span#complaint_error.help-block.error {{ t.form_error }}
-        .col-md-6.col-md-offset-3#buttons('class-hidden'='register')
-          .edit
-            .btn.btn-success.btn-sm#check_dupes("on-click" = "@this.check_dupes()")
-              i.fa.fa-check.fa-lg
-              span {{ t.check_dupes }}
-          .edit
-            .btn.btn-success.btn-sm#proceed_to_intake("on-click" = "@this.proceed_to_intake()")
-              i.fa.fa-check.fa-lg
-              span {{ t.proceed_to_intake }}
-          .edit
-            .btn.btn-success.btn-sm#save_complaint("on-click" = "@this.save_complaint()", 'class-hidden'='update_complaint')
-              i.fa.fa-check.fa-lg
-              span {{ t.save }}
+      <buttons mode='{{mode}}' editing='{{editing}}' has_errors='{{has_errors}}' />
 
 style.
-  #buttons {
-    display:flex;
-    justify-content:space-evenly;
-  }
   #alt_id_other_type_field label { width: 120px; }
   #alt_id_other_type_field .edit { display: flex;}
   .complainant #firstName, #complainant #title {margin-right: .25em;}

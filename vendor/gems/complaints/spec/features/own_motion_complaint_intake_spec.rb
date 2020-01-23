@@ -38,7 +38,7 @@ feature "own motion complaint duplicate check", :js => true do
   let(:complaint2){ Complaint.last }
 
   before do
-    populate_database(:own_motion)
+    populate_database(:own_motion_complaint)
     visit complaint_intake_path('en', 'own_motion')
   end
 

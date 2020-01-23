@@ -38,8 +38,16 @@ feature "organization complaint intake", :js => true do
   let(:current_year){ Date.today.strftime('%y').to_i }
 
   before do
-    populate_database
+    populate_database(:organization_complaint)
     visit complaint_register_path('en', 'organization')
+  end
+
+  it "initiates registration via duplicate complaints check" do
+    visit complaint_intake_path('en', 'organization')
+    page.find("#proceed_to_intake").click
+    expect(page_heading).to eq "Organization Complaint Intake"
+    complete_required_fields(:organization)
+    expect{save_complaint}.to change{ OrganizationComplaint.count }.by(1)
   end
 
   it "adds a new complaint that is valid" do
@@ -233,13 +241,13 @@ feature "organization complaint intake", :js => true do
     # preferred means --email
     save_complaint(false)
     expect(page).to have_selector('#email_error', :text => "email designated as preferred communication means. You must enter an email")
-    choose("Home phone")
+    choose("Contact phone")
     expect(page).not_to have_selector('#email_error', :text => "email designated as preferred communication means. You must enter an email")
-    # preferred means --home phone
+    # preferred means --contact phone
     save_complaint(false)
-    expect(page).to have_selector('#home_phone_error', :text => "Home phone designated as preferred communication means. You must enter a home phone number")
+    expect(page).to have_selector('#contact_phone_error', :text => "Contact phone designated as preferred communication means. You must enter a contact phone number")
     choose("Cell phone")
-    expect(page).not_to have_selector('#home_phone_error', :text => "Home phone designated as preferred communication means. You must enter a home phone number")
+    expect(page).not_to have_selector('#contact_phone_error', :text => "Contact phone designated as preferred communication means. You must enter a contact phone number")
     # preferred means --cell phone
     save_complaint(false)
     expect(page).to have_selector('#contact_cell_phone_error', :text => "Cell phone designated as preferred communication means. You must enter a cell phone number")

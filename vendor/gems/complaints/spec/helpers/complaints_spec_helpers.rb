@@ -84,7 +84,7 @@ module ComplaintsSpecHelpers
   end
 
   def edit_cancel
-    page.find('.edit_cancel .fa-remove').click
+    page.find('#edit_cancel .fa-remove').click
   end
 
   def select_option(name)

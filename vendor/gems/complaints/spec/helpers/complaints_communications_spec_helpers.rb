@@ -4,7 +4,7 @@ module ComplaintsCommunicationsSpecHelpers
   extend RSpec::Core::SharedContext
 
   before do
-    populate_database
+    populate_database(:individual_complaint)
     visit complaints_path('en')
     open_communications_modal
   end

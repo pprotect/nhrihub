@@ -38,8 +38,16 @@ feature "complaints index", :js => true do
   let(:current_year){ Date.today.strftime('%y').to_i }
 
   before do
-    populate_database
+    populate_database(:own_motion_complaint)
     visit complaint_register_path('en', 'own_motion')
+  end
+
+  it "initiates registration via duplicate complaints check" do
+    visit complaint_intake_path('en', 'own_motion')
+    page.find("#proceed_to_intake").click
+    expect(page_heading).to eq "Own Motion Complaint Intake"
+    complete_required_fields(:own_motion)
+    expect{save_complaint}.to change{ OwnMotionComplaint.count }.by(1)
   end
 
   it "adds a new complaint that is valid" do
@@ -231,9 +239,9 @@ feature "complaints index", :js => true do
     expect(page).not_to have_selector('#email_error', :text => "email designated as preferred communication means. You must enter an email")
     # preferred means --home phone
     save_complaint(false)
-    expect(page).to have_selector('#home_phone_error', :text => "Home phone designated as preferred communication means. You must enter a home phone number")
+    expect(page).to have_selector('#home_phone_error', :text => "Phone designated as preferred communication means. You must enter a phone number")
     choose("Cell phone")
-    expect(page).not_to have_selector('#home_phone_error', :text => "Home phone designated as preferred communication means. You must enter a home phone number")
+    expect(page).not_to have_selector('#home_phone_error', :text => "Phone designated as preferred communication means. You must enter a phone number")
     # preferred means --cell phone
     save_complaint(false)
     expect(page).to have_selector('#cell_phone_error', :text => "Cell phone designated as preferred communication means. You must enter a cell phone number")

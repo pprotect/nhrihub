@@ -25,6 +25,7 @@ import notes from 'notes.ractive.pug'
 import 'bootstrap'
 import DupeList from 'dupe_list.ractive.pug'
 import 'string.coffee'
+import Buttons from 'buttons.ractive.pug'
 
 export default Ractive.extend({
   el: '#complaint',
@@ -159,12 +160,17 @@ export default Ractive.extend({
     statusChange : StatusChange,
     subareaSelector: SubareaSelector,
     dupeList: DupeList,
-    //progressBar : ProgressBar
+    //progressBar : ProgressBar,
+    buttons: Buttons
+  },
+  partials : {
+    buttons : Buttons
   },
   proceed_to_intake(){
     history.pushState({},"anything",this.get('url'));
     this.enable_all_inputs();
-    complaint.set('heading',this.get('register_heading'));
+    complaint.set({heading:this.get('register_heading'),
+                   mode:'register'});
   },
   enable_all_inputs(){
     $(this.el).find('input, select').attr('disabled',false)
