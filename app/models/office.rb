@@ -3,7 +3,7 @@ class Office < ActiveRecord::Base
   belongs_to :province
 
   scope :branches, ->{ joins(:office_group).merge(OfficeGroup.head_office) }
-  scope :not_branches, -> { joins(:office_group).merge(OfficeGroup.not_head_office) }
+  scope :not_branches, -> { joins(:office_group).merge(OfficeGroup.regional_provincial) }
 
   def to_s
     return "#{name} (Provincial)" if provincial?

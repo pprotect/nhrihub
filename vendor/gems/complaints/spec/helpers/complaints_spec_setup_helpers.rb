@@ -84,7 +84,7 @@ module ComplaintsSpecSetupHelpers
     populate_areas_subareas
     user = User.where(:login => 'admin').first
     staff_user = User.where(:login => 'staff').first
-    FactoryBot.create( type, :open,
+    FactoryBot.create( type, :registered,
                       :assigned_to => [user, staff_user],
                       :date_received => DateTime.now.advance(:days => -100),
                       :city => Faker::Address.city,

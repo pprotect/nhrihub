@@ -30,6 +30,8 @@ window.start_page = function(){
     window.complaint = new OrganizationComplaint({data: complaint_data}) }
   else if(type == "own_motion"){
     window.complaint = new OwnMotionComplaint({data: complaint_data}) }
+  else
+    throw "complaint type not recognized in app/javascript/packs/complaint.js"
   complaint.set({heading: i18n.heading, type: type});
 }
 

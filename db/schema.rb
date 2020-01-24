@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_16_170524) do
+ActiveRecord::Schema.define(version: 2020_01_24_233427) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -180,6 +180,14 @@ ActiveRecord::Schema.define(version: 2020_01_16_170524) do
     t.string "long_type"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "case_references", force: :cascade do |t|
+    t.integer "year"
+    t.integer "sequence"
+    t.integer "complaint_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "communicants", id: :serial, force: :cascade do |t|

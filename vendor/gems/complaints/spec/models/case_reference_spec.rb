@@ -1,15 +1,43 @@
 require 'rails_helper'
 require 'case_reference'
 
+describe ".create" do
+  context "when none exist in the database" do
+    let!(:case_reference){ CaseReference.create }
+
+    it "should start the sequence at 1" do
+      expect(case_reference.year).to eq Date.today.strftime("%y").to_i # last two digits
+      expect(case_reference.sequence).to eq 1
+      expect(CaseReference.max).to be_a CaseReference
+      expect(CaseReference.max.year).to eql 20
+      expect(CaseReference.max.sequence).to eql 1
+      expect(CaseReference.max.next_ref.year).to eq Date.today.strftime("%y").to_i
+      expect(CaseReference.max.next_ref.sequence).to eq 2
+    end
+  end
+
+  context "when there are others" do
+    before do
+      5.times do
+        CaseReference.create
+      end
+    end
+
+    it "should create sequential case references" do
+      expect(CaseReference.pluck(:sequence)).to eq [1,2,3,4,5]
+    end
+  end
+end
+
 describe "flexible formatting defined by an application constant" do
   it "should represent case reference in Samoa-specific format" do
     stub_const("CaseReferenceFormat","C%<year>i-%<sequence>i")
-    expect(CaseReference.new(20,8).to_s).to eq "C20-8"
+    expect(CaseReference.new(year: 20, sequence: 8).to_s).to eq "C20-8"
   end
 
   it "should represent case reference in South Africa-specific format" do
     stub_const("CaseReferenceFormat","7/2-%05<sequence>i/%<year>i")
-    expect(CaseReference.new(20,8).to_s).to eq "7/2-00008/20"
+    expect(CaseReference.new(year: 20, sequence: 8).to_s).to eq "7/2-00008/20"
   end
 end
 
@@ -23,7 +51,7 @@ context "Samoa formatted string" do
 
   describe "CaseReference in the current year"  do
     before do
-      @case_reference = CaseReference.new(year,sequence)
+      @case_reference = CaseReference.new(year: year, sequence: sequence)
     end
 
     it "should produce a value for the next reference in the current year" do
@@ -36,7 +64,7 @@ context "Samoa formatted string" do
   describe "CaseReference in the previous year"  do
     before do
       year = year.to_i - 1
-      @case_reference = CaseReference.new(year,sequence)
+      @case_reference = CaseReference.new(year: year, sequence: sequence)
     end
 
     it "should produce a value for the next reference in the current year" do
@@ -49,10 +77,10 @@ context "Samoa formatted string" do
   describe "CaseReference comparing values" do
     before do
       @list = [
-        CaseReference.new(16,15),
-        CaseReference.new(16,1),
-        CaseReference.new(17,10),
-        CaseReference.new(17,1)
+        CaseReference.new(year: 16, sequence: 15),
+        CaseReference.new(year: 16, sequence: 1),
+        CaseReference.new(year: 17, sequence: 10),
+        CaseReference.new(year: 17, sequence: 1)
       ]
     end
 
@@ -61,17 +89,17 @@ context "Samoa formatted string" do
     end
 
     it "should calculate the next value" do
-      expect(CaseReference.new(17,10).next_ref.year).to eq year.to_i
-      expect(CaseReference.new(17,10).next_ref.sequence).to eq 1
+      expect(CaseReference.new(year: 17, sequence: 10).next_ref.year).to eq year.to_i
+      expect(CaseReference.new(year: 17, sequence: 10).next_ref.sequence).to eq 1
     end
   end
 
   describe "CaseReferenceCollection" do
     before do
-      cr1 = CaseReference.new(16,15)
-      cr2 = CaseReference.new(16,1)
-      @cr3 = CaseReference.new(17,10)
-      cr4 = CaseReference.new(17,1)
+      cr1 = CaseReference.new(year: 16, sequence: 15)
+      cr2 = CaseReference.new(year: 16, sequence: 1)
+      @cr3 = CaseReference.new(year: 17, sequence: 10)
+      cr4 = CaseReference.new(year: 17, sequence: 1)
       @collection = CaseReferenceCollection.new [cr1,cr2,@cr3,cr4]
     end
 
@@ -86,120 +114,64 @@ context "Samoa formatted string" do
     end
   end
 
-  describe "CaseReference.sql_matchj" do
+  describe "CaseReference.sql_match" do
     let(:complaint){ FactoryBot.create(:complaint) }
 
+    before do
+      complaint.case_reference.update(year: 19, sequence: 1234)
+    end
+
     it "should disregard nil fragment" do
-      complaint.update_attribute(:case_reference, CaseReference.new(19,1234))
       case_ref_fragment = nil
       expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
     end
 
     it "should disregard blank string fragment" do
-      complaint.update_attribute(:case_reference, CaseReference.new(19,1234))
       case_ref_fragment = ""
       expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
     end
 
     it "should match single digit" do
-      complaint.update_attribute(:case_reference, CaseReference.new(19,1234))
       case_ref_fragment = "1"
       expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
     end
 
     it "should match two digits" do
-      complaint.update_attribute(:case_reference, CaseReference.new(19,1234))
       case_ref_fragment = "19"
       expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
     end
 
     it "should match three digits" do
-      complaint.update_attribute(:case_reference, CaseReference.new(19,1234))
       case_ref_fragment = "191"
       expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
     end
 
     it "should match four digits" do
-      complaint.update_attribute(:case_reference, CaseReference.new(19,1234))
       case_ref_fragment = "1912"
       expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
     end
 
     it "should match all digits" do
-      complaint.update_attribute(:case_reference, CaseReference.new(19,1234))
       case_ref_fragment = "191234"
       expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
     end
 
     it "should match all digits with arbitrary alpha interspersed" do
-      complaint.update_attribute(:case_reference, CaseReference.new(19,1234))
       case_ref_fragment = "f1a9 b1c 23d4x"
       expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
     end
 
     it "should not match if extra digits are appended" do
-      complaint.update_attribute(:case_reference, CaseReference.new(19,1234))
       case_ref_fragment = "1912345"
       expect(Complaint.with_case_reference_match(case_ref_fragment)).to be_empty
     end
 
     it "should not match if any digits do not match" do
-      complaint.update_attribute(:case_reference, CaseReference.new(19,1234))
       case_ref_fragment = "291234"
       expect(Complaint.with_case_reference_match(case_ref_fragment)).to be_empty
     end
   end
 
-  describe "unique case reference generation" do
-    subject! do
-      class TestModel < ActiveRecord::Base
-        after_commit :generate_case_reference, on: :create
-        serialize :case_reference, CaseReference
-
-        def generate_case_reference
-          update_column :case_reference, TestModel.next_case_reference
-        end
-
-        def self.next_case_reference
-          case_references = CaseReferenceCollection.new(all.pluck(:case_reference))
-          case_references.next_ref
-        end
-      end
-    end
-
-    before do
-      connection = ActiveRecord::Base.connection
-      connection.create_table :test_models do |t|
-        t.string :case_reference
-      end
-      connection.add_index :test_models, :case_reference, unique: true
-    end
-
-    after do
-      connection = ActiveRecord::Base.connection
-      connection.commit_transaction
-      if connection.table_exists? :test_models
-        connection.drop_table :test_models
-      end
-    end
-
-    it "should save and fetch CaseReferences" do
-      tm = TestModel.create
-      expect(tm.reload.case_reference).to be_a CaseReference
-      expect(tm.case_reference.to_s).to eq "C#{year}-1"
-      tm = TestModel.create
-      expect(tm.case_reference.to_s).to eq "C#{year}-2"
-    end
-
-    it "should raise argument error if two test models are saved with the same case reference" do
-      # simulate simultaneous saving of two Complaints, each thinks the highest ref is 19,1
-      allow_any_instance_of(CaseReferenceCollection).to receive(:highest_ref).and_return(CaseReference.new(year,1))
-      tm1 = TestModel.create
-      expect(tm1.case_reference.to_s).to eq "C#{year}-2"
-      expect{ TestModel.create }.to raise_error ActiveRecord::RecordNotUnique
-    end
-
-  end
 end
 
 context "South Africa formatted string" do
@@ -212,7 +184,7 @@ context "South Africa formatted string" do
 
   describe "CaseReference in the current year"  do
     before do
-      @case_reference = CaseReference.new(year,sequence)
+      @case_reference = CaseReference.new(year: year, sequence: sequence)
     end
 
     it "should produce a value for the next reference in the current year" do
@@ -225,7 +197,7 @@ context "South Africa formatted string" do
   describe "CaseReference in the previous year"  do
     before do
       year = year.to_i - 1
-      @case_reference = CaseReference.new(year,sequence)
+      @case_reference = CaseReference.new(year: year, sequence: sequence)
     end
 
     it "should produce a value for the next reference in the current year" do
@@ -238,10 +210,10 @@ context "South Africa formatted string" do
   describe "CaseReference comparing values" do
     before do
       @list = [
-        CaseReference.new(16,15),
-        CaseReference.new(16,1),
-        CaseReference.new(17,10),
-        CaseReference.new(17,1)
+        CaseReference.new(year: 16, sequence: 15),
+        CaseReference.new(year: 16, sequence: 1),
+        CaseReference.new(year: 17, sequence: 10),
+        CaseReference.new(year: 17, sequence: 1)
       ]
     end
 
@@ -251,54 +223,4 @@ context "South Africa formatted string" do
 
   end
 
-  describe "unique case reference generation" do
-    subject! do
-      class TestModel < ActiveRecord::Base
-        after_commit :generate_case_reference, on: :create
-        serialize :case_reference, CaseReference
-
-        def generate_case_reference
-          update_column :case_reference, TestModel.next_case_reference
-        end
-
-        def self.next_case_reference
-          case_references = CaseReferenceCollection.new(all.pluck(:case_reference))
-          case_references.next_ref
-        end
-      end
-    end
-
-    before do
-      connection = ActiveRecord::Base.connection
-      connection.create_table :test_models do |t|
-        t.string :case_reference
-      end
-      connection.add_index :test_models, :case_reference, unique: true
-    end
-
-    after do
-      connection = ActiveRecord::Base.connection
-      connection.commit_transaction
-      if connection.table_exists? :test_models
-        connection.drop_table :test_models
-      end
-    end
-
-    it "should save and fetch CaseReferences" do
-      tm = TestModel.create
-      expect(tm.reload.case_reference).to be_a CaseReference
-      expect(tm.case_reference.to_s).to eq "7/2-00001/#{year}"
-      tm = TestModel.create
-      expect(tm.case_reference.to_s).to eq "7/2-00002/#{year}"
-    end
-
-    it "should raise argument error if two test models are saved with the same case reference" do
-      # simulate simultaneous saving of two Complaints, each thinks the highest ref is 19,1
-      allow_any_instance_of(CaseReferenceCollection).to receive(:highest_ref).and_return(CaseReference.new(year,1))
-      tm1 = TestModel.create
-      expect(tm1.case_reference.to_s).to eq "7/2-00002/#{year}"
-      expect{ TestModel.create }.to raise_error ActiveRecord::RecordNotUnique
-    end
-
-  end
 end

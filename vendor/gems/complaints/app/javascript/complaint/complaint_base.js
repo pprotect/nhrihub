@@ -26,10 +26,32 @@ import 'bootstrap'
 import DupeList from 'dupe_list.ractive.pug'
 import 'string.coffee'
 import Buttons from 'buttons.ractive.pug'
+import StatusSelector from 'status_selector.ractive.pug'
 
 export default Ractive.extend({
   el: '#complaint',
   computed : {
+    initiating_branch(){
+      var branch = _(this.get('branches')).findWhere({id:  this.get('initiating_branch_id')});
+      return branch.name;
+    },
+    initiating_office(){
+      var provincial_office = _(this.get('provincial_offices')).findWhere({id: this.get('initiating_office_id')});
+      var regional_office = _(this.get('regional_offices')).findWhere({id: this.get('initiating_office_id')});
+      if(typeof provincial_office != 'undefined'){
+        return provincial_office.name + " (Provincial office)"
+      }else if( typeof regional_office != 'undefined'){
+        return regional_office.name + " (Regional office)"
+      }else{ throw "office not found"}
+    },
+    regional_offices(){
+      var group = _(this.get('office_groups')).findWhere({name: "Regional Offices"});
+      return group.offices;
+    },
+    provincial_offices(){
+      var group = _(this.get('office_groups')).findWhere({name: "Provincial Offices"});
+      return group.offices;
+    },
     delete_confirmation_message() {
       return `${i18n.delete_complaint_confirmation_message} ${this.get('case_reference')}?`;
     },
@@ -161,7 +183,8 @@ export default Ractive.extend({
     subareaSelector: SubareaSelector,
     dupeList: DupeList,
     //progressBar : ProgressBar,
-    buttons: Buttons
+    buttons: Buttons,
+    statusSelector: StatusSelector
   },
   partials : {
     buttons : Buttons

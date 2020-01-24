@@ -11,7 +11,9 @@ namespace :complaints do
   task :populate_complaints => [ :populate_statuses, :populate_areas_subareas, 'projects:populate_mandates', 'projects:populate_agnc', "complaints:depopulate"] do
     n = 50
     n.times do |i|
-      complaint = FactoryBot.create(:complaint, :with_associations, :with_assignees, :with_document, :with_comm, :with_reminders, :with_notes, :case_reference => "C17-#{n-i}")
+      complaint = [:individual_complaint, :own_motion_complaint, :organization_complaint].sample
+      complaint = FactoryBot.create(complaint, :with_associations, :with_assignees, :with_document, :with_comm, :with_reminders, :with_notes)
+      n -= 1
     end
   end
 

@@ -24,10 +24,10 @@ feature 'edit complaint', js: true do
 
   it "changes complaint current status by adding a status_change" do
     edit_complaint
-    expect(page).to have_checked_field "open"
-    choose "closed"
-    expect{ edit_save }.to change{ IndividualComplaint.first.current_status }.from("Open").to("Closed")
-    expect( all('#status_changes .status_change').last.text ).to match "Closed"
+    expect(page).to have_checked_field "Registered"
+    choose "Assessment"
+    expect{ edit_save }.to change{ IndividualComplaint.first.current_status }.from("Registered").to("Assessment")
+    expect( all('#status_changes .status_change').last.text ).to match "Assessment"
     expect( all('#status_changes .date').last.text ).to match /#{Date.today.strftime("%b %-e, %Y")}/
     user = User.find_by(:login => 'admin')
     expect( all('#status_changes .user_name').last.text ).to match /#{user.first_last_name}/
@@ -73,6 +73,9 @@ feature 'edit complaint', js: true do
                        and change{ stored_files_count }.by(1).
                        and change { ActionMailer::Base.deliveries.count }.by(1)
 
+    # first Complaint has current status "registered"
+    # last Complaint has current status "closed"
+    # here we're editing the first complaint
     expect( IndividualComplaint.first.title ).to eq "kahunga"
     expect( IndividualComplaint.first.complained_to_subject_agency ).to eq false
     expect( IndividualComplaint.first.dob ).to eq "19/08/1950"
@@ -128,7 +131,7 @@ feature 'edit complaint', js: true do
     user = User.staff.last
     expect( email.subject ).to eq "Notification of complaint assignment"
     expect( addressee ).to eq user.first_last_name
-    expect( complaint_url ).to match (/#{Regexp.escape complaints_path(:en,case_reference:IndividualComplaint.first.case_reference.to_s)}$/i)
+    expect( complaint_url ).to match (/#{Regexp.escape complaint_path('en',Complaint.first.id)}$/i)
     expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
     expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
     expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.reload.unsubscribe_code, host: SITE_URL, protocol: :https)

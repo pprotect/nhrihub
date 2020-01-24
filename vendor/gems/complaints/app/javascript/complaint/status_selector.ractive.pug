@@ -1,0 +1,26 @@
+form
+  | {{#statuses}}
+  label
+    | {{ name }}
+    input(id='{{this.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{id}}')
+  | {{/statuses}}
+
+style.
+  label{
+    font-weight:normal;
+    margin-right:12px;
+  }
+  input{
+    margin-left:6px;
+  }
+
+script.
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    computed: {
+      key(){
+        return this.get('name');
+      }
+    }
+    })

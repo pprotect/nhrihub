@@ -1,5 +1,4 @@
 require 'rails_helper'
-$:.unshift File.expand_path '../../helpers', __FILE__
 require 'login_helpers'
 require 'complaints_spec_setup_helpers'
 require 'navigation_helpers'
@@ -101,7 +100,6 @@ feature "complaint register", :js => true do
 
     expect(page).to have_selector("#complaint_documents .document .filename", :text => "first_upload_file.pdf")
 
-    next_ref = Complaint.next_case_reference
     expect{save_complaint}.to change{ IndividualComplaint.count }.by(1)
                                 .and change{ ComplaintComplaintSubarea.count }.by(3)
                                 .and change{ ComplaintAgency.count }.by(2)
@@ -109,8 +107,8 @@ feature "complaint register", :js => true do
     ## on the server
     complaint = IndividualComplaint.last
     expect(complaint).to be_a(IndividualComplaint)
-    expect(complaint.case_reference.year).to eq next_ref.year
-    expect(complaint.case_reference.sequence).to eq next_ref.sequence
+    expect(complaint.case_reference.year).to eq complaint.case_reference.year
+    expect(complaint.case_reference.sequence).to eq 3
     expect(complaint.title).to eq "Ambassador"
     expect(complaint.lastName).to eq "Normal"
     expect(complaint.firstName).to eq "Norman"
@@ -139,7 +137,7 @@ feature "complaint register", :js => true do
     expect(complaint.complaint_subareas.map(&:name)).to match_array ["Delayed action", "CAT", "Unreasonable delay"]
     expect(complaint.current_assignee_name).to eq User.staff.first.first_last_name
     expect(complaint.status_changes.count).to eq 1
-    expect(complaint.status_changes.first.complaint_status.name).to eq "Under Evaluation"
+    expect(complaint.status_changes.first.complaint_status.name).to eq "Registered"
     expect(complaint.agencies.map(&:name)).to include "SAA"
     expect(complaint.agencies.map(&:name)).to include "ACC"
     expect(complaint.complaint_documents.count).to eq 1
@@ -147,7 +145,7 @@ feature "complaint register", :js => true do
     expect(complaint.complaint_documents[0].title).to eq "Complaint Document"
 
     ## on the client
-    expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
+    expect(page_heading).to eq "Complaint, case reference: #{Complaint.last.case_reference}"
     expect(find('#complaint #complaint_type').text).to eq "Individual complaint"
     expect(find('#complaint #title').text).to eq "Ambassador"
     expect(find('#complaint #lastName').text).to eq "Normal"
@@ -173,7 +171,7 @@ feature "complaint register", :js => true do
     expect(find('#complaint #complained_to_subject_agency').text).to eq "yes"
     expect(find('#complaint #date').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
     expect(find('#complaint #current_assignee').text).to eq user.first_last_name
-    expect(find('#complaint #status_changes .status_change .status_humanized').text).to eq 'Under Evaluation'
+    expect(find('#complaint #status_changes .status_change .status_humanized').text).to eq 'Registered'
     #expect(find('#complaint .gender').text).to eq "male" # this should work, but I postponed troubleshooting in favour of other activities!
 
     within special_investigations_unit_area do
@@ -198,7 +196,7 @@ feature "complaint register", :js => true do
     # Email notification
     expect( email.subject ).to eq "Notification of complaint assignment"
     expect( addressee ).to eq user.first_last_name
-    expect( complaint_url ).to match (/#{Regexp.escape complaints_path(:en,case_reference:complaint.case_reference.to_s)}$/i)
+    expect( complaint_url ).to match (/#{Regexp.escape complaint.url}$/i)
     expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
     expect( header_field('From')).to eq "NHRI Hub Administrator<no_reply@nhri-hub.com>"
     expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
@@ -209,13 +207,12 @@ feature "complaint register", :js => true do
     page.go_back
     expect( page_heading ).to eq "Individual Complaint Intake"
     page.go_forward
-    expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
+    expect(page_heading).to eq "Complaint, case reference: #{Complaint.last.case_reference}"
     page.go_back
     expect( page_heading ).to eq "Individual Complaint Intake"
     complete_required_fields(:individual)
-    next_ref = Complaint.next_case_reference # capture the expected value before saving
     expect{save_complaint}.to change{ IndividualComplaint.count }.by(1)
-    expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
+    expect(page_heading).to eq "Complaint, case reference: #{Complaint.last.case_reference}"
   end
 
   it "does not add a new complaint that is invalid" do

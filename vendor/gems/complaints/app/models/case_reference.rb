@@ -1,13 +1,44 @@
-class CaseReference
-  attr_accessor :ref, :year, :sequence
+class CaseReference < ActiveRecord::Base
+  belongs_to :complaint
 
-  def initialize(year=nil, sequence=nil)
-    @year = year.to_i
-    @sequence = sequence.to_i
+  def self.matching(fragment)
+    return no_filter if fragment.nil?
+    return no_filter if fragment.blank?
+    fragment = fragment.gsub(/\D/,'')
+    fragment = fragment.gsub(/^0*/,'')
+    fragment = "^#{fragment}"
+    return where("concat(sequence,year) ~ ?", fragment) if sequence_first
+    return where("concat(year, sequence) ~ ?", fragment) if year_first
   end
 
+  def self.no_filter
+    where("1=1")
+  end
+
+  def self.sequence_first
+    CaseReferenceFormat.match(/.*sequence.*year/)
+  end
+
+  def self.year_first
+    CaseReferenceFormat.match(/.*year.*sequence/)
+  end
+
+  def init_params
+    max = self.class.max
+    self.sequence = max&.next_ref&.sequence || 1
+    self.year = current_year
+  end
+
+  def self.max
+    sub_query = "select max(array[case_refs.year, case_refs.sequence]) from case_references as case_refs"
+    query = "select * from case_references where array[case_references.year,case_references.sequence] = (#{sub_query}) limit 1;"
+    find_by_sql(query).first
+  end
+
+  before_create :init_params
+
   def to_s
-    CaseReferenceFormat%{year:year,sequence:sequence}
+    CaseReferenceFormat%{sequence:sequence,year:year}
   end
   alias_method :as_json, :to_s
 
@@ -16,11 +47,11 @@ class CaseReference
   end
 
   def next_ref
-    self.class.new(next_year, next_sequence)
+    self.class.new(sequence: next_sequence, year: next_year)
   end
 
   def next_year
-    [year,current_year].max # year may be nil
+    [year || 0, current_year].max # year may be nil
   end
 
   def current_year
@@ -29,19 +60,19 @@ class CaseReference
 
   def next_sequence
     if year == current_year
-      sequence + 1
+      (sequence || 0) + 1
     else
       1
     end
   end
 
-  def self.sql_match(case_reference_fragment)
-    digits = case_reference_fragment&.delete('^0-9')
-    if digits.nil? || digits.empty?
-      "1=1"
-    else
-      match, year, sequence = digits.match(/^(\d{1,2})(\d*)/).to_a
-      "complaints.case_reference ~* 'year: #{year}\\d?\\nsequence: #{sequence}'" # postgres ~* operator is case-insensitive regex match
-    end
-  end
+  #def self.sql_match(case_reference_fragment)
+    #digits = case_reference_fragment&.delete('^0-9')
+    #if digits.nil? || digits.empty?
+      #"1=1"
+    #else
+      #match, year, sequence = digits.match(/^(\d{1,2})(\d*)/).to_a
+      #"complaints.case_reference ~* 'year: #{year}\\d?\\nsequence: #{sequence}'" # postgres ~* operator is case-insensitive regex match
+    #end
+  #end
 end

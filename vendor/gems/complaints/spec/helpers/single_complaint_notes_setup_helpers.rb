@@ -11,8 +11,8 @@ module SingleComplaintNotesSetupHelpers
     create_complaint_statuses
     create_agencies
     complaint = FactoryBot.create( :individual_complaint,
-                       :open,
                        :with_associations,
+                       :registered,
                        :agencies => [Agency.first],
                        :assigned_to => [User.where(:login => 'admin').first, User.where(:login => 'admin').first],
                        :reminders=>[FactoryBot.create(:reminder, :complaint)],

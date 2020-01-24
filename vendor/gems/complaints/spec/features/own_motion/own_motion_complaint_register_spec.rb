@@ -21,11 +21,11 @@ feature "complaint pages navigation", :js => true do
     expect(page).to have_selector('.nav #compl .dropdown-menu #intake', text: 'Intake')
     expect(page).to have_selector('.nav #compl .dropdown-menu #list', text: 'List')
     page.find('.nav #compl .dropdown-menu #intake').hover
-    expect(page).to have_selector('.nav #compl .dropdown-menu #organization', text: 'Organization')
+    expect(page).to have_selector('.nav #compl .dropdown-menu #own_motion', text: 'Own Motion')
   end
 end
 
-feature "organization complaint intake", :js => true do
+feature "complaints index", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecSetupHelpers
   include ComplaintsSpecHelpers
@@ -38,21 +38,21 @@ feature "organization complaint intake", :js => true do
   let(:current_year){ Date.today.strftime('%y').to_i }
 
   before do
-    populate_database(:organization_complaint)
-    visit complaint_register_path('en', 'organization')
+    populate_database(:own_motion_complaint)
+    visit complaint_register_path('en', 'own_motion')
   end
 
   it "initiates registration via duplicate complaints check" do
-    visit complaint_intake_path('en', 'organization')
+    visit complaint_intake_path('en', 'own_motion')
     page.find("#proceed_to_intake").click
-    expect(page_heading).to eq "Organization Complaint Intake"
-    complete_required_fields(:organization)
-    expect{save_complaint}.to change{ OrganizationComplaint.count }.by(1)
+    expect(page_heading).to eq "Own Motion Complaint Intake"
+    complete_required_fields(:own_motion)
+    expect{save_complaint}.to change{ OwnMotionComplaint.count }.by(1)
   end
 
   it "adds a new complaint that is valid" do
-    expect( page_heading ).to eq "Organization Complaint Intake"
-    complete_required_fields(:organization)
+    expect( page_heading ).to eq "Own Motion Complaint Intake"
+    complete_required_fields(:own_motion)
     expect{save_complaint}.to change{ Complaint.count }.by(1)
 
     # on the server
@@ -64,19 +64,17 @@ feature "organization complaint intake", :js => true do
   it "adds a new complaint that is valid" do
     user = User.staff.first
     fill_in('title', :with => "Ambassador")
-    fill_in('contact_last_name', :with => "Normal")
-    fill_in('contact_first_name', :with => "Norman")
+    fill_in('lastName', :with => "Normal")
+    fill_in('firstName', :with => "Norman")
     fill_in('physical_address', :with => '1311 Santa Rosa Avenue')
     fill_in('postal_address', :with => '8844 Sebastopol Road')
     fill_in('city', :with => "Normaltown")
     fill_in('province', with: 'Gondwanaland')
     fill_in('postal_code', with: '12345')
-    fill_in('contact_email', :with => "norm@acme.co.ws")
-    fill_in('contact_phone', :with => "555-1212")
-    fill_in('contact_cell_phone', :with => "555-1212")
-    fill_in('contact_fax', with: '832-4489')
-    fill_in('organization_name', :with => 'Acme Corp')
-    fill_in('organization_registration_number', :with => '1234abcd')
+    fill_in('email', :with => "norm@acme.co.ws")
+    fill_in('home_phone', :with => "555-1212")
+    fill_in('cell_phone', :with => "555-1212")
+    fill_in('fax', with: '832-4489')
     choose('Fax')
     fill_in('complaint_details', :with => "a long story about lots of stuff")
     fill_in('desired_outcome', :with => "Life gets better")
@@ -94,16 +92,15 @@ feature "organization complaint intake", :js => true do
 
     expect(page).to have_selector("#complaint_documents .document .filename", :text => "first_upload_file.pdf")
 
-    next_ref = Complaint.next_case_reference
     expect{save_complaint}.to change{ Complaint.count }.by(1)
                                 .and change{ ComplaintComplaintSubarea.count }.by(3)
                                 .and change{ ComplaintAgency.count }.by(2)
                                 .and change{ ActionMailer::Base.deliveries.count }.by(1)
     ## on the server
     complaint = Complaint.last
-    expect(complaint).to be_a(OrganizationComplaint)
-    expect(complaint.case_reference.year).to eq next_ref.year
-    expect(complaint.case_reference.sequence).to eq next_ref.sequence
+    expect(complaint).to be_a(OwnMotionComplaint)
+    expect(complaint.case_reference.year).to eq complaint.case_reference.year
+    expect(complaint.case_reference.sequence).to eq 3
     expect(complaint.title).to eq "Ambassador"
     expect(complaint.lastName).to eq "Normal"
     expect(complaint.firstName).to eq "Norman"
@@ -116,8 +113,6 @@ feature "organization complaint intake", :js => true do
     expect(complaint.home_phone).to eq "555-1212"
     expect(complaint.cell_phone).to eq "555-1212"
     expect(complaint.fax).to eq "832-4489"
-    expect(complaint.organization_name).to eq "Acme Corp"
-    expect(complaint.organization_registration_number).to eq '1234abcd'
     expect(complaint.preferred_means).to eq 'fax'
     expect(complaint.details).to eq "a long story about lots of stuff"
     expect(complaint.desired_outcome).to eq "Life gets better"
@@ -127,7 +122,7 @@ feature "organization complaint intake", :js => true do
     expect(complaint.complaint_subareas.map(&:name)).to match_array ["Delayed action", "CAT", "Unreasonable delay"]
     expect(complaint.current_assignee_name).to eq User.staff.first.first_last_name
     expect(complaint.status_changes.count).to eq 1
-    expect(complaint.status_changes.first.complaint_status.name).to eq "Under Evaluation"
+    expect(complaint.status_changes.first.complaint_status.name).to eq "Registered"
     expect(complaint.agencies.map(&:name)).to include "SAA"
     expect(complaint.agencies.map(&:name)).to include "ACC"
     expect(complaint.complaint_documents.count).to eq 1
@@ -135,11 +130,11 @@ feature "organization complaint intake", :js => true do
     expect(complaint.complaint_documents[0].title).to eq "Complaint Document"
 
     ## on the client
-    expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
-    expect(find('#complaint #complaint_type').text).to eq "Organization complaint"
+    expect(page_heading).to eq "Complaint, case reference: #{Complaint.last.case_reference}"
+    expect(find('#complaint #complaint_type').text).to eq "Own motion complaint"
     expect(find('#complaint #title').text).to eq "Ambassador"
-    expect(find('#complaint #contact_last_name').text).to eq "Normal"
-    expect(find('#complaint #contact_first_name').text).to eq "Norman"
+    expect(find('#complaint #lastName').text).to eq "Normal"
+    expect(find('#complaint #firstName').text).to eq "Norman"
     expect(find('#complaint #physical_address').text).to eq "1311 Santa Rosa Avenue"
     expect(find('#complaint #postal_address').text).to eq  "8844 Sebastopol Road"
     expect(find('#complaint #city').text).to eq "Normaltown"
@@ -149,15 +144,13 @@ feature "organization complaint intake", :js => true do
     expect(find('#complaint #home_phone').text).to eq "555-1212"
     expect(find('#complaint #cell_phone').text).to eq "555-1212"
     expect(find('#complaint #fax').text).to eq "832-4489"
-    expect(find('#complaint #organization_name').text).to eq "Acme Corp"
-    expect(find('#complaint #organization_registration_number').text).to eq "1234abcd"
     expect(find('#complaint #preferred_means').text).to eq 'fax'
     expect(find('#complaint #complaint_details').text).to eq "a long story about lots of stuff"
     expect(find('#complaint #desired_outcome').text).to eq "Life gets better"
     expect(find('#complaint #complained_to_subject_agency').text).to eq "yes"
     expect(find('#complaint #date').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
     expect(find('#complaint #current_assignee').text).to eq user.first_last_name
-    expect(find('#complaint #status_changes .status_change .status_humanized').text).to eq 'Under Evaluation'
+    expect(find('#complaint #status_changes .status_change .status_humanized').text).to eq 'Registered'
     #expect(find('#complaint .gender').text).to eq "male" # this should work, but I postponed troubleshooting in favour of other activities!
 
     within special_investigations_unit_area do
@@ -182,7 +175,7 @@ feature "organization complaint intake", :js => true do
     # Email notification
     expect( email.subject ).to eq "Notification of complaint assignment"
     expect( addressee ).to eq user.first_last_name
-    expect( complaint_url ).to match (/#{Regexp.escape complaints_path(:en,case_reference:complaint.case_reference.to_s)}$/i)
+    expect( complaint_url ).to match (/#{Regexp.escape complaint.url}$/i)
     expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
     expect( header_field('From')).to eq "NHRI Hub Administrator<no_reply@nhri-hub.com>"
     expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
@@ -191,15 +184,14 @@ feature "organization complaint intake", :js => true do
 
     # back button
     page.go_back
-    expect( page_heading ).to eq "Organization Complaint Intake"
+    expect( page_heading ).to eq "Own Motion Complaint Intake"
     page.go_forward
-    expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
+    expect(page_heading).to eq "Complaint, case reference: #{Complaint.last.case_reference}"
     page.go_back
-    expect( page_heading ).to eq "Organization Complaint Intake"
-    complete_required_fields(:organization)
-    next_ref = Complaint.next_case_reference # capture the expected value before saving
+    expect( page_heading ).to eq "Own Motion Complaint Intake"
+    complete_required_fields(:own_motion)
     expect{save_complaint}.to change{ Complaint.count }.by(1)
-    expect(page_heading).to eq "Complaint, case reference: #{next_ref}"
+    expect(page_heading).to eq "Complaint, case reference: #{Complaint.last.case_reference}"
   end
 
   it "does not add a new complaint that is invalid" do
@@ -217,9 +209,9 @@ feature "organization complaint intake", :js => true do
     expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
     expect(page).to have_selector('#province_error', :text => "You must enter a province")
     expect(page).to have_selector('#postal_code_error', :text => "You must enter a postal code")
-    fill_in('contact_last_name', :with => "Normal")
+    fill_in('lastName', :with => "Normal")
     expect(page).not_to have_selector('#lastName_error', :text => "You must enter a first name")
-    fill_in('contact_first_name', :with => "Norman")
+    fill_in('firstName', :with => "Norman")
     expect(page).not_to have_selector('#firstName_error', :text => "You must enter a last name")
     fill_in('city', :with => "Leaden Roding")
     expect(page).not_to have_selector('#city_error', :text => 'You must enter a city')
@@ -241,18 +233,18 @@ feature "organization complaint intake", :js => true do
     # preferred means --email
     save_complaint(false)
     expect(page).to have_selector('#email_error', :text => "email designated as preferred communication means. You must enter an email")
-    choose("Contact phone")
+    choose("Phone")
     expect(page).not_to have_selector('#email_error', :text => "email designated as preferred communication means. You must enter an email")
-    # preferred means --contact phone
+    # preferred means --home phone
     save_complaint(false)
-    expect(page).to have_selector('#contact_phone_error', :text => "Contact phone designated as preferred communication means. You must enter a contact phone number")
+    expect(page).to have_selector('#home_phone_error', :text => "Phone designated as preferred communication means. You must enter a phone number")
     choose("Cell phone")
-    expect(page).not_to have_selector('#contact_phone_error', :text => "Contact phone designated as preferred communication means. You must enter a contact phone number")
+    expect(page).not_to have_selector('#home_phone_error', :text => "Phone designated as preferred communication means. You must enter a phone number")
     # preferred means --cell phone
     save_complaint(false)
-    expect(page).to have_selector('#contact_cell_phone_error', :text => "Cell phone designated as preferred communication means. You must enter a cell phone number")
+    expect(page).to have_selector('#cell_phone_error', :text => "Cell phone designated as preferred communication means. You must enter a cell phone number")
     choose("Fax")
-    expect(page).not_to have_selector('#contact_cell_phone_error', :text => "Cell phone designated as preferred communication means. You must enter a cell phone number")
+    expect(page).not_to have_selector('#cell_phone_error', :text => "Cell phone designated as preferred communication means. You must enter a cell phone number")
     # preferred means --fax
     save_complaint(false)
     expect(page).to have_selector('#fax_error', :text => "Fax designated as preferred communication means. You must enter a fax number")
@@ -280,7 +272,7 @@ feature "organization complaint intake", :js => true do
 
   it "flags as invalid when file attachment is unpermitted filetype" do
     SiteConfig["complaint_document.filetypes"]=["doc"]
-    visit complaint_register_path('en', 'organization')
+    visit complaint_register_path('en', 'own_motion')
 
     attach_file("complaint_fileinput", upload_image)
     expect(page).to have_css('#original_type_error', :text => "File type not allowed")
@@ -290,7 +282,7 @@ feature "organization complaint intake", :js => true do
   end
 
   it "sets date_received to today's date if it is not provided when adding" do
-    complete_required_fields(:organization)
+    complete_required_fields(:own_motion)
     expect{save_complaint}.to change{ Complaint.count }.by(1)
 
     # on the server

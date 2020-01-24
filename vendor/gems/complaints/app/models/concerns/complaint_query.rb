@@ -4,8 +4,7 @@ module ComplaintQuery
 
   class_methods do
     def with_case_reference_match(case_ref_fragment)
-      sql = CaseReference.sql_match(case_ref_fragment)
-      where(sql)
+      joins(:case_reference).merge(CaseReference.matching(case_ref_fragment))
     end
 
     # can take either an array of strings or symbols

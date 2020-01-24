@@ -27,10 +27,7 @@ RSpec.describe ReminderMailer, type: :mailer do
       unsubscribe_url = html.xpath(".//a[@id='opt_out_link']/@href").text
       url = URI.parse(source_link)
       expect(url.host).to eq SITE_URL
-      expect(url.path).to eq "/en/complaints"
-      params = CGI.parse(url.query)
-      expect(params.keys.first).to eq "case_reference"
-      expect(params.values.first).to eq [complaint.case_reference.to_s]
+      expect(url.path).to eq "/en/complaints/3"
       expect( mail.header_fields.find{|h| h.name == 'From'}.value).to eq "NHRI Hub Administrator<no_reply@nhri-hub.com>"
       expect( mail.header_fields.find{|h| h.name == 'List-Unsubscribe-Post'}.value).to eq "List-Unsubscribe=One-Click"
       expect( mail.header_fields.find{|h| h.name == 'List-Unsubscribe'}.value).to eq admin_unsubscribe_url(:en,user.id, user.reload.unsubscribe_code, host: SITE_URL, protocol: :https)

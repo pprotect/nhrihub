@@ -18,8 +18,8 @@ module ComplaintsRemindersSetupHelpers
     create_agencies
     create_complaint_statuses
     FactoryBot.create( :complaint,
-                       :open,
                        :with_associations,
+                       :assessment,
                        :assigned_to => [User.where(:login => 'admin').first, User.where(:login => 'admin').first],
                        :agencies => [Agency.first],
                        :reminders=>[FactoryBot.create(:reminder,

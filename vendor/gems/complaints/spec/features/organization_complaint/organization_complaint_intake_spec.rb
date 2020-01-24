@@ -53,7 +53,7 @@ feature "organization complaint duplicate check", :js => true do
 
     enabled_text_fields = %w[organization_name organization_registration_number]
 
-    status_checkboxes = %w[under_evaluation open suspended closed ]
+    status_checkboxes = ComplaintStatus.all.map{|status| status.name.gsub(/\s/,'_').downcase }
 
     preferred_means_checkboxes = %w[preferred_means_mail preferred_means_email
                                     preferred_means_home_phone preferred_means_cell_phone

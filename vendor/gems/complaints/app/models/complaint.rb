@@ -1,5 +1,4 @@
 #require Complaints::Engine.root.join('app', 'domain_models', 'cache')
-#require 'case_reference'
 
 class Complaint < ActiveRecord::Base
   #include Cache
@@ -26,30 +25,32 @@ class Complaint < ActiveRecord::Base
   has_many :complaint_documents, :dependent => :destroy
   accepts_nested_attributes_for :complaint_documents
   has_many :communications, :dependent => :destroy
+  has_one :case_reference, :dependent => :destroy
 
   attr_accessor :witness_name, :heading
 
   # why after_commit iso after_create? see https://dev.mikamai.com/2016/01/19/postgresql-transaction-and-rails-callbacks/
-  after_commit :generate_case_reference, on: :create
-  serialize :case_reference, CaseReference
+  after_create :generate_case_reference
 
   def generate_case_reference
-    update_column :case_reference, Complaint.next_case_reference
+    self.case_reference = CaseReference.create
+    #update_column :case_reference, Complaint.next_case_reference
     # must be done after commit b/c case_reference is not final until the last commit
     assigns.last&.notify_assignee
   end
 
   def assign_initial_status(user)
-    self.status_changes_attributes = [{:user_id => user.id, :name => "Under Evaluation"}]
+    self.status_changes_attributes = [{:user_id => user.id, :name => "Registered"}]
   end
 
   def notify_assignee(assign)
     # i.e. when complaint is updated with a new assign
-    assign.notify_assignee if assigns.size > 1
+    assign.notify_assignee if assigns.size > 1 && persisted?
   end
 
   def self.default_index_query_params(user_id)
-    { selected_assignee_id:        user_id,
+    {
+      selected_assignee_id:        user_id,
       selected_status_ids:         ComplaintStatus.default.map(&:id),
       selected_complaint_area_ids: ComplaintArea.pluck(:id),
       selected_subarea_ids:        ComplaintSubarea.pluck(:id),
@@ -110,17 +111,15 @@ class Complaint < ActiveRecord::Base
     change_date = attrs[:change_date].nil? ? DateTime.now : DateTime.new(attrs[:change_date])
     user_id = attrs[:user_id]
     if !persisted?
-      complaint_status = ComplaintStatus.find_or_create_by(:name => "Under Evaluation")
+      complaint_status = ComplaintStatus.find_or_create_by(:name => "Registered")
       complaint_status_id = complaint_status.id
       status_changes.build({:user_id => user_id,
                             :change_date => change_date,
                             :complaint_status_id => complaint_status_id})
-    elsif !(attrs[:name].nil? || attrs[:name] == "null") && attrs[:name] != current_status_humanized
-      complaint_status = ComplaintStatus.find_or_create_by(:name => attrs[:name])
-      complaint_status_id = complaint_status.id
+    elsif !(attrs[:status_id].nil? || attrs[:status_id] == "null") && attrs[:status_id].to_i != status_id
       status_changes.build({:user_id => user_id,
                             :change_date => change_date,
-                            :complaint_status_id => complaint_status_id})
+                            :complaint_status_id => attrs[:status_id]})
     end
   end
 
@@ -155,6 +154,10 @@ class Complaint < ActiveRecord::Base
     type&.underscore&.humanize
   end
 
+  def type_as_symbol
+    type.gsub(/Complaint$/,'').underscore
+  end
+
   def as_json(options = {})
     # these fields are included in options when json: complaint is called in a controller
     if options.except(:status, :prefixes, :template, :layout).blank?
@@ -168,7 +171,7 @@ class Complaint < ActiveRecord::Base
                            :date,
                            :date_of_birth,
                            :dob,
-                           :current_status_humanized,
+                           :status_id,
                            :attached_documents,
                            :complaint_area_id,
                            :subarea_ids,
@@ -235,22 +238,23 @@ class Complaint < ActiveRecord::Base
     complaint_documents
   end
 
-  def self.next_case_reference
-    case_references = CaseReferenceCollection.new(all.pluck(:case_reference))
-    case_references.next_ref
-  end
+  #def self.next_case_reference
+    #case_references = CaseReferenceCollection.new(all.pluck(:case_reference))
+    #case_references.next_ref
+  #end
 
   def closed?
     !current_status
   end
 
-  def current_status
-    status_changes.sort_by(&:change_date).last.complaint_status.name
+  def status_id
+    status_changes.sort_by(&:change_date).last&.complaint_status&.id
   end
 
-  def current_status_humanized
-    status_changes.sort_by(&:change_date).last.status_humanized unless status_changes.empty?
+  def current_status
+    status_changes.sort_by(&:change_date).last&.complaint_status&.name
   end
+  alias_method :current_status_humanized, :current_status
 
   def _complained_to_subject_agency
     complained_to_subject_agency ? 'yes' : 'no'
@@ -306,12 +310,13 @@ class Complaint < ActiveRecord::Base
   end
 
   def url
-    complaint_path('en', self)
+    complaint_url('en', {:host => SITE_URL, :protocol => 'https', :id => id})
   end
+  alias_method :index_url, :url # only for conformity wih the reminder convention
 
-  def index_url
-    complaints_url('en', {:host => SITE_URL, :protocol => 'https', :case_reference => case_reference})
-  end
+  #def index_url
+    #complaints_url('en', {:host => SITE_URL, :protocol => 'https', :case_reference => case_reference})
+  #end
 
   def complainant_full_name
     [title, firstName, lastName].join(' ')

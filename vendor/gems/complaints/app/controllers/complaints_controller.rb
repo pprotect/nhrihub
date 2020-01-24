@@ -53,7 +53,7 @@ class ComplaintsController < ApplicationController
   def update
     params[:complaint].delete(:type) # ignore type on update... it will be correct
     complaint = Complaint.find(params[:id])
-    params[:complaint][:status_changes_attributes] = [{:user_id => current_user.id, :name => params[:complaint].delete(:current_status_humanized)}]
+    params[:complaint][:status_changes_attributes] = [{:user_id => current_user.id, :status_id => params[:complaint].delete(:status_id)}]
     if complaint.update(complaint_params)
       render :json => complaint, :status => 200
     else
@@ -74,7 +74,7 @@ class ComplaintsController < ApplicationController
     populate_associations
     @complaint = Complaint.find(params[:id])
     @title = t('.heading', case_reference: @complaint.case_reference)
-    @type = @complaint.complaint_type.split(' ').first.downcase
+    @type = @complaint.type_as_symbol
     @edit = false
     @mode = "show"
     respond_to do |format|
@@ -153,7 +153,7 @@ class ComplaintsController < ApplicationController
                                        :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
                                        :organization_name, :organization_registration_number,
                                        :subarea_ids => [],
-                                       :status_changes_attributes => [:user_id, :name],
+                                       :status_changes_attributes => [:user_id, :status_id],
                                        :agency_ids => [],
                                        :complaint_documents_attributes => [:file, :title, :original_filename, :original_type, :filesize, :lastModifiedDate],
                                      )

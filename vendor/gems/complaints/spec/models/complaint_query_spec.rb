@@ -6,9 +6,9 @@ describe "scope class methods" do
   include UserSetupHelper
   include ComplaintsSpecSetupHelpers
 
-  let(:open){ ComplaintStatus.where(:name => 'Open').first.id }
-  let(:closed){ ComplaintStatus.where(:name => 'Closed').first.id }
-  let(:under_evaluation){ ComplaintStatus.where(:name => 'Under Evaluation').first.id }
+  let(:registered){ ComplaintStatus.find_or_create_by(:name => 'Registered').id }
+  let(:closed){ ComplaintStatus.find_or_create_by(:name => 'Closed').id }
+  let(:assessment){ ComplaintStatus.find_or_create_by(:name => 'Assessment').id }
 
 
   describe "query by current assignee" do
@@ -28,15 +28,15 @@ describe "scope class methods" do
 
   describe "query by current status" do
     before do
-      FactoryBot.create(:complaint, :open)
+      FactoryBot.create(:complaint, :registered)
       FactoryBot.create(:complaint, :closed)
-      FactoryBot.create(:complaint, :under_evaluation)
+      FactoryBot.create(:complaint, :assessment)
     end
 
     it "returns complaints with current requested status" do
-      expect(Complaint.with_status(open)).to eq Complaint.all.select{|c| c.current_status == 'Open'}
+      expect(Complaint.with_status(registered)).to eq Complaint.all.select{|c| c.current_status == 'Registered'}
       expect(Complaint.with_status(closed)).to eq Complaint.all.select{|c| c.current_status == 'Closed'}
-      expect(Complaint.with_status(under_evaluation)).to eq Complaint.all.select{|c| c.current_status == 'Under Evaluation'}
+      expect(Complaint.with_status(assessment)).to eq Complaint.all.select{|c| c.current_status == 'Assessment'}
     end
   end
 
@@ -44,35 +44,39 @@ describe "scope class methods" do
     before do
       @user = create_user('admin')
       @staff_user = create_user('staff')
-      FactoryBot.create(:complaint, :open, :assigned_to => [@user, @staff_user])
+      FactoryBot.create(:complaint, :registered, :assigned_to => [@user, @staff_user])
       FactoryBot.create(:complaint, :closed, :assigned_to => [@user, @staff_user])
-      FactoryBot.create(:complaint, :open, :assigned_to => [@staff_user, @user])
+      FactoryBot.create(:complaint, :registered, :assigned_to => [@staff_user, @user])
       FactoryBot.create(:complaint, :closed, :assigned_to => [@staff_user, @user])
     end
 
     it "should merge the two scopes" do
-      expect(Complaint.with_status(open).for_assignee(@user.id).length).to eq 1
+      expect(Complaint.with_status(registered).for_assignee(@user.id).length).to eq 1
+    end
+
+    it "should merge the two scopes when there are no matches" do
+      expect(Complaint.with_status(assessment).for_assignee(@user.id).length).to eq 0
     end
   end
 
   describe "query by date_received" do
     before do
       user = FactoryBot.create(:user)
-      FactoryBot.create(:complaint, :open, assigned_to: user, date_received: 1.month.ago)
-      FactoryBot.create(:complaint, :open, assigned_to: user, date_received: 1.month.ago.end_of_day)
-      FactoryBot.create(:complaint, :open, assigned_to: user, date_received: 1.month.ago.beginning_of_day)
+      FactoryBot.create(:complaint, :registered, assigned_to: user, date_received: 1.month.ago)
+      FactoryBot.create(:complaint, :registered, assigned_to: user, date_received: 1.month.ago.end_of_day)
+      FactoryBot.create(:complaint, :registered, assigned_to: user, date_received: 1.month.ago.beginning_of_day)
 
-      FactoryBot.create(:complaint, :open, assigned_to: user, date_received: 2.months.ago)
-      FactoryBot.create(:complaint, :open, assigned_to: user, date_received: 2.months.ago.end_of_day)
-      FactoryBot.create(:complaint, :open, assigned_to: user, date_received: 2.months.ago.beginning_of_day)
+      FactoryBot.create(:complaint, :registered, assigned_to: user, date_received: 2.months.ago)
+      FactoryBot.create(:complaint, :registered, assigned_to: user, date_received: 2.months.ago.end_of_day)
+      FactoryBot.create(:complaint, :registered, assigned_to: user, date_received: 2.months.ago.beginning_of_day)
 
-      FactoryBot.create(:complaint, :open, assigned_to: user, date_received: 3.months.ago)
-      FactoryBot.create(:complaint, :open, assigned_to: user, date_received: 3.months.ago.end_of_day)
-      FactoryBot.create(:complaint, :open, assigned_to: user, date_received: 3.months.ago.beginning_of_day)
+      FactoryBot.create(:complaint, :registered, assigned_to: user, date_received: 3.months.ago)
+      FactoryBot.create(:complaint, :registered, assigned_to: user, date_received: 3.months.ago.end_of_day)
+      FactoryBot.create(:complaint, :registered, assigned_to: user, date_received: 3.months.ago.beginning_of_day)
 
-      FactoryBot.create(:complaint, :open, assigned_to: user, date_received: 4.months.ago)
-      FactoryBot.create(:complaint, :open, assigned_to: user, date_received: 4.months.ago.end_of_day)
-      FactoryBot.create(:complaint, :open, assigned_to: user, date_received: 4.months.ago.beginning_of_day)
+      FactoryBot.create(:complaint, :registered, assigned_to: user, date_received: 4.months.ago)
+      FactoryBot.create(:complaint, :registered, assigned_to: user, date_received: 4.months.ago.end_of_day)
+      FactoryBot.create(:complaint, :registered, assigned_to: user, date_received: 4.months.ago.beginning_of_day)
     end
 
     it "returns complaints before the 'to' date" do
@@ -112,7 +116,7 @@ describe "scope class methods" do
       complaint_area = ComplaintArea.first
       complaint_subarea = ComplaintSubarea.where(area_id: complaint_area.id).first
       FactoryBot.create(:complaint,
-                        :open,
+                        :registered,
                         assigned_to: user,
                         complaint_area_id: complaint_area.id,
                         agencies: [Agency.first],
@@ -166,9 +170,9 @@ describe "selects complaints matching the selected subarea" do
     create_agencies
     create_complaint_areas
     complaint_area_id = ComplaintArea.first.id
-    @foo_complaint = FactoryBot.create(:complaint, :open, agencies: [Agency.first], complaint_area_id: complaint_area_id, complaint_subareas: [foo_subarea], assigned_to: user)
-    @bar_complaint = FactoryBot.create(:complaint,:open, agencies: [Agency.first], complaint_area_id: complaint_area_id, complaint_subareas: [bar_subarea],  assigned_to: user)
-    @baz_complaint = FactoryBot.create(:complaint, :open, agencies: [Agency.first], complaint_area_id: complaint_area_id, complaint_subareas: [baz_subarea],  assigned_to: user)
+    @foo_complaint = FactoryBot.create(:complaint, :registered, agencies: [Agency.first], complaint_area_id: complaint_area_id, complaint_subareas: [foo_subarea], assigned_to: user)
+    @bar_complaint = FactoryBot.create(:complaint,:registered, agencies: [Agency.first], complaint_area_id: complaint_area_id, complaint_subareas: [bar_subarea],  assigned_to: user)
+    @baz_complaint = FactoryBot.create(:complaint, :registered, agencies: [Agency.first], complaint_area_id: complaint_area_id, complaint_subareas: [baz_subarea],  assigned_to: user)
   end
 
   it "should return complaints with subareas indicated by the query" do
@@ -204,8 +208,8 @@ describe "selects complaints matching the selected agency" do
     create_agencies
     create_complaint_areas
     complaint_area_id = ComplaintArea.first.id
-    @foo_complaint = FactoryBot.create(:complaint, :open, assigned_to: user)
-    @bar_complaint = FactoryBot.create(:complaint,:open, agencies: [Agency.first], assigned_to: user)
+    @foo_complaint = FactoryBot.create(:complaint, :registered, assigned_to: user)
+    @bar_complaint = FactoryBot.create(:complaint, :registered, agencies: [Agency.first], assigned_to: user)
   end
 
   it "should do some darn thing useful" do
@@ -229,5 +233,45 @@ describe "selects complaints with home- cell- or fax-number matching" do
     expect(Complaint.with_phone("32").map(&:id)).to eq [@complaint1, @complaint2, @complaint3].map(&:id)
     expect(Complaint.with_phone("321").map(&:id)).to eq [@complaint1, @complaint3].map(&:id)
     expect(Complaint.with_phone("034").map(&:id)).to eq [@complaint2].map(&:id)
+  end
+end
+
+describe "#with_case_reference_match" do
+  context "single digit entry" do
+    before do
+      @complaint1 = FactoryBot.create(:complaint)
+      @complaint2 = FactoryBot.create(:complaint)
+      @complaint3 = FactoryBot.create(:complaint)
+    end
+
+    it "match case reference digits" do
+      expect(Complaint.with_case_reference_match("3").first).to eq @complaint3
+    end
+  end
+
+  context "disregards user-entered zeros" do
+    before do
+      @complaint1 = FactoryBot.create(:complaint)
+      @complaint2 = FactoryBot.create(:complaint)
+      @complaint3 = FactoryBot.create(:complaint)
+    end
+
+    it "match case reference digits" do
+      expect(Complaint.with_case_reference_match("00003").first).to eq @complaint3
+    end
+  end
+
+  context "multiple digit entry" do
+    before do
+      15.times do
+        FactoryBot.create(:complaint)
+      end
+    end
+
+    it "matches only the starting digit pattern" do
+      expect(Complaint.with_case_reference_match("5").count).to eq 1
+      expect(Complaint.with_case_reference_match("52").count).to eq 1
+      expect(Complaint.with_case_reference_match("520").count).to eq 1
+    end
   end
 end

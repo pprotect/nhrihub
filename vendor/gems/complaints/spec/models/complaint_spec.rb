@@ -4,14 +4,14 @@ require_relative '../../../authengine/spec/helpers/user_setup_helper'
 describe "complaint" do
   context "create" do
     before do
-      @complaint = Complaint.create({:status_changes_attributes => [{:name => nil}]})
+      @complaint = Complaint.create({:status_changes_attributes => [{:status_id => nil}]})
     end
 
-    it "should create a status_change and link to 'Under Evaluation' complaint status" do
+    it "should create a status_change and link to 'Registered' complaint status" do
       expect(@complaint.status_changes.length).to eq 1
       expect(@complaint.complaint_statuses.length).to eq 1
-      expect(@complaint.complaint_statuses.first.name).to eq "Under Evaluation"
-      expect(@complaint.current_status_humanized).to eq "Under Evaluation"
+      expect(@complaint.complaint_statuses.first.name).to eq "Registered"
+      expect(@complaint.current_status_humanized).to eq "Registered"
     end
 
     it "should create a complaint with unassigned agency when none is specified" do
@@ -21,26 +21,28 @@ describe "complaint" do
 
   context "update status" do
     before do
-      @complaint = Complaint.create({:status_changes_attributes => [{:name => nil}]})
-      @complaint.update({:status_changes_attributes => [{:name => "Active"}]})
+      complaint_status = ComplaintStatus.find_or_create_by(name: "Assessment")
+      @complaint = Complaint.create({:status_changes_attributes => [{:status_id => nil}]})
+      @complaint.update({:status_changes_attributes => [{:status_id => complaint_status.id }]})
     end
 
-    it "should create a status change object and link to the Active complaint status" do
+    it "should create a status change object and link to the Assessment complaint status" do
       expect(@complaint.status_changes.length).to eq 2
-      expect(@complaint.complaint_statuses.map(&:name)).to eq ["Under Evaluation", "Active"]
+      expect(@complaint.complaint_statuses.map(&:name)).to eq ["Registered", "Assessment"]
     end
   end
 
   context "update Complaint with no status change" do
     before do
-      @complaint = Complaint.create({:status_changes_attributes => [{:name => nil}]})
-      @complaint.update({:status_changes_attributes => [{:name => "Active"}]})
-      @complaint.update({:status_changes_attributes => [{:name => "Active"}]})
+      complaint_status = ComplaintStatus.find_or_create_by(name: "Assessment")
+      @complaint = Complaint.create({:status_changes_attributes => [{:status_id => nil}]})
+      @complaint.update({:status_changes_attributes => [{:status_id => complaint_status.id}]})
+      @complaint.update({:status_changes_attributes => [{:status_id => complaint_status.id}]})
     end
 
     it "should create a status change object and link to the Active complaint status" do
       expect(@complaint.status_changes.length).to eq 2
-      expect(@complaint.complaint_statuses.map(&:name)).to eq ["Under Evaluation", "Active"]
+      expect(@complaint.complaint_statuses.map(&:name)).to eq ["Registered", "Assessment"]
     end
   end
 end
@@ -63,51 +65,50 @@ describe "Complaint with gg complaint basis" do
   end
 end
 
-describe "next case reference" do
-  let(:current_year){ Date.today.strftime('%y').to_i }
-  let(:this_year_case_reference) { CaseReference.new(current_year,22) }
-  let(:formatted_case_reference) { ->(year,sequence){ CaseReferenceFormat%{year:year,sequence:sequence} } }
+#describe "next case reference" do
+  #let(:current_year){ Date.today.strftime('%y').to_i }
+  #let(:this_year_case_reference) { CaseReference.new(year: current_year, sequence: 22) }
+  #let(:formatted_case_reference) { ->(year,sequence){ CaseReferenceFormat%{year:year,sequence:sequence} } }
 
-  context "existing Complaints are from previous year" do
-    before do
-      complaint = Complaint.create
-      complaint.update_attribute(:case_reference, CaseReference.new(12,35))
-    end
+  #context "existing Complaints are from previous year" do
+    #before do
+      #complaint = Complaint.create
+      #complaint.case_reference = CaseReference.new(year: 12, sequence: 35))
+    #end
 
-    it "should start the sequence at 1 with the current year" do
-      expect(Complaint.next_case_reference.to_s).to eq formatted_case_reference[current_year, 1]
-    end
-  end
+    #it "should start the sequence at 1 with the current year" do
+      #expect(Complaint.next_case_reference.to_s).to eq formatted_case_reference[current_year, 1]
+    #end
+  #end
 
-  context "existing Complaints are from the current year" do
-    before do
-      complaint = Complaint.create
-      complaint.update_attribute(:case_reference, this_year_case_reference)
-    end
+  #context "existing Complaints are from the current year" do
+    #before do
+      #complaint = Complaint.create
+      #complaint.update_attribute(:case_reference, this_year_case_reference)
+    #end
 
-    it "should increment the sequence only" do
-      expect(Complaint.next_case_reference.to_s).to eq formatted_case_reference[current_year, 23]
-    end
-  end
+    #it "should increment the sequence only" do
+      #expect(Complaint.next_case_reference.to_s).to eq formatted_case_reference[current_year, 23]
+    #end
+  #end
 
-  context "no existing complaints" do
-    before do
-      # nothing!
-    end
+  #context "no existing complaints" do
+    #before do
+      ## nothing!
+    #end
 
-    it "should create the first case reference for the current year" do
-      expect(Complaint.next_case_reference.to_s).to eq formatted_case_reference[current_year, 1]
-    end
-  end
-end
+    #it "should create the first case reference for the current year" do
+      #expect(Complaint.next_case_reference.to_s).to eq formatted_case_reference[current_year, 1]
+    #end
+  #end
+#end
 
 describe "server assignment of case reference" do
   let(:formatted_case_reference) { ->(year,sequence){ CaseReferenceFormat%{year:year,sequence:sequence} } }
   let(:current_year){ Date.today.strftime('%y').to_i }
 
   it "should not assign case reference to a new complaint" do
-    expect(Complaint.new.case_reference.year).to be_zero
-    expect(Complaint.new.case_reference.sequence).to be_zero
+    expect(Complaint.new.case_reference).to be_nil
   end
 
   it "should assign case reference to a saved complaint" do
@@ -121,43 +122,22 @@ describe "sort algorithm" do
 
   before do
     c = Complaint.create
-    c.update_attribute(:case_reference, CaseReference.new(17,4))
+    c.case_reference.update(year: 17, sequence: 4)
     c = Complaint.create
-    c.update_attribute(:case_reference, CaseReference.new(16,10))
+    c.case_reference.update(year: 16, sequence: 10)
     c = Complaint.create
-    c.update_attribute(:case_reference, CaseReference.new(16,2))
+    c.case_reference.update(year: 16, sequence: 2)
     c = Complaint.create
-    c.update_attribute(:case_reference, CaseReference.new(16,1))
+    c.case_reference.update(year: 16, sequence: 1)
     c = Complaint.create
-    c.update_attribute(:case_reference, CaseReference.new(16,5))
+    c.case_reference.update(year: 16, sequence: 5)
     c = Complaint.create
-    c.update_attribute(:case_reference, CaseReference.new(15,11))
+    c.case_reference.update(year: 15, sequence: 11)
   end
 
   it "should sort by ascending case reference" do
     sequenced_case_refs = [[17,4],[16,10],[16,5],[16,2],[16,1],[15,11]].map{|attrs| formatted_case_reference[ *attrs ]}
-    expect(Complaint.all.sort.pluck(:case_reference).map(&:to_s)).to eq sequenced_case_refs
-  end
-end
-
-describe "#index_url" do
-  let(:formatted_case_reference) { ->(year,sequence){ CaseReferenceFormat%{year:year,sequence:sequence} } }
-  let(:current_year){ Date.today.strftime('%y').to_i }
-
-  before do
-    @complaint = Complaint.create
-    @complaint.update_attribute(:case_reference,  CaseReference.new(12,35))
-  end
-
-  it "should contain protocol, host, locale, complaints path, and case_reference query string" do
-    route = Rails.application.routes.recognize_path(@complaint.index_url)
-    expect(route[:locale]).to eq I18n.locale.to_s
-    url = URI.parse(@complaint.index_url)
-    expect(url.host).to eq SITE_URL
-    expect(url.path).to eq "/en/complaints"
-    params = CGI.parse(url.query)
-    expect(params.keys.first).to eq "case_reference"
-    expect(params.values.first).to eq [formatted_case_reference[12,35]]
+    expect(Complaint.all.sort.map(&:case_reference).map(&:to_s)).to eq sequenced_case_refs
   end
 end
 
@@ -196,7 +176,7 @@ describe "#as_json" do
         end
       end
 
-      ["Open", "Suspended", "Closed"].each do |name|
+      ComplaintStatus::Names.each do |name|
         ComplaintStatus.create(:name => name)
       end
 
@@ -205,7 +185,7 @@ describe "#as_json" do
       end
 
       2.times do |i|
-        FactoryBot.create(:complaint, :with_fixed_associations, :with_assignees, :with_document, :with_comm, :with_reminders, :with_two_notes, :case_reference => CaseReference.new(17,3-i))
+        FactoryBot.create(:complaint, :with_fixed_associations, :with_assignees, :with_document, :with_comm, :with_reminders, :with_two_notes, :case_reference => CaseReference.new(year: 17, sequence: 3-i))
       end
     end
 
@@ -218,7 +198,7 @@ describe "#as_json" do
                                                      "imported", "email", "gender", "dob", "details",
                                                      "firstName", "lastName", "title", "occupation", "employer",
                                                      "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name",
-                                                     "date", "date_of_birth", "current_status_humanized", "attached_documents",
+                                                     "date", "date_of_birth", "status_id", "attached_documents",
                                                      "status_changes", "agency_ids", "communications", "subarea_ids", "area_subarea_ids",
                                                      "cell_phone", "city", "complaint_area_id", "complaint_type",
                                                      "alt_id_type", "physical_address",
@@ -250,7 +230,7 @@ describe "#as_json" do
       expect(@complaints.first["current_assignee_name"]).to eq Complaint.first.current_assignee_name
       expect(@complaints.first["date"]).to eq Complaint.first.date
       expect(@complaints.first["date_of_birth"]).to eq Complaint.first.date_of_birth
-      expect(@complaints.first["current_status_humanized"]).to eq Complaint.first.current_status_humanized
+      expect(@complaints.first["status_id"]).to eq Complaint.first.status_id
       expect(@complaints.first["reminders"].first.keys).to match_array ["id", "text", "reminder_type", "remindable_id", "remindable_type", "start_date", "next", "user_id", "recipient", "next_date", "previous_date", "url", "start_year", "start_month", "start_day"]
       expect(@complaints.first["reminders"].first["recipient"].keys).to match_array ["id", "first_last_name"]
       expect(@complaints.first["notes"].first.keys).to match_array ["author_id", "author_name", "created_at", "date", "editor_id", "editor_name", "id", "notable_id", "notable_type", "text", "updated_at", "updated_on", "url"]
@@ -284,7 +264,7 @@ describe "#as_json" do
     before do
       2.times do |i|
         c = FactoryBot.create(:complaint)
-        c.update_attribute(:case_reference, CaseReference.new(17,3-i))
+        c.case_reference.update(year: 17, sequence: 3-i)
       end
     end
 
@@ -297,7 +277,7 @@ describe "#as_json" do
                                                      "imported", "email", "gender", "dob", "details",
                                                      "firstName", "lastName", "title", "occupation", "employer",
                                                      "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name",
-                                                     "date", "date_of_birth", "current_status_humanized", "attached_documents",
+                                                     "date", "date_of_birth", "status_id", "attached_documents",
                                                      "status_changes", "agency_ids", "communications", "subarea_ids", "area_subarea_ids",
                                                      "cell_phone", "city", "complaint_area_id", "complaint_type",
                                                      "alt_id_type", "physical_address",

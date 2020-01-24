@@ -84,7 +84,6 @@ FactoryBot.define do
     gender { ["m","f","o"].sample }
     dob { y=20+rand(40); m=rand(12); d=rand(31); Date.today.advance(:years => -y, :months => -m, :days => -d).to_s }
     complaint_area_id { ComplaintArea.pluck(:id).sample(1).first }
-
     title { Faker::Name.prefix }
     id_type { id_attribute[:type] }
     id_value { id_attribute[:value] }
@@ -143,7 +142,8 @@ FactoryBot.define do
       after :build do |complaint|
         complaint.complaint_area = ComplaintArea.all.sample
         complaint.complaint_subareas << ComplaintSubarea.all.sample(2)
-        complaint.status_changes << FactoryBot.create(:status_change, :open, :change_date => DateTime.now, :user_id => User.all.sample.id)
+        status = ComplaintStatus::Names.map{|name| name.downcase.gsub(/ /,'_').to_sym}.sample
+        complaint.status_changes << FactoryBot.create(:status_change, status, :change_date => DateTime.now, :user_id => User.all.sample.id)
         complaint.agency_ids = Agency.pluck(:id).sample(2)
       end
     end
@@ -152,7 +152,8 @@ FactoryBot.define do
       after :build do |complaint|
         complaint.complaint_area = ComplaintArea.all.sample
         complaint.complaint_subareas << ComplaintSubarea.all
-        complaint.status_changes << FactoryBot.create(:status_change, :open, :change_date => DateTime.now, :user_id => User.all.sample.id)
+        status = ComplaintStatus::Names.map{|name| name.downcase.gsub(/ /,'_').to_sym}.sample
+        complaint.status_changes << FactoryBot.create(:status_change, status, :change_date => DateTime.now, :user_id => User.all.sample.id)
         complaint.complaint_area_id = ComplaintArea.pluck(:id).sample(1)
         complaint.agency_ids = Agency.pluck(:id).sample(2)
       end
@@ -208,25 +209,15 @@ FactoryBot.define do
       end
     end
 
-    trait :open do
-      after(:build) do |complaint|
-        complaint.status_changes = [FactoryBot.create(:status_change, :open, change_date: 4.days.ago),
-                                    FactoryBot.create(:status_change, :closed, change_date: 20.days.ago)]
+    ComplaintStatus::Names.each { |name|
+      sym = name.downcase.gsub(/ /,'_').to_sym
+      trait sym do
+        after(:build) do |complaint|
+          complaint.status_changes = [FactoryBot.create(:status_change, sym, change_date: 4.days.ago),
+                                      FactoryBot.create(:status_change, :registered, change_date: 20.days.ago)]
+        end
       end
-    end
-
-    trait :closed do
-      after(:build) do |complaint|
-        complaint.status_changes = [FactoryBot.create(:status_change, :closed, change_date: 4.days.ago),
-                                    FactoryBot.create(:status_change, :open, change_date: 20.days.ago)]
-      end
-    end
-
-    trait :under_evaluation do
-      after(:build) do |complaint|
-        complaint.status_changes = [FactoryBot.create(:status_change, :under_evaluation, change_date: 4.days.ago)]
-      end
-    end
+    }
 
     factory :individual_complaint do
       type { 'IndividualComplaint' }
@@ -240,6 +231,8 @@ FactoryBot.define do
 
     factory :own_motion_complaint do
       type { 'OwnMotionComplaint' }
+      initiating_office_id { Office.not_branches.map(&:id).sample }
+      initiating_branch_id { Office.branches.map(&:id).sample }
     end
   end
 end
