@@ -59,8 +59,7 @@ feature "organization complaint duplicate check", :js => true do
     complained_checkboxes = %w[complained_to_subject_agency_yes complained_to_subject_agency_no]
     area_checkboxes = %w[good_governance special_investigations_unit human_rights]
 
-    (status_checkboxes +
-     preferred_means_checkboxes + complained_checkboxes + area_checkboxes).each do |checkbox|
+    ( preferred_means_checkboxes + complained_checkboxes + area_checkboxes).each do |checkbox|
       expect(page.find("##{checkbox}")[:disabled]).to eq "true"
     end
 
