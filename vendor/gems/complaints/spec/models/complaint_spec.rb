@@ -4,7 +4,7 @@ require_relative '../../../authengine/spec/helpers/user_setup_helper'
 describe "complaint" do
   context "create" do
     before do
-      @complaint = Complaint.create({:status_changes_attributes => [{:status_id => nil}]})
+      @complaint = IndividualComplaint.create({:status_changes_attributes => [{:status_id => nil}]})
     end
 
     it "should create a status_change and link to 'Registered' complaint status" do
@@ -22,7 +22,7 @@ describe "complaint" do
   context "update status" do
     before do
       complaint_status = ComplaintStatus.find_or_create_by(name: "Assessment")
-      @complaint = Complaint.create({:status_changes_attributes => [{:status_id => nil}]})
+      @complaint = IndividualComplaint.create({:status_changes_attributes => [{:status_id => nil}]})
       @complaint.update({:status_changes_attributes => [{:status_id => complaint_status.id }]})
     end
 
@@ -35,7 +35,7 @@ describe "complaint" do
   context "update Complaint with no status change" do
     before do
       complaint_status = ComplaintStatus.find_or_create_by(name: "Assessment")
-      @complaint = Complaint.create({:status_changes_attributes => [{:status_id => nil}]})
+      @complaint = IndividualComplaint.create({:status_changes_attributes => [{:status_id => nil}]})
       @complaint.update({:status_changes_attributes => [{:status_id => complaint_status.id}]})
       @complaint.update({:status_changes_attributes => [{:status_id => complaint_status.id}]})
     end
@@ -49,7 +49,7 @@ end
 
 describe "Complaint with gg complaint basis" do
   before do
-    @complaint = Complaint.create
+    @complaint = IndividualComplaint.create
     @good_governance_area = ComplaintArea.create(name: "Good Governance")
     good_governance_subarea = ComplaintSubarea.create(name: "A thing", area_id: @good_governance_area.id)
 
@@ -108,11 +108,11 @@ describe "server assignment of case reference" do
   let(:current_year){ Date.today.strftime('%y').to_i }
 
   it "should not assign case reference to a new complaint" do
-    expect(Complaint.new.case_reference).to be_nil
+    expect(IndividualComplaint.new.case_reference).to be_nil
   end
 
   it "should assign case reference to a saved complaint" do
-    expect(Complaint.create.reload.case_reference.to_s).to eq formatted_case_reference[current_year, 1]
+    expect(IndividualComplaint.create.reload.case_reference.to_s).to eq formatted_case_reference[current_year, 1]
   end
 end
 

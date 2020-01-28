@@ -158,6 +158,8 @@ en:
     suspended : "Suspended"
     yes : "Yes"
     village_error_message : "You must enter a village"
+    close_memo_error_message:  "You must supply a reason for closing"
+    close_memo_default_prompt: "Close memo"
 
   filter_controls:
     agency: "Agency(ies)"

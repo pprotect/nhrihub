@@ -122,7 +122,7 @@ feature "complaints index", :js => true do
     expect(complaint.complaint_subareas.map(&:name)).to match_array ["Delayed action", "CAT", "Unreasonable delay"]
     expect(complaint.current_assignee_name).to eq User.staff.first.first_last_name
     expect(complaint.status_changes.count).to eq 1
-    expect(complaint.status_changes.first.complaint_status.name).to eq "Registered"
+    expect(complaint.status_changes.first.complaint_status.name).to eq "Investigation"
     expect(complaint.agencies.map(&:name)).to include "SAA"
     expect(complaint.agencies.map(&:name)).to include "ACC"
     expect(complaint.complaint_documents.count).to eq 1
@@ -150,7 +150,7 @@ feature "complaints index", :js => true do
     expect(find('#complaint #complained_to_subject_agency').text).to eq "yes"
     expect(find('#complaint #date').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
     expect(find('#complaint #current_assignee').text).to eq user.first_last_name
-    expect(find('#complaint #status_changes .status_change .status_humanized').text).to eq 'Registered'
+    expect(find('#complaint #status_changes .status_change .status_humanized').text).to eq 'Investigation'
     #expect(find('#complaint .gender').text).to eq "male" # this should work, but I postponed troubleshooting in favour of other activities!
 
     within special_investigations_unit_area do

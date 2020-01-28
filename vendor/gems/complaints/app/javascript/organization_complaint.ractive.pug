@@ -56,7 +56,7 @@
         .col-md-10
           span#current_assignee {{ current_assignee_name }}
 
-      .row('data-toggle'= 'edit')
+      .row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
         .col-md-2
           label
             | {{ t.status }}
@@ -87,7 +87,7 @@
       .row
         .col-md-2
           label {{ t.contact }}
-        .col-md-9.complainant('data-toggle'='edit')
+        .col-md-9#complainant('data-toggle'='edit')
           .no_edit.in
             span#title {{ title }}
             span#contact_first_name {{ firstName }}
@@ -343,11 +343,11 @@
 
 
 style.
-  .complainant #firstName, #complainant #title {margin-right: .25em;}
-  .complainant .edit .col-md-4{
+  #complainant #firstName, #complainant #title {margin-right: .25em;}
+  #complainant .edit .col-md-4{
     padding-top:0px;
   }
-  .complainant .edit .col-md-4:nth-of-type(2), .complainant .edit .col-md-4:nth-of-type(3){
+  #complainant .edit .col-md-4:nth-of-type(2), #complainant .edit .col-md-4:nth-of-type(3){
     margin-top: -5px;
   }
   #alt_id_other_type_field.visible { display: block; }

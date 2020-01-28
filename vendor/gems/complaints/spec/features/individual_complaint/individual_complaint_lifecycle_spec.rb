@@ -22,30 +22,110 @@ feature "complaint register", :js => true do
     expect{save_complaint}.to change{ IndividualComplaint.count }.by(1)
     expect(IndividualComplaint.last.current_status_humanized).to eq "Registered"
   end
-
-
 end
 
-feature "complaints list", js: true do
+feature "assessment status next step", js: true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
+  include ComplaintsSpecSetupHelpers
 
   before do
-    FactoryBot.create( :individual_complaint, :registered )
-    FactoryBot.create( :individual_complaint, :registered )
-    visit complaints_path('en')
+    create_agencies
+    create_complaint_statuses
+    populate_areas_subareas
+    complaint = FactoryBot.create( :individual_complaint, :with_associations, :assessment, assigned_to: @user, date_received: Date.today.advance(years: -2, days: -1))
+    visit complaint_path('en', complaint.id)
+    edit_complaint
   end
 
-  it "should show registered status complaints in the complaints list" do
-    expect(page.find('h1').text).to eq "Complaints"
-    expect(page).to have_no_selector('#complaints .complaint')
-    open_dropdown('Select status')
-    expect{ select_option('Registered').click; wait_for_ajax }.to change{ page.all('#complaints .complaint').count }.by(2)
+  describe "close memo warnings" do
+    it "should show warnings until preset reason is selected" do
+      choose('closed')
+      edit_save
+      expect(page).to have_selector('#close_memo_error', :text => "You must supply a reason for closing")
+      expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
+      click_button('Close memo')
+      page.find('li#preset', text: 'No jurisdiction').click
+      expect(page).not_to have_selector('#close_memo_error', :text => "You must supply a reason for closing")
+      expect(page).not_to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
+    end
 
-    select_option('Registered').click #deselect
-    expect(page).not_to have_selector("div.select li.selected")
-    clear_filter_fields
-    open_dropdown('Select status')
-    expect(page).to have_selector("div.select li.selected", count: 0)
+    it "should show warnings until referree is entered" do
+      choose('closed')
+      edit_save
+      expect(page).to have_selector('#close_memo_error', :text => "You must supply a reason for closing")
+      expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
+      click_button('Close memo')
+      fill_in('referred', with: 'another agency')
+      expect(page).not_to have_selector('#close_memo_error', :text => "You must supply a reason for closing")
+      expect(page).not_to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
+    end
+
+    it "should show warnings until other reason is entered" do
+      choose('closed')
+      edit_save
+      expect(page).to have_selector('#close_memo_error', :text => "You must supply a reason for closing")
+      expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
+      click_button('Close memo')
+      fill_in('other', with: 'another reason')
+      expect(page).not_to have_selector('#close_memo_error', :text => "You must supply a reason for closing")
+      expect(page).not_to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
+    end
+
+    it "should show warnings until other status is selected" do
+      choose('closed')
+      edit_save
+      expect(page).to have_selector('#close_memo_error', :text => "You must supply a reason for closing")
+      expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
+      choose("Investigation")
+      expect(page).not_to have_selector('#close_memo_error', :text => "You must supply a reason for closing")
+      expect(page).not_to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
+    end
+  end
+
+  describe "apply closed status, select preset close memo" do
+    let(:closed_status){ ComplaintStatus.where(name: "Closed").first }
+    it "should show warnings until preset reason is selected" do
+      choose('closed')
+      click_button('Close memo')
+      page.find('li#preset', text: 'No jurisdiction').click
+      expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
+      expect(StatusChange.last.complaint_status_id).to eq closed_status.id
+      expect(StatusChange.last.close_memo).to eq "No jurisdiction"
+    end
+  end
+
+  describe "apply closed status, enter 'other' close memo" do
+    let(:closed_status){ ComplaintStatus.where(name: "Closed").first }
+    it "should show warnings until preset reason is selected" do
+      choose('closed')
+      click_button('Close memo')
+      fill_in('other', with: "some other reason")
+      expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
+      expect(StatusChange.last.complaint_status_id).to eq closed_status.id
+      expect(StatusChange.last.close_memo).to eq "some other reason"
+    end
+  end
+
+  describe "apply closed status, enter 'referred to' close memo" do
+    let(:closed_status){ ComplaintStatus.where(name: "Closed").first }
+    it "should show warnings until preset reason is selected" do
+      choose('closed')
+      click_button('Close memo')
+      fill_in('referred', with: "another agency")
+      expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
+      expect(StatusChange.last.complaint_status_id).to eq closed_status.id
+      expect(StatusChange.last.close_memo).to eq "Referred to: another agency"
+    end
+  end
+
+  describe "apply investigation status" do
+    let(:investigation_status){ ComplaintStatus.where(name: "Investigation").first }
+    it "should show warnings until preset reason is selected" do
+      choose('investigation')
+      expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
+      expect(StatusChange.last.complaint_status_id).to eq investigation_status.id
+      expect(StatusChange.last.close_memo).to be_nil
+    end
   end
 end

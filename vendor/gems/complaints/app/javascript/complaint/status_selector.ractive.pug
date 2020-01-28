@@ -4,8 +4,50 @@ form
     | {{ name }}
     input(id='{{this.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{id}}')
   | {{/statuses}}
+  .btn-group.form-group('class-has-error' = 'close_memo_error')
+    button.btn.btn-default.dropdown-toggle.form-control(type='button', 'data-toggle'='dropdown', 'class-hidden'='active')
+      span#close_memo_prompt {{ button_text }}
+      span.caret
+    ul.dropdown-menu#close_memo(name="close_memo")
+      | {{#close_memo_options}}
+      li#preset('on-click'='select(.)') {{ . }}
+      | {{/close_memo_options}}
+      li#referral
+        div Referred to:
+        input#referred(name='referred', tabIndex=-1, autocomplete='off', type='text', placeholder='Where referred', value='{{referred_to}}', 'on-keyup'='set_referred_to(referred_to)')
+      li
+        input#other(name='other', tabIndex=-1, autocomplete='off', type='text', placeholder='Other reason', value='{{other_reason}}', 'on-keyup'="user_input(other_reason)")
+    span.help-block.error#close_memo_error {{ t.close_memo_error_message }}
 
 style.
+  form{
+    display: flex;
+  }
+  #close_memo_error{
+    width: 125px;
+  }
+  #referral{
+    display: flex;
+  }
+  #close_memo #preset{
+    cursor: pointer;
+  },
+  #close_memo_prompt{
+    color: gray;
+  }
+  .caret{
+    margin-left: 12px;
+  }
+  #close_memo {
+    width: 290px;
+  }
+  #close_memo #other{
+    margin-left: 0px;
+    width: 247px;
+  }
+  #close_memo li {
+    margin-left: 18px;
+  }
   label{
     font-weight:normal;
     margin-right:12px;
@@ -15,12 +57,46 @@ style.
   }
 
 script.
+  import translations from 'translations.js'
+
   export default Ractive.extend({
     template: $TEMPLATE,
     css: $CSS,
     computed: {
-      key(){
-        return this.get('name');
+      selected_status_name(){
+        return _(this.get('statuses')).findWhere({id: this.get('status_id')}).name;
+      },
+      active(){
+        return this.get('selected_status_name') != "Closed"
+      }
+    },
+    user_input(val){
+      this.set({referred_to:'',button_text:val,close_memo:val});
+      this.set('close_memo_error',false);
+    },
+    select(selection){
+      this.set({button_text:selection,close_memo:selection,other_reason:"",referred_to:''})
+      this.set('close_memo_error',false);
+    },
+    set_referred_to(val){
+      val = "Referred to: "+val;
+      this.set({other_reason:'',button_text:val,close_memo:val});
+      this.set('close_memo_error',false);
+    },
+    data(){
+      return {
+        t : translations.t('complaint'),
+      }
+    },
+    oninit(){
+      this.set('button_text',this.get('t.close_memo_default_prompt'))
+    },
+    observe: {
+      'active': {
+        handler(value, old, path, idx){
+          this.reset({button_text:this.get('t.close_memo_default_prompt')});
+          this.set('close_memo_error',false);
+        }
       }
     }
     })

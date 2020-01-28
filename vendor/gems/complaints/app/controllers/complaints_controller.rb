@@ -53,7 +53,9 @@ class ComplaintsController < ApplicationController
   def update
     params[:complaint].delete(:type) # ignore type on update... it will be correct
     complaint = Complaint.find(params[:id])
-    params[:complaint][:status_changes_attributes] = [{:user_id => current_user.id, :status_id => params[:complaint].delete(:status_id)}]
+    params[:complaint][:status_changes_attributes] = [{:user_id => current_user.id,
+                                                       :status_id => params[:complaint].delete(:status_id),
+                                                       :close_memo => params[:complaint].delete(:close_memo)}]
     if complaint.update(complaint_params)
       render :json => complaint, :status => 200
     else
@@ -98,6 +100,7 @@ class ComplaintsController < ApplicationController
   end
 
   def create
+    params[:complaint].delete(:close_memo) # not pertinent to new complaint, but supplied as 'undefined' by the client
     type = params[:complaint].delete(:type)               # individual, organization, own_motion
     klass = "#{type}_complaint".classify.constantize      # IndividualComplaint, OrganizationComplaint, OwnMotionComplaint
     @complaint = klass.send(:new, complaint_params)       # e.g. IndividualComplaint.new(complaint_params)
@@ -125,6 +128,7 @@ class ComplaintsController < ApplicationController
     @statuses = ComplaintStatus.select(:id, :name).all
     @office_groups = OfficeGroup.regional_provincial
     @branches = Office.branches
+    @close_memo_options = ComplaintStatus::CloseMemoOptions
   end
 
   def default_params
@@ -153,7 +157,7 @@ class ComplaintsController < ApplicationController
                                        :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
                                        :organization_name, :organization_registration_number,
                                        :subarea_ids => [],
-                                       :status_changes_attributes => [:user_id, :status_id],
+                                       :status_changes_attributes => [:user_id, :status_id, :close_memo],
                                        :agency_ids => [],
                                        :complaint_documents_attributes => [:file, :title, :original_filename, :original_type, :filesize, :lastModifiedDate],
                                      )

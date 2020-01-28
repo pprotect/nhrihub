@@ -54,7 +54,6 @@ feature "individual complaint duplicate check", :js => true do
 
     enabled_text_fields = %w[id_value alt_id_value lastName email]
 
-    status_checkboxes = ComplaintStatus.all.map{|status| status.name.gsub(/\s/,'_').downcase }
     gender_checkboxes = %w[m f o]
     id_checkboxes = %w[identify_by_passport identify_by_id identify_by_pension_id
                        identify_by_prison_id identify_by_other_id ]

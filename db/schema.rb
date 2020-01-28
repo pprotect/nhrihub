@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_24_233427) do
+ActiveRecord::Schema.define(version: 2020_01_28_144147) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -637,6 +637,7 @@ ActiveRecord::Schema.define(version: 2020_01_24_233427) do
     t.datetime "updated_at"
     t.integer "complaint_status_id"
     t.datetime "change_date"
+    t.string "close_memo"
   end
 
   create_table "strategic_plans", id: :serial, force: :cascade do |t|

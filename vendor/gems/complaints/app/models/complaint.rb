@@ -40,7 +40,7 @@ class Complaint < ActiveRecord::Base
   end
 
   def assign_initial_status(user)
-    self.status_changes_attributes = [{:user_id => user.id, :name => "Registered"}]
+    self.status_changes_attributes = [{:user_id => user.id, :name => self.class::InitialStatus }]
   end
 
   def notify_assignee(assign)
@@ -111,15 +111,17 @@ class Complaint < ActiveRecord::Base
     change_date = attrs[:change_date].nil? ? DateTime.now : DateTime.new(attrs[:change_date])
     user_id = attrs[:user_id]
     if !persisted?
-      complaint_status = ComplaintStatus.find_or_create_by(:name => "Registered")
+      complaint_status = ComplaintStatus.find_or_create_by(:name => self.class::InitialStatus )
       complaint_status_id = complaint_status.id
       status_changes.build({:user_id => user_id,
                             :change_date => change_date,
                             :complaint_status_id => complaint_status_id})
     elsif !(attrs[:status_id].nil? || attrs[:status_id] == "null") && attrs[:status_id].to_i != status_id
+      close_memo = attrs[:close_memo]=='undefined' ? nil : attrs[:close_memo]
       status_changes.build({:user_id => user_id,
                             :change_date => change_date,
-                            :complaint_status_id => attrs[:status_id]})
+                            :complaint_status_id => attrs[:status_id],
+                            :close_memo => close_memo})
     end
   end
 

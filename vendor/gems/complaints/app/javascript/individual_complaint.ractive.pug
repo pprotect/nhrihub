@@ -55,7 +55,7 @@
         .col-md-10
           span#current_assignee {{ current_assignee_name }}
 
-      .row('data-toggle'= 'edit')
+      .row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
         .col-md-2
           label
             | {{ t.status }}
@@ -65,12 +65,12 @@
             <statusChange status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
             | {{/status_changes}}
           .fade.edit#current_status
-            <statusSelector statuses='{{statuses}}' status_id = '{{status_id}}' />
+            <statusSelector close_memo='{{close_memo}}' close_memo_error = '{{close_memo_error}}' close_memo_options = '{{close_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
 
       .row
         .col-md-2('data-toggle' = 'edit')
           label {{ t.complainant }}
-        .col-md-9.complainant('data-toggle'='edit')
+        .col-md-9#complainant('data-toggle'='edit')
           .no_edit.in
             span#title {{ title }}
             span#firstName {{ firstName }}
@@ -396,11 +396,11 @@
 style.
   #alt_id_other_type_field label { width: 120px; }
   #alt_id_other_type_field .edit { display: flex;}
-  .complainant #firstName, #complainant #title {margin-right: .25em;}
-  .complainant .edit .col-md-4{
+  #complainant #firstName, #complainant #title {margin-right: .25em;}
+  #complainant .edit .col-md-4{
     padding-top:0px;
   }
-  .complainant .edit .col-md-4:nth-of-type(2), .complainant .edit .col-md-4:nth-of-type(3){
+  #complainant .edit .col-md-4:nth-of-type(2), #complainant .edit .col-md-4:nth-of-type(3){
     margin-top: -5px;
   }
   #alt_id_other_type_field.visible { display: block; }
@@ -449,7 +449,7 @@ script(type='text/javascript').
         return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
           'city','province','postal_code','complaint_area_id',
           'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
-          'status_id', 'new_assignee_id', 'subarea_ids',
+          'status_id', 'close_memo', 'new_assignee_id', 'subarea_ids',
           'agency_ids', 'attached_documents_attributes', 'details',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
           'firstName', 'lastName', 'title', 'type'];
@@ -478,7 +478,8 @@ script(type='text/javascript').
           email: ['notBlank', {if: ()=>this.get('preferred_means') == 'email'}],
           home_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'home_phone'}],
           cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
-          fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}]
+          fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
+          close_memo: ['notBlank', {if: ()=>!this.findComponent('statusSelector').get('active')}],
         };
       },
     },

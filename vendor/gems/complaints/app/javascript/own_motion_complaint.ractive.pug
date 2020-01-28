@@ -90,7 +90,7 @@
                 | {{/offices}}
                 | {{/office_groups}}
 
-      .row('data-toggle'= 'edit')
+      .row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
         .col-md-2
           label
             | {{ t.status }}
@@ -105,7 +105,7 @@
       .row
         .col-md-2('data-toggle' = 'edit')
           label {{ t.subject_beneficiary }}
-        .col-md-9.complainant('data-toggle'='edit')
+        .col-md-9#complainant('data-toggle'='edit')
           .no_edit.in
             span#title {{ title }}
             span#firstName {{ firstName }}
@@ -363,11 +363,11 @@
       <buttons mode='{{mode}}' has_errors='{{has_errors}}' />
 
 style.
-  .complainant #firstName, #complainant #title {margin-right: .25em;}
-  .complainant .edit .col-md-4{
+  #complainant #firstName, #complainant #title {margin-right: .25em;}
+  #complainant .edit .col-md-4{
     padding-top:0px;
   }
-  .complainant .edit .col-md-4:nth-of-type(2), .complainant .edit .col-md-4:nth-of-type(3){
+  #complainant .edit .col-md-4:nth-of-type(2), #complainant .edit .col-md-4:nth-of-type(3){
     margin-top: -5px;
   }
   #alt_id_other_type_field.visible { display: block; }
@@ -415,6 +415,19 @@ script(type='text/javascript').
     template : $TEMPLATE,
     css: $CSS,
     computed : {
+      initiating_branch(){
+        var branch = _(this.get('branches')).findWhere({id:  this.get('initiating_branch_id')});
+        return branch.name;
+      },
+      initiating_office(){
+        var provincial_office = _(this.get('provincial_offices')).findWhere({id: this.get('initiating_office_id')});
+        var regional_office = _(this.get('regional_offices')).findWhere({id: this.get('initiating_office_id')});
+        if(typeof provincial_office != 'undefined'){
+          return provincial_office.name + " (Provincial office)"
+        }else if( typeof regional_office != 'undefined'){
+          return regional_office.name + " (Regional office)"
+        }else{ throw "office not found"}
+      },
       dupe_check_attributes() {
         return ['type', 'initiating_branch_id', 'initiating_office_id', 'agency_ids'];
       },
