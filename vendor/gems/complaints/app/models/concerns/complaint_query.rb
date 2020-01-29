@@ -10,6 +10,7 @@ module ComplaintQuery
     # can take either an array of strings or symbols
     # or cant take a single string or symbol
     def with_status(status_ids)
+      select("status_changes.change_date").
       joins(:status_changes => :complaint_status).
         merge(StatusChange.most_recent_for_complaint).
         merge(ComplaintStatus.with_status(status_ids))

@@ -4,6 +4,16 @@ class StatusChange < ActiveRecord::Base
   belongs_to :complaint_status
   accepts_nested_attributes_for :complaint_status
 
+  default_scope { order(change_date: :desc) }
+
+  before_create do
+    self.change_date ||= Time.now
+    if complaint.status_changes.count > 0
+      previous = complaint.status_changes.merge(StatusChange.most_recent_for_complaint).first
+      previous.update(end_date: change_date)
+    end
+  end
+
   scope :most_recent_for_complaint, ->{
     sc = StatusChange.arel_table
     sc1 = sc.alias
@@ -14,13 +24,19 @@ class StatusChange < ActiveRecord::Base
     where(subquery)
   }
 
+  def duration
+    end_time = end_date.nil? ? Time.now : end_date
+    # see lib/rails_class_extensions.rb
+    end_time.distance_of_time_in_words(change_date)
+  end
+
   def as_json(options={})
-    super(:only => [], :methods => [:user_name, :date, :status_humanized])
+    super(:except => [:updated_at, :created_at], :methods => [:change_date, :user_name, :date, :status_humanized])
   end
 
   def user_name
     # normally there should always be an associated user, but imported data may not have one
-    user && user.first_last_name
+    user&.first_last_name
   end
 
   def date
@@ -28,7 +44,11 @@ class StatusChange < ActiveRecord::Base
   end
 
   def status_humanized
-    complaint_status.name
+    if ( status = complaint_status&.name )== 'Closed'
+      [status, close_memo].join(', ')
+    else
+      status
+    end
   end
 
   def status_humanized=(val)

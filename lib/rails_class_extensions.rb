@@ -93,3 +93,34 @@ class NilClass
     'no'
   end
 end
+
+class Time
+  def distance_of_time_in_words(other_time)
+    end_time = self
+    change_date = other_time
+    diff = (end_time - change_date).to_f/60/60/24
+    days = diff.round
+    days_in_year = 365
+    days_in_month = days_in_year/12
+    case days
+    when 0...30
+      "#{days} #{'day'.pluralize(days)}"
+    when 30...365
+      whole_months = (diff.to_f/days_in_month).to_i
+      remaining_days = days%days_in_month
+      string = "#{whole_months} #{'month'.pluralize(whole_months)}"
+      string += ", #{remaining_days.to_i} #{'day'.pluralize(remaining_days.to_i)}" unless remaining_days.to_i.zero?
+      string
+    else
+      whole_years = (days.to_f/days_in_year).to_i
+      remaining_days = days%days_in_year
+      months = (remaining_days.to_f/days_in_month).to_i
+      remaining_days = remaining_days%days_in_month
+
+      string = "#{whole_years} #{'year'.pluralize(whole_years)}"
+      string += ", #{months} #{'month'.pluralize(months)}" unless months.zero?
+      string += ", #{remaining_days.to_i} #{'day'.pluralize(remaining_days.to_i)}" unless remaining_days.to_i.zero?
+      string
+    end
+  end
+end

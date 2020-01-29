@@ -31,6 +31,10 @@ import StatusSelector from 'status_selector.ractive.pug'
 export default Ractive.extend({
   el: '#complaint',
   computed : {
+    status_changes_recent_first(){
+      // on update, it seems that ractive  doesn't render in the order of the data object, so we need to force the correct sort
+      return _(this.get('status_changes')).sortBy(function(sc){return -$.datepicker.formatDate('@',new Date(sc.change_date)) });
+    },
     regional_offices(){
       var group = _(this.get('office_groups')).findWhere({name: "Regional Offices"});
       return group.offices;
@@ -172,9 +176,6 @@ export default Ractive.extend({
     //progressBar : ProgressBar,
     buttons: Buttons,
     statusSelector: StatusSelector
-  },
-  partials : {
-    buttons : Buttons
   },
   proceed_to_intake(){
     history.pushState({},"anything",this.get('url'));

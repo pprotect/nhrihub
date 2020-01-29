@@ -61,9 +61,9 @@
             | {{ t.status }}
         .col-md-10
           .fade.no_edit.in#status_changes
-            | {{#status_changes}}
-            <statusChange status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
-            | {{/status_changes}}
+            | {{#status_changes_recent_first}}
+            <statusChange close_memo='{{close_memo}}' status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
+            | {{/status_changes_recent_first}}
           .fade.edit#current_status
             <statusSelector close_memo='{{close_memo}}' close_memo_error = '{{close_memo_error}}' close_memo_options = '{{close_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
 
