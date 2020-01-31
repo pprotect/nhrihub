@@ -4,11 +4,12 @@ class StatusChange < ActiveRecord::Base
   belongs_to :complaint_status
   accepts_nested_attributes_for :complaint_status
 
-  default_scope { order(change_date: :desc) }
+  #default_scope { order(change_date: :desc) }
+  scope :most_recent_first, -> { order(change_date: :desc) }
 
   before_create do
     self.change_date ||= Time.now
-    if complaint.status_changes.count > 0
+    if complaint&.status_changes&.count && complaint.status_changes.count > 0
       previous = complaint.status_changes.merge(StatusChange.most_recent_for_complaint).first
       previous.update(end_date: change_date)
     end
@@ -31,7 +32,7 @@ class StatusChange < ActiveRecord::Base
   end
 
   def as_json(options={})
-    super(:except => [:updated_at, :created_at], :methods => [:change_date, :user_name, :date, :status_humanized])
+    super(:except => [:updated_at, :created_at, :id, :user_id, :end_date, :complaint_status_id, :complaint_id], :methods => [:change_date, :user_name, :date, :status_humanized])
   end
 
   def user_name

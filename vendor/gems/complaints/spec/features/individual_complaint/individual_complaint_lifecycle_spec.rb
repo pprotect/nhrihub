@@ -90,8 +90,8 @@ feature "assessment status next step", js: true do
       click_button('Close memo')
       page.find('li#preset', text: 'No jurisdiction').click
       expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
-      expect(StatusChange.first.complaint_status_id).to eq closed_status.id
-      expect(StatusChange.first.close_memo).to eq "No jurisdiction"
+      expect(StatusChange.most_recent_first.first.complaint_status_id).to eq closed_status.id
+      expect(StatusChange.most_recent_first.first.close_memo).to eq "No jurisdiction"
       expect(all('#complaint #status_changes .status_change .status_humanized').map(&:text)).to eq ['Closed, No jurisdiction','Assessment','Registered']
     end
   end
@@ -103,8 +103,8 @@ feature "assessment status next step", js: true do
       click_button('Close memo')
       fill_in('other', with: "some other reason")
       expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
-      expect(StatusChange.first.complaint_status_id).to eq closed_status.id
-      expect(StatusChange.first.close_memo).to eq "some other reason"
+      expect(StatusChange.most_recent_first.first.complaint_status_id).to eq closed_status.id
+      expect(StatusChange.most_recent_first.first.close_memo).to eq "some other reason"
       expect(all('#complaint #status_changes .status_change .status_humanized').map(&:text)).to eq ['Closed, some other reason','Assessment','Registered']
     end
   end
@@ -116,8 +116,8 @@ feature "assessment status next step", js: true do
       click_button('Close memo')
       fill_in('referred', with: "another agency")
       expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
-      expect(StatusChange.first.complaint_status_id).to eq closed_status.id
-      expect(StatusChange.first.close_memo).to eq "Referred to: another agency"
+      expect(StatusChange.most_recent_first.first.complaint_status_id).to eq closed_status.id
+      expect(StatusChange.most_recent_first.first.close_memo).to eq "Referred to: another agency"
       expect(all('#complaint #status_changes .status_change .status_humanized').map(&:text)).to eq ['Closed, Referred to: another agency','Assessment','Registered']
     end
   end
@@ -127,8 +127,8 @@ feature "assessment status next step", js: true do
     it "should show warnings until preset reason is selected" do
       choose('investigation')
       expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
-      expect(StatusChange.first.complaint_status_id).to eq investigation_status.id
-      expect(StatusChange.first.close_memo).to be_nil
+      expect(StatusChange.most_recent_first.first.complaint_status_id).to eq investigation_status.id
+      expect(StatusChange.most_recent_first.first.close_memo).to be_nil
     end
   end
 end

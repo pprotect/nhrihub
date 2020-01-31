@@ -27,10 +27,11 @@ feature 'edit complaint', js: true do
     expect(page).to have_checked_field "Registered"
     choose "Assessment"
     expect{ edit_save }.to change{ IndividualComplaint.first.current_status }.from("Registered").to("Assessment")
-    expect( all('#status_changes .status_change').last.text ).to match "Assessment"
-    expect( all('#status_changes .date').last.text ).to match /#{Date.today.strftime("%b %-e, %Y")}/
+    expect( all('#status_changes .status_change').first.text ).to match "Assessment"
+    expect( all('#status_changes .status_change').last.text ).to match "Registered"
+    expect( all('#status_changes .date').first.text ).to match /#{Date.today.strftime("%b %-e, %Y")}/
     user = User.find_by(:login => 'admin')
-    expect( all('#status_changes .user_name').last.text ).to match /#{user.first_last_name}/
+    expect( all('#status_changes .user_name').first.text ).to match /#{user.first_last_name}/
   end
 
   it "edits a complaint" do

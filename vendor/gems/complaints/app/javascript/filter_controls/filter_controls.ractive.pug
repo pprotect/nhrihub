@@ -130,7 +130,6 @@ script.
       'filter_criteria': {
         handler(value, old, path, idx){
           if(!_.isUndefined(old)){
-            console.log("filter_criteria change observed")
             this.parent.fetch();
           }
         }
@@ -138,7 +137,7 @@ script.
     },
     clear_filter() {
       //complaints_page_data().filter_criteria.case_reference = null
-      this.set('filter_criteria',$.extend(true,{},complaints_page_data().filter_criteria));
+      this.set('filter_criteria',$.extend(true,{},complaints_page_data().default_filter_criteria));
       window.history.pushState({foo: "bar"},"unused title string",window.location.origin + window.location.pathname);
       //complaints.fetch();
       //return this.set_filter_from_query_string();

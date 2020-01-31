@@ -50,6 +50,12 @@ class Complaint < ActiveRecord::Base
 
   def self.default_index_query_params(user_id)
     {
+      complainant: "",
+      from: "",
+      to: "",
+      case_reference: "",
+      city: "",
+      phone: "",
       selected_assignee_id:        user_id,
       selected_status_ids:         ComplaintStatus.default.map(&:id),
       selected_complaint_area_ids: ComplaintArea.pluck(:id),
@@ -78,6 +84,7 @@ class Complaint < ActiveRecord::Base
     logger.info "with_phone: #{with_phone(query[:phone]).length}"
     logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
     logger.info "with_agencies: #{with_agencies(query[:selected_agency_ids]).length}"
+    select("DISTINCT ON (complaints.id) complaints.*").
     for_assignee(query[:selected_assignee_id]).
       with_status(query[:selected_status_ids]).
       with_complaint_area_ids(query[:selected_complaint_area_ids]).
@@ -100,7 +107,8 @@ class Complaint < ActiveRecord::Base
         {:communications => [:user, :communication_documents, :communicants]},
         :complaint_documents,
         {:reminders => :user},
-        {:notes =>[:author, :editor]})
+        {:notes =>[:author, :editor]}).
+      sort_by(&:case_reference)
   end
 
   def status_changes_attributes=(attrs)
@@ -185,6 +193,9 @@ class Complaint < ActiveRecord::Base
     super(options)
   end
 
+  def assigns
+    Assign.where(complaint_id: id).order("assigns.created_at DESC")
+  end
 
   # supports the checkbox selectors for subareas
   alias_method :subarea_ids, :complaint_subarea_ids
@@ -289,8 +300,7 @@ class Complaint < ActiveRecord::Base
   end
 
   def current_assignee
-    # default order for assigns is most-recent-first
-    @current_assignee ||= assigns.first.assignee unless assigns.empty?
+    @current_assignee ||= assigns.single_complaint_most_recent.first.assignee unless assigns.empty?
   end
 
   def new_assignee_id=(id)

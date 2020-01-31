@@ -3,7 +3,7 @@ class Assign < ActiveRecord::Base
   belongs_to :assignee, :class_name => 'User', :foreign_key => :user_id
 
   # most recent first
-  default_scope -> { order(:created_at => :desc)}
+  #default_scope -> { order(:created_at => :desc)}
 
   scope :for_assignee, ->(id){ where("assigns.user_id = ?", id) }
 

@@ -7,10 +7,33 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
+window.urlQueryParams =function(){
+  var query_string = window.location.search.substr(1);
+  var query_string_fragments = query_string.split('&');
+  var params = {}
+  var extract_param=function(el){
+    var array_type = el.match(/(\w*)%5B%5D=(\d*)/);
+    var const_type = el.match(/(\w*)=(\d*)/);
+    if(array_type){
+      var name = array_type[1];
+      var val = parseInt(array_type[2]);
+      if(params[name]){params[name][params[name].length] = val}else{params[name]=[val];}
+    }else{
+      var name = const_type[1];
+      var val = const_type[2];
+      params[name] = val;
+    }
+  };
+  query_string_fragments.forEach(extract_param)
+  return params;
+};
+
 window.complaints_page_data = function(){
+  var params = urlQueryParams();
   return {
     complaints : source_complaints_data,
-    filter_criteria: source_filter_criteria,
+    default_filter_criteria: source_filter_criteria,
+    filter_criteria: urlQueryParams(),
     all_agencies : source_all_agencies,
     all_subareas : source_subareas
   }

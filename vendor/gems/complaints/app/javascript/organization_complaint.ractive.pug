@@ -62,11 +62,11 @@
             | {{ t.status }}
         .col-md-10
           .fade.no_edit.in#status_changes
-            | {{#status_changes}}
-            <statusChange status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
-            | {{/status_changes}}
+            | {{#status_changes_recent_first}}
+            <statusChange close_memo='{{close_memo}}' status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
+            | {{/status_changes_recent_first}}
           .fade.edit#current_status
-            <statusSelector statuses='{{statuses}}' status_id = '{{status_id}}' />
+            <statusSelector close_memo='{{close_memo}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
 
       .row
         .col-md-2
@@ -389,7 +389,7 @@ script(type='text/javascript').
           'city','province','postal_code','complaint_area_id',
           'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
           'organization_name', 'organization_registration_number',
-          'status_id', 'new_assignee_id', 'subarea_ids',
+          'status_id', 'close_memo', 'new_assignee_id', 'subarea_ids',
           'agency_ids', 'attached_documents_attributes', 'details',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
           'firstName', 'lastName', 'title', 'type'];
@@ -410,7 +410,8 @@ script(type='text/javascript').
           email: ['notBlank', {if: ()=>this.get('preferred_means') == 'email'}],
           home_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'home_phone'}],
           cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
-          fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}]
+          fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
+          close_memo: ['notBlank', {if: ()=>!this.findComponent('statusSelector').get('active')}],
         };
       }
     },

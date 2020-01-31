@@ -20,9 +20,9 @@ describe "scope class methods" do
     end
 
     it "returns complaints based on assignee" do
-      #expect(Complaint.for_assignee(@user.id)).to eq Complaint.all.select{|c| c.current_assignee_id == @user.id}
+      expect(Complaint.for_assignee(@user.id)).to eq Complaint.all.select{|c| c.current_assignee_id == @user.id}
       expect(Complaint.for_assignee(@staff_user.id)).to eq Complaint.all.select{|c| c.current_assignee_id == @staff_user.id}
-      #expect(Complaint.for_assignee).to be_empty
+      expect(Complaint.for_assignee).to be_empty
     end
   end
 
@@ -212,10 +212,13 @@ describe "selects complaints matching the selected agency" do
     @bar_complaint = FactoryBot.create(:complaint, :registered, agencies: [Agency.first], assigned_to: user)
   end
 
-  it "should do some darn thing useful" do
+  it "should return complaints with matching agency assignment" do
+    expect(Complaint.with_agencies([Agency.first.id])).to eq [ @bar_complaint ]
+  end
+
+  it "should assign the 'Unassigned' agency to the complaint for which no agency was specified" do
     expect(@foo_complaint.agency_ids).to include unassigned_agency.id
     expect(Complaint.with_agencies([unassigned_agency.id])).to eq [ @foo_complaint ]
-    expect(Complaint.with_agencies([Agency.first.id])).to eq [ @bar_complaint ]
   end
 end
 

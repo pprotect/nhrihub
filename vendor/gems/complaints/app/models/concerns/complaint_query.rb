@@ -10,7 +10,7 @@ module ComplaintQuery
     # can take either an array of strings or symbols
     # or cant take a single string or symbol
     def with_status(status_ids)
-      select("status_changes.change_date").
+      select("complaints.*, status_changes.change_date").
       joins(:status_changes => :complaint_status).
         merge(StatusChange.most_recent_for_complaint).
         merge(ComplaintStatus.with_status(status_ids))
@@ -18,7 +18,10 @@ module ComplaintQuery
 
     def for_assignee(user_id = nil)
       user_id && !user_id.blank? ?
-        select('distinct complaints.id, complaints.*, assigns.created_at, assigns.user_id, assigns.complaint_id').joins(:assigns).merge(Assign.most_recent_for_assignee(user_id)) :
+        select(' complaints.*, assigns.created_at, assigns.user_id, assigns.complaint_id').
+        joins(:assigns).
+        merge(Assign.most_recent_for_assignee(user_id))
+        :
         where("1=0")
     end
 
@@ -27,6 +30,7 @@ module ComplaintQuery
         return no_results if selected_agency_ids.nil? || selected_agency_ids.empty?
       else
         return no_filter if Agency.count.zero?
+        return no_filter if selected_agency_ids.nil?
         return no_filter if selected_agency_ids.delete_if(&:blank?).empty?
         #selected_agency_ids = nil if selected_agency_ids.delete_if(&:blank?).empty?
       end
@@ -43,6 +47,7 @@ module ComplaintQuery
 
     def with_subareas(selected_subarea_ids)
       return no_filter if ComplaintSubarea.count.zero?
+      return no_filter if selected_subarea_ids.nil?
       selected_subarea_ids = nil if selected_subarea_ids.delete_if(&:blank?).empty?
 
       joins(:complaint_complaint_subareas).

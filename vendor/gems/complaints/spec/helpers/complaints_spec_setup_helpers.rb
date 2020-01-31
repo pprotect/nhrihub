@@ -184,7 +184,8 @@ module ComplaintsSpecSetupHelpers
 
   def create_complaint_statuses
     ComplaintStatus::Names.each do |status_name|
-      FactoryBot.create(:complaint_status, :name => status_name)
+      sym = status_name.downcase.to_sym
+      FactoryBot.create(:complaint_status, sym)
     end
   end
 

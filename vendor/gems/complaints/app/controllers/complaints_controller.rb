@@ -1,42 +1,37 @@
 class ComplaintsController < ApplicationController
   def index
+    # normally this would not happen, but it happens in testing and perhaps might happen
+    # in unforeseen circumstances?
+    if params.keys.without("controller", "action", "locale").empty?
+      redirect_to complaints_path('en',default_params) and return
+    end
     logger.info "PARAMS #{index_query_params.inspect}"
-    #cache_fetcher = BulkCacheFetcher.new(Rails.cache)
-    #complaints = cache_fetcher.fetch(Complaint.cache_identifiers(current_user)) do |uncached_keys_and_ids|
-      #ids = uncached_keys_and_ids.values
-      #Complaint.index_page_associations(current_user, ids).map(&:to_json)
-    #end
     complaints = Complaint.index_page_associations(index_query_params)
     logger.info "complaints length: #{complaints.length}"
 
-    @areas = ComplaintArea.all
-    @subareas = ComplaintSubarea.all
-    @selected_status_ids = default_params[:selected_status_ids]
-    @selected_assignee_id = current_user.id
-    @complaint_areas = ComplaintArea.all.sort_by(&:name)
-    @filter_criteria = {
-      complainant: nil,
-      from: "",
-      to: "",
-      case_reference: nil,
-      city: nil,
-      phone: "",
-      selected_agency_ids: Agency.unscoped.pluck(:id),
-      selected_assignee_id: @selected_assignee_id,
-      selected_subarea_ids: @subareas.map(&:id),
-      selected_status_ids: @selected_status_ids,
-      selected_complaint_area_ids: @complaint_areas.map(&:id)
-    }
-    @complaints = "[#{complaints.map(&:to_json).join(", ").html_safe}]".html_safe
+    #@selected_status_ids = default_params[:selected_status_ids]
+    #@selected_assignee_id = current_user.id
 
+    # filter controls dropdown options:
+    # TODO looks like some redundancy can be exploited here:
+    @complaint_areas = ComplaintArea.all.sort_by(&:name)
+    @areas = ComplaintArea.all
+
+    @subareas = ComplaintSubarea.all
+    @statuses = ComplaintStatus.select(:id, :name).all
     @agencies = Agency.unassigned_first
+
+    # TODO looks like some redundancy can be exploited here:
     @users = User.all
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
+
+    @filter_criteria = default_params
+    @complaints = "[#{complaints.map(&:to_json).join(", ").html_safe}]".html_safe
+
     @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
     @permitted_filetypes = ComplaintDocument.permitted_filetypes
     @communication_maximum_filesize    = CommunicationDocument.maximum_filesize * 1000000
     @communication_permitted_filetypes = CommunicationDocument.permitted_filetypes
-    @statuses = ComplaintStatus.select(:id, :name).all
     respond_to do |format|
       format.json do
         render :json => complaints
@@ -57,6 +52,7 @@ class ComplaintsController < ApplicationController
                                                        :status_id => params[:complaint].delete(:status_id),
                                                        :close_memo => params[:complaint].delete(:close_memo)}]
     if complaint.update(complaint_params)
+      complaint.heading= t('.heading', case_reference: complaint.case_reference)
       render :json => complaint, :status => 200
     else
       head :internal_server_error

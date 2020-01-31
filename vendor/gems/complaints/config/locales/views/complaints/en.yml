@@ -15,6 +15,9 @@ en:
     show:
       heading: 'Complaint, case reference: %{case_reference}'
 
+    update:
+      heading: 'Complaint, case reference: %{case_reference}'
+
     complaint:
       delete_complaint_confirmation_message: "Are you sure you want to delete complaint "
 

@@ -62,7 +62,10 @@ feature "complaints index query string", js: true do
   end
 
   it "defaults to reflect default query values" do
-    expect(query_hash(query_string)).to match_hash({ selected_assignee_id: @user.id,
+    expect(query_hash(query_string)).to match_hash({ case_reference: 0,
+                                                     city: 0,
+                                                     complainant: 0,
+                                                     selected_assignee_id: @user.id,
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
                                                      selected_complaint_area_ids: ComplaintArea.pluck(:id),
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
@@ -78,7 +81,9 @@ feature "complaints index query string", js: true do
 
   it "records query params in url query string" do
     select_assignee('Norman Normal')
-    expect(query_hash(query_string)).to match_hash({
+    expect(query_hash(query_string)).to match_hash({ case_reference: 0,
+                                                     city: 0,
+                                                     complainant: 0,
                                                      selected_agency_ids: Agency.unscoped.pluck(:id),
                                                      selected_assignee_id: @norm.id,
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
@@ -87,7 +92,9 @@ feature "complaints index query string", js: true do
                                                      from: 0, to: 0, phone: 0
                                                     })
     clear_filter_fields
-    expect(query_hash(query_string)).to match_hash({
+    expect(query_hash(query_string)).to match_hash({ case_reference: 0,
+                                                     city: 0,
+                                                     complainant: 0,
                                                      selected_agency_ids: Agency.unscoped.pluck(:id),
                                                      selected_assignee_id: @user.id,
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
@@ -96,7 +103,9 @@ feature "complaints index query string", js: true do
                                                      from:0, to: 0, phone: 0
                                                     })
     clear_options('Select agency')
-    expect(query_hash(query_string)).to match_hash({
+    expect(query_hash(query_string)).to match_hash({ case_reference: 0,
+                                                     city: 0,
+                                                     complainant: 0,
                                                      selected_agency_ids: [0],
                                                      selected_assignee_id: @user.id,
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
@@ -106,7 +115,9 @@ feature "complaints index query string", js: true do
                                                     })
     select_all_options('Select agency')
     wait_for_ajax
-    expect(query_hash(query_string)).to match_hash({
+    expect(query_hash(query_string)).to match_hash({ case_reference: 0,
+                                                     city: 0,
+                                                     complainant: 0,
                                                      selected_agency_ids: Agency.unscoped.pluck(:id),
                                                      selected_assignee_id: @user.id,
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
@@ -118,7 +129,7 @@ feature "complaints index query string", js: true do
   end
 end
 
-feature "complaints index with multiple complaints", :js => true do
+feature "complaints index defaults to current user, status not closed", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecHelpers
   include ComplaintsSpecSetupHelpers
@@ -139,6 +150,33 @@ feature "complaints index with multiple complaints", :js => true do
     expect(select_option('Registered')[:class]).to include('selected')
     expect(select_option('Assessment')[:class]).to include('selected')
     expect(select_option('Investigation')[:class]).to include('selected')
+  end
+end
+
+feature "complaints list", js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecHelpers
+  include ComplaintsSpecSetupHelpers
+
+  before do
+    populate_database(:individual_complaint)
+    Complaint.destroy_all
+    # all these complaints are are assigned only to the "Unassigned" agency
+    FactoryBot.create(:complaint, :registered, :good_governance, :assigned_to => [@user, @staff_user])
+    FactoryBot.create(:complaint, :assessment, :good_governance, :assigned_to => [@user, @staff_user])
+    FactoryBot.create(:complaint, :registered, :good_governance, :assigned_to => [@user, @staff_user])
+    FactoryBot.create(:complaint, :investigation, :good_governance, :assigned_to => [@user, @staff_user])
+    visit complaints_path('en')
+  end
+
+  it "shows complaints not closed assigned to the current user" do
+    expect(page.all('#complaints .complaint').length).to eq 4
+    expect(page.all('#complaints .case_reference').map{|cr| cr.text.match(/0*(\d)\/#{Date.today.strftime('%y')}/)[1].to_i }).to eq [4,3,2,1]
+    #expect(page.find('#complaints .complaint .current_assignee').text).to eq @user.first_last_name
+    #open_dropdown('Select status')
+    #expect(select_option('Registered')[:class]).to include('selected')
+    #expect(select_option('Assessment')[:class]).to include('selected')
+    #expect(select_option('Investigation')[:class]).to include('selected')
   end
 end
 
@@ -179,7 +217,7 @@ feature "complaints index", :js => true do
     open_dropdown('Select status')
     expect{ select_option('Registered').click; wait_for_ajax }.to change{ page.all('#complaints .complaint').count }.by(-1)
     expect{ select_option('Closed').click; wait_for_ajax }.to change{ page.all('#complaints .complaint').count }.by(1)
-    expect(page.all('#complaints .complaint #status_changes .status_change .status_humanized').first.text).to eq "Closed"
+    expect(page.all('#complaints .complaint #status_changes .status_change .status_humanized').first.text).to eq "Closed, No jurisdiction"
 
     ## reset the filter to defaults
     clear_filter_fields

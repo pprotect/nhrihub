@@ -24,6 +24,8 @@ script.
     },
     refresh : function(data, statusText, xhr){
       this.set('complaints', data);
+      console.log("refresh with filter_criteria.selected_status_ids: "+this.get('filter_criteria.selected_status_ids'))
+      console.log("current_query is: "+this.get('current_query.selected_status_ids'))
       history.replaceState({filter_criteria: this.get('filter_criteria')},
                             "some text",
                             Routes.complaints_path(current_locale,this.get('current_query')));

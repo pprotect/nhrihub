@@ -94,7 +94,8 @@ script.
     observe: {
       'active': {
         handler(value, old, path, idx){
-          this.reset({button_text:this.get('t.close_memo_default_prompt')});
+          this.set('button_text',this.get('t.close_memo_default_prompt'));
+          this.set('close_memo',null);
           this.set('close_memo_error',false);
         }
       }

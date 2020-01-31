@@ -28,7 +28,7 @@ describe "complaint" do
 
     it "should create a status change object and link to the Assessment complaint status" do
       expect(@complaint.status_changes.length).to eq 2
-      expect(@complaint.complaint_statuses.map(&:name)).to eq ["Registered", "Assessment"]
+      expect(@complaint.complaint_statuses.map(&:name)).to eq [ "Registered", "Assessment"]
     end
   end
 
@@ -42,7 +42,7 @@ describe "complaint" do
 
     it "should create a status change object and link to the Active complaint status" do
       expect(@complaint.status_changes.length).to eq 2
-      expect(@complaint.complaint_statuses.map(&:name)).to eq ["Registered", "Assessment"]
+      expect(@complaint.complaint_statuses.map(&:name)).to eq [ "Registered", "Assessment"]
     end
   end
 end
@@ -249,7 +249,7 @@ describe "#as_json" do
       expect(@complaints.first["complaint_area_id"]).to eq Complaint.first.complaint_area_id
       expect(@complaints.first["area_subarea_ids"]).to be_an Hash
       expect(@complaints.first["current_assignee_id"]).to eq Complaint.first.current_assignee_id
-      expect(@complaints.first["status_changes"].first.keys).to match_array ["date", "status_humanized", "user_name"]
+      expect(@complaints.first["status_changes"].first.keys).to match_array ["date", "status_humanized", "user_name", "change_date", "close_memo"]
       expect(DateTime.parse(@complaints.first["status_changes"].first["date"]).strftime("%s")).to eq Complaint.first.status_changes.first.date.to_datetime.strftime("%s")
       expect(@complaints.first["status_changes"].first["status_humanized"]).to eq Complaint.first.status_changes.first.status_humanized
       expect(@complaints.first["status_changes"].first["user_name"]).to eq Complaint.first.status_changes.first.user_name
