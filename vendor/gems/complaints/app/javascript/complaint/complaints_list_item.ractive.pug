@@ -23,9 +23,9 @@ script#file_selector_template(type='text/ractive' src='../../../../../../app/vie
             label {{ t.status }}
           .col-md-9
             #status_changes
-              | {{#status_changes}}
+              | {{#status_changes_recent_first}}
               <statusChange status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
-              | {{/status_changes}}
+              | {{/status_changes_recent_first}}
         .row
           .col-md-3
             label {{ t.complainant }}
@@ -54,94 +54,25 @@ style.
   .firstName, .title {margin-right: .25em;}
 
 script(type='text/javascript').
-  import Area from 'area'
-  import Agencies from 'agencies'
-  import AgenciesSelector from 'agencies_selector'
-  import Assignees from 'assignees'
-  import AssigneeSelector from 'assignee_selector'
   import ComplaintDocuments from './complaint_documents'
   import ConfirmDeleteModal from 'confirm_delete_modal'
-  import Validator from 'validator'
   import 'jquery-ui/ui/widgets/datepicker'
-  var EditInPlace = require("exports-loader?EditInPlace!edit_in_place")
   import translations from 'translations.js'
   import Communications from 'communications.ractive.pug'
   import StatusChange from 'status_change.ractive.pug'
-  var RactiveLocalMethods = require("exports-loader?local_methods!ractive_local_methods")
   import reminders from 'reminders.ractive.pug'
   import notes from 'notes.ractive.pug'
   import Remindable from 'remindable.coffee'
   import Notable from 'notable.coffee'
-  import SubareaSelector from './subarea_selector.ractive.pug'
   import 'bootstrap'
-
-  const EditBackup = {
-    stash() {
-      const stashed_attributes = _(this.get()).pick(this.get('persistent_attributes'));
-      Object.assign(stashed_attributes, {attached_documents : this.get('attached_documents')});
-      return this.stashed_instance = $.extend(true,{},stashed_attributes);
-    },
-    restore() {
-      return this.set(this.stashed_instance);
-    }
-  };
-
-
-  const Persistence = {
-    delete_callback(data,textStatus,jqxhr){
-      return this.parent.remove(this._guid);
-    },
-    save_complaint() {
-      if (this.validate()) {
-        const data = this.formData();
-        return $.ajax({
-          // thanks to http://stackoverflow.com/a/22987941/451893
-          //xhr: @progress_bar_create.bind(@)
-          method : 'post',
-          data,
-          url : Routes.complaints_path(current_locale),
-          success : this.save_complaint_callback,
-          context : this,
-          processData : false,
-          contentType : false
-        });
-      }
-    },
-    // jQuery correctly sets the contentType and boundary values
-    formData() {
-      return this.asFormData(this.get('persistent_attributes'));
-    },
-    // in ractive_local_methods, returns a FormData instance
-    save_complaint_callback(response, status, jqxhr){
-      UserInput.reset();
-      this.set(response);
-    },
-    progress_bar_create() {
-      return this.findComponent('progressBar').start();
-    },
-    update_persist(success, error, context) { // called by EditInPlace
-      if (this.validate()) {
-        const data = this.formData();
-        return $.ajax({
-          // thanks to http://stackoverflow.com/a/22987941/451893
-          //xhr: @progress_bar_create.bind(@)
-          method : 'put',
-          data,
-          url : this.get('persisted') ? Routes.complaint_path(current_locale, this.get('id')) : undefined,
-          success,
-          context,
-          processData : false,
-          contentType : false
-        });
-      }
-    }
-    // jQuery correctly sets the contentType and boundary values
-  }
 
   export default Ractive.extend({
     template : $TEMPLATE,
     css: $CSS,
     computed : {
+      status_changes_recent_first(){
+        return _(this.get('status_changes')).sortBy(function(sc){return -$.datepicker.formatDate('@',new Date(sc.change_date)) });
+      },
       delete_confirmation_message() {
         return `${i18n.delete_complaint_confirmation_message} ${this.get('case_reference')}?`;
       },
@@ -157,18 +88,8 @@ script(type='text/javascript').
         const comms = this.get('communications');
         if (_.isUndefined(comms)) { return 0; } else { return comms.length; }
       },
-      persisted() {
-        return !(_.isNull(this.get('id')) || _.isUndefined(this.get('id')));
-      },
-      persistent_attributes() {
-        return ['city','home_phone','complaint_area_id',
-          'current_status_humanized', 'new_assignee_id', 'subarea_ids',
-          'agency_ids', 'attached_documents_attributes', 'details',
-          'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
-          'firstName', 'lastName', 'title'];
-      },
       url() {
-        if (this.get('persisted')) { return Routes.complaint_path(current_locale, this.get('id')); }
+        return Routes.complaint_path(current_locale, this.get('id')); 
       },
       formatted_date : {
         get() {
@@ -183,109 +104,22 @@ script(type='text/javascript').
           return this.set('date', val);
         }
       },
-      has_errors() {
-        return this.validator.has_errors();
-      },
-      mandate_name() {
-        if(_.isNull(this.get('complaint_area_id'))){return null}
-        const mandate = _(this.get('all_mandates')).find(mandate=>mandate.id==this.get('complaint_area_id'))
-        return mandate.name;
-      },
       create_reminder_url() {
-        if (this.get('persisted')) { return Routes.complaint_reminders_path('en', this.get('id')); }
+        return Routes.complaint_reminders_path('en', this.get('id')); 
       },
       create_note_url() {
-        if (this.get('persisted')) { return Routes.complaint_notes_path('en', this.get('id')); }
+        return Routes.complaint_notes_path('en', this.get('id')); 
       },
-      subarea_id_count() { // aka subareas
-        const sa = this.get('subarea_ids');
-        const sal = _.isUndefined(sa) ? 0 : sa.length;
-        return sal;
-      },
-      validation_criteria() {
-        return {
-          firstName : ['notBlank'],
-          lastName : ['notBlank'],
-          city : ['notBlank'],
-          complaint_area_id : 'numeric',
-          subarea_id_count : 'nonZero',
-          new_assignee_id : ['nonZero', {if : () => !this.get('editing')}],
-          dob: () => {
-            const date_regex = new RegExp(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); // dd/mm/yyyy
-            const match = date_regex.exec(this.get('dob'));
-            const valid_day = match && (parseInt(match[1]) <= 31);
-            const valid_month = match && (parseInt(match[2]) <= 12);
-            const valid_year = match && (parseInt(match[3]) <= (new Date).getFullYear()) && (parseInt(match[3]) >= 1900 );
-            return !_.isNull(match) && valid_day && valid_month && valid_year;
-          },
-          details : 'notBlank'
-        };
-      },
-      error_vector() {
-        return {
-          firstName_error : this.get('firstName_error'),
-          lastName_error : this.get('lastName_error'),
-          city_error : this.get('city_error'),
-          new_assignee_id_error : this.get('new_assignee_id_error'),
-          complaint_area_id_error : this.get('complaint_area_id_error'),
-          subarea_id_count_error : this.get('subarea_id_count_error'),
-          dob_error : this.get('dob_error'),
-          details_error : this.get('details_error')
-        };
-      }
     },
-    oninit() {
-      return this.set({
-        editing : false,
-        expanded:false,
-        serialization_key:'complaint'
-      });
-    },
-    onconfig() {
-      return this.validator = new Validator(this);
-    },
-    // this should work, but due to some weirdness in ractive, it doesn't, maybe a future release
-    // will work better so that the callbacks can be removed from the view elements
-    //onupdate: (obj)->
-      //attr = _(obj).keys()[0]
-      //console.log "change to #{attr}"
-      //unless _.isUndefined(@validator)
-        //if _(@validator.attributes).includes(attr)
-          //@validate_attribute(attr)
     data : function(){ return {
       t : translations.t('complaint')
     }},
     components : {
-      agencies : Agencies,
-      agenciesSelector : AgenciesSelector,
-      area : Area,
-      assignees : Assignees,
-      assigneeSelector : AssigneeSelector,
       attachedDocuments : ComplaintDocuments,
       statusChange : StatusChange,
-      subareaSelector: SubareaSelector,
-      //progressBar : ProgressBar
     },
     generate_word_doc() {
       return window.location = Routes.complaint_path('en',this.get('id'),{format : 'docx'});
-    },
-    validate() {
-      return this.validator.validate();
-    },
-    validate_attribute(attribute){
-      return this.validator.validate_attribute(attribute);
-    },
-    remove_attribute_error(attribute){
-      return this.set(attribute+"_error",false);
-    },
-    remove_errors() {
-      this.compact();
-      //nothing to do with errors, but this method is called on edit_cancel
-      return this.restore();
-    },
-    cancel_add_complaint() {
-      UserInput.reset();
-      return this.parent.shift('complaints');
     },
     show_complaint(){
       var url = Routes.complaint_path(current_locale, this.get('id'));
@@ -297,24 +131,11 @@ script(type='text/javascript').
       const index = _(guids).indexOf(guid);
       return this.splice('attached_documents',index,1);
     },
-    add_file(file){
-      const attached_document = {
-        id : null,
-        complaint_id : this.get('id'),
-        file,
-        title: '',
-        file_id : '',
-        url : '',
-        original_filename : file.name,
-        filesize : file.size,
-        original_type : file.type,
-        serialization_key : 'complaint[complaint_documents_attributes][]'
-      };
-      return this.unshift('attached_documents', attached_document);
-    }}).extend(EditBackup)
-  .extend(Persistence)
+    delete_callback(data,textStatus,jqxhr){
+      return this.parent.remove(this._guid);
+    },
+  })
   .extend(ConfirmDeleteModal)
   .extend(Remindable)
   .extend(Notable)
   .extend(Communications)
-  .extend(RactiveLocalMethods);
