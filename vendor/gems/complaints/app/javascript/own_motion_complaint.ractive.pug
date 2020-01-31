@@ -100,7 +100,7 @@
             <statusChange close_memo='{{close_memo}}' status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
             | {{/status_changes_recent_first}}
           .fade.edit#current_status
-            <statusSelector close_memo='{{close_memo}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
+            <statusSelector close_memo='{{close_memo}}' close_memo_error = '{{close_memo_error}}' close_memo_options = '{{close_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
 
       .row
         .col-md-2('data-toggle' = 'edit')
@@ -457,7 +457,7 @@ script(type='text/javascript').
           home_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'home_phone'}],
           cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
           fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
-          close_memo: ['notBlank', {if: ()=>!this.findComponent('statusSelector').get('active')}],
+          close_memo: ['notBlank', {if: ()=>this.findComponent('closedStatusRadio').get('selected')}],
         };
       }
     },

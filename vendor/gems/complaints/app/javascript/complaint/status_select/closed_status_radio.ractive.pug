@@ -1,11 +1,8 @@
-form
-  | {{#statuses}}
-  label
-    | {{ name }}
-    input(id='{{this.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{id}}')
-  | {{/statuses}}
+label
+  | {{ status.name }}
+  input(id='{{this.status.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{status.id}}')
   .btn-group.form-group('class-has-error' = 'close_memo_error')
-    button.btn.btn-default.dropdown-toggle.form-control(type='button', 'data-toggle'='dropdown', 'class-hidden'='active')
+    button.btn.btn-default.dropdown-toggle.form-control(type='button', 'data-toggle'='dropdown', 'class-hidden'='!selected')
       span#close_memo_prompt {{ button_text }}
       span.caret
     ul.dropdown-menu#close_memo(name="close_memo")
@@ -20,9 +17,6 @@ form
     span.help-block.error#close_memo_error {{ t.close_memo_error_message }}
 
 style.
-  form{
-    display: flex;
-  }
   #close_memo_error{
     width: 125px;
   }
@@ -48,13 +42,6 @@ style.
   #close_memo li {
     margin-left: 18px;
   }
-  label{
-    font-weight:normal;
-    margin-right:12px;
-  }
-  input{
-    margin-left:6px;
-  }
 
 script.
   import translations from 'translations.js'
@@ -62,12 +49,26 @@ script.
   export default Ractive.extend({
     template: $TEMPLATE,
     css: $CSS,
+    data(){
+      return {
+        t : translations.t('complaint'),
+      }
+    },
+    oninit(){
+      this.set('button_text',this.get('t.close_memo_default_prompt'))
+    },
     computed: {
-      selected_status_name(){
-        return _(this.get('statuses')).findWhere({id: this.get('status_id')}).name;
-      },
-      active(){
-        return this.get('selected_status_name') != "Closed"
+      selected(){
+        return this.get('status_id') == this.get('id');
+      }
+    },
+    observe: {
+      'selected': {
+        handler(value, old, path, idx){
+          this.set('button_text',this.get('t.close_memo_default_prompt'));
+          this.set('close_memo',null);
+          this.set('close_memo_error',false);
+        }
       }
     },
     user_input(val){
@@ -83,21 +84,4 @@ script.
       this.set({other_reason:'',button_text:val,close_memo:val});
       this.set('close_memo_error',false);
     },
-    data(){
-      return {
-        t : translations.t('complaint'),
-      }
-    },
-    oninit(){
-      this.set('button_text',this.get('t.close_memo_default_prompt'))
-    },
-    observe: {
-      'active': {
-        handler(value, old, path, idx){
-          this.set('button_text',this.get('t.close_memo_default_prompt'));
-          this.set('close_memo',null);
-          this.set('close_memo_error',false);
-        }
-      }
-    }
     })

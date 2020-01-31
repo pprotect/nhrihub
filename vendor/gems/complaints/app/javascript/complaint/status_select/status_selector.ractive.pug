@@ -1,0 +1,54 @@
+form
+  <registeredStatusRadio status_id='{{status_id}}' id='{{registeredStatus.id}}' status='{{registeredStatus}}' />
+  <assessmentStatusRadio status_id='{{status_id}}' id='{{assessmentStatus.id}}' status='{{assessmentStatus}}' />
+  <investigationStatusRadio status_id='{{status_id}}' id='{{investigationStatus.id}}' status='{{investigationStatus}}' />
+  <closedStatusRadio close_memo='{{close_memo}}' close_memo_error='{{close_memo_error}}' status_id='{{status_id}}' id='{{closedStatus.id}}' status='{{closedStatus}}' />
+
+style.
+  form{
+    display: flex;
+  }
+  label{
+    font-weight:normal;
+    margin-right:12px;
+  }
+  input{
+    margin-left:6px;
+  }
+
+script.
+  import RegisteredStatusRadio from 'status_radio.ractive.pug'
+  import InvestigationStatusRadio from 'status_radio.ractive.pug'
+  import AssessmentStatusRadio from 'assessment_status_radio.ractive.pug'
+  import ClosedStatusRadio from 'closed_status_radio.ractive.pug'
+  import translations from 'translations.js'
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    components: {
+      registeredStatusRadio: RegisteredStatusRadio,
+      investigationStatusRadio: InvestigationStatusRadio,
+      assessmentStatusRadio: AssessmentStatusRadio,
+      closedStatusRadio: ClosedStatusRadio,
+    },
+    computed: {
+      registeredStatus(){
+        return _(this.get('statuses')).findWhere({name: "Registered"})
+      },
+      investigationStatus(){
+        return _(this.get('statuses')).findWhere({name: "Investigation"})
+      },
+      assessmentStatus(){
+        return _(this.get('statuses')).findWhere({name: "Assessment"})
+      },
+      closedStatus(){
+        return _(this.get('statuses')).findWhere({name: "Closed"})
+      },
+    },
+    data(){
+      return {
+        t : translations.t('complaint'),
+      }
+    },
+    })

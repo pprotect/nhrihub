@@ -1,0 +1,17 @@
+label
+  | {{ status.name }}
+  input(id='{{this.status.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{status.id}}')
+
+script.
+  import translations from 'translations.js'
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    data(){
+      return {
+        t : translations.t('complaint'),
+      }
+    },
+    })
+

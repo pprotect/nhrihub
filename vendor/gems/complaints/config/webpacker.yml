@@ -17,6 +17,7 @@ default: &default
   resolved_paths: ['app/javascript',
                    'app/javascript/filter_controls',
                    'app/javascript/complaint',
+                   'app/javascript/complaint/status_select',
                    '../../../app/javascript',
                    '../../../app/javascript/shared/mixins',
                    '../../../app/javascript/shared/components',

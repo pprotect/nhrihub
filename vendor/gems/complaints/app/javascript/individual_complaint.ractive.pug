@@ -479,7 +479,7 @@ script(type='text/javascript').
           home_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'home_phone'}],
           cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
           fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
-          close_memo: ['notBlank', {if: ()=>!this.findComponent('statusSelector').get('active')}],
+          close_memo: ['notBlank', {if: ()=>this.findComponent('closedStatusRadio').get('selected')}],
         };
       },
     },
