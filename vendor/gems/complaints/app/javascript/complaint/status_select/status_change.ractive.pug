@@ -1,0 +1,60 @@
+form
+  | {{#activeStatuses}}
+  <statusRadio status_id='{{current_status.complaint_status_id}}' id='{{id}}' name='{{name}}' />
+  | {{/activeStatuses}}
+  <closedStatusRadio close_memo='{{current_status.close_memo}}' close_memo_error='{{close_memo_error}}' status_id='{{current_status.complaint_status_id}}' id='{{closedStatus.id}}' name='{{closedStatus.name}}' status='{{closedStatus}}' />
+
+style.
+  form{
+    display: flex;
+  }
+  label{
+    font-weight:normal;
+    margin-right:12px;
+  }
+  input{
+    margin-left:6px;
+  }
+
+script.
+  import StatusRadio from 'status_radio.ractive.pug'
+  import ClosedStatusRadio from 'closed_status_radio.ractive.pug'
+  import translations from 'translations.js'
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    components: {
+      statusRadio: StatusRadio,
+      closedStatusRadio: ClosedStatusRadio,
+    },
+    computed: {
+      close_memo:{
+        set(val){ this.set('current_status.close_memo',val)},
+        get(){ return this.get('current_status.close_memo') }
+        },
+      complaint_status_id:{ 
+        set(val){ this.set('current_status.complaint_status_id',val) },
+        get(){return this.get('current_status.complaint_status_id') }
+        },
+      persistent_attributes() {
+        if(this.get('persisted')){
+            return ["close_memo", "complaint_status_id"];
+          }else{
+            return [];
+          }
+      },
+      serialization_key(){ return 'complaint[status_changes_attributes][]' },
+      activeStatuses(){
+        return _(this.get('statuses')).reject({name: "Closed"})
+      },
+      closedStatus(){
+        return _(this.get('statuses')).findWhere({name: "Closed"})
+      },
+    },
+    data(){
+      return {
+        t : translations.t('complaint'),
+      }
+    },
+  })

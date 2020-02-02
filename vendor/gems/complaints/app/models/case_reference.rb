@@ -7,8 +7,8 @@ class CaseReference < ActiveRecord::Base
     fragment = fragment.gsub(/\D/,'')
     fragment = fragment.gsub(/^0*/,'')
     fragment = "^#{fragment}"
-    return where("concat(sequence,year) ~ ?", fragment) if sequence_first
-    return where("concat(year, sequence) ~ ?", fragment) if year_first
+    return where("concat(case_references.sequence,case_references.year) ~ ?", fragment) if sequence_first
+    return where("concat(case_references.year, case_references.sequence) ~ ?", fragment) if year_first
   end
 
   def self.no_filter
@@ -65,14 +65,4 @@ class CaseReference < ActiveRecord::Base
       1
     end
   end
-
-  #def self.sql_match(case_reference_fragment)
-    #digits = case_reference_fragment&.delete('^0-9')
-    #if digits.nil? || digits.empty?
-      #"1=1"
-    #else
-      #match, year, sequence = digits.match(/^(\d{1,2})(\d*)/).to_a
-      #"complaints.case_reference ~* 'year: #{year}\\d?\\nsequence: #{sequence}'" # postgres ~* operator is case-insensitive regex match
-    #end
-  #end
 end

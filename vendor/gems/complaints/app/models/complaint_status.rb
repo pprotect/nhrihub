@@ -6,4 +6,5 @@ class ComplaintStatus < ActiveRecord::Base
 
   scope :default, ->{ select(:id).where("name != 'Closed'") }
   scope :with_status, ->(ids){ where(id: ids) }
+  scope :ordered, ->{ order("complaint_statuses.sequence asc") }
 end

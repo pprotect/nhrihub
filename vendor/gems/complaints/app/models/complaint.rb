@@ -124,11 +124,13 @@ class Complaint < ActiveRecord::Base
       status_changes.build({:user_id => user_id,
                             :change_date => change_date,
                             :complaint_status_id => complaint_status_id})
-    elsif !(attrs[:status_id].nil? || attrs[:status_id] == "null") && attrs[:status_id].to_i != status_id
+    elsif !(attrs[:complaint_status_id].nil? || attrs[:complaint_status_id] == "null") && 
+           ((attrs[:complaint_status_id].to_i != status_id) ||
+            ((attrs[:complaint_status_id].to_i == status_id) && (attrs[:close_memo] != current_status.close_memo )))
       close_memo = attrs[:close_memo]=='undefined' ? nil : attrs[:close_memo]
-      status_changes.build({:user_id => user_id,
+      sc = status_changes.build({:user_id => user_id,
                             :change_date => change_date,
-                            :complaint_status_id => attrs[:status_id],
+                            :complaint_status_id => attrs[:complaint_status_id],
                             :close_memo => close_memo})
     end
   end
@@ -182,6 +184,7 @@ class Complaint < ActiveRecord::Base
                            :date_of_birth,
                            :dob,
                            :status_id,
+                           :current_status,
                            :attached_documents,
                            :complaint_area_id,
                            :subarea_ids,
@@ -251,23 +254,21 @@ class Complaint < ActiveRecord::Base
     complaint_documents
   end
 
-  #def self.next_case_reference
-    #case_references = CaseReferenceCollection.new(all.pluck(:case_reference))
-    #case_references.next_ref
-  #end
-
   def closed?
     !current_status
   end
 
   def status_id
-    status_changes.sort_by(&:change_date).last&.complaint_status&.id
+    current_status&.complaint_status&.id
   end
 
   def current_status
-    status_changes.sort_by(&:change_date).last&.complaint_status&.name
+    status_changes.sort_by(&:change_date).last
   end
-  alias_method :current_status_humanized, :current_status
+
+  def current_status_humanized
+    current_status.status_humanized
+  end
 
   def _complained_to_subject_agency
     complained_to_subject_agency ? 'yes' : 'no'

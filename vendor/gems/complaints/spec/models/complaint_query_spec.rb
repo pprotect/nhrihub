@@ -34,9 +34,9 @@ describe "scope class methods" do
     end
 
     it "returns complaints with current requested status" do
-      expect(Complaint.with_status(registered)).to eq Complaint.all.select{|c| c.current_status == 'Registered'}
-      expect(Complaint.with_status(closed)).to eq Complaint.all.select{|c| c.current_status == 'Closed'}
-      expect(Complaint.with_status(assessment)).to eq Complaint.all.select{|c| c.current_status == 'Assessment'}
+      expect(Complaint.with_status(registered)).to eq Complaint.all.select{|c| c.current_status.complaint_status.name == 'Registered'}
+      expect(Complaint.with_status(closed)).to eq Complaint.all.select{|c| c.current_status.complaint_status.name == 'Closed'}
+      expect(Complaint.with_status(assessment)).to eq Complaint.all.select{|c| c.current_status.complaint_status.name == 'Assessment'}
     end
   end
 

@@ -261,4 +261,8 @@ module ComplaintsSpecHelpers
       expect(assignee).to eq (name)
     end
   end
+
+  def open_close_memo_menu
+    page.find('#close_memo_prompt').click
+  end
 end

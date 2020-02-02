@@ -32,7 +32,8 @@ class StatusChange < ActiveRecord::Base
   end
 
   def as_json(options={})
-    super(:except => [:updated_at, :created_at, :id, :user_id, :end_date, :complaint_status_id, :complaint_id], :methods => [:change_date, :user_name, :date, :status_humanized])
+    super(:except => [:updated_at, :created_at, :id, :user_id, :end_date, :complaint_id],
+          :methods => [:change_date, :user_name, :date, :status_humanized])
   end
 
   def user_name

@@ -1,5 +1,5 @@
 label
-  | {{ status.name }}
+  | {{ name }}
   input(id='{{this.status.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{status.id}}')
   .btn-group.form-group('class-has-error' = 'close_memo_error')
     button.btn.btn-default.dropdown-toggle.form-control(type='button', 'data-toggle'='dropdown', 'class-hidden'='!selected')
@@ -7,16 +7,20 @@ label
       span.caret
     ul.dropdown-menu#close_memo(name="close_memo")
       | {{#close_memo_options}}
-      li#preset('on-click'='select(.)') {{ . }}
+      li#preset('on-click'='select_preset(.)') {{ . }}
       | {{/close_memo_options}}
       li#referral
         div Referred to:
         input#referred(name='referred', tabIndex=-1, autocomplete='off', type='text', placeholder='Where referred', value='{{referred_to}}', 'on-keyup'='set_referred_to(referred_to)')
       li
-        input#other(name='other', tabIndex=-1, autocomplete='off', type='text', placeholder='Other reason', value='{{other_reason}}', 'on-keyup'="user_input(other_reason)")
+        input#other(name='other', tabIndex=-1, autocomplete='off', type='text', placeholder='Other reason', value='{{other_reason}}', 'on-keyup'="set_other_reason(other_reason)")
     span.help-block.error#close_memo_error {{ t.close_memo_error_message }}
 
 style.
+  .btn-group.form-group {
+    vertical-align: top;
+    margin-left: 12px;
+  }
   #close_memo_error{
     width: 125px;
   }
@@ -34,6 +38,7 @@ style.
   }
   #close_memo {
     width: 290px;
+    top: 30px;
   }
   #close_memo #other{
     margin-left: 0px;
@@ -41,10 +46,12 @@ style.
   }
   #close_memo li {
     margin-left: 18px;
+    margin-top: 4px;
   }
 
 script.
   import translations from 'translations.js'
+  import Validator from 'validator'
 
   export default Ractive.extend({
     template: $TEMPLATE,
@@ -54,34 +61,67 @@ script.
         t : translations.t('complaint'),
       }
     },
-    oninit(){
-      this.set('button_text',this.get('t.close_memo_default_prompt'))
+    onconfig() {
+      return this.validator = new Validator(this);
     },
     computed: {
+      validation_criteria() {
+        return {
+          close_memo: ['notBlank', {if: ()=>this.get('selected')}],
+        };
+      },
       selected(){
         return this.get('status_id') == this.get('id');
+      },
+      referred_to: {
+        set(val){ if(!_.isEmpty(val)){ this.set('close_memo',"Referred to: "+val)}},
+        get(){
+            if(_.isEmpty(this.get('close_memo'))){ return "" }
+            var referred_match = this.get('close_memo').match(/^Referred to: (.*)$/);
+            if(referred_match){ return referred_match[1] }
+          }
+      },
+      other_reason: {
+        set(val){ if(!_.isEmpty(val)){ this.set('close_memo',val)}},
+        get(){
+            if(_.isEmpty(this.get('close_memo'))){ return "" }
+            var referred_match = this.get('close_memo').match(/^Referred to:/);
+            var preset_match = _.contains(this.get('close_memo_options'), this.get('close_memo'))
+            if(!referred_match && !preset_match){ return this.get('close_memo') }
+          }
+      },
+      button_text(){
+        if(_.isEmpty(this.get('close_memo'))){
+            return this.get('t.close_memo_default_prompt')
+          }else{
+            return this.get('close_memo')
+          }
       }
     },
     observe: {
       'selected': {
         handler(value, old, path, idx){
-          this.set('button_text',this.get('t.close_memo_default_prompt'));
-          this.set('close_memo',null);
+          console.log('selected')
+          console.log(old)
+          console.log(value)
           this.set('close_memo_error',false);
+          if(typeof old != 'undefined'){
+            console.log('zeroize close_memo');
+            this.set('close_memo',"")
+          }
         }
       }
     },
-    user_input(val){
-      this.set({referred_to:'',button_text:val,close_memo:val});
+    set_other_reason(val){
+      this.set({referred_to:'',other_reason:val});
       this.set('close_memo_error',false);
     },
-    select(selection){
-      this.set({button_text:selection,close_memo:selection,other_reason:"",referred_to:''})
+    select_preset(selection){
+      this.set({close_memo:selection,other_reason:"",referred_to:''})
       this.set('close_memo_error',false);
     },
     set_referred_to(val){
-      val = "Referred to: "+val;
-      this.set({other_reason:'',button_text:val,close_memo:val});
+      this.set({other_reason:'',referred_to:val});
       this.set('close_memo_error',false);
     },
     })

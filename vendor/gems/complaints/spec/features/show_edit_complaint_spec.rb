@@ -17,6 +17,8 @@ feature 'edit complaint', js: true do
   include ActiveStorageHelpers
   include ParseEmailHelpers
 
+  let(:closed_complaint){ IndividualComplaint.all.select{|c| c.current_status.complaint_status.name == "Closed"}.first }
+
   before do
     populate_database(:individual_complaint)
     visit complaint_path(:en, IndividualComplaint.first.id)
@@ -26,12 +28,38 @@ feature 'edit complaint', js: true do
     edit_complaint
     expect(page).to have_checked_field "Registered"
     choose "Assessment"
-    expect{ edit_save }.to change{ IndividualComplaint.first.current_status }.from("Registered").to("Assessment")
+    expect{ edit_save }.to change{ IndividualComplaint.first.current_status.complaint_status.name }.from("Registered").to("Assessment")
     expect( all('#status_changes .status_change').first.text ).to match "Assessment"
     expect( all('#status_changes .status_change').last.text ).to match "Registered"
     expect( all('#status_changes .date').first.text ).to match /#{Date.today.strftime("%b %-e, %Y")}/
     user = User.find_by(:login => 'admin')
     expect( all('#status_changes .user_name').first.text ).to match /#{user.first_last_name}/
+  end
+
+  it "edits a closed complaint with a preset close memo" do
+    closed_complaint.status_changes.most_recent_first.first.update(close_memo: "No jurisdiction")
+    visit complaint_path(:en, closed_complaint.id)
+    edit_complaint
+    expect(page.find('#close_memo_prompt').text).to eq "No jurisdiction"
+    open_close_memo_menu
+  end
+
+  it "edits a closed complaint with a referral close memo" do
+    closed_complaint.status_changes.most_recent_first.first.update(close_memo: "Referred to: another agency")
+    visit complaint_path(:en, closed_complaint.id)
+    edit_complaint
+    expect(page.find('#close_memo_prompt').text).to eq "Referred to: another agency"
+    open_close_memo_menu
+    expect(page.find('#close_memo #referred').value).to eq "another agency"
+  end
+
+  it "edits a closed complaint with a user-entered reason close memo" do
+    closed_complaint.status_changes.most_recent_first.first.update(close_memo: "some other reason")
+    visit complaint_path(:en, closed_complaint.id)
+    edit_complaint
+    expect(page.find('#close_memo_prompt').text).to eq "some other reason"
+    open_close_memo_menu
+    expect(page.find('#close_memo #other').value).to eq "some other reason"
   end
 
   it "edits a complaint" do

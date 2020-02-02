@@ -8,7 +8,7 @@ import Area from 'area'
 import Assignees from 'assignees'
 import AssigneeSelector from 'assignee_selector'
 import ComplaintDocuments from 'complaint/complaint_documents'
-import StatusChange from 'status_change.ractive.pug'
+import ShowStatusChange from 'show_status_change.ractive.pug'
 import SubareaSelector from 'complaint/subarea_selector.ractive.pug'
 import Persistence from 'persistence'
 import ConfirmDeleteModal from 'confirm_delete_modal'
@@ -26,11 +26,21 @@ import 'bootstrap'
 import DupeList from 'dupe_list.ractive.pug'
 import 'string.coffee'
 import Buttons from 'buttons.ractive.pug'
-import StatusSelector from 'status_selector.ractive.pug'
+import StatusChange from 'status_change.ractive.pug'
 
 export default Ractive.extend({
   el: '#complaint',
   computed : {
+    status_changes_attributes:{
+      get(){
+        return { complaint_status_id: this.findComponent('statusChange').get('complaint_status_id'),
+                 close_memo: this.findComponent('statusChange').get('close_memo') }
+      },
+      set(obj){
+        this.findComponent('statusChange').
+             set({'complaint_status_id': obj['complaint_status_id'],'close_memo': obj['close_memo']});
+      }
+    },
     status_changes_recent_first(){
       // on update, it seems that ractive  doesn't render in the order of the data object, so we need to force the correct sort
       return _(this.get('status_changes')).sortBy(function(sc){return -$.datepicker.formatDate('@',new Date(sc.change_date)) });
@@ -170,12 +180,12 @@ export default Ractive.extend({
     assignees : Assignees,
     assigneeSelector : AssigneeSelector,
     attachedDocuments : ComplaintDocuments,
-    statusChange : StatusChange,
+    showStatusChange : ShowStatusChange,
     subareaSelector: SubareaSelector,
     dupeList: DupeList,
     //progressBar : ProgressBar,
     buttons: Buttons,
-    statusSelector: StatusSelector
+    statusChange: StatusChange
   },
   proceed_to_intake(){
     history.pushState({},"anything",this.get('url'));

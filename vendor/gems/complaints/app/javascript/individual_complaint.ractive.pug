@@ -55,17 +55,17 @@
         .col-md-10
           span#current_assignee {{ current_assignee_name }}
 
-      .row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
+      .row#status_row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
         .col-md-2
           label
             | {{ t.status }}
         .col-md-10
           .fade.no_edit.in#status_changes
             | {{#status_changes_recent_first}}
-            <statusChange close_memo='{{close_memo}}' status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
+            <showStatusChange close_memo='{{close_memo}}' status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
             | {{/status_changes_recent_first}}
           .fade.edit#current_status
-            <statusSelector close_memo='{{close_memo}}' close_memo_error = '{{close_memo_error}}' close_memo_options = '{{close_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
+            <statusChange persisted='{{persisted}}' current_status='{{current_status}}' close_memo='{{close_memo}}' close_memo_error = '{{close_memo_error}}' close_memo_options = '{{close_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
 
       .row
         .col-md-2('data-toggle' = 'edit')
@@ -432,6 +432,9 @@ style.
   .form-control[disabled]{
     background-color: #e2dfdf;
   }
+  #status_row {
+    height: 48px;
+  }
 
 script(type='text/javascript').
   window.$ = window.jQuery = $ // it's the only method I could get to work for making $ available globally!
@@ -449,7 +452,7 @@ script(type='text/javascript').
         return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
           'city','province','postal_code','complaint_area_id',
           'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
-          'status_id', 'close_memo', 'new_assignee_id', 'subarea_ids',
+          'status_changes_attributes', 'new_assignee_id', 'subarea_ids',
           'agency_ids', 'attached_documents_attributes', 'details',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
           'firstName', 'lastName', 'title', 'type'];
@@ -479,7 +482,7 @@ script(type='text/javascript').
           home_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'home_phone'}],
           cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
           fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
-          close_memo: ['notBlank', {if: ()=>this.findComponent('closedStatusRadio').get('selected')}],
+          close_memo: ()=>{return this.findComponent('closedStatusRadio').validate() },
         };
       },
     },

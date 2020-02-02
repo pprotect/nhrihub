@@ -48,9 +48,7 @@ class ComplaintsController < ApplicationController
   def update
     params[:complaint].delete(:type) # ignore type on update... it will be correct
     complaint = Complaint.find(params[:id])
-    params[:complaint][:status_changes_attributes] = [{:user_id => current_user.id,
-                                                       :status_id => params[:complaint].delete(:status_id),
-                                                       :close_memo => params[:complaint].delete(:close_memo)}]
+    params[:complaint][:status_changes_attributes][0][:user_id] = current_user.id
     if complaint.update(complaint_params)
       complaint.heading= t('.heading', case_reference: complaint.case_reference)
       render :json => complaint, :status => 200
@@ -121,7 +119,7 @@ class ComplaintsController < ApplicationController
     @permitted_filetypes = ComplaintDocument.permitted_filetypes
     @communication_maximum_filesize    = CommunicationDocument.maximum_filesize * 1000000
     @communication_permitted_filetypes = CommunicationDocument.permitted_filetypes
-    @statuses = ComplaintStatus.select(:id, :name).all
+    @statuses = ComplaintStatus.ordered.select(:id, :name).all
     @office_groups = OfficeGroup.regional_provincial
     @branches = Office.branches
     @close_memo_options = ComplaintStatus::CloseMemoOptions
@@ -153,7 +151,7 @@ class ComplaintsController < ApplicationController
                                        :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
                                        :organization_name, :organization_registration_number,
                                        :subarea_ids => [],
-                                       :status_changes_attributes => [:user_id, :status_id, :close_memo],
+                                       :status_changes_attributes => [:user_id, :complaint_status_id, :close_memo],
                                        :agency_ids => [],
                                        :complaint_documents_attributes => [:file, :title, :original_filename, :original_type, :filesize, :lastModifiedDate],
                                      )

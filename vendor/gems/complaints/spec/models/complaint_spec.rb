@@ -4,7 +4,7 @@ require_relative '../../../authengine/spec/helpers/user_setup_helper'
 describe "complaint" do
   context "create" do
     before do
-      @complaint = IndividualComplaint.create({:status_changes_attributes => [{:status_id => nil}]})
+      @complaint = IndividualComplaint.create({:status_changes_attributes => [{:complaint_status_id => nil}]})
     end
 
     it "should create a status_change and link to 'Registered' complaint status" do
@@ -22,22 +22,22 @@ describe "complaint" do
   context "update status" do
     before do
       complaint_status = ComplaintStatus.find_or_create_by(name: "Assessment")
-      @complaint = IndividualComplaint.create({:status_changes_attributes => [{:status_id => nil}]})
-      @complaint.update({:status_changes_attributes => [{:status_id => complaint_status.id }]})
+      @complaint = IndividualComplaint.create({:status_changes_attributes => [{:complaint_status_id => nil}]})
+      @complaint.update({:status_changes_attributes => [{:complaint_status_id => complaint_status.id }]})
     end
 
     it "should create a status change object and link to the Assessment complaint status" do
       expect(@complaint.status_changes.length).to eq 2
-      expect(@complaint.complaint_statuses.map(&:name)).to eq [ "Registered", "Assessment"]
+      expect(@complaint.complaint_statuses.map(&:name)).to match_array [ "Registered", "Assessment"]
     end
   end
 
   context "update Complaint with no status change" do
     before do
       complaint_status = ComplaintStatus.find_or_create_by(name: "Assessment")
-      @complaint = IndividualComplaint.create({:status_changes_attributes => [{:status_id => nil}]})
-      @complaint.update({:status_changes_attributes => [{:status_id => complaint_status.id}]})
-      @complaint.update({:status_changes_attributes => [{:status_id => complaint_status.id}]})
+      @complaint = IndividualComplaint.create({:status_changes_attributes => [{:complaint_status_id => nil}]})
+      @complaint.update({:status_changes_attributes => [{:complaint_status_id => complaint_status.id}]})
+      @complaint.update({:status_changes_attributes => [{:complaint_status_id => complaint_status.id}]})
     end
 
     it "should create a status change object and link to the Active complaint status" do
@@ -64,44 +64,6 @@ describe "Complaint with gg complaint basis" do
     expect(ComplaintSubarea.count).to eq 1
   end
 end
-
-#describe "next case reference" do
-  #let(:current_year){ Date.today.strftime('%y').to_i }
-  #let(:this_year_case_reference) { CaseReference.new(year: current_year, sequence: 22) }
-  #let(:formatted_case_reference) { ->(year,sequence){ CaseReferenceFormat%{year:year,sequence:sequence} } }
-
-  #context "existing Complaints are from previous year" do
-    #before do
-      #complaint = Complaint.create
-      #complaint.case_reference = CaseReference.new(year: 12, sequence: 35))
-    #end
-
-    #it "should start the sequence at 1 with the current year" do
-      #expect(Complaint.next_case_reference.to_s).to eq formatted_case_reference[current_year, 1]
-    #end
-  #end
-
-  #context "existing Complaints are from the current year" do
-    #before do
-      #complaint = Complaint.create
-      #complaint.update_attribute(:case_reference, this_year_case_reference)
-    #end
-
-    #it "should increment the sequence only" do
-      #expect(Complaint.next_case_reference.to_s).to eq formatted_case_reference[current_year, 23]
-    #end
-  #end
-
-  #context "no existing complaints" do
-    #before do
-      ## nothing!
-    #end
-
-    #it "should create the first case reference for the current year" do
-      #expect(Complaint.next_case_reference.to_s).to eq formatted_case_reference[current_year, 1]
-    #end
-  #end
-#end
 
 describe "server assignment of case reference" do
   let(:formatted_case_reference) { ->(year,sequence){ CaseReferenceFormat%{year:year,sequence:sequence} } }
@@ -198,7 +160,7 @@ describe "#as_json" do
                                                      "imported", "email", "gender", "dob", "details",
                                                      "firstName", "lastName", "title", "occupation", "employer",
                                                      "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name",
-                                                     "date", "date_of_birth", "status_id", "attached_documents",
+                                                     "date", "date_of_birth", "current_status", "status_id", "attached_documents",
                                                      "status_changes", "agency_ids", "communications", "subarea_ids", "area_subarea_ids",
                                                      "cell_phone", "city", "complaint_area_id", "complaint_type",
                                                      "alt_id_type", "physical_address",
@@ -249,7 +211,7 @@ describe "#as_json" do
       expect(@complaints.first["complaint_area_id"]).to eq Complaint.first.complaint_area_id
       expect(@complaints.first["area_subarea_ids"]).to be_an Hash
       expect(@complaints.first["current_assignee_id"]).to eq Complaint.first.current_assignee_id
-      expect(@complaints.first["status_changes"].first.keys).to match_array ["date", "status_humanized", "user_name", "change_date", "close_memo"]
+      expect(@complaints.first["status_changes"].first.keys).to match_array ["date", "status_humanized", "user_name", "change_date", "close_memo", "complaint_status_id"]
       expect(DateTime.parse(@complaints.first["status_changes"].first["date"]).strftime("%s")).to eq Complaint.first.status_changes.first.date.to_datetime.strftime("%s")
       expect(@complaints.first["status_changes"].first["status_humanized"]).to eq Complaint.first.status_changes.first.status_humanized
       expect(@complaints.first["status_changes"].first["user_name"]).to eq Complaint.first.status_changes.first.user_name
@@ -277,7 +239,7 @@ describe "#as_json" do
                                                      "imported", "email", "gender", "dob", "details",
                                                      "firstName", "lastName", "title", "occupation", "employer",
                                                      "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name",
-                                                     "date", "date_of_birth", "status_id", "attached_documents",
+                                                     "date", "date_of_birth", "current_status", "status_id", "attached_documents",
                                                      "status_changes", "agency_ids", "communications", "subarea_ids", "area_subarea_ids",
                                                      "cell_phone", "city", "complaint_area_id", "complaint_type",
                                                      "alt_id_type", "physical_address",

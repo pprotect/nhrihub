@@ -1,6 +1,6 @@
 label
-  | {{ status.name }}
-  input(id='{{this.status.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{status.id}}')
+  | {{ name }}
+  input(id='{{this.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{id}}')
 
 script.
   import translations from 'translations.js'

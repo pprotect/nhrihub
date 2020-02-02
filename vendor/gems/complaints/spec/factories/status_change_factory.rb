@@ -5,7 +5,7 @@ FactoryBot.define do
     ComplaintStatus::Names.each { |name|
       sym = name.downcase.gsub(/ /,'_').to_sym
       trait sym do
-        close_memo { 'No jurisdiction' }
+        close_memo { sym == :closed ? 'No jurisdiction' : nil }
         after(:create) do |status_change|
           status_change.complaint_status = ComplaintStatus.find_or_create_by(:name => name)
         end
