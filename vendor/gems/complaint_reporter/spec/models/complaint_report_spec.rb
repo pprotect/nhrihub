@@ -1,5 +1,4 @@
 require 'rails_helper'
-$:.unshift File.expand_path '../../helpers', __FILE__
 
 feature "complaint report" do
   scenario "it should produce valid xml with weird characters in fields" do
@@ -16,7 +15,9 @@ end
 
 feature "complaints report" do
   scenario "it should produce valid xml with weird characters in fields" do
-    complaint = FactoryBot.create(:complaint, :details=> "&><**/")
+    complaint = FactoryBot.build(:individual_complaint, :details=> "&><**/")
+    complaint.assign_initial_status(FactoryBot.create(:user))
+    complaint.save
     complaints_report = ComplaintsReport.new([complaint])
     report = complaints_report.generate_word_doc
     docx = File.read(ComplaintsReport::TMP_DIR.join('docx', 'word', 'document.xml').to_s)

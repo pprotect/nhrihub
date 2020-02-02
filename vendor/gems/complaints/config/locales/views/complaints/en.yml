@@ -58,6 +58,7 @@ en:
     no_agency_match: "no possible duplicates for agency"
 
   complaint:
+    assessment_memo: '(Information pending)'
     register_heading: "%{type} Complaint Intake"
     add_file: "Add file"
     add_document: "Add"

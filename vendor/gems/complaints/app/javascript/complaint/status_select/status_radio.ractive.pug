@@ -1,6 +1,16 @@
-label
-  | {{ name }}
-  input(id='{{this.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{id}}')
+div
+  label
+    | {{ name }}
+    input(id='{{this.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{id}}')
+  label('class-hidden'='!has_memo')
+    | {{ memo }}
+    input(id='{{this.name.underscore()}}_memo' type = 'checkbox', checked='{{memo_checked}}', name ='{{this.name.underscore()._memo}}', value ='{{id}}')
+
+style.
+  div {
+    display: flex;
+    flex-direction: column;
+    }
 
 script.
   import translations from 'translations.js'
@@ -13,5 +23,23 @@ script.
         t : translations.t('complaint'),
       }
     },
+    oninit(){
+      this.set('memo_checked',false);
+    },
+    computed: {
+      memo(){
+        var key = this.get('name').downcase();
+        return this.get('t.'+key+'_memo');
+      },
+      selected(){
+        return this.parent.get('complaint_status_id') == this.get('id');
+      },
+      assessment_status(){
+        return this.get('name') == 'Assessment';
+      },
+      has_memo(){
+        return this.get('assessment_status') && this.get('selected');
+      }
+    }
     })
 

@@ -24,7 +24,7 @@ script#file_selector_template(type='text/ractive' src='../../../../../../app/vie
           .col-md-9
             #status_changes
               | {{#status_changes_recent_first}}
-              <statusChange status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
+              <showStatusChange status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
               | {{/status_changes_recent_first}}
         .row
           .col-md-3
@@ -59,7 +59,7 @@ script(type='text/javascript').
   import 'jquery-ui/ui/widgets/datepicker'
   import translations from 'translations.js'
   import Communications from 'communications.ractive.pug'
-  import StatusChange from 'status_change.ractive.pug'
+  import ShowStatusChange from 'show_status_change.ractive.pug'
   import reminders from 'reminders.ractive.pug'
   import notes from 'notes.ractive.pug'
   import Remindable from 'remindable.coffee'
@@ -116,7 +116,7 @@ script(type='text/javascript').
     }},
     components : {
       attachedDocuments : ComplaintDocuments,
-      statusChange : StatusChange,
+      showStatusChange : ShowStatusChange,
     },
     generate_word_doc() {
       return window.location = Routes.complaint_path('en',this.get('id'),{format : 'docx'});

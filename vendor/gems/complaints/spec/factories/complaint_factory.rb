@@ -219,17 +219,17 @@ FactoryBot.define do
       end
     }
 
-    factory :individual_complaint do
+    factory :individual_complaint, class: "IndividualComplaint" do
       type { 'IndividualComplaint' }
     end
 
-    factory :organization_complaint do
+    factory :organization_complaint, class: "OrganizationComplaint" do
       type { 'OrganizationComplaint' }
       organization_name { Faker::Company.name }
       organization_registration_number {  10000000 + rand(10000000) }
     end
 
-    factory :own_motion_complaint do
+    factory :own_motion_complaint, class: "OwnMotionComplaint" do
       type { 'OwnMotionComplaint' }
       initiating_office_id { Office.not_branches.map(&:id).sample }
       initiating_branch_id { Office.branches.map(&:id).sample }

@@ -28,6 +28,26 @@ feature "complaint register", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecSetupHelpers
   include ComplaintsSpecHelpers
+  include AreaSubareaCommonHelpers
+
+  before do
+    populate_database(:individual_complaint)
+    visit complaint_intake_path('en', 'individual')
+  end
+
+  it "initiates registration via duplicate complaints check" do
+    page.find("#proceed_to_intake").click
+    expect(page_heading).to eq "Individual Complaint Intake"
+    complete_required_fields(:individual)
+    expect{save_complaint}.to change{ IndividualComplaint.count }.by(1)
+    expect(IndividualComplaint.last.current_status_humanized).to eq "Registered"
+  end
+end
+
+feature "complaint register", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include ComplaintsSpecHelpers
   include UploadFileHelpers
   include ActiveStorageHelpers
   include ParseEmailHelpers
