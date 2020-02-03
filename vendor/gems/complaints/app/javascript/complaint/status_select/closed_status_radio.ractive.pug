@@ -101,19 +101,21 @@ script.
     observe: {
       'selected': {
         handler(value, old, path, idx){
-          console.log('selected')
-          console.log(old)
-          console.log(value)
           this.set('close_memo_error',false);
-          if(typeof old != 'undefined'){
-            console.log('zeroize close_memo');
-            this.set('close_memo',"")
+          var click_away = old && !value;
+          var click_return = value && !old;
+          if(click_away){
+            this.set('close_memo','');
+          }
+          if(complaint.stashed_instance){
+            var stashed_close_memo = complaint.stashed_instance.status_changes_attributes.close_memo;
+            if(click_return){ this.set('close_memo', stashed_close_memo)};
           }
         }
       }
     },
     set_other_reason(val){
-      this.set({referred_to:'',other_reason:val});
+      this.set({referred_to:''});
       this.set('close_memo_error',false);
     },
     select_preset(selection){
@@ -121,7 +123,7 @@ script.
       this.set('close_memo_error',false);
     },
     set_referred_to(val){
-      this.set({other_reason:'',referred_to:val});
+      this.set({other_reason:''});
       this.set('close_memo_error',false);
     },
     })

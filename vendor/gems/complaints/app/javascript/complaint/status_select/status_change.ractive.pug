@@ -29,6 +29,15 @@ script.
       closedStatusRadio: ClosedStatusRadio,
     },
     computed: {
+      status_changes_attributes:{
+        get(){
+          return { complaint_status_id: this.get('complaint_status_id'),
+                   close_memo: this.get('close_memo') }
+        },
+        set(obj){
+          this.set({'complaint_status_id': obj['complaint_status_id'],'close_memo': obj['close_memo']});
+        }
+      },
       close_memo:{
         set(val){ this.set('current_status.close_memo',val)},
         get(){ return this.get('current_status.close_memo') }

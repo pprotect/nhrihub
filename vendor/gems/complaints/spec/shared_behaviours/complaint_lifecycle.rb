@@ -108,4 +108,37 @@ RSpec.shared_examples  "complaint lifecycle" do
       expect(StatusChange.most_recent_first.first.close_memo).to be_nil
     end
   end
+
+  describe "persistence of original attribute" do
+    before do
+      closed_status = ComplaintStatus.where(name: "Closed").first
+      complaint.status_changes_attributes = [{complaint_status_id: closed_status.id, close_memo: "No jurisdiction"}] 
+      complaint.save
+      visit complaint_path('en', complaint.id)
+      edit_complaint
+    end
+
+    it "should persist the original close_memo attribute when selecting another status and returning to closed" do
+      choose('Assessment')
+      choose('Closed')
+      expect(page.find('#close_memo_prompt').text).to eq "No jurisdiction"
+    end
+  end
+
+  describe "change from closed status and save... close_memo not submitted" do
+    before do
+      closed_status = ComplaintStatus.where(name: "Closed").first
+      complaint.status_changes_attributes = [{complaint_status_id: closed_status.id, close_memo: "No jurisdiction"}] 
+      complaint.save
+      visit complaint_path('en', complaint.id)
+      edit_complaint
+    end
+
+    it "should zeroize close_memo before saving" do
+      choose('Investigation')
+      edit_save
+      expect(complaint.reload.current_status.close_memo).to be_blank
+      expect(complaint.reload.current_status.complaint_status.name).to eq "Investigation"
+    end
+  end
 end
