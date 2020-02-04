@@ -60,6 +60,40 @@ RSpec.shared_examples  "complaint lifecycle" do
     end
   end
 
+  describe "depiction of close_memo prompt when editing a closed complaint" do
+    context "when complaint close_memo is other_reason" do
+      before do
+        closed_status = ComplaintStatus.where(name: "Closed").first
+        complaint.status_changes_attributes = [{complaint_status_id: closed_status.id, close_memo: "some other reason"}] 
+        complaint.save
+        visit complaint_path('en', complaint.id)
+        edit_complaint
+      end
+
+      it "should show the close_memo value in the button" do
+        expect(page.find('#close_memo_prompt').text).to eq "some other reason"
+        click_button('some other reason')
+        expect(page.find('#other').value).to eq "some other reason"
+      end
+    end
+
+    context "when complaint close_memo is referred_to" do
+      before do
+        closed_status = ComplaintStatus.where(name: "Closed").first
+        complaint.status_changes_attributes = [{complaint_status_id: closed_status.id, close_memo: "Referred to: another agency"}] 
+        complaint.save
+        visit complaint_path('en', complaint.id)
+        edit_complaint
+      end
+
+      it "should show the close_memo value in the button" do
+        expect(page.find('#close_memo_prompt').text).to eq "Referred to: another agency"
+        click_button('Referred to: another agency')
+        expect(page.find('#referred').value).to eq "another agency"
+      end
+    end
+  end
+
   describe "apply closed status, select preset close memo" do
     let(:closed_status){ ComplaintStatus.where(name: "Closed").first }
     it "should show warnings until preset reason is selected" do
@@ -105,7 +139,7 @@ RSpec.shared_examples  "complaint lifecycle" do
       choose('investigation')
       expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
       expect(StatusChange.most_recent_first.first.complaint_status_id).to eq investigation_status.id
-      expect(StatusChange.most_recent_first.first.close_memo).to be_nil
+      expect(StatusChange.most_recent_first.first.close_memo).to be_blank
     end
   end
 
@@ -119,7 +153,12 @@ RSpec.shared_examples  "complaint lifecycle" do
     end
 
     it "should persist the original close_memo attribute when selecting another status and returning to closed" do
+      expect(page.find('#close_memo_prompt').text).to eq "No jurisdiction"
       choose('Assessment')
+      check('(Information pending)')
+      choose('Closed')
+      expect(page.find('#close_memo_prompt').text).to eq "No jurisdiction"
+      choose('Investigation')
       choose('Closed')
       expect(page.find('#close_memo_prompt').text).to eq "No jurisdiction"
     end

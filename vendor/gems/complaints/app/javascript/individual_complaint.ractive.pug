@@ -65,7 +65,7 @@
             <showStatusChange close_memo='{{close_memo}}' status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
             | {{/status_changes_recent_first}}
           .fade.edit#current_status
-            <statusChange persisted='{{persisted}}' current_status='{{current_status}}' close_memo='{{close_memo}}' close_memo_error = '{{close_memo_error}}' close_memo_options = '{{close_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
+            <statusChange status_changes_attributes='{{status_changes_attributes}}' persisted='{{persisted}}' current_status='{{current_status}}' close_memo='{{close_memo}}' close_memo_error = '{{close_memo_error}}' close_memo_options = '{{close_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
 
       .row
         .col-md-2('data-toggle' = 'edit')

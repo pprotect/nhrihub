@@ -99,18 +99,12 @@ script.
       }
     },
     observe: {
-      'selected': {
+      'selected close_memo': {
         handler(value, old, path, idx){
           this.set('close_memo_error',false);
-          var click_away = old && !value;
-          var click_return = value && !old;
-          if(click_away){
-            this.set('close_memo','');
-          }
-          if(complaint.stashed_instance){
-            var stashed_close_memo = complaint.stashed_instance.status_changes_attributes.close_memo;
-            if(click_return){ this.set('close_memo', stashed_close_memo)};
-          }
+          if(this.get('selected')){ 
+            this.parent.set({complaint_status_id: this.get('id'), close_memo: this.get('close_memo')})
+          };
         }
       }
     },

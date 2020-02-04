@@ -31,16 +31,6 @@ import StatusChange from 'status_change.ractive.pug'
 export default Ractive.extend({
   el: '#complaint',
   computed : {
-    status_changes_attributes:{
-      get(){
-        return { complaint_status_id: this.findComponent('statusChange').get('complaint_status_id'),
-                 close_memo: this.findComponent('statusChange').get('close_memo') }
-      },
-      set(obj){
-        this.findComponent('statusChange').
-             set({'complaint_status_id': obj['complaint_status_id'],'close_memo': obj['close_memo']});
-      }
-    },
     status_changes_recent_first(){
       // on update, it seems that ractive  doesn't render in the order of the data object, so we need to force the correct sort
       return _(this.get('status_changes')).sortBy(function(sc){return -$.datepicker.formatDate('@',new Date(sc.change_date)) });

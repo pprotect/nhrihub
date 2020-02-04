@@ -1,6 +1,6 @@
 form
   | {{#activeStatuses}}
-  <statusRadio status_id='{{current_status.complaint_status_id}}' id='{{id}}' name='{{name}}' />
+  <statusRadio close_memo='{{current_status.close_memo}}' status_id='{{current_status.complaint_status_id}}' id='{{id}}' name='{{name}}' />
   | {{/activeStatuses}}
   <closedStatusRadio close_memo='{{current_status.close_memo}}' close_memo_error='{{close_memo_error}}' status_id='{{current_status.complaint_status_id}}' id='{{closedStatus.id}}' name='{{closedStatus.name}}' status='{{closedStatus}}' />
 
@@ -29,23 +29,14 @@ script.
       closedStatusRadio: ClosedStatusRadio,
     },
     computed: {
-      status_changes_attributes:{
-        get(){
-          return { complaint_status_id: this.get('complaint_status_id'),
-                   close_memo: this.get('close_memo') }
-        },
-        set(obj){
-          this.set({'complaint_status_id': obj['complaint_status_id'],'close_memo': obj['close_memo']});
-        }
-      },
-      close_memo:{
-        set(val){ this.set('current_status.close_memo',val)},
-        get(){ return this.get('current_status.close_memo') }
-        },
-      complaint_status_id:{ 
-        set(val){ this.set('current_status.complaint_status_id',val) },
-        get(){return this.get('current_status.complaint_status_id') }
-        },
+      //close_memo:{
+        //set(val){ this.set('current_status.close_memo',val)},
+        //get(){ return this.get('current_status.close_memo') }
+        //},
+      //complaint_status_id:{ 
+        //set(val){ this.set('current_status.complaint_status_id',val) },
+        //get(){return this.get('current_status.complaint_status_id') }
+        //},
       persistent_attributes() {
         if(this.get('persisted')){
             return ["close_memo", "complaint_status_id"];
