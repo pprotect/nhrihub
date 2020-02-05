@@ -82,18 +82,21 @@ script.
           }
       },
       other_reason: {
-        set(val){ if(!_.isEmpty(val)){ this.set('close_memo',val)}},
+        set(val){ if(!_.isEmpty(val)){ console.log('foo'); this.set('close_memo',val)}},
         get(){
             if(_.isEmpty(this.get('close_memo'))){ return "" }
             var referred_match = this.get('close_memo').match(/^Referred to:/);
             var preset_match = _.contains(this.get('close_memo_options'), this.get('close_memo'))
-            if(!referred_match && !preset_match){ return this.get('close_memo') }
+            var assessment_match = this.get('close_memo').match(/Information pending/)
+            if(!referred_match && !preset_match && !assessment_match){ return this.get('close_memo') }
           }
       },
       button_text(){
         if(_.isEmpty(this.get('close_memo'))){
+            console.log('button text default');
             return this.get('t.close_memo_default_prompt')
           }else{
+            console.log('button text = the close memo value');
             return this.get('close_memo')
           }
       }
@@ -102,7 +105,10 @@ script.
       'selected close_memo': {
         handler(value, old, path, idx){
           this.set('close_memo_error',false);
-          if(this.get('selected')){ 
+          var becomes_selected = (typeof old != 'undefined') && this.get('selected')
+          if(becomes_selected){
+            console.log('closed becomes selected')
+            console.log(this.get('close_memo'));
             this.parent.set({complaint_status_id: this.get('id'), close_memo: this.get('close_memo')})
           };
         }

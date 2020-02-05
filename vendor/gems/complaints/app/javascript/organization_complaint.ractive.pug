@@ -56,18 +56,6 @@
         .col-md-10
           span#current_assignee {{ current_assignee_name }}
 
-      .row#status_row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
-        .col-md-2
-          label
-            | {{ t.status }}
-        .col-md-10
-          .fade.no_edit.in#status_changes
-            | {{#status_changes_recent_first}}
-            <showStatusChange close_memo='{{close_memo}}' status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
-            | {{/status_changes_recent_first}}
-          .fade.edit#current_status
-            <statusChange persisted='{{persisted}}' current_status='{{current_status}}' close_memo='{{close_memo}}' close_memo_error = '{{close_memo_error}}' close_memo_options = '{{close_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
-
       .row
         .col-md-2
           label {{ t.organization_name }}
@@ -277,17 +265,6 @@
                 | {{ t.no }}
                 input#complained_to_subject_agency_no(name = "{{complained_to_subject_agency}}", style = "margin-left:6px", type = "radio", value = "false")/
 
-      .row.form-group('class-has-error' = 'new_assignee_id_error')
-        .col-md-2
-          label('class-hidden' = 'new_complaint') {{ t.assignees_history }}
-          label('class-hidden' = 'update_complaint') {{ t.assignee }}
-        .col-md-5("data-toggle" = "edit")
-          <assignees assigns = "{{assigns}}"  />
-          .no_edit.in
-          .edit
-            <assigneeSelector editing = {{update_complaint}} new_assignee_id = "{{new_assignee_id}}" />
-            span.help-block.error#new_assignee_id_error {{ t.assignee_error_message }}
-
       .row.form-group("class-has-error" = "complaint_area_id_error", "data-toggle" = "edit")
         .col-md-2
           .no_edit.in
@@ -327,6 +304,29 @@
           .edit
             <agenciesSelector agency_ids = "{{agency_ids}}" all_agencies_in_sixes = "{{all_agencies_in_sixes}}" />
 
+      .row#status_row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
+        .col-md-2
+          label
+            | {{ t.status }}
+        .col-md-10
+          .fade.no_edit.in#status_changes
+            | {{#status_changes_recent_first}}
+            <showStatusChange close_memo='{{close_memo}}' status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
+            | {{/status_changes_recent_first}}
+          .fade.edit#current_status
+            <statusChange persisted='{{persisted}}' current_status='{{current_status}}' close_memo='{{close_memo}}' close_memo_error = '{{close_memo_error}}' close_memo_options = '{{close_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
+
+      .row.form-group('class-has-error' = 'new_assignee_id_error')
+        .col-md-2
+          label('class-hidden' = 'new_complaint') {{ t.assignees_history }}
+          label('class-hidden' = 'update_complaint') {{ t.assignee }}
+        .col-md-5("data-toggle" = "edit")
+          <assignees assigns = "{{assigns}}"  />
+          .no_edit.in
+          .edit
+            <assigneeSelector editing = {{update_complaint}} new_assignee_id = "{{new_assignee_id}}" />
+            span.help-block.error#new_assignee_id_error {{ t.assignee_error_message }}
+
       .row("data-toggle" = "edit")
         .col-md-2
           label {{ t.documents }}
@@ -340,7 +340,6 @@
           <attachedDocuments attached_documents = "{{attached_documents}}" key = "complaint" maximum_filesize = "{{maximum_filesize}}" permitted_filetypes = "{{permitted_filetypes}}" />
 
       <buttons mode='{{mode}}' editing='{{editing}}' has_errors='{{has_errors}}' />
-
 
 style.
   #complainant #firstName, #complainant #title {margin-right: .25em;}

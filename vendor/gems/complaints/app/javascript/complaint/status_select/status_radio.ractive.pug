@@ -47,7 +47,12 @@ script.
     observe: {
       'selected close_memo': {
         handler(value, old, path, idx){
-          if(this.get('selected')){ 
+          // i.e. as opposed to is selected at initialization time
+          var becomes_selected = (typeof old != 'undefined') && this.get('selected')
+          if(becomes_selected){ 
+            var name = this.get('name')
+            console.log('not closed becomes selected')
+            console.log(name)
             this.parent.set({complaint_status_id: this.get('id'), close_memo: this.get('close_memo')})
           };
         }

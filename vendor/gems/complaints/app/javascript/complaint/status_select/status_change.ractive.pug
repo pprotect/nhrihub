@@ -29,14 +29,6 @@ script.
       closedStatusRadio: ClosedStatusRadio,
     },
     computed: {
-      //close_memo:{
-        //set(val){ this.set('current_status.close_memo',val)},
-        //get(){ return this.get('current_status.close_memo') }
-        //},
-      //complaint_status_id:{ 
-        //set(val){ this.set('current_status.complaint_status_id',val) },
-        //get(){return this.get('current_status.complaint_status_id') }
-        //},
       persistent_attributes() {
         if(this.get('persisted')){
             return ["close_memo", "complaint_status_id"];

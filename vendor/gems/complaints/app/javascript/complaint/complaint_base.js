@@ -27,6 +27,8 @@ import DupeList from 'dupe_list.ractive.pug'
 import 'string.coffee'
 import Buttons from 'buttons.ractive.pug'
 import StatusChange from 'status_change.ractive.pug'
+import TransfereeSelector from 'transferee_selector.ractive.pug'
+import Transferees from 'transferees.ractive.pug'
 
 export default Ractive.extend({
   el: '#complaint',
@@ -147,6 +149,7 @@ export default Ractive.extend({
       editing : false,
       serialization_key:'complaint',
       new_assignee_id: 0,
+      new_transferee_id: 0,
     });
   },
   onconfig() {
@@ -175,7 +178,9 @@ export default Ractive.extend({
     dupeList: DupeList,
     //progressBar : ProgressBar,
     buttons: Buttons,
-    statusChange: StatusChange
+    statusChange: StatusChange,
+    transfereeSelector: TransfereeSelector,
+    transferees: Transferees
   },
   proceed_to_intake(){
     history.pushState({},"anything",this.get('url'));

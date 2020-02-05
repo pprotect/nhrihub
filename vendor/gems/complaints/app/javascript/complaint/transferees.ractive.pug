@@ -1,0 +1,13 @@
+#transferees
+  | {{#transfers}}
+  <transferee  name='{{name}}' date='{{date}}' />
+  | {{/transfers}}
+
+script.
+  import Transferee from 'transferee'
+  export default Ractive.extend({
+    template : $TEMPLATE,
+    components : {
+      transferee : Transferee
+    }
+  });

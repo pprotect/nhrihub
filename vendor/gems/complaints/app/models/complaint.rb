@@ -26,6 +26,8 @@ class Complaint < ActiveRecord::Base
   accepts_nested_attributes_for :complaint_documents
   has_many :communications, :dependent => :destroy
   has_one :case_reference, :dependent => :destroy
+  has_many :complaint_transfers
+  has_many :tranferees, through: :complaint_transfers, class_name: :office, foreign_key: :office_id
 
   attr_accessor :witness_name, :heading
 

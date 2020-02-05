@@ -46,11 +46,9 @@ class StatusChange < ActiveRecord::Base
   end
 
   def status_humanized
-    if ( status = complaint_status&.name )== 'Closed'
-      [status, close_memo].join(', ')
-    else
-      status
-    end
+    [complaint_status&.name, close_memo].
+      delete_if(&:blank?).
+      join(', ')
   end
 
   def status_humanized=(val)

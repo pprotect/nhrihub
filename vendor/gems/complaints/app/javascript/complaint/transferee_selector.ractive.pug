@@ -1,0 +1,23 @@
+select.form-control#transferee(value = '{{new_transferee_id}}', 'on-change'="@this.remove_error()")
+  option(value='0', disabled=true, style = "color:#333")
+    | {{ t.select_transferee }}
+  | {{#office_groups}}
+  optgroup(label='{{name}}')
+    | {{#offices}}
+    option(value='{{id}}')
+      | {{ name }}
+    | {{/offices}}
+  | {{/office_groups}}
+
+script.
+  import translations from 'translations.js'
+
+  export default Ractive.extend({
+    template : $TEMPLATE,
+    data : function(){ return {
+      t : translations.t('transferee_selector')
+    }},
+    remove_error() {
+      return this.parent.remove_attribute_error('new_transferee_id');
+    }
+  });

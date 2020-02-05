@@ -164,7 +164,7 @@ RSpec.shared_examples  "complaint lifecycle" do
     end
   end
 
-  describe "change from closed status and save... close_memo not submitted" do
+  describe "change from closed to investigation status and save... close_memo not submitted" do
     before do
       closed_status = ComplaintStatus.where(name: "Closed").first
       complaint.status_changes_attributes = [{complaint_status_id: closed_status.id, close_memo: "No jurisdiction"}] 
@@ -178,6 +178,57 @@ RSpec.shared_examples  "complaint lifecycle" do
       edit_save
       expect(complaint.reload.current_status.close_memo).to be_blank
       expect(complaint.reload.current_status.complaint_status.name).to eq "Investigation"
+    end
+  end
+
+  describe "when a status has assessment memo" do
+    before do
+      assessment_status = ComplaintStatus.where(name: "Assessment").first
+      complaint.status_changes_attributes = [{complaint_status_id: assessment_status.id, close_memo: "(Information pending)"}] 
+      complaint.save
+      visit complaint_path('en', complaint.id)
+      edit_complaint
+    end
+
+    it "should indicate the presence of the assessment memo" do
+      expect(page.find('input#assessment_memo')).to be_checked
+      choose('Closed')
+      expect(page.find('#close_memo_prompt').text).to eq "Close memo"
+      choose('Assessment')
+      check('assessment_memo')
+      choose('Closed')
+      expect(page.find('#close_memo_prompt').text).to eq "Close memo"
+    end
+  end
+
+  describe 'assign assessment status' do
+    before do
+      closed_status = ComplaintStatus.where(name: "Closed").first
+      complaint.status_changes_attributes = [{complaint_status_id: closed_status.id, close_memo: "No jurisdiction"}] 
+      complaint.save
+      visit complaint_path('en', complaint.id)
+      edit_complaint
+    end
+
+    it "should show assessment memo" do
+      expect(page.find('input#closed')).to be_checked
+      expect(page.find('#close_memo_prompt').text).to eq "No jurisdiction"
+      choose('Assessment')
+      check('assessment_memo')
+      edit_save
+      expect(complaint.reload.current_status.complaint_status.name).to eq "Assessment"
+      expect(complaint.reload.current_status.close_memo).to eq "(Information pending)"
+      expect(page.all('#status_changes .status_change .status_humanized').first.text).to eq "Assessment, (Information pending)"
+      edit_complaint
+      expect(page.find('input#assessment')).to be_checked
+      expect(page.find('input#assessment_memo')).to be_checked
+    end
+  end
+
+  describe 'transfer case during assessment' do
+    it "shows case transfer within status timeline" do
+      expect(page.all('select#transferees option.office').count).to eq Office.count
+      select(Office.first, :from => "transferees")
     end
   end
 end
