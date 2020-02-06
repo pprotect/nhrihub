@@ -128,12 +128,13 @@ class Complaint < ActiveRecord::Base
                             :complaint_status_id => complaint_status_id})
     elsif !(attrs[:complaint_status_id].nil? || attrs[:complaint_status_id] == "null") && 
            ((attrs[:complaint_status_id].to_i != status_id) ||
-            ((attrs[:complaint_status_id].to_i == status_id) && (attrs[:close_memo] != current_status.close_memo )))
-      close_memo = attrs[:close_memo]=='undefined' ? nil : attrs[:close_memo]
+            ((attrs[:complaint_status_id].to_i == status_id) && (attrs[:status_memo] != current_status.status_memo )))
+      status_memo = attrs[:status_memo]=='undefined' ? nil : attrs[:status_memo]
       sc = status_changes.build({:user_id => user_id,
                             :change_date => change_date,
                             :complaint_status_id => attrs[:complaint_status_id],
-                            :close_memo => close_memo})
+                            :status_memo => status_memo,
+                            :status_memo_type => attrs[:status_memo_type]})
     end
   end
 

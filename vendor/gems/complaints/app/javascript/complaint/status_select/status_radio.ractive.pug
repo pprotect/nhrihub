@@ -24,10 +24,14 @@ script.
       }
     },
     oninit(){
-      this.set('memo_checked',false);
+      if(this.get('status_memo_type' == 'assessment') && this.get('memo') == 'Information pending')
+        { this.set('memo_checked',true);
+        }else{
+          this.set('memo_checked',false);
+        }
     },
     computed: {
-      close_memo(){
+      status_memo(){
         if(this.get('memo_checked')){return this.get('memo')}else{return ''}
       },
       memo(){
@@ -45,15 +49,13 @@ script.
       }
     },
     observe: {
-      'selected close_memo': {
+      'selected status_memo': {
         handler(value, old, path, idx){
           // i.e. as opposed to is selected at initialization time
           var becomes_selected = (typeof old != 'undefined') && this.get('selected')
           if(becomes_selected){ 
             var name = this.get('name')
-            console.log('not closed becomes selected')
-            console.log(name)
-            this.parent.set({complaint_status_id: this.get('id'), close_memo: this.get('close_memo')})
+            this.parent.set({complaint_status_id: this.get('id'), status_memo: this.get('status_memo')})
           };
         }
       }

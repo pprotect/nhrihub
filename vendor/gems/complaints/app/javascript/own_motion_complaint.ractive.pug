@@ -332,10 +332,10 @@
         .col-md-10
           .fade.no_edit.in#status_changes
             | {{#status_changes_recent_first}}
-            <showStatusChange close_memo='{{close_memo}}' status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
+            <showStatusChange status_memo='{{status_memo}}' status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
             | {{/status_changes_recent_first}}
           .fade.edit#current_status
-            <statusChange persisted='{{persisted}}' current_status='{{current_status}}' close_memo='{{close_memo}}' close_memo_error = '{{close_memo_error}}' close_memo_options = '{{close_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
+            <statusChange status_changes_attributes='{{status_changes_attributes}}' persisted='{{persisted}}' current_status='{{current_status}}' status_memo='{{status_memo}}' status_memo_error = '{{close_memo_error}}' close_memo_options = '{{close_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
 
       .row.form-group('class-has-error' = 'new_assignee_id_error')
         .col-md-2
@@ -460,7 +460,7 @@ script(type='text/javascript').
           home_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'home_phone'}],
           cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
           fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
-          close_memo: ()=>{return this.findComponent('closedStatusRadio').validate() },
+          status_memo: ()=>{return this.findComponent('closedStatusRadio').validate() },
         };
       }
     },

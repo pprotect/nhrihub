@@ -1,4 +1,5 @@
 class StatusChange < ActiveRecord::Base
+  enum status_memo_type: {non_existent: 0, close_preset: 1, close_referred_to:2, close_other_reason: 3, assessment: 4}
   belongs_to :user
   belongs_to :complaint
   belongs_to :complaint_status
@@ -46,7 +47,7 @@ class StatusChange < ActiveRecord::Base
   end
 
   def status_humanized
-    [complaint_status&.name, close_memo].
+    [complaint_status&.name, status_memo].
       delete_if(&:blank?).
       join(', ')
   end

@@ -1,50 +1,50 @@
 label
   | {{ name }}
   input(id='{{this.status.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{status.id}}')
-  .btn-group.form-group('class-has-error' = 'close_memo_error')
+  .btn-group.form-group('class-has-error' = 'status_memo_error')
     button.btn.btn-default.dropdown-toggle.form-control(type='button', 'data-toggle'='dropdown', 'class-hidden'='!selected')
-      span#close_memo_prompt {{ button_text }}
+      span#status_memo_prompt {{ button_text }}
       span.caret
-    ul.dropdown-menu#close_memo(name="close_memo")
-      | {{#close_memo_options}}
+    ul.dropdown-menu#status_memo(name="status_memo")
+      | {{#status_memo_options}}
       li#preset('on-click'='select_preset(.)') {{ . }}
-      | {{/close_memo_options}}
+      | {{/status_memo_options}}
       li#referral
         div Referred to:
         input#referred(name='referred', tabIndex=-1, autocomplete='off', type='text', placeholder='Where referred', value='{{referred_to}}', 'on-keyup'='set_referred_to(referred_to)')
       li
         input#other(name='other', tabIndex=-1, autocomplete='off', type='text', placeholder='Other reason', value='{{other_reason}}', 'on-keyup'="set_other_reason(other_reason)")
-    span.help-block.error#close_memo_error {{ t.close_memo_error_message }}
+    span.help-block.error#status_memo_error {{ t.status_memo_error_message }}
 
 style.
   .btn-group.form-group {
     vertical-align: top;
     margin-left: 12px;
   }
-  #close_memo_error{
+  #status_memo_error{
     width: 125px;
   }
   #referral{
     display: flex;
   }
-  #close_memo #preset{
+  #status_memo #preset{
     cursor: pointer;
   },
-  #close_memo_prompt{
+  #status_memo_prompt{
     color: gray;
   }
   .caret{
     margin-left: 12px;
   }
-  #close_memo {
+  #status_memo {
     width: 290px;
     top: 30px;
   }
-  #close_memo #other{
+  #status_memo #other{
     margin-left: 0px;
     width: 247px;
   }
-  #close_memo li {
+  #status_memo li {
     margin-left: 18px;
     margin-top: 4px;
   }
@@ -67,63 +67,109 @@ script.
     computed: {
       validation_criteria() {
         return {
-          close_memo: ['notBlank', {if: ()=>this.get('selected')}],
+          status_memo: ()=>{
+              if(!this.get('selected')){ return true };
+              return this.get('valid_preset') || this.get('valid_referred_to') || this.get('valid_other_reason')
+            },
         };
       },
       selected(){
         return this.get('status_id') == this.get('id');
       },
-      referred_to: {
-        set(val){ if(!_.isEmpty(val)){ this.set('close_memo',"Referred to: "+val)}},
-        get(){
-            if(_.isEmpty(this.get('close_memo'))){ return "" }
-            var referred_match = this.get('close_memo').match(/^Referred to: (.*)$/);
-            if(referred_match){ return referred_match[1] }
-          }
+      //preset(){
+        //var preset_type = this.get('status_memo_type') == 'close_preset';
+        //if(preset_type){ return this.get('status_memo') };
+      //},
+      valid_preset(){
+        var preset_type = this.get('status_memo_type') == 'close_preset'
+        var non_blank_value = _.contains(this.get('status_memo_options'), this.get('status_memo'))
+        return preset_type && non_blank_value
       },
-      other_reason: {
-        set(val){ if(!_.isEmpty(val)){ console.log('foo'); this.set('close_memo',val)}},
-        get(){
-            if(_.isEmpty(this.get('close_memo'))){ return "" }
-            var referred_match = this.get('close_memo').match(/^Referred to:/);
-            var preset_match = _.contains(this.get('close_memo_options'), this.get('close_memo'))
-            var assessment_match = this.get('close_memo').match(/Information pending/)
-            if(!referred_match && !preset_match && !assessment_match){ return this.get('close_memo') }
-          }
+      valid_referred_to(){
+        var referred_type = this.get('status_memo_type') == 'close_referred_to'
+        var non_blank_value = this.get('status_memo').length > 0
+        return referred_type && non_blank_value
       },
+      valid_other_reason(){
+        var other_type = this.get('status_memo_type') == 'close_other_reason'
+        var non_blank_value = this.get('status_memo').length > 0
+        return other_type && non_blank_value
+      },
+      //status_memo(){
+        //if(this.get('status_memo_type') == 'close_preset'){ return this.get('preset') }
+        //if(this.get('status_memo_type') == 'close_referred_to'){ return "Referred to: "+this.get('referred_to') }
+        //if(this.get('status_memo_type') == 'close_other_reason'){ return this.get('other_reason') }
+      //},
+      //referred_to: {
+        //set(val){ if(!_.isEmpty(val)){ this.set('status_memo',"Referred to: "+val)}},
+        //get(){
+            //if(_.isEmpty(this.get('status_memo'))){ return "" }
+            //var referred_match = this.get('status_memo').match(/^Referred to: (.*)$/);
+            //if(referred_match){ return referred_match[1] }
+          //}
+      //},
+      //other_reason: {
+        //set(val){ if(!_.isEmpty(val)){ this.set('status_memo',val)}},
+        //get(){
+            //if(_.isEmpty(this.get('status_memo'))){ return "" }
+            //var referred_match = this.get('status_memo').match(/^Referred to:/);
+            //var preset_match = _.contains(this.get('status_memo_options'), this.get('status_memo'))
+            //var assessment_match = this.get('status_memo').match(/Information pending/)
+            //if(!referred_match && !preset_match && !assessment_match){ return this.get('status_memo') }
+          //}
+      //},
       button_text(){
-        if(_.isEmpty(this.get('close_memo'))){
-            console.log('button text default');
-            return this.get('t.close_memo_default_prompt')
-          }else{
-            console.log('button text = the close memo value');
-            return this.get('close_memo')
-          }
+        if(this.get('status_memo_type') == 'close_preset'){ return this.get('preset') }
+        if(this.get('status_memo_type') == 'close_referred_to'){ return "Referred to: "+this.get('referred_to') }
+        if(this.get('status_memo_type') == 'close_other_reason'){ return this.get('other_reason') }
+        return this.get('t.status_memo_default_prompt')
       }
     },
     observe: {
-      'selected close_memo': {
+      'selected': {
         handler(value, old, path, idx){
-          this.set('close_memo_error',false);
+          this.set('status_memo_error',false);
           var becomes_selected = (typeof old != 'undefined') && this.get('selected')
           if(becomes_selected){
-            console.log('closed becomes selected')
-            console.log(this.get('close_memo'));
-            this.parent.set({complaint_status_id: this.get('id'), close_memo: this.get('close_memo')})
+            this.parent.set({complaint_status_id: this.get('id'), status_memo: this.get('status_memo'), status_memo_type: this.get('status_memo_type')})
           };
+        }
+      },
+      'preset': {
+        handler(value, old, path, idx){
+          this.set('status_memo_error',false);
+          this.parent.set({complaint_status_id: this.get('id'), status_memo: this.get('status_memo'), status_memo_type: this.get('status_memo_type')})
+        }
+      },
+      'referred_to': {
+        handler(value, old, path, idx){
+          this.set('status_memo_error',false);
+          this.parent.set({complaint_status_id: this.get('id'), status_memo: "Referred to: "+this.get('referred_to'), status_memo_type: this.get('status_memo_type')})
+        }
+      },
+      'other_reason': {
+        handler(value, old, path, idx){
+          this.set('status_memo_error',false);
+          this.parent.set({complaint_status_id: this.get('id'), status_memo: this.get('other_reason'), status_memo_type: this.get('status_memo_type')})
         }
       }
     },
-    set_other_reason(val){
-      this.set({referred_to:''});
-      this.set('close_memo_error',false);
+    oninit(){
+        if(this.get('status_memo_type') == 'close_preset'){ this.set('preset', this.get('status_memo')) }
+        else if(this.get('status_memo_type') == 'close_referred_to'){ this.set('referred_to', this.get('status_memo')) }
+        else if(this.get('status_memo_type') == 'close_other_reason'){ this.set('other_reason', this.get('status_memo')) }
+        //else {this.set('button_text', 't.status_memo_default_prompt')}
     },
-    select_preset(selection){
-      this.set({close_memo:selection,other_reason:"",referred_to:''})
-      this.set('close_memo_error',false);
+    set_other_reason(val){
+      this.set({preset:'', referred_to:'', status_memo: val, status_memo_type: 'close_other_reason'})
+      this.set('status_memo_error',false);
+    },
+    select_preset(val){
+      this.set({preset:val, referred_to:'', other_reason:'', status_memo:val, status_memo_type: 'close_preset'})
+      this.set('status_memo_error',false);
     },
     set_referred_to(val){
-      this.set({other_reason:''});
-      this.set('close_memo_error',false);
+      this.set({preset:'', other_reason:'', status_memo:val, status_memo_type: 'close_referred_to'})
+      this.set('status_memo_error',false);
     },
     })

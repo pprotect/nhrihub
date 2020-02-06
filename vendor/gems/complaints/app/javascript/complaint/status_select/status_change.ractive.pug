@@ -1,8 +1,8 @@
 form
   | {{#activeStatuses}}
-  <statusRadio close_memo='{{current_status.close_memo}}' status_id='{{current_status.complaint_status_id}}' id='{{id}}' name='{{name}}' />
+  <statusRadio status_memo_type='{{current_status.status_memo_type}}' status_memo='{{current_status.status_memo}}' status_id='{{current_status.complaint_status_id}}' id='{{id}}' name='{{name}}' />
   | {{/activeStatuses}}
-  <closedStatusRadio close_memo='{{current_status.close_memo}}' close_memo_error='{{close_memo_error}}' status_id='{{current_status.complaint_status_id}}' id='{{closedStatus.id}}' name='{{closedStatus.name}}' status='{{closedStatus}}' />
+  <closedStatusRadio status_memo_type='{{current_status.status_memo_type}}' status_memo='{{current_status.status_memo}}' status_memo_error='{{status_memo_error}}' status_id='{{current_status.complaint_status_id}}' id='{{closedStatus.id}}' name='{{closedStatus.name}}' status='{{closedStatus}}' />
 
 style.
   form{
@@ -31,7 +31,7 @@ script.
     computed: {
       persistent_attributes() {
         if(this.get('persisted')){
-            return ["close_memo", "complaint_status_id"];
+            return ["status_memo", "complaint_status_id", "status_memo_type"];
           }else{
             return [];
           }

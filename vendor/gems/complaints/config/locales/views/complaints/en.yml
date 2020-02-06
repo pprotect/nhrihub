@@ -58,7 +58,7 @@ en:
     no_agency_match: "no possible duplicates for agency"
 
   complaint:
-    assessment_memo: '(Information pending)'
+    assessment_memo: 'Information pending'
     register_heading: "%{type} Complaint Intake"
     add_file: "Add file"
     add_document: "Add"
@@ -164,8 +164,8 @@ en:
     suspended : "Suspended"
     yes : "Yes"
     village_error_message : "You must enter a village"
-    close_memo_error_message:  "You must supply a reason for closing"
-    close_memo_default_prompt: "Close memo"
+    status_memo_error_message:  "You must supply a reason for closing"
+    status_memo_default_prompt: "Close memo"
 
   filter_controls:
     agency: "Agency(ies)"
