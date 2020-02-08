@@ -28,15 +28,12 @@ class Complaint < ActiveRecord::Base
   has_one :case_reference, :dependent => :destroy
   has_many :complaint_transfers
   has_many :transferees, through: :complaint_transfers, class_name: :Office, foreign_key: :office_id
+  accepts_nested_attributes_for :complaint_transfers
 
   attr_accessor :witness_name, :heading
 
   # why after_commit iso after_create? see https://dev.mikamai.com/2016/01/19/postgresql-transaction-and-rails-callbacks/
   after_create :generate_case_reference
-
-  def new_transferee_id=(id)
-    transferees << Office.find(id) unless id.to_i.zero?
-  end
 
   def generate_case_reference
     self.case_reference = CaseReference.create

@@ -233,8 +233,11 @@ RSpec.shared_examples  "complaint lifecycle" do
       expect(page.all('select#transferee option').count).to eq Office.count
       select(office_name, :from => "transferee")
       expect{edit_save}.to change{ComplaintTransfer.count}.by(1)
+      expect(complaint.complaint_transfers.merge(ComplaintTransfer.most_recent_for_complaint).first.user_id).to eq User.first.id
       expect(page.all('#timeline .timeline_event .event_label').first.text).to eq "Transferred to"
       expect(page.all('#timeline .timeline_event .event_description').first.text).to eq office_name
+      expect(page.all('#timeline .timeline_event .user_name').first.text).to eq User.first.first_last_name
+      expect(page.all('#timeline .timeline_event .date').first.text).to eq DateTime.now.to_s(:js_view)
     end
 
     it "shows case assignment to one of four investigative branches within timeline" do

@@ -49,6 +49,10 @@ class ComplaintsController < ApplicationController
     params[:complaint].delete(:type) # ignore type on update... it will be correct
     complaint = Complaint.find(params[:id])
     params[:complaint][:status_changes_attributes][0][:user_id] = current_user.id
+    unless params[:complaint][:new_transferee_id].to_i.zero?
+      params[:complaint][:complaint_transfers_attributes]=[{user_id: current_user.id,
+                                                           office_id: params[:complaint].delete(:new_transferee_id).to_i}]
+    end
     #if true
     if complaint.update(complaint_params)
       complaint.heading= t('.heading', case_reference: complaint.case_reference)
@@ -151,6 +155,7 @@ class ComplaintsController < ApplicationController
                                        :cell_phone, :fax, :province, :postal_code, :id_type, :id_value, :alt_id_type, :alt_id_value,
                                        :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
                                        :organization_name, :organization_registration_number,
+                                       :complaint_transfers_attributes => [:user_id, :office_id],
                                        :subarea_ids => [],
                                        :status_changes_attributes => [:user_id, :complaint_status_id, :status_memo, :status_memo_type],
                                        :agency_ids => [],
