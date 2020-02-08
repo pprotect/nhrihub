@@ -358,13 +358,12 @@
 
       .row#status_row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
         .col-md-2
-          label
-            | {{ t.status }}
+          label {{ t.timeline }}
         .col-md-10
-          .fade.no_edit.in#status_changes
-            | {{#status_changes_recent_first}}
-            <showStatusChange status_memo='{{status_memo}}' status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
-            | {{/status_changes_recent_first}}
+          .fade.no_edit.in#timeline
+            | {{#timeline_events_recent_first}}
+            <showTimelineEvent event_label='{{event_label}}' status_memo='{{status_memo}}' event_description='{{event_description}}' date='{{date}}' user_name='{{user_name}}' />
+            | {{/timeline_events_recent_first}}
           .fade.edit#current_status
             <statusChange status_changes_attributes='{{status_changes_attributes}}' persisted='{{persisted}}' current_status='{{current_status}}' status_memo='{{status_memo}}' status_memo_error = '{{status_memo_error}}' status_memo_options = '{{status_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
 
@@ -460,7 +459,7 @@ script(type='text/javascript').
       },
       persistent_attributes() {
         return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
-          'city','province','postal_code','complaint_area_id',
+          'city','province','postal_code','complaint_area_id', 'new_transferee_id',
           'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
           'status_changes_attributes', 'new_assignee_id', 'subarea_ids',
           'agency_ids', 'attached_documents_attributes', 'details',

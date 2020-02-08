@@ -1,0 +1,29 @@
+.timeline_event
+  span.event_label {{ event_label }}
+  span.event_description {{event_description}}
+  span.by ( {{ t.by }}
+  span.user_name {{user_name}}
+  span , {{ t.on }}
+  span.date {{ local(date) }}
+  span )
+
+style.
+  .date, .user_name, .event_description, .by {
+    margin-left: 6px;
+  }
+  .event_label:after {
+     content: ':';
+  }
+
+script.
+  import translations from 'translations.js'
+  var RactiveLocalMethods = require("exports-loader?local_methods!ractive_local_methods")
+
+  export default Ractive.extend({
+    template : $TEMPLATE,
+    css: $CSS,
+    data : function(){ return {
+      t : translations.t('complaint'),
+    }},
+  }).extend(RactiveLocalMethods)
+

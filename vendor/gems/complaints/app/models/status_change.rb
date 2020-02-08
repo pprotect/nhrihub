@@ -26,6 +26,10 @@ class StatusChange < ActiveRecord::Base
     where(subquery)
   }
 
+  def as_timeline_event
+    TimelineEvent.new(self)
+  end
+
   def duration
     end_time = end_date.nil? ? Time.now : end_date
     # see lib/rails_class_extensions.rb
@@ -34,7 +38,31 @@ class StatusChange < ActiveRecord::Base
 
   def as_json(options={})
     super(:except => [:updated_at, :created_at, :id, :user_id, :end_date, :complaint_id],
-          :methods => [:change_date, :user_name, :date, :status_humanized])
+          :methods => [:change_date, :user_name, :date, :event_description, :event_label])
+  end
+
+  def event_label
+    if initial_status_for_complaint?
+      "Initial status"
+    else
+      "Status change"
+    end
+  end
+
+  def initial_status_for_complaint
+    subquery=<<-SQL.squish
+      select min(sc.change_date) change_date
+      from status_changes sc where sc.complaint_id=#{complaint_id}
+    SQL
+    query = <<-SQL.squish
+      status_changes.complaint_id =#{complaint_id}
+      and status_changes.change_date = (#{subquery})
+    SQL
+    StatusChange.where(query).select("status_changes.id").first
+  end
+
+  def initial_status_for_complaint?
+    id == initial_status_for_complaint.id
   end
 
   def user_name
@@ -46,13 +74,13 @@ class StatusChange < ActiveRecord::Base
     change_date
   end
 
-  def status_humanized
+  def event_description
     [complaint_status&.name, status_memo].
       delete_if(&:blank?).
       join(', ')
   end
 
-  def status_humanized=(val)
+  def event_description=(val)
     complaint_status.name = (val)
   end
 

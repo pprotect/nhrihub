@@ -121,7 +121,7 @@ class ComplaintsController < ApplicationController
     @communication_maximum_filesize    = CommunicationDocument.maximum_filesize * 1000000
     @communication_permitted_filetypes = CommunicationDocument.permitted_filetypes
     @statuses = ComplaintStatus.ordered.select(:id, :name).all
-    @office_groups = OfficeGroup.regional_provincial
+    @office_groups = OfficeGroup.national_regional_provincial
     @branches = Office.branches
     @status_memo_options = ComplaintStatus::CloseMemoOptions
   end
@@ -147,7 +147,7 @@ class ComplaintsController < ApplicationController
   def complaint_params
     params.require(:complaint).permit( :firstName, :lastName, :title, :city, :home_phone, :new_assignee_id,
                                        :dob, :email, :complained_to_subject_agency, :desired_outcome, :gender, :details,
-                                       :date, :imported, :complaint_area_id,
+                                       :date, :imported, :complaint_area_id, 'new_transferee_id',
                                        :cell_phone, :fax, :province, :postal_code, :id_type, :id_value, :alt_id_type, :alt_id_value,
                                        :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
                                        :organization_name, :organization_registration_number,

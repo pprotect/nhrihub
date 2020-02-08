@@ -11,7 +11,7 @@ describe "complaint" do
       expect(@complaint.status_changes.length).to eq 1
       expect(@complaint.complaint_statuses.length).to eq 1
       expect(@complaint.complaint_statuses.first.name).to eq "Registered"
-      expect(@complaint.current_status_humanized).to eq "Registered"
+      expect(@complaint.current_event_description).to eq "Registered"
     end
 
     it "should create a complaint with unassigned agency when none is specified" do
@@ -161,7 +161,7 @@ describe "#as_json" do
                                                      "firstName", "lastName", "title", "occupation", "employer",
                                                      "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name",
                                                      "date", "date_of_birth", "current_status", "status_id", "attached_documents",
-                                                     "status_changes", "agency_ids", "communications", "subarea_ids", "area_subarea_ids",
+                                                     "timeline_events", "agency_ids", "communications", "subarea_ids", "area_subarea_ids",
                                                      "cell_phone", "city", "complaint_area_id", "complaint_type",
                                                      "alt_id_type", "physical_address",
                                                      "postal_address", "postal_code", "preferred_means", "province",
@@ -211,10 +211,10 @@ describe "#as_json" do
       expect(@complaints.first["complaint_area_id"]).to eq Complaint.first.complaint_area_id
       expect(@complaints.first["area_subarea_ids"]).to be_an Hash
       expect(@complaints.first["current_assignee_id"]).to eq Complaint.first.current_assignee_id
-      expect(@complaints.first["status_changes"].first.keys).to match_array ["date", "status_humanized", "user_name", "change_date", "close_memo", "complaint_status_id"]
-      expect(DateTime.parse(@complaints.first["status_changes"].first["date"]).strftime("%s")).to eq Complaint.first.status_changes.first.date.to_datetime.strftime("%s")
-      expect(@complaints.first["status_changes"].first["status_humanized"]).to eq Complaint.first.status_changes.first.status_humanized
-      expect(@complaints.first["status_changes"].first["user_name"]).to eq Complaint.first.status_changes.first.user_name
+      expect(@complaints.first["timeline_events"].first.keys).to match_array ["date", "event_description", "user_name", "change_date", "complaint_status_id", "event_label", "status_memo", "status_memo_type"]
+      expect(DateTime.parse(@complaints.first["timeline_events"].first["date"]).strftime("%s")).to eq Complaint.first.status_changes.first.date.to_datetime.strftime("%s")
+      expect(@complaints.first["timeline_events"].first["event_description"]).to eq Complaint.first.status_changes.first.event_description
+      expect(@complaints.first["timeline_events"].first["user_name"]).to eq Complaint.first.status_changes.first.user_name
       expect(@complaints.first["agency_ids"]).to be_an Array
       expect(@complaints.first["communications"].first.keys).to match_array ["attached_documents", "communicants", "complaint_id", "date", "direction", "id", "mode", "note", "user", "user_id"]
       expect(@complaints.first["communications"].first["attached_documents"].first.keys ).to match_array ["communication_id", "original_filename", "filesize", "id", "lastModifiedDate", "original_type", "title", "user_id"]
@@ -240,7 +240,7 @@ describe "#as_json" do
                                                      "firstName", "lastName", "title", "occupation", "employer",
                                                      "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name",
                                                      "date", "date_of_birth", "current_status", "status_id", "attached_documents",
-                                                     "status_changes", "agency_ids", "communications", "subarea_ids", "area_subarea_ids",
+                                                     "timeline_events", "agency_ids", "communications", "subarea_ids", "area_subarea_ids",
                                                      "cell_phone", "city", "complaint_area_id", "complaint_type",
                                                      "alt_id_type", "physical_address",
                                                      "postal_address", "postal_code", "preferred_means", "province",
@@ -253,7 +253,7 @@ describe "#as_json" do
       expect(@complaints.first["subarea_ids"]).to be_empty
       expect(@complaints.first["complaint_area_id"]).to be_nil
       expect(@complaints.first["area_subarea_ids"]).to be_empty
-      expect(@complaints.first["status_changes"]).to be_empty
+      expect(@complaints.first["timeline_events"]).to be_empty
       expect(@complaints.first["communications"]).to be_empty
     end
   end

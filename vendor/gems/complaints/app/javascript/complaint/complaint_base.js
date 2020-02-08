@@ -8,7 +8,7 @@ import Area from 'area'
 import Assignees from 'assignees'
 import AssigneeSelector from 'assignee_selector'
 import ComplaintDocuments from 'complaint/complaint_documents'
-import ShowStatusChange from 'show_status_change.ractive.pug'
+import ShowTimelineEvent from 'show_timeline_event.ractive.pug'
 import SubareaSelector from 'complaint/subarea_selector.ractive.pug'
 import Persistence from 'persistence'
 import ConfirmDeleteModal from 'confirm_delete_modal'
@@ -33,9 +33,9 @@ import Transferees from 'transferees.ractive.pug'
 export default Ractive.extend({
   el: '#complaint',
   computed : {
-    status_changes_recent_first(){
+    timeline_events_recent_first(){
       // on update, it seems that ractive  doesn't render in the order of the data object, so we need to force the correct sort
-      return _(this.get('status_changes')).sortBy(function(sc){return -$.datepicker.formatDate('@',new Date(sc.change_date)) });
+      return _(this.get('timeline_events')).sortBy(function(sc){return -$.datepicker.formatDate('@',new Date(sc.change_date)) });
     },
     regional_offices(){
       var group = _(this.get('office_groups')).findWhere({name: "Regional Offices"});
@@ -173,7 +173,7 @@ export default Ractive.extend({
     assignees : Assignees,
     assigneeSelector : AssigneeSelector,
     attachedDocuments : ComplaintDocuments,
-    showStatusChange : ShowStatusChange,
+    showTimelineEvent : ShowTimelineEvent,
     subareaSelector: SubareaSelector,
     dupeList: DupeList,
     //progressBar : ProgressBar,

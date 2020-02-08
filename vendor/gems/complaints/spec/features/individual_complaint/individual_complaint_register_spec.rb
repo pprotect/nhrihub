@@ -40,7 +40,7 @@ feature "complaint register", :js => true do
     expect(page_heading).to eq "Individual Complaint Intake"
     complete_required_fields(:individual)
     expect{save_complaint}.to change{ IndividualComplaint.count }.by(1)
-    expect(IndividualComplaint.last.current_status_humanized).to eq "Registered"
+    expect(IndividualComplaint.last.current_event_description).to eq "Registered"
   end
 end
 
@@ -77,7 +77,7 @@ feature "complaint register", :js => true do
     # on the server
     #puts "on server, first status change is:  #{ActiveRecord::Base.connection.execute('select change_date from status_changes').to_a.last["change_date"]}"
     #puts DateTime.now.strftime("%b %e, %Y")
-    expect(page.find('#status_changes .status_change span.date').text).to eq Date.today.strftime("%b %-e, %Y")
+    expect(page.find('#timeline .timeline_event span.date').text).to eq Date.today.strftime("%b %-e, %Y")
   end
 
   it "adds a new complaint that is valid" do
@@ -191,7 +191,7 @@ feature "complaint register", :js => true do
     expect(find('#complaint #complained_to_subject_agency').text).to eq "yes"
     expect(find('#complaint #date').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
     expect(find('#complaint #current_assignee').text).to eq user.first_last_name
-    expect(find('#complaint #status_changes .status_change .status_humanized').text).to eq 'Registered'
+    expect(find('#complaint #timeline .timeline_event .event_description').text).to eq 'Registered'
     #expect(find('#complaint .gender').text).to eq "male" # this should work, but I postponed troubleshooting in favour of other activities!
 
     within special_investigations_unit_area do

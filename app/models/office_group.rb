@@ -3,6 +3,7 @@ class OfficeGroup < ActiveRecord::Base
 
   scope :head_office, ->{ where("office_groups.name ilike 'head%' ") }
   scope :regional_provincial, ->{ where("office_groups.name not ilike 'head%' ") }
+  scope :national_regional_provincial, ->{ where("office_groups.name is not null") }
 
   def provincial?
     name=~/provinc/i

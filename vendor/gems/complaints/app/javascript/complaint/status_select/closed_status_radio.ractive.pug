@@ -1,6 +1,6 @@
 label
   | {{ name }}
-  input(id='{{this.status.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{status.id}}')
+  input(id='{{name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{id}}')
   .btn-group.form-group('class-has-error' = 'status_memo_error')
     button.btn.btn-default.dropdown-toggle.form-control(type='button', 'data-toggle'='dropdown', 'class-hidden'='!selected')
       span#status_memo_prompt {{ button_text }}
@@ -87,12 +87,12 @@ script.
       },
       valid_referred_to(){
         var referred_type = this.get('status_memo_type') == 'close_referred_to'
-        var non_blank_value = this.get('status_memo').length > 0
+        var non_blank_value = !_.isNull(this.get('status_memo')) && this.get('status_memo').length > 0
         return referred_type && non_blank_value
       },
       valid_other_reason(){
         var other_type = this.get('status_memo_type') == 'close_other_reason'
-        var non_blank_value = this.get('status_memo').length > 0
+        var non_blank_value = !_.isNull(this.get('status_memo')) && this.get('status_memo').length > 0
         return other_type && non_blank_value
       },
       //status_memo(){
@@ -138,19 +138,19 @@ script.
       'preset': {
         handler(value, old, path, idx){
           this.set('status_memo_error',false);
-          this.parent.set({complaint_status_id: this.get('id'), status_memo: this.get('status_memo'), status_memo_type: this.get('status_memo_type')})
+          this.parent.set({status_memo: this.get('status_memo'), status_memo_type: this.get('status_memo_type')})
         }
       },
       'referred_to': {
         handler(value, old, path, idx){
           this.set('status_memo_error',false);
-          this.parent.set({complaint_status_id: this.get('id'), status_memo: "Referred to: "+this.get('referred_to'), status_memo_type: this.get('status_memo_type')})
+          this.parent.set({status_memo: "Referred to: "+this.get('referred_to'), status_memo_type: this.get('status_memo_type')})
         }
       },
       'other_reason': {
         handler(value, old, path, idx){
           this.set('status_memo_error',false);
-          this.parent.set({complaint_status_id: this.get('id'), status_memo: this.get('other_reason'), status_memo_type: this.get('status_memo_type')})
+          this.parent.set({status_memo: this.get('other_reason'), status_memo_type: this.get('status_memo_type')})
         }
       }
     },

@@ -158,7 +158,7 @@ en:
     required : "Required"
     select_initiating_branch: "Select initiating branch"
     select_initiating_office: "Select initiating office"
-    status: 'Status'
+    timeline: 'Timeline'
     subarea_id_count_error_message : "You must select at least one subarea"
     subject_beneficiary: "Subject/Beneficiary"
     suspended : "Suspended"

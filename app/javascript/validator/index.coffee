@@ -13,6 +13,7 @@ class Validator
   validation_criteria : ->
     @validatee.get('validation_criteria')
   has_errors : ->
+    console.log("validator has errors")
     attributes = _(@validatee.get('validation_criteria')).keys()
     error_attributes = _(attributes).map (attribute)-> attribute+"_error"
     _(error_attributes).any (attr)=>@validatee.get(attr)

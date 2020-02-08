@@ -209,6 +209,13 @@ FactoryBot.define do
       end
     end
 
+    trait :closed do
+      after(:build) do |complaint|
+        complaint.status_changes = [FactoryBot.create(:status_change, :closed, :preset_jurisdiction, change_date: 4.days.ago),
+                                    FactoryBot.create(:status_change, :registered, change_date: 20.days.ago)]
+      end
+    end
+
     ComplaintStatus::Names.each { |name|
       sym = name.downcase.gsub(/ /,'_').to_sym
       trait sym do

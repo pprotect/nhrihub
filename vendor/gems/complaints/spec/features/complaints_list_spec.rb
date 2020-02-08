@@ -213,11 +213,11 @@ feature "complaints index", :js => true do
   it "shows a list of complaints" do
     expect(page.find('h1').text).to eq "Complaints"
     expect(page).to have_selector('#complaints .complaint', :count => 1)
-    expect(page.all('#complaints .complaint #status_changes .status_change .status_humanized').first.text).to eq "Registered"
+    expect(page.all('#complaints .complaint #timeline .timeline_event .event_description').first.text).to eq "Registered"
     open_dropdown('Select status')
     expect{ select_option('Registered').click; wait_for_ajax }.to change{ page.all('#complaints .complaint').count }.by(-1)
     expect{ select_option('Closed').click; wait_for_ajax }.to change{ page.all('#complaints .complaint').count }.by(1)
-    expect(page.all('#complaints .complaint #status_changes .status_change .status_humanized').first.text).to eq "Closed, No jurisdiction"
+    expect(page.all('#complaints .complaint #timeline .timeline_event .event_description').first.text).to eq "Closed, No jurisdiction"
 
     ## reset the filter to defaults
     clear_filter_fields
@@ -242,12 +242,12 @@ feature "complaints index", :js => true do
     within first_complaint do
       expect(find('.current_assignee').text).to eq Complaint.first.assignees.first.first_last_name
       expect(find('.date_received').text).to eq Complaint.first.date_received.strftime("%b %-e, %Y")
-      expect(all('#status_changes .status_change').first.text).to match /#{Complaint.first.status_changes.first.status_humanized}/
-      expect(all('#status_changes .status_change .user_name').first.text).to match /#{Complaint.first.status_changes.first.user.first_last_name}/
-      expect(all('#status_changes .status_change .date').first.text).to match /#{Complaint.first.status_changes.first.change_date.getlocal.to_date.strftime("%b %-e, %Y")}/
-      expect(all('#status_changes .status_change').last.text).to match /#{Complaint.first.status_changes.last.status_humanized}/
-      expect(all('#status_changes .status_change .user_name').last.text).to match /#{Complaint.first.status_changes.last.user.first_last_name}/
-      expect(all('#status_changes .status_change .date').last.text).to match /#{Complaint.first.status_changes.last.change_date.getlocal.to_date.strftime("%b %-e, %Y")}/
+      expect(all('#timeline .timeline_event').first.text).to match /#{Complaint.first.status_changes.first.event_description}/
+      expect(all('#timeline .timeline_event .user_name').first.text).to match /#{Complaint.first.status_changes.first.user.first_last_name}/
+      expect(all('#timeline .timeline_event .date').first.text).to match /#{Complaint.first.status_changes.first.change_date.getlocal.to_date.strftime("%b %-e, %Y")}/
+      expect(all('#timeline .timeline_event').last.text).to match /#{Complaint.first.status_changes.last.event_description}/
+      expect(all('#timeline .timeline_event .user_name').last.text).to match /#{Complaint.first.status_changes.last.user.first_last_name}/
+      expect(all('#timeline .timeline_event .date').last.text).to match /#{Complaint.first.status_changes.last.change_date.getlocal.to_date.strftime("%b %-e, %Y")}/
       expect(find('.lastName').text).to eq Complaint.first.lastName
       expect(find('.firstName').text).to eq Complaint.first.firstName
     end
@@ -272,13 +272,13 @@ feature "complaints index", :js => true do
       end # /within
 
       within status_changes do
-        expect(page).to have_selector('.status_change', :count => 2)
-        expect(all('.status_change .user_name')[0].text).to eq Complaint.first.status_changes.sort_by(&:change_date).last.user.first_last_name
-        expect(all('.status_change .user_name')[1].text).to eq Complaint.first.status_changes.sort_by(&:change_date).first.user.first_last_name
-        expect(all('.status_change .date')[0].text).to eq Complaint.first.status_changes[0].change_date.localtime.to_date.strftime("%b %-e, %Y")
-        expect(all('.status_change .date')[1].text).to eq Complaint.first.status_changes[1].change_date.localtime.to_date.strftime("%b %-e, %Y")
-        expect(all('.status_change .status_humanized')[0].text).to eq "Registered"
-        expect(all('.status_change .status_humanized')[1].text).to eq "Registered"
+        expect(page).to have_selector('.timeline_event', :count => 2)
+        expect(all('.timeline_event .user_name')[0].text).to eq Complaint.first.status_changes.sort_by(&:change_date).last.user.first_last_name
+        expect(all('.timeline_event .user_name')[1].text).to eq Complaint.first.status_changes.sort_by(&:change_date).first.user.first_last_name
+        expect(all('.timeline_event .date')[0].text).to eq Complaint.first.status_changes[0].change_date.localtime.to_date.strftime("%b %-e, %Y")
+        expect(all('.timeline_event .date')[1].text).to eq Complaint.first.status_changes[1].change_date.localtime.to_date.strftime("%b %-e, %Y")
+        expect(all('.timeline_event .event_description')[0].text).to eq "Registered"
+        expect(all('.timeline_event .event_description')[1].text).to eq "Registered"
       end
 
       within complaint_documents do

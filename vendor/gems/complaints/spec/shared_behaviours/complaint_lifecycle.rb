@@ -8,6 +8,7 @@ RSpec.shared_examples  "complaint lifecycle" do
   include ComplaintsSpecSetupHelpers
 
   before do
+    create_offices
     create_agencies
     create_complaint_statuses
     populate_areas_subareas
@@ -102,10 +103,10 @@ RSpec.shared_examples  "complaint lifecycle" do
       choose('closed')
       click_button('Close memo')
       page.find('li#preset', text: 'No jurisdiction').click
-      expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
+      expect{edit_save}.to change{StatusChange.count}.by 1
       expect(StatusChange.most_recent_first.first.complaint_status_id).to eq closed_status.id
       expect(StatusChange.most_recent_first.first.status_memo).to eq "No jurisdiction"
-      expect(all('#complaint #status_changes .status_change .status_humanized').map(&:text)).to eq ['Closed, No jurisdiction','Assessment, Information pending','Registered']
+      expect(all('#complaint #timeline .timeline_event .event_description').map(&:text)).to eq ['Closed, No jurisdiction','Assessment, Information pending','Registered']
     end
   end
 
@@ -115,10 +116,10 @@ RSpec.shared_examples  "complaint lifecycle" do
       choose('closed')
       click_button('Close memo')
       fill_in('other', with: "some other reason")
-      expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
+      expect{edit_save}.to change{StatusChange.count}.by 1
       expect(StatusChange.most_recent_first.first.complaint_status_id).to eq closed_status.id
       expect(StatusChange.most_recent_first.first.status_memo).to eq "some other reason"
-      expect(all('#complaint #status_changes .status_change .status_humanized').map(&:text)).to eq ['Closed, some other reason','Assessment, Information pending','Registered']
+      expect(all('#complaint #timeline .timeline_event .event_description').map(&:text)).to eq ['Closed, some other reason','Assessment, Information pending','Registered']
     end
   end
 
@@ -128,10 +129,10 @@ RSpec.shared_examples  "complaint lifecycle" do
       choose('closed')
       click_button('Close memo')
       fill_in('referred', with: "another agency")
-      expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
+      expect{edit_save}.to change{StatusChange.count}.by 1
       expect(StatusChange.most_recent_first.first.complaint_status_id).to eq closed_status.id
       expect(StatusChange.most_recent_first.first.status_memo).to eq "Referred to: another agency"
-      expect(all('#complaint #status_changes .status_change .status_humanized').map(&:text)).to eq ['Closed, Referred to: another agency','Assessment, Information pending','Registered']
+      expect(all('#complaint #timeline .timeline_event .event_description').map(&:text)).to eq ['Closed, Referred to: another agency','Assessment, Information pending','Registered']
     end
   end
 
@@ -139,7 +140,7 @@ RSpec.shared_examples  "complaint lifecycle" do
     let(:investigation_status){ ComplaintStatus.where(name: "Investigation").first }
     it "should show warnings until preset reason is selected" do
       choose('investigation')
-      expect{edit_save; wait_for_ajax}.to change{StatusChange.count}.by 1
+      expect{edit_save}.to change{StatusChange.count}.by 1
       expect(StatusChange.most_recent_first.first.complaint_status_id).to eq investigation_status.id
       expect(StatusChange.most_recent_first.first.status_memo).to be_blank
     end
@@ -204,6 +205,7 @@ RSpec.shared_examples  "complaint lifecycle" do
   end
 
   describe 'assign assessment status' do
+    let(:office_name){ OfficeGroup.national_regional_provincial.map(&:offices).flatten.first.name }
     before do
       closed_status = ComplaintStatus.where(name: "Closed").first
       complaint.status_changes_attributes = [{complaint_status_id: closed_status.id, status_memo: "No jurisdiction", status_memo_type: :close_preset}] 
@@ -220,17 +222,25 @@ RSpec.shared_examples  "complaint lifecycle" do
       edit_save
       expect(complaint.reload.current_status.complaint_status.name).to eq "Assessment"
       expect(complaint.reload.current_status.status_memo).to eq "Information pending"
-      expect(page.all('#status_changes .status_change .status_humanized').first.text).to eq "Assessment, Information pending"
+      expect(page.all('#timeline .timeline_event .event_label').first.text).to eq "Status change"
+      expect(page.all('#timeline .timeline_event .event_description').first.text).to eq "Assessment, Information pending"
       edit_complaint
       expect(page.find('input#assessment')).to be_checked
       expect(page.find('input#assessment_memo')).to be_checked
     end
-  end
 
-  describe 'transfer case during assessment' do
     it "shows case transfer within status timeline" do
-      expect(page.all('select#transferees option.office').count).to eq Office.count
-      select(Office.first, :from => "transferees")
+      expect(page.all('select#transferee option').count).to eq Office.count
+      select(office_name, :from => "transferee")
+      expect{edit_save}.to change{ComplaintTransfer.count}.by(1)
+      expect(page.all('#timeline .timeline_event .event_label').first.text).to eq "Transferred to"
+      expect(page.all('#timeline .timeline_event .event_description').first.text).to eq office_name
+    end
+
+    it "shows case assignment to one of four investigative branches within timeline" do
+      #see para 4.2.3 "Determine jurisdiction"
+      test_fail_placeholder
     end
   end
+
 end

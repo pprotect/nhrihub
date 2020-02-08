@@ -96,7 +96,7 @@ module ComplaintsSpecHelpers
   end
 
   def status_changes
-    page.find('#status_changes')
+    page.find('#timeline')
   end
 
   def status
@@ -263,6 +263,6 @@ module ComplaintsSpecHelpers
   end
 
   def open_close_memo_menu
-    page.find('#close_memo_prompt').click
+    page.find('#status_memo_prompt').click
   end
 end

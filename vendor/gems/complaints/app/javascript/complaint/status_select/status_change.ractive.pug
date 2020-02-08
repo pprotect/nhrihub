@@ -2,7 +2,7 @@ form
   | {{#activeStatuses}}
   <statusRadio status_memo_type='{{current_status.status_memo_type}}' status_memo='{{current_status.status_memo}}' status_id='{{current_status.complaint_status_id}}' id='{{id}}' name='{{name}}' />
   | {{/activeStatuses}}
-  <closedStatusRadio status_memo_type='{{current_status.status_memo_type}}' status_memo='{{current_status.status_memo}}' status_memo_error='{{status_memo_error}}' status_id='{{current_status.complaint_status_id}}' id='{{closedStatus.id}}' name='{{closedStatus.name}}' status='{{closedStatus}}' />
+  <closedStatusRadio status_memo_type='{{current_status.status_memo_type}}' status_memo='{{current_status.status_memo}}' status_id='{{current_status.complaint_status_id}}' status_memo_error='{{status_memo_error}}' id='{{closedStatus.id}}' name='{{closedStatus.name}}' />
 
 style.
   form{

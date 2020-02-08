@@ -20,12 +20,12 @@ script#file_selector_template(type='text/ractive' src='../../../../../../app/vie
             span.current_assignee {{ current_assignee_name }}
         .row
           .col-md-3
-            label {{ t.status }}
+            label {{ t.timeline }}
           .col-md-9
-            #status_changes
-              | {{#status_changes_recent_first}}
-              <showStatusChange status_humanized='{{status_humanized}}' date='{{date}}' user_name='{{user_name}}' />
-              | {{/status_changes_recent_first}}
+            #timeline
+              | {{#timeline_events_recent_first}}
+              <showTimelineEvent event_label='{{event_label}}' status_memo='{{status_memo}}' event_description='{{event_description}}' date='{{date}}' user_name='{{user_name}}' />
+              | {{/timeline_events_recent_first}}
         .row
           .col-md-3
             label {{ t.complainant }}
@@ -59,7 +59,7 @@ script(type='text/javascript').
   import 'jquery-ui/ui/widgets/datepicker'
   import translations from 'translations.js'
   import Communications from 'communications.ractive.pug'
-  import ShowStatusChange from 'show_status_change.ractive.pug'
+  import ShowTimelineEvent from 'show_timeline_event.ractive.pug'
   import reminders from 'reminders.ractive.pug'
   import notes from 'notes.ractive.pug'
   import Remindable from 'remindable.coffee'
@@ -70,8 +70,8 @@ script(type='text/javascript').
     template : $TEMPLATE,
     css: $CSS,
     computed : {
-      status_changes_recent_first(){
-        return _(this.get('status_changes')).sortBy(function(sc){return -$.datepicker.formatDate('@',new Date(sc.change_date)) });
+      timeline_events_recent_first(){
+        return _(this.get('timeline_events')).sortBy(function(sc){return -$.datepicker.formatDate('@',new Date(sc.change_date)) });
       },
       delete_confirmation_message() {
         return `${i18n.delete_complaint_confirmation_message} ${this.get('case_reference')}?`;
@@ -116,7 +116,7 @@ script(type='text/javascript').
     }},
     components : {
       attachedDocuments : ComplaintDocuments,
-      showStatusChange : ShowStatusChange,
+      showTimelineEvent : ShowTimelineEvent,
     },
     generate_word_doc() {
       return window.location = Routes.complaint_path('en',this.get('id'),{format : 'docx'});

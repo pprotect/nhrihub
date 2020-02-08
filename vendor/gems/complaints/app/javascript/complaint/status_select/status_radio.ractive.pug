@@ -1,7 +1,7 @@
 div
   label
     | {{ name }}
-    input(id='{{this.name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{id}}')
+    input(id='{{name.underscore()}}' type = 'radio', name ='{{status_id}}', value ='{{id}}')
   label('class-hidden'='!has_memo')
     | {{ memo }}
     input(id='{{this.name.underscore()}}_memo' type = 'checkbox', checked='{{memo_checked}}')
@@ -54,7 +54,7 @@ script.
           // i.e. as opposed to is selected at initialization time
           var becomes_selected = (typeof old != 'undefined') && this.get('selected')
           if(becomes_selected){ 
-            var name = this.get('name')
+            console.log('becomes selected '+this.get('name'))
             this.parent.set({complaint_status_id: this.get('id'), status_memo: this.get('status_memo')})
           };
         }

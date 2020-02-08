@@ -27,12 +27,16 @@ class Complaint < ActiveRecord::Base
   has_many :communications, :dependent => :destroy
   has_one :case_reference, :dependent => :destroy
   has_many :complaint_transfers
-  has_many :tranferees, through: :complaint_transfers, class_name: :office, foreign_key: :office_id
+  has_many :transferees, through: :complaint_transfers, class_name: :Office, foreign_key: :office_id
 
   attr_accessor :witness_name, :heading
 
   # why after_commit iso after_create? see https://dev.mikamai.com/2016/01/19/postgresql-transaction-and-rails-callbacks/
   after_create :generate_case_reference
+
+  def new_transferee_id=(id)
+    transferees << Office.find(id) unless id.to_i.zero?
+  end
 
   def generate_case_reference
     self.case_reference = CaseReference.create
@@ -126,7 +130,7 @@ class Complaint < ActiveRecord::Base
       status_changes.build({:user_id => user_id,
                             :change_date => change_date,
                             :complaint_status_id => complaint_status_id})
-    elsif !(attrs[:complaint_status_id].nil? || attrs[:complaint_status_id] == "null") && 
+    elsif !(attrs[:complaint_status_id].nil? || attrs[:complaint_status_id] == "null" || attrs[:complaint_status_id] == 'undefined') && 
            ((attrs[:complaint_status_id].to_i != status_id) ||
             ((attrs[:complaint_status_id].to_i == status_id) && (attrs[:status_memo] != current_status.status_memo )))
       status_memo = attrs[:status_memo]=='undefined' ? nil : attrs[:status_memo]
@@ -173,6 +177,11 @@ class Complaint < ActiveRecord::Base
     type.gsub(/Complaint$/,'').underscore
   end
 
+  def timeline_events
+    (status_changes.map(&:as_timeline_event) +
+      complaint_transfers.map(&:as_timeline_event)).sort_by(&:date).reverse
+  end
+
   def as_json(options = {})
     # these fields are included in options when json: complaint is called in a controller
     if options.except(:status, :prefixes, :template, :layout).blank?
@@ -193,7 +202,7 @@ class Complaint < ActiveRecord::Base
                            :subarea_ids,
                            :area_subarea_ids,
                            :agency_ids,
-                           :status_changes,
+                           :timeline_events,
                            :communications] }
     end
     super(options)
@@ -269,8 +278,8 @@ class Complaint < ActiveRecord::Base
     status_changes.sort_by(&:change_date).last
   end
 
-  def current_status_humanized
-    current_status.status_humanized
+  def current_event_description
+    current_status.event_description
   end
 
   def _complained_to_subject_agency

@@ -101,6 +101,10 @@ module ApplicationHelpers
     page.find('.modal#confirm-delete a#confirm').click
   end
 
+  def test_fail_placeholder
+    expect("this is a placeholder to force test fail").to eq "something else"
+  end
+
   def clear_filter_fields
     page.all('.fa-refresh').first.click
     wait_for_ajax

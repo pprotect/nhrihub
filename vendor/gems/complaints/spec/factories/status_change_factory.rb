@@ -15,6 +15,11 @@ FactoryBot.define do
       status_memo_type { 'close_preset' }
     end
 
+    trait :preset_jurisdiction do
+      status_memo { "No jurisdiction" }
+      status_memo_type { 'close_preset' }
+    end
+
     trait :referred do
       status_memo { 'another agency' }
       status_memo_type { 'close_referred_to' }
