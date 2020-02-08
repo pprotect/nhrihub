@@ -29,6 +29,7 @@ import Buttons from 'buttons.ractive.pug'
 import StatusChange from 'status_change.ractive.pug'
 import TransfereeSelector from 'transferee_selector.ractive.pug'
 import Transferees from 'transferees.ractive.pug'
+import JurisdictionBranchSelector from 'jurisdiction_branch_selector.ractive.pug'
 
 export default Ractive.extend({
   el: '#complaint',
@@ -150,6 +151,7 @@ export default Ractive.extend({
       serialization_key:'complaint',
       new_assignee_id: 0,
       new_transferee_id: 0,
+      new_jurisdiction_branch_id: 0,
     });
   },
   onconfig() {
@@ -180,7 +182,8 @@ export default Ractive.extend({
     buttons: Buttons,
     statusChange: StatusChange,
     transfereeSelector: TransfereeSelector,
-    transferees: Transferees
+    transferees: Transferees,
+    jurisdictionBranchSelector: JurisdictionBranchSelector,
   },
   proceed_to_intake(){
     history.pushState({},"anything",this.get('url'));

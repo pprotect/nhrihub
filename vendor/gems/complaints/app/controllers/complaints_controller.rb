@@ -49,9 +49,13 @@ class ComplaintsController < ApplicationController
     params[:complaint].delete(:type) # ignore type on update... it will be correct
     complaint = Complaint.find(params[:id])
     params[:complaint][:status_changes_attributes][0][:user_id] = current_user.id
-    unless params[:complaint][:new_transferee_id].to_i.zero?
+    unless (new_transferee_id = params[:complaint].delete(:new_transferee_id)).to_i.zero?
       params[:complaint][:complaint_transfers_attributes]=[{user_id: current_user.id,
-                                                           office_id: params[:complaint].delete(:new_transferee_id).to_i}]
+                                                            office_id: new_transferee_id}]
+    end
+    unless (new_jurisdiction_branch_id = params[:complaint].delete(:new_jurisdiction_branch_id)).to_i.zero?
+      params[:complaint][:jurisdiction_assignments_attributes]=[{user_id: current_user.id,
+                                                                 branch_id: new_jurisdiction_branch_id}]
     end
     #if true
     if complaint.update(complaint_params)
@@ -100,6 +104,8 @@ class ComplaintsController < ApplicationController
 
   def create
     params[:complaint].delete(:status_memo) # not pertinent to new complaint, but supplied as 'undefined' by the client
+    params[:complaint].delete(:new_jurisdiction_branch_id)
+    params[:complaint].delete(:new_transferee_id)
     type = params[:complaint].delete(:type)               # individual, organization, own_motion
     klass = "#{type}_complaint".classify.constantize      # IndividualComplaint, OrganizationComplaint, OwnMotionComplaint
     @complaint = klass.send(:new, complaint_params)       # e.g. IndividualComplaint.new(complaint_params)
@@ -158,6 +164,7 @@ class ComplaintsController < ApplicationController
                                        :complaint_transfers_attributes => [:user_id, :office_id],
                                        :subarea_ids => [],
                                        :status_changes_attributes => [:user_id, :complaint_status_id, :status_memo, :status_memo_type],
+                                       :jurisdiction_assignments_attributes => [:user_id, :branch_id],
                                        :agency_ids => [],
                                        :complaint_documents_attributes => [:file, :title, :original_filename, :original_type, :filesize, :lastModifiedDate],
                                      )

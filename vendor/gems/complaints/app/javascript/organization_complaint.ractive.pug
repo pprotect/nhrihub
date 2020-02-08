@@ -335,6 +335,14 @@
           .edit
             <transfereeSelector editing = {{update_complaint}} new_transferee_id = "{{new_transferee_id}}" />
 
+      .row.form-group('data-toggle'='edit', 'class-hidden'='new_complaint')
+        .col-md-2
+          label {{ t.jurisdiction_branch_history }}
+        .col-md-5("data-toggle" = "edit")
+          .no_edit.in
+          .edit
+            <jurisdictionBranchSelector editing = {{update_complaint}} new_jurisdiction_branch_id = "{{new_jurisdiction_branch_id}}" />
+
       .row("data-toggle" = "edit")
         .col-md-2
           label {{ t.documents }}
@@ -398,7 +406,7 @@ script(type='text/javascript').
           'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
           'organization_name', 'organization_registration_number',
           'status_changes_attributes', 'new_assignee_id', 'subarea_ids',
-          'agency_ids', 'attached_documents_attributes', 'details',
+          'agency_ids', 'attached_documents_attributes', 'details', 'new_jurisdiction_branch_id',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
           'firstName', 'lastName', 'title', 'type'];
       },

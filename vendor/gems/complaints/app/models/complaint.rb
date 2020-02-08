@@ -29,6 +29,9 @@ class Complaint < ActiveRecord::Base
   has_many :complaint_transfers
   has_many :transferees, through: :complaint_transfers, class_name: :Office, foreign_key: :office_id
   accepts_nested_attributes_for :complaint_transfers
+  has_many :jurisdiction_assignments
+  has_many :branches, -> { merge(Office.branches) }, class_name: "Office", through: :jurisdiction_assignments
+  accepts_nested_attributes_for :jurisdiction_assignments
 
   attr_accessor :witness_name, :heading
 
@@ -175,8 +178,11 @@ class Complaint < ActiveRecord::Base
   end
 
   def timeline_events
-    (status_changes.map(&:as_timeline_event) +
-      complaint_transfers.map(&:as_timeline_event)).sort_by(&:date).reverse
+    [status_changes, complaint_transfers, jurisdiction_assignments].
+      flatten.
+      map(&:as_timeline_event).
+      sort_by(&:date).
+      reverse
   end
 
   def as_json(options = {})

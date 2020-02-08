@@ -1,0 +1,24 @@
+select.form-control#jurisdiction_branch(value = '{{new_jurisdiction_branch_id}}', 'on-change'="@this.remove_error()")
+  option(value='0', disabled=true, style = "color:#333") {{ t.select_jurisdiction_branch }}
+  | {{#jurisdiction_branches}}
+  option(value='{{id}}') {{ name }}
+  | {{/jurisdiction_branches}}
+
+script.
+  import translations from 'translations.js'
+
+  export default Ractive.extend({
+    template : $TEMPLATE,
+    data : function(){ return {
+      t : translations.t('jurisdiction_branch_selector')
+    }},
+    computed: {
+      jurisdiction_branches(){
+        var office_group = _(this.get('office_groups')).filter(function(o){return o.name.match(/^Head/)})[0]
+        return office_group.offices
+      }
+    },
+    remove_error() {
+      return this.parent.remove_attribute_error('new_jurisdiction_branch_id');
+    }
+  });
