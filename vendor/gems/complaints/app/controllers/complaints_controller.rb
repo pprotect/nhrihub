@@ -57,6 +57,10 @@ class ComplaintsController < ApplicationController
       params[:complaint][:jurisdiction_assignments_attributes]=[{user_id: current_user.id,
                                                                  branch_id: new_jurisdiction_branch_id}]
     end
+    unless (new_assignee_id = params[:complaint].delete(:new_assignee_id)).to_i.zero?
+      params[:complaint][:assigns_attributes] = [{ user_id: new_assignee_id,
+                                                   assigner_id: current_user.id}]
+    end
     #if true
     if complaint.update(complaint_params)
       complaint.heading= t('.heading', case_reference: complaint.case_reference)
@@ -162,9 +166,10 @@ class ComplaintsController < ApplicationController
                                        :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
                                        :organization_name, :organization_registration_number,
                                        :complaint_transfers_attributes => [:user_id, :office_id],
+                                       :jurisdiction_assignments_attributes => [:user_id, :branch_id],
+                                       :assigns_attributes => [:user_id, :assigner_id],
                                        :subarea_ids => [],
                                        :status_changes_attributes => [:user_id, :complaint_status_id, :status_memo, :status_memo_type],
-                                       :jurisdiction_assignments_attributes => [:user_id, :branch_id],
                                        :agency_ids => [],
                                        :complaint_documents_attributes => [:file, :title, :original_filename, :original_type, :filesize, :lastModifiedDate],
                                      )

@@ -205,8 +205,6 @@ RSpec.shared_examples  "complaint lifecycle" do
   end
 
   describe 'assign assessment status' do
-    let(:office_name){ OfficeGroup.national_regional_provincial.map(&:offices).flatten.first.name }
-    let(:branch_office){ Office.branches.first.name }
     before do
       closed_status = ComplaintStatus.where(name: "Closed").first
       complaint.status_changes_attributes = [{complaint_status_id: closed_status.id, status_memo: "No jurisdiction", status_memo_type: :close_preset}] 
@@ -229,6 +227,18 @@ RSpec.shared_examples  "complaint lifecycle" do
       expect(page.find('input#assessment')).to be_checked
       expect(page.find('input#assessment_memo')).to be_checked
     end
+  end
+
+  describe "case transfer" do
+    let(:office_name){ OfficeGroup.national_regional_provincial.map(&:offices).flatten.first.name }
+    let(:branch_office){ Office.branches.first.name }
+    before do
+      closed_status = ComplaintStatus.where(name: "Closed").first
+      complaint.status_changes_attributes = [{complaint_status_id: closed_status.id, status_memo: "No jurisdiction", status_memo_type: :close_preset}] 
+      complaint.save
+      visit complaint_path('en', complaint.id)
+      edit_complaint
+    end
 
     it "shows case transfer within status timeline" do
       expect(page.all('select#transferee option').count).to eq Office.count
@@ -244,6 +254,18 @@ RSpec.shared_examples  "complaint lifecycle" do
     it "does not add transfers when none are selected" do
       expect{edit_save}.not_to change{ComplaintTransfer.count}
     end
+  end
+
+  describe "case jurisdiction assignment" do
+    let(:branch_office){ Office.branches.first.name }
+
+    before do
+      closed_status = ComplaintStatus.where(name: "Closed").first
+      complaint.status_changes_attributes = [{complaint_status_id: closed_status.id, status_memo: "No jurisdiction", status_memo_type: :close_preset}] 
+      complaint.save
+      visit complaint_path('en', complaint.id)
+      edit_complaint
+    end
 
     it "shows case assignment to one of four investigative branches within timeline" do
       #see para 4.2.3 "Determine jurisdiction"
@@ -252,8 +274,29 @@ RSpec.shared_examples  "complaint lifecycle" do
       expect{edit_save}.to change{JurisdictionAssignment.count}.by(1)
       expect(complaint.jurisdiction_assignments.merge(JurisdictionAssignment.most_recent_for_complaint).first.user_id).to eq User.first.id
       expect(page.all('#timeline .timeline_event .event_label').first.text).to eq "Jurisdiction assigned"
-      expect(page.all('#timeline .timeline_event .event_description').first.text).to eq office_name
+      expect(page.all('#timeline .timeline_event .event_description').first.text).to eq branch_office
       expect(page.all('#timeline .timeline_event .user_name').first.text).to eq User.first.first_last_name
+      expect(page.all('#timeline .timeline_event .date').first.text).to eq DateTime.now.to_s(:js_view)
+    end
+  end
+
+  describe "staff assignment" do
+    let(:assigner){ User.first.first_last_name }
+    let!(:assignee){ FactoryBot.create(:user) }
+
+    before do
+      visit complaint_path('en', complaint.id)
+      edit_complaint
+    end
+
+    it "shows the staff assignment in the timeline" do
+      expect(page.all('select#assignee option').count).to eq User.count + 1
+      select(assignee.first_last_name, from: 'assignee')
+      expect{edit_save}.to change{Assign.count}.by(1)
+      expect(complaint.assigns.first.user_id).to eq assignee.id
+      expect(page.all('#timeline .timeline_event .event_label').first.text).to eq "Assigned to"
+      expect(page.all('#timeline .timeline_event .event_description').first.text).to eq assignee.first_last_name
+      expect(page.all('#timeline .timeline_event .user_name').first.text).to eq assigner
       expect(page.all('#timeline .timeline_event .date').first.text).to eq DateTime.now.to_s(:js_view)
     end
   end

@@ -19,7 +19,7 @@ def admin_assigns(assignees)
   if assignees.empty?
     []
   else
-    assignees.each_with_index.map{|assignee, i| Assign.new(created_at: (5*i).days.ago, assignee: assignee) }
+    assignees.each_with_index.map{|assignee, i| Assign.new(created_at: (5*i).days.ago, assignee: assignee, assigner:assignee) }
   end
 end
 

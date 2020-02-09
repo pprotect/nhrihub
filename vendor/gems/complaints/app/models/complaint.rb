@@ -16,6 +16,7 @@ class Complaint < ActiveRecord::Base
   has_many :reminders, :as => :remindable, :autosave => true, :dependent => :destroy, :inverse_of => :remindable
   has_many :notes, :as => :notable, :autosave => true, :dependent => :destroy, :inverse_of => :notable
   has_many :assigns, :autosave => true, :dependent => :destroy, after_add: :notify_assignee
+  accepts_nested_attributes_for :assigns
   has_many :assignees, :through => :assigns
   has_many :status_changes, :dependent => :destroy
   accepts_nested_attributes_for :status_changes
@@ -178,7 +179,7 @@ class Complaint < ActiveRecord::Base
   end
 
   def timeline_events
-    [status_changes, complaint_transfers, jurisdiction_assignments].
+    [status_changes, complaint_transfers, jurisdiction_assignments, assigns].
       flatten.
       map(&:as_timeline_event).
       sort_by(&:date).
