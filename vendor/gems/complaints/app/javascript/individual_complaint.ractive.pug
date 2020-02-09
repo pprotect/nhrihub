@@ -356,44 +356,47 @@
           .edit
             <agenciesSelector agency_ids = "{{agency_ids}}" all_agencies_in_sixes = "{{all_agencies_in_sixes}}" />
 
-      .row#status_row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
-        .col-md-2
-          label {{ t.timeline }}
-        .col-md-10
-          .fade.no_edit.in#timeline
+      .row#timeline_row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
+        .fade.edit
+        .fade.no_edit.in#timeline
+          .col-md-2
+            label {{ t.timeline }}
+          .col-md-10
             | {{#timeline_events_recent_first}}
             <showTimelineEvent event_label='{{event_label}}' status_memo='{{status_memo}}' event_description='{{event_description}}' date='{{date}}' user_name='{{user_name}}' />
             | {{/timeline_events_recent_first}}
-          .fade.edit#current_status
+
+      .row#status_row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
+        .fade.no_edit.in
+        .fade.edit#current_status
+          .col-md-2
+            label {{ t.status }}
+          .col-md-10
             <statusChange status_changes_attributes='{{status_changes_attributes}}' persisted='{{persisted}}' current_status='{{current_status}}' status_memo='{{status_memo}}' status_memo_error = '{{status_memo_error}}' status_memo_options = '{{status_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
 
-      .row.form-group('class-has-error' = 'new_assignee_id_error')
-        .col-md-2
-          label('class-hidden' = 'new_complaint') {{ t.assignees_history }}
-          label('class-hidden' = 'update_complaint') {{ t.assignee }}
-        .col-md-5("data-toggle" = "edit")
-          <assignees assigns = "{{assigns}}"  />
-          .no_edit.in
-          .edit
+      .row.form-group('class-has-error' = 'new_assignee_id_error', "data-toggle" = "edit")
+        .no_edit.in
+        .edit
+          .col-md-2
+            label('class-hidden' = 'new_complaint') {{ t.assign }}
+          .col-md-5
             <assigneeSelector editing = {{update_complaint}} new_assignee_id = "{{new_assignee_id}}" />
             span.help-block.error#new_assignee_id_error {{ t.assignee_error_message }}
 
       .row.form-group('data-toggle'='edit', 'class-hidden'='new_complaint')
-        .col-md-2
-          label('class-hidden' = 'new_complaint') {{ t.transferee_history }}
-          label('class-hidden' = 'update_complaint') {{ t.assignee }}
-        .col-md-5("data-toggle" = "edit")
-          <transferees transfers = "{{transfers}}"  />
-          .no_edit.in
-          .edit
+        .no_edit.in
+        .edit
+          .col-md-2
+            label {{ t.transfer }}
+          .col-md-5("data-toggle" = "edit")
             <transfereeSelector editing = {{update_complaint}} new_transferee_id = "{{new_transferee_id}}" />
 
       .row.form-group('data-toggle'='edit', 'class-hidden'='new_complaint')
-        .col-md-2
-          label {{ t.jurisdiction_branch_history }}
-        .col-md-5("data-toggle" = "edit")
-          .no_edit.in
-          .edit
+        .no_edit.in
+        .edit
+          .col-md-2
+            label {{ t.jurisdiction_assignment }}
+          .col-md-5("data-toggle" = "edit")
             <jurisdictionBranchSelector editing = {{update_complaint}} new_jurisdiction_branch_id = "{{new_jurisdiction_branch_id}}" />
 
       .row("data-toggle" = "edit")

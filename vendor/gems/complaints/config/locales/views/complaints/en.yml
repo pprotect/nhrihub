@@ -66,12 +66,12 @@ en:
     alternate_id_type: "Alternate ID type"
     alternate_id: "Alternate ID"
     area: "Area"
-    assignee: 'Assignee'
+    assign: 'Assign staff'
     transferee: 'Transferee'
     assignee_error_message: "You must designate an assignee"
     assignees_history: "History of assignees"
-    transferee_history: "History of tranfers"
-    jurisdiction_branch_history: "Jurisdiction assignments"
+    transfer: "Transfer"
+    jurisdiction_assignment: "Assign jurisdiction"
     by: 'by'
     case_reference: "Ref"
     cell_phone: "Cell phone"
@@ -160,6 +160,7 @@ en:
     select_initiating_branch: "Select initiating branch"
     select_initiating_office: "Select initiating office"
     timeline: 'Timeline'
+    status: 'Status'
     subarea_id_count_error_message : "You must select at least one subarea"
     subject_beneficiary: "Subject/Beneficiary"
     suspended : "Suspended"
