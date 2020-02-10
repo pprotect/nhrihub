@@ -1,0 +1,15 @@
+.row.form-group("class-has-error" = "subarea_id_count_error", "data-toggle" = "edit")
+  .col-md-2
+    .no_edit.in
+      label {{ t.subareas }}
+    .edit.required
+      label {{ t.subareas }}
+  .col-md-9
+    .no_edit.in
+      | {{#area_subarea_ids:id}}
+      <area area_ids = "{{area_ids}}" area_subarea_ids = "{{area_subarea_ids}}" areas = "{{all_complaint_areas}}" id = "{{parseInt(id)}}" subarea_ids = "{{this}}" subareas = "{{all_subareas}}" />
+      | {{/area_subarea_ids}}
+    .edit
+      .row
+        <subareaSelector all_complaint_areas = "{{all_complaint_areas}}" subarea_ids = "{{subarea_ids}}" />
+      span#subarea_id_count_error.help-block.error {{ t.subarea_id_count_error_message }}

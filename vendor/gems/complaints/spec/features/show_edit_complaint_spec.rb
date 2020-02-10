@@ -155,7 +155,7 @@ feature 'edit complaint', js: true do
       expect(page.all('#complaint_documents .complaint_document .title').map(&:text)).to include "added complaint document"
     end
 
-    expect(page).to have_selector("#assignees .assignee .name", :text => User.admin.last.first_last_name )
+    expect(page).to have_selector("#timeline .timeline_event .event_description", :text => User.admin.last.first_last_name )
 
     user = User.staff.last
     expect( email.subject ).to eq "Notification of complaint assignment"

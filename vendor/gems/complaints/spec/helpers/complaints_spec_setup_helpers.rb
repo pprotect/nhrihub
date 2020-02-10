@@ -36,7 +36,7 @@ module ComplaintsSpecSetupHelpers
     choose('Special Investigations Unit')
     choose('complained_to_subject_agency_yes')
     check_subarea(:good_governance, "Delayed action")
-    select(User.admin.first.first_last_name, :from => "assignee")
+    #select(User.admin.first.first_last_name, :from => "assignee")
   end
 
   def complete_organization_complaint_required_fields
@@ -56,7 +56,7 @@ module ComplaintsSpecSetupHelpers
     choose('Special Investigations Unit')
     choose('complained_to_subject_agency_yes')
     check_subarea(:good_governance, "Delayed action")
-    select(User.admin.first.first_last_name, :from => "assignee")
+    #select(User.admin.first.first_last_name, :from => "assignee")
   end
 
   def complete_individual_complaint_required_fields
@@ -72,7 +72,7 @@ module ComplaintsSpecSetupHelpers
     choose('Special Investigations Unit')
     choose('complained_to_subject_agency_yes')
     check_subarea(:good_governance, "Delayed action")
-    select(User.admin.first.first_last_name, :from => "assignee")
+    #select(User.admin.first.first_last_name, :from => "assignee")
   end
 
   def populate_database(type)

@@ -1,0 +1,13 @@
+.row.form-group("class-has-error" = "details_error", "data-toggle" = "edit")
+  .col-md-2
+    .no_edit.in
+      label {{ t.details }}
+    .edit
+      label.required {{ t.details }}
+  .col-md-9
+    .no_edit.in
+      span#complaint_details {{ details }}
+    .edit
+      input#complaint_details.form-control(autocomplete='none', "on-keydown" = "@this.remove_attribute_error('details')", value = "{{details}}")/
+      span#details_error.help-block.error
+        | {{ t.details_error_message }}

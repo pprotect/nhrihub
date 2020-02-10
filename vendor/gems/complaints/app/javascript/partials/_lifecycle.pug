@@ -1,0 +1,42 @@
+.row#timeline_row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
+  .fade.edit
+  .fade.no_edit.in#timeline
+    .col-md-2
+      label {{ t.timeline }}
+    .col-md-10
+      | {{#timeline_events_recent_first}}
+      <showTimelineEvent event_label='{{event_label}}' status_memo='{{status_memo}}' event_description='{{event_description}}' date='{{date}}' user_name='{{user_name}}' />
+      | {{/timeline_events_recent_first}}
+
+.row#status_row('data-toggle'= 'edit', 'class-hidden'='new_complaint')
+  .fade.no_edit.in
+  .fade.edit#current_status
+    .col-md-2
+      label {{ t.status }}
+    .col-md-10
+      <statusChange status_changes_attributes='{{status_changes_attributes}}' persisted='{{persisted}}' current_status='{{current_status}}' status_memo='{{status_memo}}' status_memo_error = '{{status_memo_error}}' status_memo_options = '{{status_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
+
+.row.form-group('class-has-error' = 'new_assignee_id_error', "data-toggle" = "edit", 'class-hidden'='new_complaint')
+  .no_edit.in
+  .edit
+    .col-md-2
+      label {{ t.assign }}
+    .col-md-5
+      <assigneeSelector editing = {{update_complaint}} new_assignee_id = "{{new_assignee_id}}" />
+      span.help-block.error#new_assignee_id_error {{ t.assignee_error_message }}
+
+.row.form-group('data-toggle'='edit', 'class-hidden'='new_complaint')
+  .no_edit.in
+  .edit
+    .col-md-2
+      label {{ t.transfer }}
+    .col-md-5("data-toggle" = "edit")
+      <transfereeSelector editing = {{update_complaint}} new_transferee_id = "{{new_transferee_id}}" />
+
+.row.form-group('data-toggle'='edit', 'class-hidden'='new_complaint')
+  .no_edit.in
+  .edit
+    .col-md-2
+      label {{ t.jurisdiction_assignment }}
+    .col-md-5("data-toggle" = "edit")
+      <jurisdictionBranchSelector editing = {{update_complaint}} new_jurisdiction_branch_id = "{{new_jurisdiction_branch_id}}" />

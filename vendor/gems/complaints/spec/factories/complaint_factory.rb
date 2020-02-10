@@ -19,7 +19,7 @@ def admin_assigns(assignees)
   if assignees.empty?
     []
   else
-    assignees.each_with_index.map{|assignee, i| Assign.new(created_at: (5*i).days.ago, assignee: assignee, assigner:assignee) }
+    assignees.each_with_index.map{|assignee, i| Assign.new(created_at: (5*(i+1)).days.ago, assignee: assignee, assigner:assignee) }
   end
 end
 
@@ -174,9 +174,10 @@ FactoryBot.define do
         else
           assignees = [FactoryBot.create(:assignee), FactoryBot.create(:assignee)]
         end
+        another_user = User.order('RANDOM()').first
         assigns = assignees.map do |user|
           date = DateTime.now.advance(:days => -rand(365))
-          Assign.create(:created_at => date, :assignee => user, :complaint_id => complaint.id )
+          Assign.create(:created_at => date, :assigner => another_user, :assignee => user, :complaint_id => complaint.id )
         end
       end
     end

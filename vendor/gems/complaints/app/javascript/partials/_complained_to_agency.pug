@@ -1,0 +1,14 @@
+.row("data-toggle" = "edit")
+  .col-md-2
+    label {{ t.complained_to_subject_agency }}
+  .col-md-3
+    .no_edit.in
+      span#complained_to_subject_agency {{#if complained_to_subject_agency }} yes {{else}} no {{/if}}
+    .edit
+      form
+        label(style = "font-weight:normal; margin-right:12px")
+          | {{ t.yes }}
+          input#complained_to_subject_agency_yes(name = "{{complained_to_subject_agency}}", style = "margin-left:6px", type = "radio", value = "true")/
+        label(style = "font-weight:normal")
+          | {{ t.no }}
+          input#complained_to_subject_agency_no(name = "{{complained_to_subject_agency}}", style = "margin-left:6px", type = "radio", value = "false")/

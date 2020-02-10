@@ -190,6 +190,17 @@ feature "complaints index", :js => true do
   include ActiveStorageHelpers
   include AreaSubareaCommonHelpers
 
+  # most recent first
+  let(:assignees) do
+    Complaint.first.assigns.sort_by(&:created_at).reverse.
+      collect{|a| {name: a.assignee.first_last_name,date:a.created_at.localtime.to_date.strftime("%b %-e, %Y")}}
+  end
+
+  let(:status_changes) do
+    Complaint.first.status_changes.sort_by(&:change_date).reverse.
+      collect{|sc| {name:sc.user.first_last_name, date:sc.change_date.localtime.to_date.strftime("%b %-e, %Y")}}
+  end
+
   before do
     populate_database(:individual_complaint)
     visit complaints_path('en')
@@ -213,7 +224,9 @@ feature "complaints index", :js => true do
   it "shows a list of complaints" do
     expect(page.find('h1').text).to eq "Complaints"
     expect(page).to have_selector('#complaints .complaint', :count => 1)
-    expect(page.all('#complaints .complaint #timeline .timeline_event .event_description').first.text).to eq "Registered"
+    # assigns are 5 days ago and 10 days ago
+    # status changes are 4 days ago and 20 days ago
+    expect(page.all('#complaints .complaint #timeline .timeline_event .event_label').first.text).to eq "Status change"
     open_dropdown('Select status')
     expect{ select_option('Registered').click; wait_for_ajax }.to change{ page.all('#complaints .complaint').count }.by(-1)
     expect{ select_option('Closed').click; wait_for_ajax }.to change{ page.all('#complaints .complaint').count }.by(1)
@@ -262,42 +275,45 @@ feature "complaints index", :js => true do
     expect(find('#home_phone').text).to eq Complaint.first.home_phone
     expect(find('#complaint_details').text).to eq Complaint.first.details
 
-      within assignee_history do
-        Complaint.first.assigns.map(&:name).each do |name|
-          expect(all('.name').map(&:text)).to include name
-        end # /do
-        Complaint.first.assigns.map(&:date).each do |date|
-          expect(all('.date').map(&:text)).to include date
-        end # /do
-      end # /within
 
-      within status_changes do
-        expect(page).to have_selector('.timeline_event', :count => 2)
-        expect(all('.timeline_event .user_name')[0].text).to eq Complaint.first.status_changes.sort_by(&:change_date).last.user.first_last_name
-        expect(all('.timeline_event .user_name')[1].text).to eq Complaint.first.status_changes.sort_by(&:change_date).first.user.first_last_name
-        expect(all('.timeline_event .date')[0].text).to eq Complaint.first.status_changes[0].change_date.localtime.to_date.strftime("%b %-e, %Y")
-        expect(all('.timeline_event .date')[1].text).to eq Complaint.first.status_changes[1].change_date.localtime.to_date.strftime("%b %-e, %Y")
-        expect(all('.timeline_event .event_description')[0].text).to eq "Registered"
-        expect(all('.timeline_event .event_description')[1].text).to eq "Registered"
+    expect(page).to have_selector('.timeline_event', :count => 4)
+    # assigns are 5 days ago and 10 days ago
+    # status changes are 4 days ago and 20 days ago
+    # events are registered, assigned, assigned, registered
+    expect(all('.timeline_event .user_name')[0].text).to eq status_changes[0][:name]
+    expect(all('.timeline_event .user_name')[1].text).to eq assignees[0][:name]
+    expect(all('.timeline_event .user_name')[2].text).to eq assignees[1][:name]
+    expect(all('.timeline_event .user_name')[3].text).to eq status_changes[1][:name]
+    expect(all('.timeline_event .date')[0].text).to eq status_changes[0][:date]
+    expect(all('.timeline_event .date')[1].text).to eq assignees[0][:date]
+    expect(all('.timeline_event .date')[2].text).to eq assignees[1][:date]
+    expect(all('.timeline_event .date')[3].text).to eq status_changes[1][:date]
+    expect(all('.timeline_event .event_description')[0].text).to eq "Registered"
+    expect(all('.timeline_event .event_description')[1].text).to eq assignees[0][:name]
+    expect(all('.timeline_event .event_description')[2].text).to eq assignees[1][:name]
+    expect(all('.timeline_event .event_description')[3].text).to eq "Registered"
+    expect(all('.timeline_event .event_label')[0].text).to eq "Status change"
+    expect(all('.timeline_event .event_label')[1].text).to eq "Assigned to"
+    expect(all('.timeline_event .event_label')[2].text).to eq "Assigned to"
+    expect(all('.timeline_event .event_label')[3].text).to eq "Initial status"
+
+    within complaint_documents do
+      Complaint.first.complaint_documents.map(&:title).each do |title|
+        expect(all('.complaint_document .title').map(&:text)).to include title
       end
+    end
 
-      within complaint_documents do
-        Complaint.first.complaint_documents.map(&:title).each do |title|
-          expect(all('.complaint_document .title').map(&:text)).to include title
-        end
+    within human_rights_area do
+      Complaint.first.complaint_subareas.human_rights.map(&:name).each do |subarea_name|
+        expect(page).to have_selector('.subarea', :text => subarea_name)
       end
+    end
 
-      within human_rights_area do
-        Complaint.first.complaint_subareas.human_rights.map(&:name).each do |subarea_name|
-          expect(page).to have_selector('.subarea', :text => subarea_name)
-        end
-      end
+    expect(find('#complaint_area').text).to eq "Human Rights"
 
-      expect(find('#complaint_area').text).to eq "Human Rights"
-
-      within agencies do
-        expect(all('.agency').map(&:text)).to include "SAA"
-      end
+    within agencies do
+      expect(all('.agency').map(&:text)).to include "SAA"
+    end
   end # /it
 
   it "should download a complaint document file" do

@@ -15,7 +15,7 @@ script.
     computed: {
       jurisdiction_branches(){
         var office_group = _(this.get('office_groups')).filter(function(o){return o.name.match(/^Head/)})[0]
-        return office_group.offices
+        if(office_group){ return office_group.offices }
       }
     },
     remove_error() {

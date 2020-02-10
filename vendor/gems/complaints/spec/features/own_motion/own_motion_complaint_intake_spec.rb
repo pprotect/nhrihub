@@ -49,8 +49,7 @@ feature "own motion complaint duplicate check", :js => true do
   it "should have fields disabled that are not relevant for duplicate check" do
     disabled_text_fields = %w[date_received title firstName
                               physical_address postal_address city province postal_code
-                              home_phone cell_phone fax complaint_details desired_outcome
-                              assignee ]
+                              home_phone cell_phone fax complaint_details desired_outcome ]
 
 
     preferred_means_checkboxes = %w[preferred_means_mail preferred_means_email

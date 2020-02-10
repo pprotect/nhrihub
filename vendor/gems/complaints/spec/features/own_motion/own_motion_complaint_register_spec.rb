@@ -84,7 +84,7 @@ feature "complaints index", :js => true do
     check_subarea(:good_governance, "Delayed action")
     check_subarea(:human_rights, "CAT")
     check_subarea(:special_investigations_unit, "Unreasonable delay")
-    select(user.first_last_name, :from => "assignee")
+    #select(user.first_last_name, :from => "assignee")
     check_agency("SAA")
     check_agency("ACC")
     attach_file("complaint_fileinput", upload_document)
@@ -95,7 +95,7 @@ feature "complaints index", :js => true do
     expect{save_complaint}.to change{ Complaint.count }.by(1)
                                 .and change{ ComplaintComplaintSubarea.count }.by(3)
                                 .and change{ ComplaintAgency.count }.by(2)
-                                .and change{ ActionMailer::Base.deliveries.count }.by(1)
+                                #.and change{ ActionMailer::Base.deliveries.count }.by(1)
     ## on the server
     complaint = Complaint.last
     expect(complaint).to be_a(OwnMotionComplaint)
@@ -120,7 +120,7 @@ feature "complaints index", :js => true do
     expect(complaint.complained_to_subject_agency).to eq true
     expect(complaint.date_received.to_date).to eq Date.new(Date.today.year, Date.today.month, 16)
     expect(complaint.complaint_subareas.map(&:name)).to match_array ["Delayed action", "CAT", "Unreasonable delay"]
-    expect(complaint.current_assignee_name).to eq User.staff.first.first_last_name
+    #expect(complaint.current_assignee_name).to eq User.staff.first.first_last_name
     expect(complaint.status_changes.count).to eq 1
     expect(complaint.status_changes.first.complaint_status.name).to eq "Investigation"
     expect(complaint.agencies.map(&:name)).to include "SAA"
@@ -149,7 +149,7 @@ feature "complaints index", :js => true do
     expect(find('#complaint #desired_outcome').text).to eq "Life gets better"
     expect(find('#complaint #complained_to_subject_agency').text).to eq "yes"
     expect(find('#complaint #date').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
-    expect(find('#complaint #current_assignee').text).to eq user.first_last_name
+    #expect(find('#complaint #current_assignee').text).to eq user.first_last_name
     expect(find('#complaint #timeline .timeline_event .event_description').text).to eq 'Investigation'
     #expect(find('#complaint .gender').text).to eq "male" # this should work, but I postponed troubleshooting in favour of other activities!
 
@@ -173,14 +173,14 @@ feature "complaints index", :js => true do
     expect(page.find('#complaint_area').text).to match /Special Investigations Unit/
 
     # Email notification
-    expect( email.subject ).to eq "Notification of complaint assignment"
-    expect( addressee ).to eq user.first_last_name
-    expect( complaint_url ).to match (/#{Regexp.escape complaint.url}$/i)
-    expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
-    expect( header_field('From')).to eq "NHRI Hub Administrator<no_reply@nhri-hub.com>"
-    expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
-    expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.reload.unsubscribe_code, host: SITE_URL, protocol: :https)
-    expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/[0-9a-f]{40}$/) # unsubscribe code
+    #expect( email.subject ).to eq "Notification of complaint assignment"
+    #expect( addressee ).to eq user.first_last_name
+    #expect( complaint_url ).to match (/#{Regexp.escape complaint.url}$/i)
+    #expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
+    #expect( header_field('From')).to eq "NHRI Hub Administrator<no_reply@nhri-hub.com>"
+    #expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
+    #expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.reload.unsubscribe_code, host: SITE_URL, protocol: :https)
+    #expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/[0-9a-f]{40}$/) # unsubscribe code
 
     # back button
     page.go_back
@@ -201,7 +201,7 @@ feature "complaints index", :js => true do
     expect(page).to have_selector('#city_error', :text => 'You must enter a city')
     expect(page).to have_selector('#province_error', :text => 'You must enter a province')
     expect(page).to have_selector('#postal_code_error', :text => 'You must enter a postal code')
-    expect(page).to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
+    #expect(page).to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
     expect(page).to have_selector('#complaint_area_id_error', :text => 'You must select an area')
     expect(page).to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
     expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
@@ -251,8 +251,8 @@ feature "complaints index", :js => true do
     choose('Mail')
     expect(page).not_to have_selector('#fax_error', :text => "Fax designated as preferred communication means. You must enter a fax number")
 
-    select(User.admin.first.first_last_name, :from => "assignee")
-    expect(page).not_to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
+    #select(User.admin.first.first_last_name, :from => "assignee")
+    #expect(page).not_to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
     choose('special_investigations_unit')
     expect(page).not_to have_selector('#complaint_area_id_error', :text => 'You must select an area')
     check_subarea(:special_investigations_unit, "Unreasonable delay")

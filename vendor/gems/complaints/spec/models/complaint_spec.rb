@@ -202,9 +202,9 @@ describe "#as_json" do
       expect(@complaints.first["notes"].first["url"]).to eq url
       expect(@complaints.first["notes"].first["updated_on"]).to eq Complaint.first.notes.first.updated_on
       expect(@complaints.first["notes"].first["date"]).to eq Complaint.first.notes.first.date
-      expect(@complaints.first["assigns"].first.keys).to match_array ["date", "name"]
-      expect(@complaints.first["assigns"].first["date"]).to eq Complaint.first.assigns.first.date
-      expect(@complaints.first["assigns"].first["name"]).to eq Complaint.first.assigns.first.name
+      expect(@complaints.first["assigns"].first.keys).to match_array ["date", "user_name", "event_description", "event_label"]
+      expect(@complaints.first["assigns"].first["date"].to_date).to eq Complaint.first.assigns.first.date.to_date
+      expect(@complaints.first["assigns"].first["event_description"]).to eq Complaint.first.assigns.first.assignee.first_last_name
       expect(@complaints.first["attached_documents"].first.keys).to match_array ["complaint_id", "original_filename", "filesize", "id", "lastModifiedDate", "original_type", "serialization_key", "title", "url", "user_id"]
       expect(@complaints.first["attached_documents"].first["url"]).to eq Complaint.first.attached_documents.first.url
       expect(@complaints.first["subarea_ids"]).to be_an Array

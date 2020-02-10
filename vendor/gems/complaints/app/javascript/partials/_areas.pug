@@ -1,0 +1,12 @@
+.row.form-group("class-has-error" = "complaint_area_id_error", "data-toggle" = "edit")
+  .col-md-2
+    .no_edit.in
+      label {{ t.area }}
+    .edit.required
+      label {{ t.area }}
+  .col-md-9
+    #complaint_area.no_edit.in {{ complaint_area_name }}
+    .edit
+      .row
+        <areasSelector complaint_area_id = "{{complaint_area_id}}" />
+      span#complaint_area_id_error.help-block.error {{ t.complaint_area_id_error_message }}

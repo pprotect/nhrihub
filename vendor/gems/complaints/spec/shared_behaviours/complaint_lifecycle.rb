@@ -98,6 +98,9 @@ RSpec.shared_examples  "complaint lifecycle" do
 
   describe "apply closed status, select preset close memo" do
     let(:closed_status){ ComplaintStatus.where(name: "Closed").first }
+    let(:assignee){ complaint.assigns.first.assignee.first_last_name }
+    let(:descriptions){ ['Closed, No jurisdiction','Assessment, Information pending', assignee, 'Registered'] }
+
     it "should show warnings until preset reason is selected" do
       # starts with status: assessment memo: Information pending
       choose('closed')
@@ -106,12 +109,15 @@ RSpec.shared_examples  "complaint lifecycle" do
       expect{edit_save}.to change{StatusChange.count}.by 1
       expect(StatusChange.most_recent_first.first.complaint_status_id).to eq closed_status.id
       expect(StatusChange.most_recent_first.first.status_memo).to eq "No jurisdiction"
-      expect(all('#complaint #timeline .timeline_event .event_description').map(&:text)).to eq ['Closed, No jurisdiction','Assessment, Information pending','Registered']
+      expect(all('#complaint #timeline .timeline_event .event_description').map(&:text)).to eq descriptions
     end
   end
 
   describe "apply closed status, enter 'other' close memo" do
     let(:closed_status){ ComplaintStatus.where(name: "Closed").first }
+    let(:assignee){ complaint.assigns.first.assignee.first_last_name }
+    let(:descriptions){ ['Closed, some other reason','Assessment, Information pending', assignee, 'Registered'] }
+
     it "should show warnings until preset reason is selected" do
       choose('closed')
       click_button('Close memo')
@@ -119,12 +125,15 @@ RSpec.shared_examples  "complaint lifecycle" do
       expect{edit_save}.to change{StatusChange.count}.by 1
       expect(StatusChange.most_recent_first.first.complaint_status_id).to eq closed_status.id
       expect(StatusChange.most_recent_first.first.status_memo).to eq "some other reason"
-      expect(all('#complaint #timeline .timeline_event .event_description').map(&:text)).to eq ['Closed, some other reason','Assessment, Information pending','Registered']
+      expect(all('#complaint #timeline .timeline_event .event_description').map(&:text)).to eq descriptions
     end
   end
 
   describe "apply closed status, enter 'referred to' close memo" do
     let(:closed_status){ ComplaintStatus.where(name: "Closed").first }
+    let(:assignee){ complaint.assigns.first.assignee.first_last_name }
+    let(:descriptions){ ['Closed, Referred to: another agency','Assessment, Information pending', assignee, 'Registered'] }
+
     it "should show warnings until preset reason is selected" do
       choose('closed')
       click_button('Close memo')
@@ -132,7 +141,7 @@ RSpec.shared_examples  "complaint lifecycle" do
       expect{edit_save}.to change{StatusChange.count}.by 1
       expect(StatusChange.most_recent_first.first.complaint_status_id).to eq closed_status.id
       expect(StatusChange.most_recent_first.first.status_memo).to eq "Referred to: another agency"
-      expect(all('#complaint #timeline .timeline_event .event_description').map(&:text)).to eq ['Closed, Referred to: another agency','Assessment, Information pending','Registered']
+      expect(all('#complaint #timeline .timeline_event .event_description').map(&:text)).to eq descriptions
     end
   end
 

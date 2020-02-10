@@ -74,7 +74,6 @@ en:
     jurisdiction_assignment: "Assign jurisdiction"
     by: 'by'
     case_reference: "Ref"
-    cell_phone: "Cell phone"
     cell_phone_pref: "Cell phone"
     check_dupes: "Check duplication"
     proceed_to_intake: "Proceed with intake"
@@ -84,19 +83,12 @@ en:
     communications : "Communications"
     compact: 'Compact'
     complaint_type: 'Complaint type'
-    complainant: 'Complainant'
     complained_to_subject_agency : 'Complained to subject agency?'
     subareas: "Subarea(s)"
     city_error_message: 'You must enter a city'
     complaint_area_id_error_message: "You must select an area"
     complaint_documents : 'Complaint documents'
     current_assignee: 'Current assignee'
-    contact: "Contact person"
-    contact_email: "Contact email"
-    contact_phone: "Contact phone"
-    contact_phone_pref: "Contact phone"
-    contact_cell_phone: "Contact cell phone"
-    contact_fax: "Contact fax"
     date_received : "Date received"
     delete : "Delete"
     desired_outcome : 'Desired outcome'
@@ -107,18 +99,14 @@ en:
     documents: "Documents"
     download : "Download"
     edit : "Edit"
-    email : "Email"
     email_pref : "Email"
     evaluation : "Under Evaluation"
     expand: 'Expand'
-    fax: 'Fax number'
     fax_pref: 'Fax'
     female : "Female"
     firstName_error_message : "You must enter a first name"
     first_name : "First name(s)"
     gender : 'Gender'
-    home_phone: 'Home phone'
-    home_phone_pref: 'Home phone'
     id: 'SA ID'
     initiating_branch: 'Initiating branch'
     initiating_office: 'Initiating office'
@@ -140,12 +128,8 @@ en:
     postal_code_error_message: 'You must enter a postal code'
     preferred_means_error_message: "You must select a preferred means of communication"
     postal_address_error_message: "Mail designated as preferred communication means. You must enter a postal address"
-    email_error_message: "email designated as preferred communication means. You must enter an email"
-    home_phone_error_message: "Home phone designated as preferred communication means. You must enter a home phone number"
     phone_error_message: "Phone designated as preferred communication means. You must enter a phone number"
-    contact_phone_error_message: "Contact phone designated as preferred communication means. You must enter a contact phone number"
     cell_phone_error_message: "Cell phone designated as preferred communication means. You must enter a cell phone number"
-    fax_error_message: "Fax designated as preferred communication means. You must enter a fax number"
     preferred_means: 'Preferred means of communication'
     other: 'Other'
     other_type: 'Other type'
@@ -162,12 +146,39 @@ en:
     timeline: 'Timeline'
     status: 'Status'
     subarea_id_count_error_message : "You must select at least one subarea"
-    subject_beneficiary: "Subject/Beneficiary"
     suspended : "Suspended"
     yes : "Yes"
     village_error_message : "You must enter a village"
     status_memo_error_message:  "You must supply a reason for closing"
     status_memo_default_prompt: "Close memo"
+    fax_error_message: "Fax designated as preferred communication means. You must enter a fax number"
+
+  own_motion:
+    cell_phone: "Cell phone"
+    complainant: "Subject/Beneficiary"
+    email : "Email"
+    email_error_message: "email designated as preferred communication means. You must enter an email"
+    fax: 'Fax number'
+    phone: 'Phone'
+    phone_error_message: "Phone designated as preferred communication means. You must enter a phone number"
+
+  individual:
+    cell_phone: "Cell phone"
+    complainant: 'Complainant'
+    email : "Email"
+    email_error_message: "email designated as preferred communication means. You must enter an email"
+    fax: 'Fax number'
+    phone: 'Home phone'
+    phone_error_message: "Home phone designated as preferred communication means. You must enter a home phone number"
+
+  organization:
+    cell_phone: "Contact cell phone"
+    complainant: "Contact person"
+    email : "Contact email"
+    email_error_message: "Contact email designated as preferred communication means. You must enter a contact email"
+    fax: 'Contact fax'
+    phone: "Contact phone"
+    phone_error_message: "Contact phone designated as preferred communication means. You must enter a contact phone number"
 
   filter_controls:
     agency: "Agency(ies)"

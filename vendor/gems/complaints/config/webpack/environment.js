@@ -17,11 +17,18 @@ environment.loaders.append('ractive_component', {
   use: 'ractive-bin-loader'
 })
 
+environment.loaders.append('pug',{
+  test: /(?<!ractive)\.pug$/,
+  use: [{loader: 'html-loader', options: {}},
+        {loader: 'pug-html-loader', options: {}}]
+})
+
 environment.loaders.append('ractive_pug_component', {
   test: /\.ractive\.pug$/,
   use: [{loader: 'ractive-bin-loader',options:{}},
         {loader: 'pug-html-loader',options: {basedir: path.join(__dirname,'../../../../../app/assets/stylesheets')}}]
 })
+
 
 environment.loaders.append('locales', {
  test: /\.ya?ml$/,

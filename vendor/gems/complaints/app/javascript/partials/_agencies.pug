@@ -1,0 +1,9 @@
+.row("data-toggle" = "edit")
+  .col-md-2
+    label
+      | {{ t.agency }}
+  .col-md-9
+    #agencies.no_edit.in.comma-list
+      <agencies agency_ids = "{{agency_ids}}" />
+    .edit
+      <agenciesSelector agency_ids = "{{agency_ids}}" all_agencies_in_sixes = "{{all_agencies_in_sixes}}" />

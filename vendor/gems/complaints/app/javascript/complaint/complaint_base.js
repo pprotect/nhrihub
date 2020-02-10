@@ -30,9 +30,20 @@ import StatusChange from 'status_change.ractive.pug'
 import TransfereeSelector from 'transferee_selector.ractive.pug'
 import Transferees from 'transferees.ractive.pug'
 import JurisdictionBranchSelector from 'jurisdiction_branch_selector.ractive.pug'
+import Lifecycle from 'partials/_lifecycle.pug'
+import Documents from 'partials/_documents.pug'
+import _Agencies from 'partials/_agencies.pug'
+import Areas from 'partials/_areas.pug'
+import Subareas from 'partials/_subareas.pug'
+import ComplainedToAgency from 'partials/_complained_to_agency.pug'
+import DesiredOutcome from 'partials/_desired_outcome.pug'
+import Details from 'partials/_details.pug'
+import PreferredMeans from 'partials/_preferred_means.pug'
+import Actions from 'partials/_actions.pug'
+import Address from 'partials/_address.pug'
 
 export default Ractive.extend({
-  el: '#complaint',
+el: '#complaint',
   computed : {
     timeline_events_recent_first(){
       // on update, it seems that ractive  doesn't render in the order of the data object, so we need to force the correct sort
@@ -144,6 +155,19 @@ export default Ractive.extend({
       _(attrs).map(function(attr){query["match["+attr+"]"]=that.get(attr)})
       return query
     }
+  },
+  partials: {
+    lifecycle: Lifecycle,
+    documents: Documents,
+    agencies: _Agencies,
+    areas: Areas,
+    subareas: Subareas,
+    complained_to_agency: ComplainedToAgency,
+    desired_outcome: DesiredOutcome,
+    details: Details,
+    preferred_means: PreferredMeans,
+    actions: Actions,
+    address: Address,
   },
   oninit() {
     this.set({

@@ -1,0 +1,8 @@
+.row("data-toggle" = "edit")
+  .col-md-2
+    label {{ t.desired_outcome }}
+  .col-md-9
+    .no_edit.in
+      span#desired_outcome {{ desired_outcome }}
+    .edit
+      input#desired_outcome.form-control(autocomplete='none', value = "{{desired_outcome}}")/

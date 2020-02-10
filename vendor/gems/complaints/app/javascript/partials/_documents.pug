@@ -1,0 +1,12 @@
+.row("data-toggle" = "edit")
+  .col-md-2
+    label {{ t.documents }}
+    span.edit.fileupload 
+      span.btn.btn-xs.btn-success.fileinput-button
+        i.fa.fa-plus.fa-lg
+        span {{ t.add_document }}
+      input.hidden_fileinput(id = "complaint_fileinput", multiple = "multiple", name = "complaint_file", type = "file", "as-ractive_fileupload" = true)
+  #complaint_documents.col-md-10
+    .no_edit.in
+    <attachedDocuments attached_documents = "{{attached_documents}}" key = "complaint" maximum_filesize = "{{maximum_filesize}}" permitted_filetypes = "{{permitted_filetypes}}" />
+
