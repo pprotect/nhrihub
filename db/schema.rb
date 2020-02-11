@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_09_043032) do
+ActiveRecord::Schema.define(version: 2020_02_11_010905) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -270,6 +270,13 @@ ActiveRecord::Schema.define(version: 2020_02_09_043032) do
     t.datetime "updated_at"
   end
 
+  create_table "complaint_legislations", force: :cascade do |t|
+    t.integer "legislation_id"
+    t.integer "complaint_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "complaint_statuses", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -429,6 +436,13 @@ ActiveRecord::Schema.define(version: 2020_02_09_043032) do
     t.integer "user_id"
     t.integer "branch_id"
     t.integer "complaint_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "legislations", force: :cascade do |t|
+    t.string "short_name"
+    t.string "full_name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

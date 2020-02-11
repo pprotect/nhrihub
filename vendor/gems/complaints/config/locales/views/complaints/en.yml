@@ -41,6 +41,15 @@ en:
       full_name: "full name"
       areas: "Areas and subareas"
       offices: "Offices and Branches"
+      legislations: "Legislation"
+    legislations_config:
+      full_name: "full name"
+      short_name: "short name"
+      add_legislation: "Add legislation"
+      short_name: "Short name"
+      full_name_error_message: "Full name can't be blank"
+      duplicate_legislation_error_message: "Duplicate legislation not allowed"
+      delete_disallowed: "cannot delete a legislation that is associated with complaints"
     office_group_office_config:
       office_groups: "Office Groups"
       add_office_group: "Add office group"

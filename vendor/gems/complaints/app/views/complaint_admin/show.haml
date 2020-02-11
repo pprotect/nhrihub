@@ -48,6 +48,9 @@
     %td
       = link_to t('defaults.delete'), nil, :class => "delete_agency"
 
+%h4= t(".legislations")
+= render :partial => 'legislations_config'
+
 :coffeescript
   $ ->
     _.templateSettings = { interpolate: /\{\{(.+?)\}\}/g }

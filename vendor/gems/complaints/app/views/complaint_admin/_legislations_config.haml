@@ -1,0 +1,145 @@
+%div
+  .admin.well#legislations
+
+%script#legislation_form_template{:type => 'template/ractive'}
+  %div.form-group.inline{:class => "{{#full_name_error}}has-error{{/}}", :style => "margin-top:15px;display:flex"}
+    %div
+      %button.btn.btn-success.btn-xs#add_legislation{:style => 'line-height:1.8;', 'on-click'=>'@this.create()'}= t(".add_legislation")
+    %div{:style => 'margin-left:30px;'}
+      %input#legislation_short_name{:size=>"10",:placeholder=>t('.short_name'),:type=>"text",:value=>"{{short_name}}",'on-keydown'=>'@this.clear_errors()'}
+    %div{:style => 'margin-left:30px;'}
+      %input#legislation_full_name{:size=>"60",:placeholder=>t('.full_name'),:type=>"text",:value=>"{{full_name}}",'on-keydown'=>'@this.clear_errors()'}
+      %span.help-block#full_name_error{ "class-show"=>'full_name_error' }= t('.full_name_error_message')
+      %span.help-block#duplicate_legislation_error{ "class-show"=>'duplicate_legislation_error' }= t('.duplicate_legislation_error_message')
+
+%script#legislations_template{:type => 'template/html'}
+  %table.table.borderless.legislations{:style => "width:auto;"}
+    %tbody
+      {{#legislations}}
+      <legislation short_name='{{short_name}}' full_name='{{full_name}}' id='{{id}}' delete_allowed='{{delete_allowed}}' />
+      {{/legislations}}
+      {{^legislations}}
+      <tr><td id='empty'>None configured</td></tr>
+      {{/legislations}}
+  <legislationForm />
+
+%script#legislation_template{:type => 'template/html' }
+  %tr.legislation{:data => { legislation_id: '{{ id }}', delete_allowed: '{{delete_allowed}}' }}
+    %td.short_name {{ short_name }}
+    %td.full_name {{ full_name }}
+    %td.delete_legislation{'on-click'=>'@this.delete()'}= t('defaults.delete')
+    %td.delete_disallowed_message.error{'class-show'=>'delete_disallowed_warn'}= t('.delete_disallowed')
+
+:css
+  .delete_disallowed_message {
+    display: none;
+  }
+  #full_name_error, #duplicate_legislation_error {
+    font-size:1.0em;
+    display: none;
+    }
+  .delete_legislation, .delete_legislation:hover {
+    color: #337ab7;
+  }
+  .delete_legislation:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+
+:coffeescript
+  $ ->
+    legislations_data = #{@legislations.html_safe}
+    create_legislation_url = "#{legislations_url(:en)}"
+
+    Legislation = Ractive.extend
+      template: '#legislation_template'
+      computed:
+        url: ->
+          Routes.legislation_path('en','id').replace(/id$/,@get('id'))
+      delete: ->
+        @event.original.preventDefault()
+        @event.original.stopPropagation()
+        if @get('delete_allowed')
+          $.ajax
+            type : 'post'
+            url : @get('url')
+            data : {'_method' : 'delete'}
+            dataType : 'json'
+            success : @delete_legislation_callback
+            context : @
+        else
+          @set('delete_disallowed_warn',true)
+      delete_legislation_callback : (response, status, xhr) ->
+        @parent.delete(@)
+      remove_delete_warning : ->
+        @set('delete_disallowed_warn',false)
+
+
+    LegislationForm = Ractive.extend
+      template: '#legislation_form_template'
+      computed:
+        matchable_short_names: ->
+          _.chain(legislations.get('legislations'))
+            .map (l)-> l.short_name.toLowerCase()
+            .reject (n)->_.isEmpty(n)
+            .value()
+        matchable_full_names: ->
+          _.chain(legislations.get('legislations'))
+            .map (l)-> l.full_name.toLowerCase().replace(/[^\w]/g,'').replace(/s/g,'')
+            .value()
+        duplicate_full_name : ->
+          _(@get('matchable_full_names'))
+            .any (existing_name)=> existing_name == @get('full_name').toLowerCase().replace(/[^\w]/g,'').replace(/s/g,'')
+        duplicate_short_name : ->
+          _(@get('matchable_short_names'))
+            .any (existing_name)=> existing_name == @get('short_name').toLowerCase().replace(/[^\w]/g,'').replace(/s/g,'')
+        valid_unique_short_name : ->
+          _(@get('matchable_short_names'))
+      create: ->
+        if @valid()
+          $.ajax
+            type : 'post'
+            url : create_legislation_url
+            data : {legislation : {full_name : @get('full_name'), short_name: @get('short_name')}}
+            dataType : 'json'
+            success : @update
+            context : @
+      valid : ->
+        vfn = @valid_full_name()
+        vu = @valid_unique()
+        vfn && vu
+      valid_full_name : ->
+        @set('full_name', @get('full_name').trim())
+        @set("full_name_error", @get('full_name') == "" )
+        !@get("full_name_error")
+      valid_unique : ->
+        duplicate = @get('duplicate_short_name') || @get('duplicate_full_name')
+        @set("duplicate_legislation_error", duplicate)
+        !@get("duplicate_legislation_error")
+      update : (response, statusText, jqxhr)->
+        @set({full_name:'', short_name:''})
+        legislations.update(response)
+      clear_errors : ->
+        @set('full_name_error',false)
+        @set('duplicate_legislation_error',false)
+
+    window.legislations = new Ractive
+      el: '#legislations'
+      template: '#legislations_template'
+      components:
+        legislation: Legislation
+        legislationForm: LegislationForm
+      oninit: ->
+        $('body').on 'click', =>
+          @findAllComponents('legislation').forEach (l)->
+            l.remove_delete_warning()
+      data:
+        legislations: legislations_data
+      update: (response)->
+        @push('legislations', response)
+      delete : (legislation)->
+        index = _(@findAllComponents('legislation')).indexOf(legislation)
+        @splice('legislations', index, 1)
+
+

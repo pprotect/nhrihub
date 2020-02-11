@@ -24,6 +24,81 @@ feature "communication file admin", :js => true do
   it_behaves_like "file admin"
 end
 
+feature "legislation admin", :js => true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  scenario "none configured yet" do
+    visit complaint_admin_path('en')
+    expect(page).to have_selector("h4",:text=>"Legislation")
+    expect(page).to have_selector('#legislations td#empty', :text => "None configured")
+  end
+
+  scenario "some legislations are configured" do
+    FactoryBot.create(:legislation, :short_name => "ABC", :full_name => "Anywhere But Colma")
+    visit complaint_admin_path('en')
+    expect(page).to have_selector('#legislations .legislation td.short_name', :text => 'ABC')
+    expect(page).to have_selector('#legislations .legislation td.full_name', :text => 'Anywhere But Colma')
+  end
+
+  scenario "add a valid legislation" do
+    visit complaint_admin_path('en')
+    page.find('input#legislation_short_name').set('ABC')
+    page.find('input#legislation_full_name').set('Anywhere But Calaveras')
+    expect{page.find('button#add_legislation').click; wait_for_ajax}.to change{Legislation.count}.from(0).to(1)
+    expect(page).not_to have_selector('#legislations td#empty', :text => "None configured")
+    expect(page).to have_selector('#legislations .legislation td.short_name', :text => 'ABC')
+    expect(page).to have_selector('#legislations .legislation td.full_name', :text => 'Anywhere But Calaveras')
+    expect(page.find('input#legislation_short_name').value).to eq ''
+    expect(page.find('input#legislation_full_name').value).to eq ''
+  end
+
+  scenario "add an invalid legislation (blank name)" do
+    visit complaint_admin_path('en')
+    page.find('input#legislation_short_name').set('ABC')
+    expect{page.find('button#add_legislation').click; wait_for_ajax}.not_to change{Legislation.count}
+    expect(page).to have_selector('#full_name_error', :text => "Full name can't be blank")
+    page.find('input#legislation_full_name').set('All blinkin correct')
+    expect(page).not_to have_selector('#full_name_error')
+  end
+
+  scenario "add a legislation with duplicate name" do
+    FactoryBot.create(:legislation, :short_name => "ABC", :full_name => "Anywhere But Colma")
+    visit complaint_admin_path('en')
+    page.find('input#legislation_short_name').set('abc') # case insensitive
+    page.find('input#legislation_full_name').set('Anywhere But Chelmsford')
+    expect{page.find('button#add_legislation').click; wait_for_ajax}.not_to change{Legislation.count}
+    expect(page).to have_selector('#duplicate_legislation_error', :text => "Duplicate legislation not allowed")
+    page.find('input#legislation_short_name').set('whaaat')
+    expect(page).not_to have_selector('#duplicate_legislation_error')
+  end
+
+  scenario "add a legislation with duplicate full name" do
+    FactoryBot.create(:legislation, :short_name => "ABC", :full_name => "Anywhere But Colma")
+    visit complaint_admin_path('en')
+    page.find('input#legislation_short_name').set('XYZ')
+    page.find('input#legislation_full_name').set('Anywhere But colma') # case insensitive!
+    expect{page.find('button#add_legislation').click; wait_for_ajax}.not_to change{Legislation.count}
+    expect(page).to have_selector('#duplicate_legislation_error', :text => "Duplicate legislation not allowed")
+    page.find('input#legislation_full_name').set('have a nice day')
+    expect(page).not_to have_selector('#duplicate_legislation_error')
+  end
+
+  scenario "delete a legislation that is not associated with any complaint" do
+    FactoryBot.create(:legislation, :short_name => "ABC", :full_name => "Anywhere But Colma")
+    visit complaint_admin_path('en')
+    expect{find("#legislations .legislation .delete_legislation").click; wait_for_ajax}.to change{Legislation.count}.from(1).to(0)
+  end
+
+  scenario "delete a legislation that is already associated with a complaint" do
+    legislation = FactoryBot.create(:legislation, :short_name => "ABC", :full_name => "Anywhere But Colma")
+    FactoryBot.create(:complaint, :legislations => [legislation])
+    visit complaint_admin_path('en')
+    expect{find("#legislations .legislation .delete_legislation").click; wait_for_ajax}.not_to change{Legislation.count}
+    expect(page).to have_selector('.delete_disallowed_message', :text => "cannot delete a legislation that is associated with complaints")
+    find('h1').click # click anywhere, 'body' doesn't seem to work anymore
+    expect(page).not_to have_selector('.delete_disallowed_message')
+  end
+end
+
 feature "agency admin", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   scenario "none configured yet" do

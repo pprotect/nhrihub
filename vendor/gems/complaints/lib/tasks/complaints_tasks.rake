@@ -8,12 +8,20 @@ namespace :complaints do
   end
 
   desc "populates complaints"
-  task :populate_complaints => [ :populate_statuses, :populate_areas_subareas, 'projects:populate_mandates', 'projects:populate_agnc', "complaints:depopulate"] do
+  task :populate_complaints => [ :populate_statuses, :populate_areas_subareas, 'populate_legislations', 'projects:populate_mandates', 'projects:populate_agnc', "complaints:depopulate"] do
     n = 50
     n.times do |i|
       complaint = [:individual_complaint, :own_motion_complaint, :organization_complaint].sample
       complaint = FactoryBot.create(complaint, :with_associations, :with_assignees, :with_document, :with_comm, :with_reminders, :with_notes)
       n -= 1
+    end
+  end
+
+  desc "populates legislations table"
+  task :populate_legislations => :environment do
+    Legislation.destroy_all
+    LEGISLATIONS.each do |legislation|
+      Legislation.create(short_name: legislation[:short_name], full_name: legislation[:full_name])
     end
   end
 

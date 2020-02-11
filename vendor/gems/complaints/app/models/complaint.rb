@@ -33,6 +33,8 @@ class Complaint < ActiveRecord::Base
   has_many :jurisdiction_assignments
   has_many :branches, -> { merge(Office.branches) }, class_name: "Office", through: :jurisdiction_assignments
   accepts_nested_attributes_for :jurisdiction_assignments
+  has_many :complaint_legislations
+  has_many :legislations, through: :complaint_legislations
 
   attr_accessor :witness_name, :heading
 
