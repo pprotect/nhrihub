@@ -1,0 +1,37 @@
+.row.form-group('class-has-error' = 'email_error', 'data-toggle' = 'edit')
+  .col-md-2
+    span.complaint_label {{ context.email }}
+  .col-md-6
+    .no_edit.in
+      span#email {{ email }}
+    .edit
+      input.form-control.dupe_check#email(name='email', autocomplete='none', value = '{{email}}', 'on-keydown'="@this.remove_attribute_error('email')")
+      span.help-block.error#email_error {{ context.email_error_message }}
+
+.row.form-group('class-has-error' = 'home_phone_error', 'data-toggle'='edit')
+  .col-md-2
+    span.complaint_label {{ context.phone }}
+  .col-md-6
+    .edit
+      input.form-control#home_phone(autocomplete='none', value = '{{home_phone}}', 'on-keydown'="@this.remove_attribute_error('home_phone')")
+      span.help-block.error#home_phone_error {{ context.phone_error_message }}
+    .no_edit.in#home_phone {{ home_phone }}
+
+.row.form-group('class-has-error' = 'cell_phone_error', 'data-toggle'='edit')
+  .col-md-2
+    span.complaint_label {{ context.cell_phone }}
+  .col-md-6
+    .edit
+      input.form-control#cell_phone(autocomplete='none', value = '{{cell_phone}}', 'on-keydown'="@this.remove_attribute_error('cell_phone')")
+      span.help-block.error#cell_phone_error {{ t.cell_phone_error_message }}
+    .no_edit.in#cell_phone {{ cell_phone }}
+
+.row.form-group('class-has-error' = 'fax_error', 'data-toggle'='edit')
+  .col-md-2
+    span.complaint_label {{ context.fax }}
+  .col-md-6
+    .edit
+      input.form-control#fax(autocomplete='none', value = '{{fax}}', 'on-keydown'="@this.remove_attribute_error('fax')")
+      span.help-block.error#fax_error {{ t.fax_error_message }}
+    .no_edit.in#fax {{ fax }}
+

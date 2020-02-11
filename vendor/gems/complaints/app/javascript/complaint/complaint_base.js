@@ -41,6 +41,7 @@ import Details from 'partials/_details.pug'
 import PreferredMeans from 'partials/_preferred_means.pug'
 import Actions from 'partials/_actions.pug'
 import Address from 'partials/_address.pug'
+import ContactInfo from 'partials/_contact_info.pug'
 
 export default Ractive.extend({
 el: '#complaint',
@@ -168,6 +169,7 @@ el: '#complaint',
     preferred_means: PreferredMeans,
     actions: Actions,
     address: Address,
+    contact_info: ContactInfo,
   },
   oninit() {
     this.set({

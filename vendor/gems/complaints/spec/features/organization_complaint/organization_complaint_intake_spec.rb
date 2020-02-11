@@ -48,7 +48,7 @@ feature "organization complaint duplicate check", :js => true do
 
   it "should have fields disabled that are not relevant for duplicate check" do
     disabled_text_fields = %w[date_received title physical_address postal_address city province postal_code
-                              contact_phone contact_cell_phone contact_fax complaint_details desired_outcome ]
+                              home_phone cell_phone fax complaint_details desired_outcome ]
 
     enabled_text_fields = %w[organization_name organization_registration_number]
 
