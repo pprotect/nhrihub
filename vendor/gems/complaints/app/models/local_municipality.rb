@@ -1,0 +1,3 @@
+class LocalMunicipality < Agency
+
+end

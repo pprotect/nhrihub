@@ -1,0 +1,2 @@
+class ProvincialAgency < Agency
+end
