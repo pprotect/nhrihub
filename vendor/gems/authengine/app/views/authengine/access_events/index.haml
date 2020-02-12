@@ -17,25 +17,25 @@
           %span.caret
         %ul.dropdown-menu#period_select
           - for period in ["all", "past day", "past week", "past month", "past year"]
-            %li{:class => 'dropdown-header period_filter'}
+            %li.dropdown-header.period_filter
               %a
-                %span{id: period}= period
-                %span.fa.fa-check
+                %div{id: period}= period
+                %div.fa.fa-check
     .col-md-3
       .btn-group.select{:style=>"width:240px;"}
         %button.btn.btn-default.dropdown-toggle{:type=>:button, 'data-toggle'=>'dropdown'}
           %span.filter-option.pull-left
           %span.caret
         %ul.dropdown-menu#user_select
-          %li{:class => 'dropdown-header user_filter'}
+          %li.dropdown-header.user_filter
             %a
-              %span{id: 'all'} all
-              %span.fa.fa-check
+              %div#all all
+              %div.fa.fa-check
           - for user in @users
-            %li{:class => 'dropdown-header user_filter'}
+            %li.dropdown-header.user_filter
               %a
-                %span{id: user.first_last_name}= user.first_last_name
-                %span.fa.fa-check
+                %div{id: user.first_last_name}= user.first_last_name
+                %div.fa.fa-check
     .col-md-3
       .btn-group.select{:style=>"width:240px;"}
         %button.btn.btn-default.dropdown-toggle{:type=>:button, 'data-toggle'=>'dropdown'}
@@ -43,10 +43,10 @@
           %span.caret
         %ul.dropdown-menu#outcome_select
           - for outcome in ["all", "success", "fail"]
-            %li{:class => 'dropdown-header outcome_filter'}
+            %li.dropdown-header.outcome_filter
               %a
-                %span{id: outcome}= outcome
-                %span.fa.fa-check
+                %div{id: outcome}= outcome
+                %div.fa.fa-check
     .col-md-1.col-md-offset-1
       %i.erase.fa.fa-refresh{ 'data-toggle'=>'tooltip', 'title' => 'clear filters'}
 
@@ -60,7 +60,7 @@
       update_display = (param,val)->
         $('#'+param+'_select').parent().find('span.filter-option').html(val)
         $('#'+param+'_select li').removeClass('selected')
-        $('#'+param+'_select li a span[id="'+val+'"]').closest('li').addClass('selected')
+        $('#'+param+'_select li a div[id="'+val+'"]').closest('li').addClass('selected')
       return {
           set: (param,value)->
             values[param] = value
@@ -83,7 +83,7 @@
        $(event.target).closest('ul').find('li').removeClass('selected')
        $(event.target).closest('li').addClass('selected')
        changed_parameter = $(event.target).closest('ul').attr('id').replace(/_select/,'')
-       new_val = $(event.target).parent().find('span').first().attr('id')
+       new_val = $(event.target).parent().find('div').first().attr('id')
        filter.set(changed_parameter, new_val)
        fetch()
 

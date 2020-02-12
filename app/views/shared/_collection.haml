@@ -218,8 +218,8 @@
 %script#area_filter_template{:type=> 'template/ractive'}
   %li{:class => 'area dropdown-header {{#if area_selected}}selected{{/if}}'}
     %a{'on-click'=>'@this.toggle()'.html_safe}
-      %span {{name}}
-      %span.fa.fa-check
+      %div {{name}}
+      %div.fa.fa-check
   {{#subareas}}
   <subarea id='{{id}}' name='{{name}}' />
   {{/subareas}}
@@ -249,8 +249,8 @@
 %script#subarea_filter_template{:type=> 'template/ractive'}
   %li{:class => 'subarea {{#if subarea_selected}}selected{{/if}}'}
     %a.opt{'on-click'=>'@this.toggle()'.html_safe}
-      %span.text {{name}}
-      %span.fa.fa-check
+      %div .text {{name}}
+      %div .fa.fa-check
 
 %script#subarea_select_template{:type=> 'template/ractive'}
   .checkbox.subarea

@@ -1,8 +1,8 @@
 %script#filetype_selector_template{:type => 'template/ractive'}
   %li{:class =>'status_filter {{#if selected}}selected{{/if}}'}
     %a.opt{'on-click'=>'@this.toggle()'.html_safe}
-      %span {{name}}
-      %span.fa.fa-check
+      %div {{name}}
+      %div.fa.fa-check
 
 %script#filter_controls_template{:type => 'template/ractive'}
   .row

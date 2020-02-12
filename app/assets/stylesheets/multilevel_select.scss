@@ -83,7 +83,7 @@
     font-size : 14px;
     list-style : none;
 
-    &.selected a span.fa-check {
+    &.selected a div.fa-check {
       position: absolute;
       display: inline-block;
       right: 15px;
@@ -104,7 +104,7 @@
         display: inline-block;
         margin-right: 34px;
       }
-      & span.fa-check {
+      & div.fa-check {
         display: none;
       }
     }

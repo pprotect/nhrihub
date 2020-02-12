@@ -244,14 +244,14 @@
 %script#area_filter_select_template{:type => 'template/ractive'}
   %li{:class => 'dropdown-header area_filter {{#if selected}}selected{{/if}}'}
     %a{'on-click'=>'@this.toggle(id)'.html_safe}
-      %span {{name}}
-      %span.fa.fa-check
+      %div {{name}}
+      %div.fa.fa-check
 
 %script#subarea_filter_select_template{:type => 'template/ractive'}
   %li.subarea_filter{'class-selected' => 'selected'}
     %a{'on-click'=>'@this.toggle(id)'.html_safe}
-      %span.name {{name}}
-      %span.fa.fa-check
+      %div.name {{name}}
+      %div.fa.fa-check
 
 %script#select_clear_template{:type => 'template/ractive'}
   %li.select_clear{ :style=>'margin-left:20px' }

@@ -17,9 +17,8 @@ ul.dropdown-menu#performance_indicator_filter_select
               | {{#performance_indicators}}
               li.performance_indicator
                 a.opt( on-click='@this.select(id)')
-                  span.text
-                    | {{ indexed_description }}
-                  span.fa.fa-check
+                  .text {{ indexed_description }}
+                  .fa.fa-check
               | {{/performance_indicators}}
           | {{/activities}}
       | {{/outcomes }}

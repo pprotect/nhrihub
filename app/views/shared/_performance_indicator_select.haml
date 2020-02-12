@@ -68,8 +68,8 @@
                 {{#performance_indicators}}
                 %li.performance_indicator
                   %a.opt{ 'on-click'=>'@this.select(id)'.html_safe}
-                    %span.text {{ indexed_description }}
-                    %span.fa.fa-check
+                    %div.text {{ indexed_description }}
+                    %div.fa.fa-check
                 {{/performance_indicators}}
             {{/activities}}
         {{/outcomes }}
