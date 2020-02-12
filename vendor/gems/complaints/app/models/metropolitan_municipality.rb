@@ -1,0 +1,2 @@
+class MetropolitanMunicipality < Agency
+end
