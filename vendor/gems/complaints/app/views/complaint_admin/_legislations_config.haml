@@ -46,7 +46,6 @@
     text-decoration: underline;
   }
 
-
 :coffeescript
   $ ->
     legislations_data = #{@legislations.html_safe}
@@ -141,5 +140,3 @@
       delete : (legislation)->
         index = _(@findAllComponents('legislation')).indexOf(legislation)
         @splice('legislations', index, 1)
-
-

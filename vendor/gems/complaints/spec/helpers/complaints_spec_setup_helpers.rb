@@ -119,6 +119,12 @@ module ComplaintsSpecSetupHelpers
     set_file_defaults
   end
 
+  def create_legislations
+    LEGISLATIONS.each do |legislation|
+      Legislation.create(legislation)
+    end
+  end
+
   def create_offices
     STAFF.group_by{|s| s[:group]}.each do |office_group,offices|
       group = OfficeGroup.find_or_create_by(:name => office_group.titlecase) unless office_group.nil?

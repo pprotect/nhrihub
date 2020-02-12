@@ -138,6 +138,7 @@ class ComplaintsController < ApplicationController
     @office_groups = OfficeGroup.national_regional_provincial
     @branches = Office.branches
     @status_memo_options = ComplaintStatus::CloseMemoOptions
+    @legislations = Legislation.all
   end
 
   def default_params
@@ -164,7 +165,7 @@ class ComplaintsController < ApplicationController
                                        :date, :imported, :complaint_area_id, 'new_transferee_id',
                                        :cell_phone, :fax, :province, :postal_code, :id_type, :id_value, :alt_id_type, :alt_id_value,
                                        :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
-                                       :organization_name, :organization_registration_number,
+                                       :organization_name, :organization_registration_number, :legislation_id,
                                        :complaint_transfers_attributes => [:user_id, :office_id],
                                        :jurisdiction_assignments_attributes => [:user_id, :branch_id],
                                        :assigns_attributes => [:user_id, :assigner_id],

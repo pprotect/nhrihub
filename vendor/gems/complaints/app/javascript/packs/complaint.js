@@ -16,6 +16,7 @@ _.extend(Ractive.defaults.data, {
   branches : source_branches,
   i18n: window.i18n,
   status_memo_options: status_memo_options,
+  legislations: legislations,
 })
 
 import IndividualComplaint from '../individual_complaint.ractive.pug'

@@ -1,0 +1,11 @@
+.row.form-group( "data-toggle" = "edit", 'class-hidden'='new_complaint')
+  .no_edit.in
+    .col-md-2
+      label {{ t.related_legislation }}
+    .col-md-5#legislation_name {{ related_legislation_name }}
+  .edit
+    .col-md-2
+      label {{ t.assign_legislation }}
+    .col-md-5
+      <legislationSelector editing = {{update_complaint}} legislations={{legislations}} legislation_id = {{legislation_id}} />
+

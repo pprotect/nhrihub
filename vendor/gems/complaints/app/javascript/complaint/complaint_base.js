@@ -42,10 +42,19 @@ import PreferredMeans from 'partials/_preferred_means.pug'
 import Actions from 'partials/_actions.pug'
 import Address from 'partials/_address.pug'
 import ContactInfo from 'partials/_contact_info.pug'
+import Legislations from 'partials/_legislations.pug'
+import LegislationSelector from 'legislation_selector.ractive.pug'
 
 export default Ractive.extend({
 el: '#complaint',
   computed : {
+    related_legislation_name(){
+      if(!_.isNaN(parseInt(this.get('legislation_id')))){
+        return _(this.get('legislations')).findWhere({id: this.get('legislation_id')}).name
+      }else{
+        return 'not configured'
+      }
+    },
     timeline_events_recent_first(){
       // on update, it seems that ractive  doesn't render in the order of the data object, so we need to force the correct sort
       return _(this.get('timeline_events')).sortBy(function(sc){return -$.datepicker.formatDate('@',new Date(sc.change_date)) });
@@ -170,6 +179,7 @@ el: '#complaint',
     actions: Actions,
     address: Address,
     contact_info: ContactInfo,
+    legislations: Legislations,
   },
   oninit() {
     this.set({
@@ -210,6 +220,7 @@ el: '#complaint',
     transfereeSelector: TransfereeSelector,
     transferees: Transferees,
     jurisdictionBranchSelector: JurisdictionBranchSelector,
+    legislationSelector: LegislationSelector,
   },
   proceed_to_intake(){
     history.pushState({},"anything",this.get('url'));

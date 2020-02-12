@@ -8,6 +8,7 @@ RSpec.shared_examples  "complaint lifecycle" do
   include ComplaintsSpecSetupHelpers
 
   before do
+    create_legislations
     create_offices
     create_agencies
     create_complaint_statuses
@@ -311,13 +312,19 @@ RSpec.shared_examples  "complaint lifecycle" do
   end
 
   describe "related legislation assignment" do
+    let(:legislation_name){ Legislation.first.name }
     before do
       visit complaint_path('en', complaint.id)
-      edit_complaint
+      expect(Legislation.count).to be > 0 # make sure some are configured!
     end
 
-    it "should xxx" do
-      test_fail_placeholder
+    it "associates legislation with complaint" do
+      expect(page.find('#legislation_name').text).to eq "not configured"
+      edit_complaint
+      expect(page.all('select#legislation option').count).to eq Legislation.count + 1
+      select(legislation_name, from: 'legislation')
+      expect{edit_save}.to change{ComplaintLegislation.count}.by 1
+      expect(page.find('#legislation_name').text).to eq legislation_name
     end
   end
 
