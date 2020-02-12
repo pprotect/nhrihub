@@ -61,4 +61,22 @@ describe 'permits_access_for class method' do
       it { is_expected.to eq(false) }
     end
   end
+
+  describe "action role audit" do
+    let(:controller){ Controller.create(controller_name: "person") }
+    let(:action){ Action.create(action_name: 'create', controller_id: controller.id) }
+
+    it "should add a new ActionRoleChange record when new ActionRole is created" do
+      expect{ ActionRole.create(role_id: 88, action_id: action.id) }.to change{ActionRoleChange.count}.by(1)
+      expect(ActionRoleChange.last.action_description).to eq 'person#create'
+      expect( ActionRoleChange.last.enable).to eq true
+    end
+
+    it "should add a new ActionRoleChange record when new ActionRole is deleted" do
+      action_role = ActionRole.create(role_id: 88, action_id: action.id) 
+      expect{ action_role.destroy }.to change{ActionRoleChange.count}.by(1)
+      expect( ActionRoleChange.last.action_description).to eq 'person#create'
+      expect( ActionRoleChange.last.enable).to eq false
+    end
+  end
 end

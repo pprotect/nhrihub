@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_11_010905) do
+ActiveRecord::Schema.define(version: 2020_02_12_034723) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 2020_02_11_010905) do
     t.integer "action_id"
     t.integer "role_id"
     t.boolean "enable"
+    t.string "action_description"
   end
 
   create_table "action_roles", id: :serial, force: :cascade do |t|
