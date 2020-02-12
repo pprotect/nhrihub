@@ -1,0 +1,2 @@
+class NationalGovernmentAgency < Agency
+end

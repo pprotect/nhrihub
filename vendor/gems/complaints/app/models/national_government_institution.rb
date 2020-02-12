@@ -1,0 +1,2 @@
+class NationalGovernmentInstitution < Agency
+end

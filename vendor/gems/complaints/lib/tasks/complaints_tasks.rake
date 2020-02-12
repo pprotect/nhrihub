@@ -7,6 +7,27 @@ namespace :complaints do
     Complaint.destroy_all
   end
 
+  desc "populates DemocracySupportingStateInstitution"
+  task :populate_democracy_institutions => :environment do
+    DemocracySupportingStateInstitutions.each do |dssi|
+      DemocracySupportingStateInstitution.create(name: dssi)
+    end
+  end
+
+  desc "populates NationalGovernmentInstitutions"
+  task :populate_gov_institutions => :environment do
+    NationalGovernmentInstitutions.each do |ngi|
+      NationalGovernmentInstitution.create(name: ngi)
+    end
+  end
+
+  desc "populates NationalGovernmentAgencies"
+  task :populate_gov_agencies => :environment do
+    NationalGovernmentAgencies.each do |nga|
+      NationalGovernmentAgency.create(name: nga)
+    end
+  end
+
   desc "populates complaints"
   task :populate_complaints => [ :populate_statuses, :populate_areas_subareas, 'populate_legislations', 'projects:populate_mandates', 'projects:populate_agnc', "complaints:depopulate"] do
     n = 50
