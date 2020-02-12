@@ -43,8 +43,7 @@ en:
       offices: "Offices and Branches"
       legislations: "Legislation"
     legislations_config:
-      full_name: "full name"
-      short_name: "short name"
+      full_name: "Full name"
       add_legislation: "Add legislation"
       short_name: "Short name"
       full_name_error_message: "Full name can't be blank"

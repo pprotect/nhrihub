@@ -310,4 +310,15 @@ RSpec.shared_examples  "complaint lifecycle" do
     end
   end
 
+  describe "related legislation assignment" do
+    before do
+      visit complaint_path('en', complaint.id)
+      edit_complaint
+    end
+
+    it "should xxx" do
+      test_fail_placeholder
+    end
+  end
+
 end
