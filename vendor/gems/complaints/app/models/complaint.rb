@@ -73,7 +73,7 @@ class Complaint < ActiveRecord::Base
   end
 
   def self.possible_duplicates(params)
-    agency_match = Complaint.with_agencies(params[:agency_ids], match: :exact).sort_by(&:case_reference).map{|c| c.becomes(DuplicateComplaint)}
+    agency_match = Complaint.with_agencies(params[:agency_id], match: :exact).sort_by(&:case_reference).map{|c| c.becomes(DuplicateComplaint)}
     source = params[:type]
     complainant_match = Complaint.
                            send(:"with_duplicate_#{source}_complainant",params).
@@ -184,6 +184,18 @@ class Complaint < ActiveRecord::Base
     type&.underscore&.humanize
   end
 
+  def agency_id=(val)
+    self.agencies = [Agency.find(val)]
+  end
+
+  def agency_name
+    Agency.find(agency_id)&.name unless agency_id.zero?
+  end
+
+  def agency_id
+    agency_ids.first || 0
+  end
+
   def type_as_symbol
     type.gsub(/Complaint$/,'').underscore
   end
@@ -215,7 +227,7 @@ class Complaint < ActiveRecord::Base
                            :complaint_area_id,
                            :subarea_ids,
                            :area_subarea_ids,
-                           :agency_ids,
+                           :agency_name,
                            :legislation_id,
                            :timeline_events,
                            :communications] }
@@ -260,9 +272,9 @@ class Complaint < ActiveRecord::Base
       alt_id_type
   end
 
-  def agency_ids
-    complaint_agencies.map(&:agency_id)
-  end
+  #def agency_ids
+    #complaint_agencies.map(&:agency_id)
+  #end
 
   # assumed to be valid date_string, checked in client before submitting
   def dob=(date_string)

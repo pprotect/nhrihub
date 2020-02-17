@@ -128,7 +128,7 @@ class ComplaintsController < ApplicationController
   def populate_associations
     @areas = ComplaintArea.all
     @subareas = ComplaintSubarea.all
-    @agencies = Agency.all
+    @agencies = Agency.hierarchy
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
     @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
     @permitted_filetypes = ComplaintDocument.permitted_filetypes
@@ -139,6 +139,13 @@ class ComplaintsController < ApplicationController
     @branches = Office.branches
     @status_memo_options = ComplaintStatus::CloseMemoOptions
     @legislations = Legislation.all
+    @provinces = Province.all.sort_by(&:name)
+    #@national_government_agencies = NationalGovernmentAgency.all.sort_by(&:name)
+    #@national_government_institutions = NationalGovernmentInstitution.all.sort_by(&:name)
+    #@democracy_institutions = DemocracySupportingStateInstitution.all.sort_by(&:name)
+    #@provincial_agencies = Agency.provincial.group_by(&:province_id)
+    @districts = DistrictMunicipality.all.group_by(&:province_id)
+    @metro_municipalities = MetropolitanMunicipality.all.group_by(&:province_id)
   end
 
   def default_params
@@ -165,13 +172,12 @@ class ComplaintsController < ApplicationController
                                        :date, :imported, :complaint_area_id, 'new_transferee_id',
                                        :cell_phone, :fax, :province, :postal_code, :id_type, :id_value, :alt_id_type, :alt_id_value,
                                        :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
-                                       :organization_name, :organization_registration_number, :legislation_id,
+                                       :organization_name, :organization_registration_number, :legislation_id, :agency_id,
                                        :complaint_transfers_attributes => [:user_id, :office_id],
                                        :jurisdiction_assignments_attributes => [:user_id, :branch_id],
                                        :assigns_attributes => [:user_id, :assigner_id],
                                        :subarea_ids => [],
                                        :status_changes_attributes => [:user_id, :complaint_status_id, :status_memo, :status_memo_type],
-                                       :agency_ids => [],
                                        :complaint_documents_attributes => [:file, :title, :original_filename, :original_type, :filesize, :lastModifiedDate],
                                      )
   end

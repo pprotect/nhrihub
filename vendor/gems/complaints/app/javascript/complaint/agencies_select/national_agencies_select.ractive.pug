@@ -1,0 +1,37 @@
+select.form-control#national_agencies_select(value='{{national_agency_type}}')
+  option#prompt(disabled=true, selected=true) select national agency...
+  option(value='government_agencies') National government agencies
+  option(value='government_institutions') National government institutions
+  option(value='democracy_institutions') Democracy-supporting government institutions
+.tertiary('class-show'='national_agencies_type_selected')
+  <governmentAgencySelect agency_id='{{agency_id}}' collection='{{collection}}' national_agency_type='{{national_agency_type}}' />
+
+style.
+  #national_agencies_select {
+    width: 192;
+  }
+  option#prompt {
+    color: #333;
+  }
+  .tertiary {
+    display: none;
+  }
+
+script.
+  import GovernmentAgencySelect from './government_agency_select.ractive.pug'
+
+  export default Ractive.extend({
+    template : $TEMPLATE,
+    css: $CSS,
+    components: {
+      governmentAgencySelect: GovernmentAgencySelect,
+    },
+    computed:{
+      national_agencies_type_selected(){ return typeof this.get('national_agency_type') != 'undefined'},
+      government_agencies(){return this.get('national_agencies').NationalGovernmentAgency},
+      government_institutions(){return this.get('national_agencies').NationalGovernmentInstitution},
+      democracy_institutions(){return this.get('national_agencies').DemocracySupportingStateInstitution},
+      collection(){ if(this.get('national_agencies_type_selected')){ return this.get(this.get('national_agency_type'))} },
+    },
+  })
+

@@ -6,7 +6,7 @@ script.
     template : $TEMPLATE,
     computed : {
       name() {
-        const agency = _(this.get('all_agencies')).findWhere({id : this.get('id')});
+        const agency = _(this.get('all_agencies')).findWhere({id : this.get('agency_id')});
         if (_.isUndefined(agency)) { return null; } else { return agency.name; }
       }
     },

@@ -1,4 +1,5 @@
 require 'rspec/core/shared_context'
+require 'csv'
 
 module ComplaintsSpecSetupHelpers
   extend RSpec::Core::SharedContext
@@ -204,7 +205,7 @@ module ComplaintsSpecSetupHelpers
   end
 
   def _agencies
-    [ Agency.find_by(:name => 'SAA') ]
+    [ Agency.find(rand(Agency.count + 1)) ]
   end
 
   def complaint_docs
@@ -212,8 +213,50 @@ module ComplaintsSpecSetupHelpers
   end
 
   def create_agencies
-    AGENCIES.each do |name,full_name|
-      Agency.create(:name => name, :full_name => full_name)
+    DemocracySupportingStateInstitutions.each do |dssi|
+      DemocracySupportingStateInstitution.create(name: dssi)
+    end
+    NationalGovernmentInstitutions.each do |ngi|
+      NationalGovernmentInstitution.create(name: ngi)
+    end
+    NationalGovernmentAgencies.each do |nga|
+      NationalGovernmentAgency.create(name: nga)
+    end
+
+    file = Rails.root.join('lib', 'data', 'provincial agencies.csv')
+    table = CSV.parse(File.read(file), headers: true)
+    provinces = Province.all
+    table.each do |pa|
+      province = provinces.select{|p| p.name == pa["Province"]}.first
+      ProvincialAgency.create(name: pa["Name"], province_id: province.id)
+    end
+
+    file = Rails.root.join('lib', 'data', 'district municipalities.csv')
+    table = CSV.parse(File.read(file), headers: true)
+    provinces = Province.all
+    table.each do |dm|
+      #headers are "Name", "Code", "Province"
+      province = provinces.select{|p| p.name == dm["Province"]}.first
+      if (name = dm["Name"])=~/District/
+        name = name.split(' ')[0...-2].join(' ')
+        DistrictMunicipality.create(name: name, province_id: province.id, code: dm["Code"])
+      else
+        name = name.split(' ')[0...-2].join(' ')
+        MetropolitanMunicipality.create(name: name, province_id: province.id, code: dm["Code"])
+      end
+    end
+    file = Rails.root.join('lib', 'data', 'local municipalities.csv')
+    table = CSV.parse(File.read(file), headers: true)
+    provinces = Province.all
+    districts = DistrictMunicipality.all
+    table.each do |lm|
+      # headers are Name,Code,Province,District,,,,
+      province = provinces.select{|p| p.name == lm["Province"]}.first
+      district = districts.select{|d| d.name.downcase == lm["District"]&.downcase}.first
+      if (name = lm["Name"])=~/Local/
+        name = name.split(' ')[0...-2].join(' ')
+        LocalMunicipality.create(name: name, province_id: province.id, district_id: district.id, code: lm["Code"])
+      end
     end
   end
 

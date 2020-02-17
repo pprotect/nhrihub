@@ -1,0 +1,46 @@
+.div(style='display:flex;')
+  select.form-control#agencies_select(value='{{top_level_category}}')
+    option#prompt(disabled=true, selected='selected') select...
+    option(value="national") National
+    option(value="provincial_agencies") Provincial
+    option(value="municipalities") Local
+  .secondary('class-show'="national")
+    <nationalAgenciesSelect agency_id='{{agency_id}}' national_agencies='{{national_agencies}}' />
+  .secondary('class-show'="provincial")
+    <provincialAgenciesSelect agency_id='{{agency_id}}' provinces='{{provinces}}' provincial_agencies='{{provincial_agencies}}' />
+  .secondary('class-show'="local")
+    <localAgenciesSelect agency_id='{{agency_id}}' provinces='{{provinces}}' districts='{{districts}}' metro_municipalities='{{metro_municipalities}}' />
+
+style.
+  #agencies_select {
+    width: 140px;
+  }
+  option#prompt {
+    color: #333;
+  }
+  .secondary { display: none; }
+  .secondary.show {display: flex !important; }
+
+script.
+  import NationalAgenciesSelect from './national_agencies_select.ractive.pug'
+  import ProvincialAgenciesSelect from './provincial_agencies_select.ractive.pug'
+  import LocalAgenciesSelect from './local_agencies_select.ractive.pug'
+
+  export default Ractive.extend({
+    template : $TEMPLATE,
+    css: $CSS,
+    components:{
+      nationalAgenciesSelect: NationalAgenciesSelect,
+      provincialAgenciesSelect: ProvincialAgenciesSelect,
+      localAgenciesSelect: LocalAgenciesSelect,
+    },
+    computed:{
+      national(){ return this.get('top_level_category') == 'national' },
+      provincial(){ return this.get('top_level_category') == 'provincial_agencies' },
+      local(){ return this.get('top_level_category') == 'municipalities' },
+      national_agencies(){return this.get('agencies').national},
+      provincial_agencies(){return this.get('agencies').provincial},
+      district_municipalities(){return this.get('agencies').local},
+    },
+    });
+

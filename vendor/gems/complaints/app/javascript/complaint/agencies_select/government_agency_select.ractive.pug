@@ -1,0 +1,29 @@
+select.form-control#government_agencies_select(value='{{agency_id}}')
+  option#prompt(value="0", disabled=true, selected='selected') {{ prompt }}
+  | {{#collection}}
+  option(value='{{id}}') {{ name }}
+  | {{/collection}}
+
+style.
+  #government_agencies_select {
+    width: 257px;
+  }
+  option#prompt {
+    color: #333;
+  }
+
+script.
+  import translations from 'translations'
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    data(){
+      return {
+        t : translations.t('agency_select')
+      }
+    },
+    computed:{
+      prompt(){ return this.get('t')[this.get('national_agency_type')]}
+    },
+  })

@@ -1,9 +1,8 @@
 .row("data-toggle" = "edit")
   .col-md-2
-    label
-      | {{ t.agency }}
-  .col-md-9
-    #agencies.no_edit.in.comma-list
-      <agencies agency_ids = "{{agency_ids}}" />
+    label {{ t.agency }}
+  .col-md-10
+    #agencies.no_edit.in.comma-list 
+      span.agency {{ agency_name }}
     .edit
-      <agenciesSelector agency_ids = "{{agency_ids}}" all_agencies_in_sixes = "{{all_agencies_in_sixes}}" />
+      <agenciesSelector agency_id='{{agency_id}}' metro_municipalities='{{metro_municipalities}}' districts='{{districts}}' provinces='{{provinces}}' agencies='{{agencies}}' top_level_category='{{top_level_category}}' />

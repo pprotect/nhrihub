@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_12_181235) do
+ActiveRecord::Schema.define(version: 2020_02_15_003348) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -158,6 +158,7 @@ ActiveRecord::Schema.define(version: 2020_02_12_181235) do
     t.string "code"
     t.string "type"
     t.integer "province_id"
+    t.integer "district_id"
   end
 
   create_table "application_data_backups", id: :serial, force: :cascade do |t|

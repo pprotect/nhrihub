@@ -33,7 +33,7 @@ namespace :agencies do
       district = districts.select{|d| d.name.downcase == lm["District"]&.downcase}.first
       if (name = lm["Name"])=~/Local/
         name = name.split(' ')[0...-2].join(' ')
-        LocalMunicipality.create(name: name, province_id: province.id, code: lm["Code"])
+        LocalMunicipality.create(name: name, province_id: province.id, district_id: district.id, code: lm["Code"])
       end
     end
   end
@@ -49,5 +49,4 @@ namespace :agencies do
       ProvincialAgency.create(name: pa["Name"], province_id: province.id)
     end
   end
-
 end

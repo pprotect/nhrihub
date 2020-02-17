@@ -1,0 +1,24 @@
+agencies_selector provincial_agencies -> provincial_agencies
+or (selected alternatives)
+agencies_selector district_municipalities -> district_municipalities
+
+provincial_agencies_select provincial_agencies -> collection (selected by province)
+or
+local_agencies_select district_municipalities -> collection (selected by province)
+
+provincial_agency_select  collection
+
+district_select  collection -> municipalities (selected by district)
+
+
+Views:
+  agencies_selector                            select natioal, provincial, local
+    national_agencies_select                   select government agencies, government institutions, democracty institutions
+      government_agencies_select               select government agency (agency_id)
+      government_institutions_select           select government institution (agency_id)
+      democracy_institutions_select            select democracy institution (agency_id)
+    provincial_agencies_select                 select province
+      provincial_agency_select                 select provincial_agency (agency_id)
+    local_agencies_select                      select province
+      district_select                          select district  (agency_id only for metropolitan municipalities)
+        local_municipality_select              select local municipality (agency_id for local municipalities)

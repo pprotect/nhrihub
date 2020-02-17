@@ -1,0 +1,25 @@
+.tertiary('class-show'='selected')
+  select.form-control(id='{{key}}', value='{{agency_id}}')
+    option(value='0', disabled=true, selected=true) select provincial agency...
+    | {{#collection }}
+    option(value='{{id}}') {{ name }}
+    | {{/collection }}
+
+style.
+  .tertiary {
+    display: none;
+  }
+
+script.
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    computed:{
+      selected(){
+        return this.get('second_level_provincial') == this.get('id')
+      },
+      key(){
+        return this.get('name').underscore().toLowerCase()
+      },
+    }
+  })

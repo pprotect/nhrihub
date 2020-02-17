@@ -14,12 +14,13 @@ feature "complaint intake and register", js: true do
 
   context "complaint intake" do
     it "should have check and proceed enabled, save disabled" do
+      test_fail_placeholder
     end
   end
 
   context "complaint register" do
     it "should have check and save enabled, proceed disabld" do
-      
+      test_fail_placeholder
     end
   end
   

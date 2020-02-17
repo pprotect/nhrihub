@@ -11,7 +11,7 @@
   @complaint_data = #{@complaint.to_json.html_safe}
   @source_areas = #{@areas.to_json.html_safe}
   @source_subareas = #{@subareas.to_json.html_safe}
-  @source_all_agencies = #{@agencies.to_json.html_safe}
+  @agencies = #{@agencies.to_json.html_safe}
   @source_all_staff = #{@staff.to_json.html_safe}
   @source_all_users = #{@staff.to_json.html_safe}
   @source_permitted_filetypes = #{@permitted_filetypes.to_json.html_safe}
@@ -29,5 +29,8 @@
   @mode = "#{@mode}"
   @status_memo_options = #{@status_memo_options.to_json.html_safe}
   @legislations = #{@legislations.to_json.html_safe}
+  @provinces = #{@provinces.to_json.html_safe}
+  @districts = #{@districts.to_json.html_safe}
+  @metro_municipalities = #{@metro_municipalities.to_json.html_safe}
 
 = javascript_pack_tag 'complaint'

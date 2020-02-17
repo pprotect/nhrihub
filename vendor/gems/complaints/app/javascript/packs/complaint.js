@@ -4,8 +4,7 @@ _.extend(Ractive.defaults.data, {
   all_subareas : source_subareas,
   all_users : source_all_users,
   all_complaint_areas : source_areas,
-  all_agencies : source_all_agencies,
-  all_agencies_in_sixes : _.chain(source_all_agencies).groupBy(function(el,i){return Math.floor(i/6)}).toArray().value(),
+  //all_agencies_in_sixes : _.chain(source_all_agencies).groupBy(function(el,i){return Math.floor(i/6)}).toArray().value(),
   all_staff : source_all_staff,
   permitted_filetypes : source_permitted_filetypes,
   maximum_filesize : source_maximum_filesize,
@@ -15,8 +14,12 @@ _.extend(Ractive.defaults.data, {
   office_groups : source_office_groups,
   branches : source_branches,
   i18n: window.i18n,
-  status_memo_options: status_memo_options,
-  legislations: legislations,
+  status_memo_options,
+  legislations,
+  agencies,
+  provinces,
+  districts,
+  metro_municipalities,
 })
 
 import IndividualComplaint from '../individual_complaint.ractive.pug'

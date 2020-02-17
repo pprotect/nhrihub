@@ -1,0 +1,45 @@
+select.form-control#provinces_select(value='{{selected_province_id}}')
+  option#prompt(value=null, disabled=true, selected=true) select province...
+  | {{#provinces}}
+  option(value='{{id}}') {{name}}
+  | {{/provinces}}
+.tertiary('class-show'='province_is_selected')
+  <districtSelect tertiary_key='{{tertiary_key}}' agency_id='{{agency_id}}' name='{{name}}' id='{{id}}' selected_province_id='{{selected_province_id}}' province_districts='{{province_districts}}' province_metro='{{province_metro}}' />
+
+style.
+  .tertiary { display: none; }
+  .tertiary.show{ display: flex !important; }
+  #provinces_select {
+    width: 140px;
+  }
+  option#prompt {
+    color: #333;
+  }
+
+script.
+  import DistrictSelect from './district_select.ractive.pug'
+
+  export default Ractive.extend({
+    template : $TEMPLATE,
+    css: $CSS,
+    components: {
+      districtSelect: DistrictSelect,
+    },
+    computed:{
+      province_districts(){
+        return this.get('districts')[this.get('selected_province_id')]
+      },
+      province_metro(){
+        return this.get('metro_municipalities')[this.get('selected_province_id')]
+      },
+      province_is_selected(){
+        return !_.isNull(this.get('selected_province_id')) && !_.isUndefined(this.get('selected_province_id'));
+      },
+      selected_province(){
+        return _(this.get('provinces')).findWhere({id: this.get('selected_province_id')})
+      },
+      tertiary_key(){
+        return this.get('selected_province').name.underscore()
+      },
+    },
+  })

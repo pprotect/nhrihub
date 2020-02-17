@@ -1,0 +1,33 @@
+select.form-control#provinces_select(value='{{second_level_provincial}}')
+  option#prompt(value=null, disabled=true, selected=true) select province...
+  | {{#provinces}}
+  option(value='{{id}}') {{name}}
+  | {{/provinces}}
+| {{#provinces}}
+<provincialAgencySelect agency_id='{{agency_id}}' name='{{name}}' id='{{id}}' second_level_provincial='{{../../second_level_provincial}}' collection='{{collection}}' />
+| {{/provinces}}
+
+
+style.
+  #provinces_select {
+    width: 140px;
+  }
+  option#prompt {
+    color: #333;
+  }
+
+script.
+  import ProvincialAgencySelect from './provincial_agency_select.ractive.pug'
+
+  export default Ractive.extend({
+    template : $TEMPLATE,
+    css: $CSS,
+    components: {
+      provincialAgencySelect: ProvincialAgencySelect,
+    },
+    computed:{
+      collection(){
+        return this.get('provincial_agencies')[this.get('second_level_provincial')]
+      }
+    },
+  })

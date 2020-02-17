@@ -2,8 +2,9 @@ var EditInPlace = require("exports-loader?EditInPlace!edit_in_place")
 import 'jquery-ui/ui/widgets/datepicker'
 import EditBackup from 'edit_backup'
 import AreasSelector from 'complaint/areas_selector'
-import Agencies from 'agencies'
-import AgenciesSelector from 'agencies_selector'
+//import Agencies from 'agencies'
+import Agency from 'agency.ractive.pug'
+import AgenciesSelector from 'agencies_select/agencies_selector'
 import Area from 'area'
 import Assignees from 'assignees'
 import AssigneeSelector from 'assignee_selector'
@@ -170,6 +171,7 @@ el: '#complaint',
     lifecycle: Lifecycle,
     documents: Documents,
     agencies: _Agencies,
+    agency: Agency,
     areas: Areas,
     subareas: Subareas,
     complained_to_agency: ComplainedToAgency,
@@ -205,7 +207,8 @@ el: '#complaint',
   },
   components : {
     areasSelector : AreasSelector,
-    agencies : Agencies,
+    //agencies : Agencies,
+    agency: Agency,
     agenciesSelector : AgenciesSelector,
     area : Area,
     assignees : Assignees,
