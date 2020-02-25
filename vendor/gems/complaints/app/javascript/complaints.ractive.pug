@@ -35,7 +35,6 @@ script.
       if(_.isEmpty(params.selected_status_ids)){params.selected_status_ids = [""]} // hack to send "empty" array indicating no status was checked
       if(_.isEmpty(params.selected_complaint_area_ids)){params.selected_complaint_area_ids = [""]} // hack to send "empty" array indicating no status was checked
       if(_.isEmpty(params.selected_subarea_ids)){params.selected_subarea_ids = [""]} // hack to send "empty" array indicating no status was checked
-      if(_.isEmpty(params.selected_agency_ids)){params.selected_agency_ids = [""]} // hack to send "empty" array indicating no status was checked
       this.set('current_query',params)
       console.log("fetch")
       console.log(params)
@@ -50,9 +49,6 @@ script.
     components : {
       complaint : Complaint,
       filterControls : FilterControls
-    },
-    computed : {
-      selected_agency_ids() { return this.findComponent('filterControls').get('agency_ids'); }
     },
     //new_complaint() {
       //if (!this.add_complaint_active()) {

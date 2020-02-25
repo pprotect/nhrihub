@@ -1,4 +1,3 @@
-
 export default {
   delete_callback(data,textStatus,jqxhr){
     return this.parent.remove(this._guid);
@@ -50,6 +49,5 @@ export default {
       });
     }
   }
-  // jQuery correctly sets the contentType and boundary values
 }
 

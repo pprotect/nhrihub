@@ -69,7 +69,7 @@ class Complaint < ActiveRecord::Base
       selected_status_ids:         ComplaintStatus.default.map(&:id),
       selected_complaint_area_ids: ComplaintArea.pluck(:id),
       selected_subarea_ids:        ComplaintSubarea.pluck(:id),
-      selected_agency_ids:         Agency.unscoped.pluck(:id) }
+      selected_agency_id:         "all" }
   end
 
   def self.possible_duplicates(params)
@@ -92,7 +92,7 @@ class Complaint < ActiveRecord::Base
     logger.info "with_city: #{with_city(query[:city]).length}"
     logger.info "with_phone: #{with_phone(query[:phone]).length}"
     logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
-    logger.info "with_agencies: #{with_agencies(query[:selected_agency_ids]).length}"
+    logger.info "with_agencies: #{with_agencies(query[:selected_agency_id]).length}"
     select("DISTINCT ON (complaints.id) complaints.*").
     for_assignee(query[:selected_assignee_id]).
       with_status(query[:selected_status_ids]).
@@ -104,7 +104,7 @@ class Complaint < ActiveRecord::Base
       with_city(query[:city]).
       with_phone(query[:phone]).
       with_subareas(query[:selected_subarea_ids]).
-      with_agencies(query[:selected_agency_ids])
+      with_agencies(query[:selected_agency_id])
   end
 
   def self.index_page_associations(query)
@@ -188,8 +188,12 @@ class Complaint < ActiveRecord::Base
     self.agencies = [Agency.find(val)]
   end
 
-  def agency_name
-    Agency.find(agency_id)&.name unless agency_id.zero?
+  def agency_description
+    Agency.find(agency_id)&.description unless agency_id.zero?
+  end
+
+  def agency_select_params
+    agency_id.zero? ? {} : Agency.find(agency_id)&.agency_select_params
   end
 
   def agency_id
@@ -227,7 +231,9 @@ class Complaint < ActiveRecord::Base
                            :complaint_area_id,
                            :subarea_ids,
                            :area_subarea_ids,
-                           :agency_name,
+                           #:agency_id,
+                           :agency_description,
+                           :agency_select_params,
                            :legislation_id,
                            :timeline_events,
                            :communications] }

@@ -54,7 +54,6 @@ script.
           // i.e. as opposed to is selected at initialization time
           var becomes_selected = (typeof old != 'undefined') && this.get('selected')
           if(becomes_selected){ 
-            console.log('becomes selected '+this.get('name'))
             this.parent.set({complaint_status_id: this.get('id'), status_memo: this.get('status_memo')})
           };
         }

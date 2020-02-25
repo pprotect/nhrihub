@@ -49,6 +49,14 @@ import LegislationSelector from 'legislation_selector.ractive.pug'
 export default Ractive.extend({
 el: '#complaint',
   computed : {
+    agency_id:{
+      get(){
+        return this.findComponent('agenciesSelector').get('agency_id');
+      },
+      set(val){
+        this.findComponent('agenciesSelector').set('agency_id', val);
+      }
+    },
     related_legislation_name(){
       if(!_.isNaN(parseInt(this.get('legislation_id')))){
         return _(this.get('legislations')).findWhere({id: this.get('legislation_id')}).name
@@ -224,6 +232,22 @@ el: '#complaint',
     transferees: Transferees,
     jurisdictionBranchSelector: JurisdictionBranchSelector,
     legislationSelector: LegislationSelector,
+  },
+  observe: {
+    'agency_select_params.top_level_category': {
+      handler(value, old, path, idx){
+        if(!_.isUndefined(old)){
+          this.set('agency_select_params.selected_province_id', "0")
+        }
+      }
+    },
+    'agency_select_params.selected_province_id': {
+      handler(value, old, path, idx){
+        if(!_.isUndefined(old)){
+          this.set('agency_select_params.selected_id', "0")
+        }
+      }
+    },
   },
   proceed_to_intake(){
     history.pushState({},"anything",this.get('url'));

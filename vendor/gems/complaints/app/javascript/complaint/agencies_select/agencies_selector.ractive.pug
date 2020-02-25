@@ -1,15 +1,15 @@
 .div(style='display:flex;')
-  select.form-control#agencies_select(value='{{top_level_category}}')
+  select.form-control#agencies_select(value='{{agency_select_params.top_level_category}}')
     option#prompt(disabled=true, selected='selected') select...
     option(value="national") National
     option(value="provincial_agencies") Provincial
     option(value="municipalities") Local
   .secondary('class-show'="national")
-    <nationalAgenciesSelect agency_id='{{agency_id}}' national_agencies='{{national_agencies}}' />
+    <nationalAgenciesSelect agency_select_params='{{agency_select_params}}' national_agencies='{{national_agencies}}' />
   .secondary('class-show'="provincial")
-    <provincialAgenciesSelect agency_id='{{agency_id}}' provinces='{{provinces}}' provincial_agencies='{{provincial_agencies}}' />
+    <provincialAgenciesSelect agency_select_params='{{agency_select_params}}' provinces='{{provinces}}' provincial_agencies='{{provincial_agencies}}' />
   .secondary('class-show'="local")
-    <localAgenciesSelect agency_id='{{agency_id}}' provinces='{{provinces}}' districts='{{districts}}' metro_municipalities='{{metro_municipalities}}' />
+    <localAgenciesSelect agency_select_params='{{agency_select_params}}' provinces='{{provinces}}' districts='{{districts}}' metro_municipalities='{{metro_municipalities}}' />
 
 style.
   #agencies_select {
@@ -35,12 +35,32 @@ script.
       localAgenciesSelect: LocalAgenciesSelect,
     },
     computed:{
-      national(){ return this.get('top_level_category') == 'national' },
-      provincial(){ return this.get('top_level_category') == 'provincial_agencies' },
-      local(){ return this.get('top_level_category') == 'municipalities' },
+      national(){ return this.get('agency_select_params.top_level_category') == 'national' },
+      provincial(){ return this.get('agency_select_params.top_level_category') == 'provincial_agencies' },
+      local(){ return this.get('agency_select_params.top_level_category') == 'municipalities' },
       national_agencies(){return this.get('agencies').national},
       provincial_agencies(){return this.get('agencies').provincial},
       district_municipalities(){return this.get('agencies').local},
+      agency_id:{
+        get(){
+          if(this.get('national')){
+              return this.findComponent('nationalAgenciesSelect').get('agency_id')
+            }else if(this.get('provincial')){
+              return this.findComponent('provincialAgenciesSelect').get('agency_id')
+            }else if(this.get('local')){
+              return this.findComponent('localAgenciesSelect').get('agency_id')
+            }
+        },
+        set(val){
+          if(this.get('national')){
+              this.findComponent('nationalAgenciesSelect').set('agency_id', val)
+            }else if(this.get('provincial')){
+              this.findComponent('provincialAgenciesSelect').set('agency_id', val)
+            }else if(this.get('local')){
+              this.findComponent('localAgenciesSelect').set('agency_id', val)
+            }
+        }
+      },
     },
-    });
+  });
 

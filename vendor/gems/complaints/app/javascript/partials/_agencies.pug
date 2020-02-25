@@ -3,6 +3,6 @@
     label {{ t.agency }}
   .col-md-10
     #agencies.no_edit.in.comma-list 
-      span.agency {{ agency_name }}
+      span.agency {{ agency_description }}
     .edit
-      <agenciesSelector agency_id='{{agency_id}}' metro_municipalities='{{metro_municipalities}}' districts='{{districts}}' provinces='{{provinces}}' agencies='{{agencies}}' top_level_category='{{top_level_category}}' />
+      <agenciesSelector agency_select_params='{{agency_select_params}}' metro_municipalities='{{metro_municipalities}}' districts='{{districts}}' provinces='{{provinces}}' agencies='{{agencies}}' />

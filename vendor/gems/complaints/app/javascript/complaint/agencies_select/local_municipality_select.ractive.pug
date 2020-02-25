@@ -1,5 +1,5 @@
-select.form-control(id='{{quarternary_key}}', value='{{agency_id}}')
-  option(disabled=true, selected=true) select local agency...
+select.form-control(id='{{quarternary_key}}', value='{{agency_select_params.agency_id}}')
+  option(value='0', disabled=true, selected=true) select local agency...
   | {{#local_municipalities}}
   option(value='{{id}}') {{ name }}
   | {{/local_municipalities}}
@@ -8,10 +8,4 @@ script.
   export default Ractive.extend({
     template: $TEMPLATE,
     css: $CSS,
-    computed: {
-      district_selected(){
-        console.log("selected_name: "+this.get('selected_name')+" district_name: "+this.get('district_name'))
-        return this.get('selected_name') == this.get('district_name')
-      }
-    }
   })

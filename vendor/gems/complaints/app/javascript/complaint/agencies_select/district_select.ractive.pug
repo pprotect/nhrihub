@@ -1,4 +1,4 @@
-select.form-control(id='{{tertiary_key}}', value='{{selected_id}}')
+select.form-control(id='{{tertiary_key}}', value='{{agency_select_params.selected_id}}')
   option(value='0', disabled=true, selected=true) select district/metropolitan municipality...
   optgroup(label='Metropolitan municipalities')
     | {{#province_metro}}
@@ -10,7 +10,7 @@ select.form-control(id='{{tertiary_key}}', value='{{selected_id}}')
     | {{/province_districts}}
 
 .quarternary('class-show'='district_is_selected')
-  <localMunicipalitySelect quarternary_key='{{quarternary_key}}' local_municipalities='{{local_municipalities}}' agency_id='{{agency_id}}' />
+  <localMunicipalitySelect agency_select_params='{{agency_select_params}}' quarternary_key='{{quarternary_key}}' local_municipalities='{{local_municipalities}}' />
 
 style.
   select.form-control { width: auto; }
@@ -28,7 +28,7 @@ script.
     computed:{
       selected_district(){
         if(this.get('district_is_selected')){
-          return _(this.get('province_districts')).findWhere({id: this.get('selected_id')})
+          return _(this.get('province_districts')).findWhere({id: this.get('agency_select_params.selected_id')})
         }
       },
       local_municipalities(){
@@ -43,23 +43,39 @@ script.
         return _(this.get('province_districts')).map(function(pd){return pd.id})
       },
       metro_selected(){
-        return _(this.get('province_metro_ids')).contains(this.get('selected_id'))
+        return _(this.get('province_metro_ids')).contains(this.get('agency_select_params.selected_id'))
       },
       district_is_selected(){
-        return _(this.get('province_district_ids')).contains(this.get('selected_id'))
+        return _(this.get('province_district_ids')).contains(this.get('agency_select_params.selected_id'))
       },
       quarternary_key(){
-        return this.get('selected_district').name.underscore()
+        if(this.get('district_is_selected')){
+          return this.get('selected_district').name.underscore()
+        }
       },
+      agency_id:{
+        get(){
+          if(this.get('metro_selected')){
+              return this.get('agency_select_params.selected_id');
+            }else if(this.get('district_is_selected')){
+              return this.findComponent('localMunicipalitySelect').get('agency_select_params.agency_id')
+            }
+        },
+        set(val){
+          if(this.get('metro_selected')){
+              return this.set('agency_select_params.selected_id', val);
+            }else if(this.get('district_is_selected')){
+              return this.findComponent('localMunicipalitySelect').set('agency_select_params.agency_id',val)
+            }
+        }
+      }
     },
     observe: {
-      'selected_id': {
+      'agency_select_params.selected_id': {
         handler(value, old, path, idx){
-          if(this.get('metro_selected')){
-              this.set('agency_id',value);
-            }else if(this.get('district_is_selected')){
-              this.set('agency_id',undefined);
-            }
+          if(!_.isUndefined(old) && this.get('district_is_selected')){
+            this.set('agency_id', "0")
+          }
         }
       }
     },

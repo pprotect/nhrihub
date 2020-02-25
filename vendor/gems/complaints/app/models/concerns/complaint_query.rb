@@ -25,16 +25,15 @@ module ComplaintQuery
         where("1=0")
     end
 
-    def with_agencies(selected_agency_ids, options = {})
+    def with_agencies(selected_agency_id, options = {})
       if options[:match] == :exact
-        return no_results if selected_agency_ids.nil? || selected_agency_ids.empty?
+        return no_results if selected_agency_id.nil?
       else
         return no_filter if Agency.count.zero?
-        return no_filter if selected_agency_ids.nil?
-        return no_filter if selected_agency_ids.delete_if(&:blank?).empty?
-        #selected_agency_ids = nil if selected_agency_ids.delete_if(&:blank?).empty?
+        return no_filter if selected_agency_id.nil?
+        return no_filter if selected_agency_id == "all"
       end
-      joins(:complaint_agencies).where("complaint_agencies.agency_id in (?)", selected_agency_ids)
+      joins(:complaint_agencies).where("complaint_agencies.agency_id in (?)", selected_agency_id)
     end
 
     def no_results

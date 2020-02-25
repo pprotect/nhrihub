@@ -13,7 +13,7 @@ window.urlQueryParams =function(){
   var params = {}
   var extract_param=function(el){
     var array_type = el.match(/(\w*)%5B%5D=(\d*)/);
-    var const_type = el.match(/(\w*)=(\d*)/);
+    var const_type = el.match(/(\w*)=(.*)/);
     if(array_type){
       var name = array_type[1];
       var val = parseInt(array_type[2]);
@@ -29,7 +29,6 @@ window.urlQueryParams =function(){
 };
 
 window.complaints_page_data = function(){
-  var params = urlQueryParams();
   return {
     complaints : source_complaints_data,
     default_filter_criteria: source_filter_criteria,
@@ -68,7 +67,7 @@ $(function() {
   filter_criteria_datepicker.start(complaints_page);
   // so that a state object is present when returnng to the initial state with the back button
   // this is so we can discriminate returning to the page from page load
-  return history.replaceState({filter_criteria:complaints_page.get('filter_criteria')},"bash",window.location);
+  //return history.replaceState({filter_criteria:complaints_page.get('filter_criteria')},"bash",window.location);
 });
 
 window.onpopstate = function(event){

@@ -46,7 +46,7 @@
             | {{ t.select_agency }}
           span.caret
         ul.dropdown-menu#agency_filter_select
-          <selectClear t='{{t}}' collection='{{'selected_agency_ids'}}'/>
+          <selectClear t='{{t}}' collection='{{'selected_agency_id'}}'/>
           | {{#all_agencies}}
           <agencyFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}' />
           | {{/all_agencies}}
@@ -124,7 +124,8 @@ script.
     data : function(){ return {
       t : translations.t('filter_controls'),
       default_subarea_ids :  _.map(complaints_page_data().all_subareas,function(d){return d.id }),
-      default_agency_ids :  _.map(complaints_page_data().all_agencies,function(d){return d.id})
+      //default_agency_ids :  _.map(complaints_page_data().all_agencies,function(d){return d.id})
+      default_agency_id: "all"
     }},
     observe: {
       'filter_criteria': {
@@ -154,7 +155,7 @@ script.
           params['filter_criteria.'+n] = ["0"];
         })
       }else{
-        params['filter_criteria.'+name] = ["0"];
+        params['filter_criteria.'+name] = "0";
       }
       this.set(params);
     },

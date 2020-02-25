@@ -19,7 +19,10 @@ def query_hash(query_string)
       h[attr.to_sym] = h[attr.to_sym] ? h[attr.to_sym] << val.to_i : [val.to_i]
     else
       attr,val = el.split('=')
-      h[attr.to_sym] = val.to_i
+      if val.nil? || val&.match(/\d+/)
+        val = val.to_i
+      end
+      h[attr.to_sym] = val
     end
     h
   end
@@ -65,11 +68,11 @@ feature "complaints index query string", js: true do
     expect(query_hash(query_string)).to match_hash({ case_reference: 0,
                                                      city: 0,
                                                      complainant: 0,
+                                                     selected_agency_id: "all",
                                                      selected_assignee_id: @user.id,
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
                                                      selected_complaint_area_ids: ComplaintArea.pluck(:id),
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
-                                                     selected_agency_ids: Agency.unscoped.pluck(:id),
                                                      from: 0, to: 0, phone: 0 })
   end
 
@@ -84,7 +87,7 @@ feature "complaints index query string", js: true do
     expect(query_hash(query_string)).to match_hash({ case_reference: 0,
                                                      city: 0,
                                                      complainant: 0,
-                                                     selected_agency_ids: Agency.unscoped.pluck(:id),
+                                                     selected_agency_id: "all",
                                                      selected_assignee_id: @norm.id,
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
@@ -95,7 +98,7 @@ feature "complaints index query string", js: true do
     expect(query_hash(query_string)).to match_hash({ case_reference: 0,
                                                      city: 0,
                                                      complainant: 0,
-                                                     selected_agency_ids: Agency.unscoped.pluck(:id),
+                                                     selected_agency_id: "all",
                                                      selected_assignee_id: @user.id,
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
@@ -106,7 +109,7 @@ feature "complaints index query string", js: true do
     expect(query_hash(query_string)).to match_hash({ case_reference: 0,
                                                      city: 0,
                                                      complainant: 0,
-                                                     selected_agency_ids: [0],
+                                                     selected_agency_id: 0,
                                                      selected_assignee_id: @user.id,
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
@@ -118,7 +121,7 @@ feature "complaints index query string", js: true do
     expect(query_hash(query_string)).to match_hash({ case_reference: 0,
                                                      city: 0,
                                                      complainant: 0,
-                                                     selected_agency_ids: Agency.unscoped.pluck(:id),
+                                                     selected_agency_id: "all",
                                                      selected_assignee_id: @user.id,
                                                      selected_subarea_ids: ComplaintSubarea.pluck(:id),
                                                      selected_status_ids: ComplaintStatus.default.map(&:id),
@@ -217,7 +220,7 @@ feature "complaints index", :js => true do
     end
     page.find('button', :text => 'Select agency').click
     Agency.unscoped.all.each do |agency|
-      expect(page).to have_selector('#agency_filter_select li a div', :text => agency.name)
+      expect(page).to have_selector('#agency_filter_select li a div', :text => agency.name.strip)
     end
   end
 
@@ -312,7 +315,7 @@ feature "complaints index", :js => true do
     expect(find('#complaint_area').text).to eq "Human Rights"
 
     within agencies do
-      expect(all('.agency').map(&:text)).to include "SAA"
+      expect(all('.agency').map(&:text)).to include Complaint.first.agencies.first.name
     end
   end # /it
 

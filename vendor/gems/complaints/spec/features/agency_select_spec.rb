@@ -129,7 +129,10 @@ feature "agency select", js: true do
           select(selected_provincial_agency.name, from: 'eastern_cape')
           edit_save
           expect(complaint.agency_id).to eq selected_provincial_agency.id
-          expect(page.find('#agencies').text).to eq selected_provincial_agency.name
+          expect(page.find('#agencies').text).to eq selected_provincial_agency.description
+          edit_complaint
+          expect( page.find('#provinces_select option', text: selected_province.name)).to be_selected
+          expect( page.find('option', text: selected_provincial_agency.name)).to be_selected
         end
       end
     end
@@ -156,9 +159,9 @@ feature "agency select", js: true do
       end
 
       it 'should show a dropdown box for the provincial agencies' do
-        expect(page).to have_selector('.tertiary#eastern_cape')
+        expect(page).to have_selector('select#eastern_cape')
         expect(number_of_municipalities).to be > 0 # make sure we actually have some!
-        expect(page.all('.tertiary#eastern_cape select option').count).to eq number_of_municipalities + 1
+        expect(page.all('select#eastern_cape option').count).to eq number_of_municipalities + 1
       end
 
       describe "select a metropolitan municipality" do
@@ -171,7 +174,7 @@ feature "agency select", js: true do
         it "should add the selected metropolitan municipality to the complaint" do
           edit_save
           expect(complaint.agency_id).to eq selected_metro.id
-          expect(page.find('#agencies').text).to eq selected_metro.name
+          expect(page.find('#agencies').text).to eq selected_metro.description
         end
       end
 
@@ -189,9 +192,190 @@ feature "agency select", js: true do
           select(selected_local_muni_name, from: dropdown_id)
           edit_save
           expect(complaint.agency_id).to eq selected_local_municipality.id
-          expect(page.find('#agencies').text).to eq selected_local_muni_name
+          expect(page.find('#agencies').text).to eq selected_local_municipality.description
         end
       end
     end
   end
 end
+
+feature "agency select: menu intialization", js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include ComplaintsSpecHelpers
+
+  let(:complaint){ IndividualComplaint.first }
+
+  before do
+    populate_database(:individual_complaint)
+    complaint.update(agency_id: agency.id)
+    visit complaint_path(:en, complaint.id)
+    edit_complaint
+  end
+
+  describe "complaint is against a national government agency" do
+    let(:agency){ NationalGovernmentAgency.first }
+
+    it "should present dropboxes with the appropriate options selected" do
+      expect(page.find('#agencies_select option', text: 'National')).to be_selected
+      expect(page.find('#national_agencies_select option', text: 'National government agencies')).to be_selected
+      expect(page.find('#government_agencies_select option', text: agency.name)).to be_selected
+    end
+  end
+
+  describe "complaint is against a national government institution" do
+    let(:agency){ NationalGovernmentInstitution.first }
+
+    it "should present dropboxes with the appropriate options selected" do
+      expect(page.find('#agencies_select option', text: 'National')).to be_selected
+      expect(page.find('#national_agencies_select option', text: 'National government institutions')).to be_selected
+      expect(page.find('#government_agencies_select option', text: agency.name)).to be_selected
+    end
+  end
+
+  describe "complaint is against a democracy institution" do
+    let(:agency){ DemocracySupportingStateInstitution.first }
+
+    it "should present dropboxes with the appropriate options selected" do
+      expect(page.find('#agencies_select option', text: 'National')).to be_selected
+      expect(page.find('#national_agencies_select option', text:  'Democracy-supporting government institutions')).to be_selected
+      expect(page.find('#government_agencies_select option', text: agency.name)).to be_selected
+    end
+  end
+
+  describe "complaint is against a provincial agency" do
+    let(:agency){ ProvincialAgency.first }
+
+    it "should present dropboxes with the appropriate options selected" do
+      expect(page.find('#agencies_select option', text: 'Provincial')).to be_selected
+      expect(page.find('#provinces_select option', text: agency.province.name)).to be_selected
+      expect(page.find("##{agency.province.name.gsub(/\s/,'_').downcase} option", text: agency.name)).to be_selected
+    end
+  end
+
+  describe "complaint is against a metropolitan municipality" do
+    let(:agency){ MetropolitanMunicipality.first }
+
+    it "should present dropboxes with the appropriate options selected" do
+      expect(page.find('#agencies_select option', text: 'Local')).to be_selected
+      expect(page.find('#provinces_select option', text: agency.province.name)).to be_selected
+      expect(page.find("##{agency.province.name.gsub(/\s/,'_').downcase} option", text: agency.name)).to be_selected
+    end
+  end
+
+  describe "complaint is against a local municipality" do
+    let(:agency){ LocalMunicipality.first }
+    let(:province_name){ agency.district_municipality.province.name }
+    let(:province_key){ province_name.gsub(/\s/,'_').downcase }
+    let(:district_name){ agency.district_municipality.name }
+    let(:district_key){ district_name.gsub(/\s/,'_').downcase }
+
+    it "should present dropboxes with the appropriate options selected" do
+      expect(page.find('#agencies_select option', text: 'Local')).to be_selected
+      expect(page.find('#provinces_select option', text: province_name)).to be_selected
+      expect(page.find("##{province_key} option", text: district_name)).to be_selected
+      expect(page.find("##{district_key} option", text: agency.name)).to be_selected
+    end
+  end
+
+end
+
+feature "agency select: cancel after editing", js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include ComplaintsSpecHelpers
+
+  let(:complaint){ IndividualComplaint.first }
+
+  before do
+    populate_database(:individual_complaint)
+    complaint.update(agency_id: agency.id)
+    visit complaint_path(:en, complaint.id)
+    edit_complaint
+  end
+
+  describe "when complaint is against a national government agency" do
+    let(:agency){ NationalGovernmentAgency.first }
+    let(:selected_province){ Province.all.sort_by(&:name).first } # Eastern Cape
+    let(:selected_provincial_agency){ selected_province.provincial_agencies.first }
+
+    it "should restore original agency when editing is cancelled" do
+      # make edits
+      select('Provincial', from:'agencies_select')
+      select(selected_province.name, from: 'provinces_select')
+      select(selected_provincial_agency.name, from: 'eastern_cape')
+      edit_cancel
+      # edits discarded
+      expect(page.find('#agencies').text).to eq agency.description
+      edit_complaint
+      # shows original values pre edited values
+      expect(page.find('#agencies_select option', text: 'National')).to be_selected
+      expect(page.find('#national_agencies_select option', text: 'National government agencies')).to be_selected
+      expect(page.find('#government_agencies_select option', text: agency.name)).to be_selected
+    end
+  end
+
+  describe "when complaint is against a local municipality" do
+    let(:agency){ LocalMunicipality.first }
+    let(:selected_province){ selected_district_municipality.province }
+    let(:selected_province_key){ selected_province.name.downcase.gsub(/\s/,'_') }
+    let(:selected_district_municipality){ agency.district_municipality }
+    let(:selected_district_key){ selected_district_municipality.name.downcase.gsub(/\s/,'_') }
+
+    it "should restore original agency when editing is cancelled" do
+      # make edits
+      select('Provincial', from:'agencies_select')
+      edit_cancel
+      # edits discarded
+      expect(page.find('#agencies').text).to eq agency.description
+      edit_complaint
+      # shows original values pre edited values
+      expect(page.find('#agencies_select option', text: 'Local')).to be_selected
+      expect(page.find('#provinces_select option', text: selected_province.name)).to be_selected
+      expect(page.find("##{selected_province_key} option", text: selected_district_municipality.name )).to be_selected
+      expect(page.find("##{selected_district_key} option", text: agency.name )).to be_selected
+    end
+  end
+end
+
+feature "select box cascade", js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include ComplaintsSpecHelpers
+
+  let(:complaint){ IndividualComplaint.first }
+  # province: Northern Cape, district_municipality: ZF Mgcawu, local_municipality: !Kheis
+  let(:agency){ LocalMunicipality.first }
+
+  before do
+    populate_database(:individual_complaint)
+    complaint.update(agency_id: agency.id)
+    visit complaint_path(:en, complaint.id)
+    edit_complaint
+  end
+
+  describe "edit high-order select_box resets low-order menus" do
+    it "should reset later low-order menus" do
+      select('Provincial', from:'agencies_select')
+      expect(page.find('#provinces_select option', text: 'select province...')).to be_selected
+      expect(page).not_to have_selector('.tertiary.show')
+      expect(page).not_to have_selector('.quarternary.show')
+    end
+  end
+
+  describe "edit secondary select box resets lower order menus" do
+    it "should reset later low-order menus" do
+      select('Gauteng', from: 'provinces_select')
+      expect(page.find('#gauteng option', text: 'select district/metropolitan municipality...')).to be_selected
+      expect(page).not_to have_selector('.quarternary.show')
+    end
+  end
+
+  describe "edit tertiary select box resets lower order menus" do
+    it "should reset later low-order menus" do
+      select('Namakwa', from: 'northern_cape');
+      expect(page.find('#namakwa option', text: 'select local agency...')).to be_selected
+    end
+  end
+end
+

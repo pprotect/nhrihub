@@ -102,7 +102,7 @@ describe "scope class methods" do
       {:selected_assignee_id=>user.id,
        :selected_status_ids=>ComplaintStatus.pluck(:id),
        :selected_complaint_area_ids=>ComplaintArea.pluck(:id),
-       :selected_agency_ids => Agency.pluck(:id),
+       :selected_agency_id => "all",
        :selected_area_ids => ComplaintArea.pluck(:id),
        :selected_subarea_ids => ComplaintSubarea.pluck(:id)
       }
@@ -157,7 +157,7 @@ describe "selects complaints matching the selected subarea" do
     {:selected_assignee_id=>user.id,
      :selected_status_ids=>ComplaintStatus.pluck(:id),
      :selected_complaint_area_ids=>ComplaintArea.pluck(:id),
-     :selected_agency_ids=>Agency.pluck(:id),
+     :selected_agency_id=>"all",
      :selected_subarea_ids => [foo_subarea.id, bar_subarea.id] }
   }
   let(:complaints){ Complaint.index_page_associations(query) }
@@ -198,7 +198,7 @@ describe "selects complaints matching the selected agency" do
     {:selected_assignee_id=>user.id,
      :selected_status_ids=>ComplaintStatus.pluck(:id),
      :selected_complaint_area_ids=>ComplaintArea.pluck(:id),
-     :selected_agency_ids=>Agency.pluck(:id),
+     :selected_agency_id=>"all",
      :selected_subarea_ids => [foo_subarea.id, bar_subarea.id] }
   }
   let(:complaints){ Complaint.index_page_associations(query) }

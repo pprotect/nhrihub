@@ -1,10 +1,10 @@
-select.form-control#provinces_select(value='{{selected_province_id}}')
-  option#prompt(value=null, disabled=true, selected=true) select province...
+select.form-control#provinces_select(value='{{agency_select_params.selected_province_id}}')
+  option#prompt(value='0', disabled=true, selected=true) select province...
   | {{#provinces}}
   option(value='{{id}}') {{name}}
   | {{/provinces}}
 .tertiary('class-show'='province_is_selected')
-  <districtSelect tertiary_key='{{tertiary_key}}' agency_id='{{agency_id}}' name='{{name}}' id='{{id}}' selected_province_id='{{selected_province_id}}' province_districts='{{province_districts}}' province_metro='{{province_metro}}' />
+  <districtSelect agency_select_params='{{agency_select_params}}' tertiary_key='{{tertiary_key}}' province_districts='{{province_districts}}' province_metro='{{province_metro}}' />
 
 style.
   .tertiary { display: none; }
@@ -27,19 +27,34 @@ script.
     },
     computed:{
       province_districts(){
-        return this.get('districts')[this.get('selected_province_id')]
+        return this.get('districts')[this.get('agency_select_params.selected_province_id')]
       },
       province_metro(){
-        return this.get('metro_municipalities')[this.get('selected_province_id')]
+        return this.get('metro_municipalities')[this.get('agency_select_params.selected_province_id')]
       },
       province_is_selected(){
-        return !_.isNull(this.get('selected_province_id')) && !_.isUndefined(this.get('selected_province_id'));
+        var sel = this.get('agency_select_params.selected_province_id')
+        return !_.isUndefined(sel) && (sel != "0")
       },
       selected_province(){
-        return _(this.get('provinces')).findWhere({id: this.get('selected_province_id')})
+        return _(this.get('provinces')).findWhere({id: this.get('agency_select_params.selected_province_id')})
       },
       tertiary_key(){
-        return this.get('selected_province').name.underscore()
+        if(this.get('province_is_selected')){
+          return this.get('selected_province').name.underscore()
+        }
+      },
+      agency_id:{
+        get(){
+          if(this.get('province_is_selected')){
+              return this.findComponent('districtSelect').get('agency_id')
+            }
+        },
+        set(val){
+          if(this.get('province_is_selected')){
+            this.findComponent('districtSelect').set('agency_id',val)
+            }
+        }
       },
     },
   })

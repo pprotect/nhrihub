@@ -1,10 +1,10 @@
-select.form-control#national_agencies_select(value='{{national_agency_type}}')
+select.form-control#national_agencies_select(value='{{agency_select_params.national_agency_type}}')
   option#prompt(disabled=true, selected=true) select national agency...
   option(value='government_agencies') National government agencies
   option(value='government_institutions') National government institutions
   option(value='democracy_institutions') Democracy-supporting government institutions
 .tertiary('class-show'='national_agencies_type_selected')
-  <governmentAgencySelect agency_id='{{agency_id}}' collection='{{collection}}' national_agency_type='{{national_agency_type}}' />
+  <governmentAgencySelect collection='{{collection}}' agency_select_params='{{agency_select_params}}' national_agency_type='{{agency_select_params.national_agency_type}}' />
 
 style.
   #national_agencies_select {
@@ -27,11 +27,20 @@ script.
       governmentAgencySelect: GovernmentAgencySelect,
     },
     computed:{
-      national_agencies_type_selected(){ return typeof this.get('national_agency_type') != 'undefined'},
+      national_agencies_type_selected(){ return typeof this.get('agency_select_params.national_agency_type') != 'undefined'},
       government_agencies(){return this.get('national_agencies').NationalGovernmentAgency},
       government_institutions(){return this.get('national_agencies').NationalGovernmentInstitution},
       democracy_institutions(){return this.get('national_agencies').DemocracySupportingStateInstitution},
-      collection(){ if(this.get('national_agencies_type_selected')){ return this.get(this.get('national_agency_type'))} },
+      collection(){ if(this.get('national_agencies_type_selected')){ return this.get(this.get('agency_select_params.national_agency_type'))} },
+      agency_id:{
+        get(){
+          if(this.get('national_agencies_type_selected')){
+             return this.get('agency_select_params.selected_national_agency_id');
+            }
+        },
+        set(val){
+          this.set('agency_select_params.selected_national_agency_id',val);
+        }
+      }
     },
   })
-

@@ -66,6 +66,7 @@ en:
     no_agency_match: "no possible duplicates for agency"
 
   complaint:
+    complainant: 'Complainant'
     assign_legislation: 'Related legislation'
     assessment_memo: 'Information pending'
     register_heading: "%{type} Complaint Intake"
