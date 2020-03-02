@@ -52,7 +52,7 @@ RSpec.shared_examples  "office and office group admin" do
     scenario 'view offices of an office_group' do
       open_accordion_for_office_group("Provincial Offices")
       office_names = ["Gauteng", "Mpumalanga", "North West", "Western Cape",
-                 "Kwa-Zulu Natal", "Limpopo", "Free State", "Northern Cape",
+                 "KwaZulu-Natal", "Limpopo", "Free State", "Northern Cape",
                  "Eastern Cape"]
       expect(offices).to match_array office_names
     end

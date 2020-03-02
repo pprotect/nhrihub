@@ -175,6 +175,7 @@ script(type='text/javascript').
           cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
           fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
           status_memo: ()=>{return this.findComponent('closedStatusRadio').validate() },
+          agency_id: 'numeric',
         };
       }
     },

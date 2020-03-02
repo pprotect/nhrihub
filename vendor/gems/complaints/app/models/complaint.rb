@@ -69,7 +69,7 @@ class Complaint < ActiveRecord::Base
       selected_status_ids:         ComplaintStatus.default.map(&:id),
       selected_complaint_area_ids: ComplaintArea.pluck(:id),
       selected_subarea_ids:        ComplaintSubarea.pluck(:id),
-      selected_agency_id:         "all" }
+      selected_agency_id:         "all"}
   end
 
   def self.possible_duplicates(params)
@@ -186,6 +186,7 @@ class Complaint < ActiveRecord::Base
 
   def agency_id=(val)
     self.agencies = [Agency.find(val)]
+  rescue ActiveRecord::RecordNotFound 
   end
 
   def agency_description

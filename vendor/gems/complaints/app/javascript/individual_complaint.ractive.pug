@@ -151,6 +151,9 @@
       <buttons mode='{{mode}}' editing='{{editing}}' has_errors='{{has_errors}}' />
 
 style.
+  .editable_container .edit.in{
+    z-index: auto
+    }
   #alt_id_other_type_field label { width: 120px; }
   #alt_id_other_type_field .edit { display: flex;}
   #complainant #firstName, #complainant #title {margin-right: .25em;}
@@ -193,7 +196,7 @@ style.
     height: 48px;
   }
 
-script(type='text/javascript').
+script.
   window.$ = window.jQuery = $ // it's the only method I could get to work for making $ available globally!
   window._ = _
   import ComplaintBase from 'complaint_base'
@@ -246,6 +249,7 @@ script(type='text/javascript').
           cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
           fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
           status_memo: ()=>{return this.findComponent('closedStatusRadio').validate() },
+          agency_id: 'numeric',
         };
       },
     },

@@ -36,9 +36,12 @@ feature "organization complaint duplicate check", :js => true do
 
   let(:complaint1){ Complaint.first }
   let(:complaint2){ Complaint.last }
+  let(:agency){ LocalMunicipality.where(name: 'Lesedi').first }
 
   before do
-    populate_database(:organization_complaint)
+    populate_database(:individual_complaint)
+    complaint1.update(agency_id: agency.id)
+    complaint2.update(agency_id: agency.id)
     visit complaint_intake_path('en', 'organization')
   end
 
@@ -85,7 +88,7 @@ feature "organization complaint duplicate check", :js => true do
   end
 
   it "should show duplicates matching the selected agency" do
-    check("SAA")
+    select_local_municipal_agency("Lesedi")
     page.find(".btn#check_dupes").click
     wait_for_ajax
     expect(page).to have_selector('h4.modal-title', text: "Possible duplicates")

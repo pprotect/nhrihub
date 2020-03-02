@@ -1,5 +1,6 @@
 require 'rails_helper'
 require_relative '../../../authengine/spec/helpers/user_setup_helper'
+require 'complaints_spec_setup_helpers'
 
 describe "complaint" do
   context "create" do
@@ -121,11 +122,11 @@ end
 
 # verify that this survives performance improvements
 describe "#as_json" do
+  include ComplaintsSpecSetupHelpers
+
   context "with a full complement of associations" do
     before do
-      agencies = AGENCIES.each do |short,full|
-        Agency.create(:name => short, :full_name => full)
-      end
+      create_agencies
 
       ["GoodGovernance", "Nhri", "Siu"].each do |type_prefix|
         klass = type_prefix+"::ComplaintBasis"
@@ -161,9 +162,9 @@ describe "#as_json" do
                                                      "firstName", "lastName", "title", "occupation", "employer",
                                                      "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name",
                                                      "date", "date_of_birth", "current_status", "status_id", "attached_documents",
-                                                     "timeline_events", "agency_ids", "communications", "subarea_ids", "area_subarea_ids",
+                                                     "timeline_events", "communications", "subarea_ids", "area_subarea_ids",
                                                      "cell_phone", "city", "complaint_area_id", "complaint_type",
-                                                     "alt_id_type", "physical_address",
+                                                     "alt_id_type", "physical_address", "agency_description", "agency_select_params", "legislation_id",
                                                      "postal_address", "postal_code", "preferred_means", "province",
                                                      "alt_id_value", "alt_id_other_type", "fax", "home_phone", "id_type",
                                                      "id_value", "organization_name", "organization_registration_number", "initiating_branch_id", "initiating_office_id"]
@@ -215,7 +216,6 @@ describe "#as_json" do
       expect(DateTime.parse(@complaints.first["timeline_events"].first["date"]).strftime("%s")).to eq Complaint.first.status_changes.first.date.to_datetime.strftime("%s")
       expect(@complaints.first["timeline_events"].first["event_description"]).to eq Complaint.first.status_changes.first.event_description
       expect(@complaints.first["timeline_events"].first["user_name"]).to eq Complaint.first.status_changes.first.user_name
-      expect(@complaints.first["agency_ids"]).to be_an Array
       expect(@complaints.first["communications"].first.keys).to match_array ["attached_documents", "communicants", "complaint_id", "date", "direction", "id", "mode", "note", "user", "user_id"]
       expect(@complaints.first["communications"].first["attached_documents"].first.keys ).to match_array ["communication_id", "original_filename", "filesize", "id", "lastModifiedDate", "original_type", "title", "user_id"]
       expect(@complaints.first["communications"].first["communicants"].first.keys).to match_array ["address", "email", "id", "name", "organization_id", "phone", "title_key"]
@@ -240,9 +240,9 @@ describe "#as_json" do
                                                      "firstName", "lastName", "title", "occupation", "employer",
                                                      "reminders", "notes", "assigns", "current_assignee_id", "current_assignee_name",
                                                      "date", "date_of_birth", "current_status", "status_id", "attached_documents",
-                                                     "timeline_events", "agency_ids", "communications", "subarea_ids", "area_subarea_ids",
+                                                     "timeline_events", "communications", "subarea_ids", "area_subarea_ids",
                                                      "cell_phone", "city", "complaint_area_id", "complaint_type",
-                                                     "alt_id_type", "physical_address",
+                                                     "alt_id_type", "physical_address", "agency_description", "agency_select_params", "legislation_id",
                                                      "postal_address", "postal_code", "preferred_means", "province",
                                                      "alt_id_value", "alt_id_other_type", "fax", "home_phone", "id_type",
                                                      "id_value", "organization_name", "organization_registration_number", "initiating_branch_id", "initiating_office_id"]

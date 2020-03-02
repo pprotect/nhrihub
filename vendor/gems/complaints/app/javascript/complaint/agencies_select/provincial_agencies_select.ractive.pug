@@ -1,4 +1,4 @@
-select.form-control#provinces_select(value='{{agency_select_params.selected_province_id}}')
+select.dupe_check.form-control#provinces_select(value='{{agency_select_params.selected_province_id}}')
   option#prompt(value="0", disabled=true, selected=true) select province...
   | {{#provinces}}
   option(value='{{id}}') {{name}}

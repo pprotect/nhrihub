@@ -6,6 +6,10 @@ class NationalGovernmentInstitution < Agency
 
   alias_method :description, :name
 
+  def classification
+    "National Government Institutions"
+  end
+
   def agency_select_params
     {top_level_category: 'national',
      national_agency_type: 'government_institutions',

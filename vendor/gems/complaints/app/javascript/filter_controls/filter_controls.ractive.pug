@@ -42,13 +42,12 @@
     .col-md-2
       .btn-group.select
         button.btn.btn-default.dropdown-toggle(type='button', 'data-toggle'='dropdown')
-          span.filter-option.pull-left 
-            | {{ t.select_agency }}
+          span.filter-option.pull-left {{ t.select_agency }}
           span.caret
         ul.dropdown-menu#agency_filter_select
           <selectClear t='{{t}}' collection='{{'selected_agency_id'}}'/>
           | {{#all_agencies}}
-          <agencyFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}' />
+          <agencyFilterGroupSelect filter_criteria='{{filter_criteria}}' classification='{{classification}}' agencies='{{agencies}}' />
           | {{/all_agencies}}
   .row.labels
     .col-md-2(class-active="@this.is_active('area')")
@@ -94,6 +93,9 @@
           | {{/all_staff}}
 
 style.
+  #agency_filter_select{
+    width: 400px;
+  }
   .active:after { 
     content: "*";
     color: #f55310;
@@ -103,7 +105,7 @@ style.
 
 script.
   import SubareaFilterSelect from 'subarea_filter_select'
-  import AgencyFilterSelect from 'agency_filter_select'
+  import AgencyFilterGroupSelect from 'agency_filter_group_select'
   import AreaFilterSelect from 'area_filter_select'
   import AssigneeFilterSelect from 'assignee_filter_select'
   import StatusFilterSelect from 'status_filter_select'
@@ -115,7 +117,7 @@ script.
     css: $CSS,
     components : {
       subareaFilterSelect: SubareaFilterSelect,
-      agencyFilterSelect : AgencyFilterSelect,
+      agencyFilterGroupSelect : AgencyFilterGroupSelect,
       areaFilterSelect : AreaFilterSelect,
       assigneeFilterSelect : AssigneeFilterSelect,
       statusFilterSelect : StatusFilterSelect,

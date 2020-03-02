@@ -28,6 +28,7 @@ module ComplaintQuery
     def with_agencies(selected_agency_id, options = {})
       if options[:match] == :exact
         return no_results if selected_agency_id.nil?
+        return no_results if selected_agency_id.blank?
       else
         return no_filter if Agency.count.zero?
         return no_filter if selected_agency_id.nil?

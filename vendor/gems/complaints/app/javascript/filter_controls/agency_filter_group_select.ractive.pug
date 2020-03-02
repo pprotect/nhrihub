@@ -1,0 +1,14 @@
+li.dropdown-header {{ classification }}
+| {{#agencies}}
+<agencyFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}' />
+| {{/agencies}}
+
+script.
+  import AgencyFilterSelect from 'agency_filter_select'
+
+  export default Ractive.extend({
+    template : $TEMPLATE,
+    components: {
+      agencyFilterSelect: AgencyFilterSelect,
+    },
+  })

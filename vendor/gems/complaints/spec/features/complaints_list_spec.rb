@@ -57,7 +57,8 @@ feature "complaints index query string", js: true do
     ComplaintStatus::Names.each{|n| ComplaintStatus.create(name: n)}
     ComplaintArea::DefaultNames.each{|n| ComplaintArea.create(name: n)}
     ComplaintArea.all.each{|area| 3.times{ ComplaintSubarea.create(name: Faker::Lorem.sentence(word_count: 2), area_id: area.id) }}
-    AGENCIES.each{|a| Agency.create(name: a)}
+    #AGENCIES.each{|a| Agency.create(name: a)}
+    create_agencies
     @norm = FactoryBot.create(:user, firstName: "Norman", lastName: "Normal")
     visit home_path('en')
     page.find('.nav #compl a.dropdown-toggle').hover
@@ -315,7 +316,7 @@ feature "complaints index", :js => true do
     expect(find('#complaint_area').text).to eq "Human Rights"
 
     within agencies do
-      expect(all('.agency').map(&:text)).to include Complaint.first.agencies.first.name
+      expect(all('.agency').map(&:text)).to include Complaint.first.agencies.first.description
     end
   end # /it
 
@@ -500,6 +501,7 @@ feature "selects complaints by match of date ranges", :js => true do
     d = Date.today.advance(months: -3)
     select_datepicker_date('#from',d.year,d.month,d.day)
     wait_for_ajax
+    sleep(2)
     expect(complaints.count).to eq 9
   end
 
@@ -508,6 +510,7 @@ feature "selects complaints by match of date ranges", :js => true do
     d = Date.today.advance(months: -2)
     select_datepicker_date('#to',d.year,d.month,d.day)
     wait_for_ajax
+    sleep(2)
     expect(complaints.count).to eq 9
   end
 
@@ -517,12 +520,14 @@ feature "selects complaints by match of date ranges", :js => true do
     d = Date.today.advance(months: -3)
     select_datepicker_date('#from',d.year,d.month,d.day)
     wait_for_ajax
+    sleep(2)
     expect(complaints.count).to eq 9
 
     d = Date.today.advance(months: -2)
     select_datepicker_date('#to',d.year,d.month,d.day)
 
     wait_for_ajax
+    sleep(2)
     expect(complaints.count).to eq 6
   end
 end
@@ -730,51 +735,17 @@ feature "selects complaints matching selected agency(-ies)", :js => true do
     it "should return complaints based on selected agencies" do
       expect(complaints.count).to eq 3
       open_dropdown('Select agency')
-      Agency.pluck(:name).each do |name|
-        expect(select_option(name)[:class]).to include('selected')
+      Agency.pluck(:id,:name).each do |attrs|
+        id,name=attrs
+        expect(select_id(id)[:class]).to include('selected')
       end
-      select_option(Agency.first.name).click # deselect
+      select_option(Agency.first.name).click # select single agency
       wait_for_ajax
-      expect(complaints.count).to eq 2
+      expect(complaints.count).to eq 1
       clear_options('Select agency')
       expect(complaints.count).to eq 0
       select_all_options('Select agency')
       expect(complaints.count).to eq 3
-    end
-  end
-
-  context "when unassigned agencies are requested" do
-    before do
-      create_complaint_areas
-      create_agencies
-      create_subareas
-      user = User.first
-      @cc = FactoryBot.create(:complaint, :with_associations, :registered, assigned_to: user)
-      @cc.agencies = [Agency.unscoped.find_by(name: "Unassigned")]
-      cc = FactoryBot.create(:complaint, :with_associations, :registered, assigned_to: user)
-      cc.agencies = [Agency.first]
-      cc = FactoryBot.create(:complaint, :with_associations, :registered, assigned_to: user)
-      cc.agencies = [Agency.second]
-      visit complaints_path(:en)
-    end
-
-    it "should return complaints based on selected agencies" do
-      expect(complaints.count).to eq 3
-      open_dropdown('Select agency')
-      Agency.unscoped.pluck(:name).each do |name|
-        expect(select_option(name)[:class]).to include('selected')
-      end
-      select_option(Agency.first.name).click # deselect
-      wait_for_ajax
-      expect(complaints.count).to eq 2
-      clear_options('select agency')
-      expect(complaints.count).to eq 0
-      select_all_options('Select agency')
-      expect(complaints.count).to eq 3
-      clear_options('select agency')
-      expect(complaints.count).to eq 0
-      select_option("Unassigned").click # select
-      expect(complaints.count).to eq 1
     end
   end
 

@@ -87,6 +87,10 @@ module ComplaintsSpecHelpers
     page.find('#edit_cancel .fa-remove').click
   end
 
+  def select_id(id)
+    page.find(:xpath,".//li[./a/div/@id='#{id}']")
+  end
+
   def select_option(name)
     page.find(:xpath, ".//li[./a/div/text()='#{name}']")
   end
@@ -213,6 +217,13 @@ module ComplaintsSpecHelpers
 
   def show_complaint
     find('.show_complaint').click
+  end
+
+  def select_local_municipal_agency(name)
+    select('Local', from: 'agencies_select')
+    select('Gauteng', from: 'provinces_select')
+    select('Sedibeng', from: 'gauteng')
+    select(name, from: 'sedibeng')
   end
 
   def select_datepicker_date(id,year,month,day)

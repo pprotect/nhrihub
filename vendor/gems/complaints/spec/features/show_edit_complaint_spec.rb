@@ -17,10 +17,14 @@ feature 'edit complaint', js: true do
   include ParseEmailHelpers
 
   let(:closed_complaint){ IndividualComplaint.all.select{|c| c.current_status.complaint_status.name == "Closed"}.first }
+  let(:individual_complaint){ IndividualComplaint.first }
+  let(:lesedi){ LocalMunicipality.where(name: 'Lesedi').first }
+  let(:emfuleni){ LocalMunicipality.where(name: 'Emfuleni').first }
 
   before do
     populate_database(:individual_complaint)
-    visit complaint_path(:en, IndividualComplaint.first.id)
+    individual_complaint.update(agency_id: lesedi.id)
+    visit complaint_path(:en, individual_complaint.id)
   end
 
   it "changes complaint current status by adding a status_change" do
@@ -82,8 +86,7 @@ feature 'edit complaint', js: true do
     uncheck_subarea(:human_rights, "CAT") # originall had "CAT" "ICESCR"
     uncheck_subarea(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
     # AGENCY
-    uncheck_agency("SAA")
-    check_agency("MAF")
+    select_local_municipal_agency('Emfuleni')
     # DOCUMENTS
     attach_file("complaint_fileinput", upload_document)
     fill_in("attached_document_title", :with => "added complaint document")
@@ -104,22 +107,22 @@ feature 'edit complaint', js: true do
     # first Complaint has current status "registered"
     # last Complaint has current status "closed"
     # here we're editing the first complaint
-    expect( IndividualComplaint.first.title ).to eq "kahunga"
-    expect( IndividualComplaint.first.complained_to_subject_agency ).to eq false
-    expect( IndividualComplaint.first.dob ).to eq "19/08/1950"
-    expect( IndividualComplaint.first.details ).to eq "the boy stood on the burning deck"
-    expect( IndividualComplaint.first.desired_outcome ).to eq "Things are more better"
-    expect( IndividualComplaint.first.complaint_area.name ).to eq "Special Investigations Unit"
-    expect( IndividualComplaint.first.good_governance_subareas.map(&:name) ).to match_array [ "Failure to act", "Contrary to Law", "Oppressive", "Private"]
-    expect( IndividualComplaint.first.good_governance_subareas.first.name ).to eq "Failure to act"
-    expect( IndividualComplaint.first.human_rights_subareas.count ).to eq 1
-    expect( IndividualComplaint.first.human_rights_subareas.first.name ).to eq "ICESCR"
-    expect( IndividualComplaint.first.special_investigations_unit_subareas.count ).to eq 1
-    expect( IndividualComplaint.first.special_investigations_unit_subareas.first.name ).to eq "Not properly investigated"
-    expect( IndividualComplaint.first.assignees ).to include User.admin.last
-    expect( IndividualComplaint.first.agencies.map(&:name) ).to include "MAF"
-    expect( IndividualComplaint.first.agencies.count ).to eq 1
-    expect( IndividualComplaint.first.date_received.to_date).to eq Date.new(Date.today.year, Date.today.month, 23)
+    expect( individual_complaint.reload.title ).to eq "kahunga"
+    expect( individual_complaint.reload.complained_to_subject_agency ).to eq false
+    expect( individual_complaint.reload.dob ).to eq "19/08/1950"
+    expect( individual_complaint.reload.details ).to eq "the boy stood on the burning deck"
+    expect( individual_complaint.reload.desired_outcome ).to eq "Things are more better"
+    expect( individual_complaint.reload.complaint_area.name ).to eq "Special Investigations Unit"
+    expect( individual_complaint.reload.good_governance_subareas.map(&:name) ).to match_array [ "Failure to act", "Contrary to Law", "Oppressive", "Private"]
+    expect( individual_complaint.reload.good_governance_subareas.first.name ).to eq "Failure to act"
+    expect( individual_complaint.reload.human_rights_subareas.count ).to eq 1
+    expect( individual_complaint.reload.human_rights_subareas.first.name ).to eq "ICESCR"
+    expect( individual_complaint.reload.special_investigations_unit_subareas.count ).to eq 1
+    expect( individual_complaint.reload.special_investigations_unit_subareas.first.name ).to eq "Not properly investigated"
+    expect( individual_complaint.reload.assignees ).to include User.admin.last
+    expect( individual_complaint.reload.agencies.map(&:name) ).to include "Emfuleni"
+    expect( individual_complaint.reload.agencies.count ).to eq 1
+    expect( individual_complaint.reload.date_received.to_date).to eq Date.new(Date.today.year, Date.today.month, 23)
 
     expect(page).to have_selector('#complainant_dob', :text => "Aug 19, 1950")
     expect(page).to have_selector('#desired_outcome', :text => "Things are more better")
@@ -145,9 +148,7 @@ feature 'edit complaint', js: true do
       end
     end
 
-    within agencies do
-      expect(all('.agency').map(&:text)).to include "MAF"
-    end
+    expect(find('.agency').text).to eq emfuleni.description
 
     within complaint_documents do
       expect(page.all('#complaint_documents .complaint_document .filename').map(&:text)).to include "first_upload_file.pdf"
@@ -205,7 +206,7 @@ feature 'edit complaint', js: true do
     select_datepicker_date("#date_received",Date.today.year,Date.today.month,9)
     select(User.admin.last.first_last_name, :from => "assignee")
     choose('special_investigations_unit')
-    check_agency("ACC")
+    select_local_municipal_agency('Emfuleni')
     attach_file("complaint_fileinput", upload_document)
     fill_in("attached_document_title", :with => "some text any text")
     edit_cancel
@@ -230,14 +231,13 @@ feature 'edit complaint', js: true do
     expect(new_assignee_id).to be_zero
     expect(find('#current_assignee').text).to eq original_complaint.assignees.first.first_last_name
     expect(page.find(".complaint_area ##{original_complaint.complaint_area.key}")).to be_checked
-    expect(page.find_field("ACC")).not_to be_checked
-    expect(page.find_field("SAA")).to be_checked
+    expect(page.find('select#sedibeng option', text:'Lesedi')).to be_selected
     expect(page).not_to have_selector("#attached_document_title")
     expect(page).not_to have_selector(".title .filename")
   end
 
   it "resets errors if editing is cancelled" do
-    edit_complaint
+    edit_complaint # Complaint.first
     # COMPLAINANT
     fill_in('lastName', :with => "")
     fill_in('firstName', :with => "")
@@ -256,7 +256,7 @@ feature 'edit complaint', js: true do
     uncheck_subarea(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
     uncheck_subarea(:special_investigations_unit, "Not properly investigated") #originally had "Unreasonable delay" "Not properly investigated"
     # AGENCY
-    uncheck_agency("SAA")
+    select_local_municipal_agency("Emfuleni")
     expect{ edit_save }.not_to change{ IndividualComplaint.first}
 
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
@@ -298,7 +298,7 @@ feature 'edit complaint', js: true do
     uncheck_subarea(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
     uncheck_subarea(:special_investigations_unit, "Not properly investigated") #originally had "Unreasonable delay" "Not properly investigated"
     # AGENCY
-    uncheck_agency("SAA")
+    select_local_municipal_agency('Emfuleni')
     expect{ edit_save }.not_to change{ IndividualComplaint.first}
 
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")

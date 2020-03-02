@@ -19,7 +19,8 @@ class ComplaintsController < ApplicationController
 
     @subareas = ComplaintSubarea.all
     @statuses = ComplaintStatus.select(:id, :name).all
-    @agencies = Agency.unassigned_first
+    #this is for the filter control agency select box
+    @agencies = Agency.all.group_by(&:classification).collect{|k,v| {classification: k, agencies: v}}
 
     # TODO looks like some redundancy can be exploited here:
     @users = User.all
@@ -128,7 +129,7 @@ class ComplaintsController < ApplicationController
   def populate_associations
     @areas = ComplaintArea.all
     @subareas = ComplaintSubarea.all
-    @agencies = Agency.hierarchy
+    @agencies = Agency.hierarchy # {national: xx, provincial: xx, local: xx}
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
     @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
     @permitted_filetypes = ComplaintDocument.permitted_filetypes

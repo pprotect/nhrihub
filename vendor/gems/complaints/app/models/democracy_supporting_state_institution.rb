@@ -8,6 +8,10 @@ class DemocracySupportingStateInstitution < Agency
    name
   end
 
+  def classification
+    "Democracy-Supporting Government Institutions"
+  end
+
   def agency_select_params
     {top_level_category: 'national',
      national_agency_type: 'democracy_institutions',

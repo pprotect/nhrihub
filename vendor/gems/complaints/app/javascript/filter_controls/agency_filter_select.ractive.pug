@@ -1,9 +1,26 @@
-include filter_select_template.pug
+li('class-selected' = 'selected')
+  a.opt('on-click'='@this.select()')
+    div.text(id='{{id}}') {{name}}
+    div.fa.fa-check
+
+style.
+  .text{
+    width: 332px;
+    overflow-x: hidden;
+  }
 
 script.
   import Toggle from './toggle'
+  import AgencyFilterSelect from 'agency_filter_select'
 
   export default Ractive.extend({
     template : $TEMPLATE,
-    source: 'filter_criteria.selected_agency_id'
+    css: $CSS,
+    source: 'filter_criteria.selected_agency_id',
+    select(){
+      this.event.original.preventDefault();
+      this.event.original.stopPropagation();
+      this.parent.parent.findAllComponents('agencyFilterSelect').forEach(function(afs){afs.set('selected',false)});
+      this.set('selected',true);
+    }
     }).extend(Toggle)

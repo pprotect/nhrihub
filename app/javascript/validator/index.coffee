@@ -29,6 +29,7 @@ class Validator
       !@validatee.get(attribute+"_error")
     else
       # params could be:
+      #   'numeric'
       #   'notBlank'
       #   ['lessThan', 44]
       #   ['notBlank, {if : true}]

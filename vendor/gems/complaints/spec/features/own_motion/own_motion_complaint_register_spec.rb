@@ -85,8 +85,7 @@ feature "complaints index", :js => true do
     check_subarea(:human_rights, "CAT")
     check_subarea(:special_investigations_unit, "Unreasonable delay")
     #select(user.first_last_name, :from => "assignee")
-    check_agency("SAA")
-    check_agency("ACC")
+    select_local_municipal_agency('Lesedi')
     attach_file("complaint_fileinput", upload_document)
     fill_in("attached_document_title", :with => "Complaint Document")
 
@@ -94,7 +93,6 @@ feature "complaints index", :js => true do
 
     expect{save_complaint}.to change{ Complaint.count }.by(1)
                                 .and change{ ComplaintComplaintSubarea.count }.by(3)
-                                .and change{ ComplaintAgency.count }.by(2)
                                 #.and change{ ActionMailer::Base.deliveries.count }.by(1)
     ## on the server
     complaint = Complaint.last
@@ -123,8 +121,7 @@ feature "complaints index", :js => true do
     #expect(complaint.current_assignee_name).to eq User.staff.first.first_last_name
     expect(complaint.status_changes.count).to eq 1
     expect(complaint.status_changes.first.complaint_status.name).to eq "Investigation"
-    expect(complaint.agencies.map(&:name)).to include "SAA"
-    expect(complaint.agencies.map(&:name)).to include "ACC"
+    expect(complaint.agencies.map(&:name)).to include "Lesedi"
     expect(complaint.complaint_documents.count).to eq 1
     expect(complaint.complaint_documents[0].original_filename).to eq "first_upload_file.pdf"
     expect(complaint.complaint_documents[0].title).to eq "Complaint Document"
@@ -159,10 +156,7 @@ feature "complaints index", :js => true do
       end
     end
 
-
-    within agencies do
-      expect(all('.agency').map(&:text)).to match_array ["SAA", "ACC" ]
-    end
+    expect(find('.agency').text).to eq "Gauteng province, Sedibeng district, Lesedi municipality"
 
     within complaint_documents do
       doc = page.all('.complaint_document')[0]
@@ -209,6 +203,7 @@ feature "complaints index", :js => true do
     expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
     expect(page).to have_selector('#province_error', :text => "You must enter a province")
     expect(page).to have_selector('#postal_code_error', :text => "You must enter a postal code")
+    expect(page).to have_selector('#agency_id_error', :text => "You must select an agency")
     fill_in('lastName', :with => "Normal")
     expect(page).not_to have_selector('#lastName_error', :text => "You must enter a first name")
     fill_in('firstName', :with => "Norman")
@@ -259,6 +254,8 @@ feature "complaints index", :js => true do
     expect(page).not_to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
     fill_in('complaint_details', :with => "random text")
     expect(page).not_to have_selector('#details_error', :text => "You must enter the complaint details")
+    select_local_municipal_agency("Lesedi")
+    expect(page).not_to have_selector('#agency_id_error', :text => "You must select an agency")
     expect(page).not_to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
   end
 

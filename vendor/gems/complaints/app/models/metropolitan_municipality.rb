@@ -9,10 +9,13 @@ class MetropolitanMunicipality < Agency
     "#{province.name} province, #{name} metropolitan municipality"
   end
 
+  def classification
+    "#{province.name} Metropolitan Municipalitie"
+  end
+
   def agency_select_params
     {top_level_category: 'municipalities',
      selected_province_id: province_id,
      selected_id: id }
   end
-
 end

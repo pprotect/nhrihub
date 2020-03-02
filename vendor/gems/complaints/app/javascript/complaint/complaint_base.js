@@ -244,7 +244,15 @@ el: '#complaint',
     'agency_select_params.selected_province_id': {
       handler(value, old, path, idx){
         if(!_.isUndefined(old)){
+          this.set('agency_select_params.provincial_agency_id', "0")
           this.set('agency_select_params.selected_id', "0")
+        }
+      }
+    },
+    'agency_id':{
+      handler(value,old,path,idx){
+        if(!_.isNaN(value)){
+          this.set('agency_id_error',false)
         }
       }
     },

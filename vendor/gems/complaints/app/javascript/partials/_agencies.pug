@@ -1,8 +1,9 @@
-.row("data-toggle" = "edit")
+.row.form-group('class-has-error' = 'agency_id_error', 'data-toggle'='edit')
   .col-md-2
-    label {{ t.agency }}
+    label.required {{ t.agency }}
   .col-md-10
     #agencies.no_edit.in.comma-list 
       span.agency {{ agency_description }}
     .edit
       <agenciesSelector agency_select_params='{{agency_select_params}}' metro_municipalities='{{metro_municipalities}}' districts='{{districts}}' provinces='{{provinces}}' agencies='{{agencies}}' />
+      span.help-block.error#agency_id_error {{ t.agency_id_error_message }}

@@ -66,6 +66,7 @@ en:
     no_agency_match: "no possible duplicates for agency"
 
   complaint:
+    agency_id_error_message: "You must select an agency"
     complainant: 'Complainant'
     assign_legislation: 'Related legislation'
     assessment_memo: 'Information pending'
@@ -138,6 +139,7 @@ en:
     postal_code_error_message: 'You must enter a postal code'
     preferred_means_error_message: "You must select a preferred means of communication"
     postal_address_error_message: "Mail designated as preferred communication means. You must enter a postal address"
+    physical_address_error_message: "You must enter a physical address"
     phone_error_message: "Phone designated as preferred communication means. You must enter a phone number"
     cell_phone_error_message: "Cell phone designated as preferred communication means. You must enter a cell phone number"
     preferred_means: 'Preferred means of communication'

@@ -1,6 +1,10 @@
 class ProvincialAgency < Agency
   belongs_to :province
 
+  def classification
+    "#{province.name} Provincial Agencies"
+  end
+
   def as_json(options={})
     super(except: [:created_at, :updated_at, :code], methods: [:type, :description])
   end

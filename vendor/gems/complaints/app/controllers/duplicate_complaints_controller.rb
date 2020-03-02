@@ -18,7 +18,7 @@ class DuplicateComplaintsController < ApplicationController
   def populate_associations
     @areas = ComplaintArea.all
     @subareas = ComplaintSubarea.all
-    @agencies = Agency.all
+    @agencies = Agency.hierarchy # {national: xx, provincial: xx, local: xx}
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
     @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
     @permitted_filetypes = ComplaintDocument.permitted_filetypes
@@ -27,12 +27,15 @@ class DuplicateComplaintsController < ApplicationController
     @statuses = ComplaintStatus.select(:id, :name).all
     @office_groups = OfficeGroup.regional_provincial
     @branches = Office.branches
+    @provinces = Province.all.sort_by(&:name)
+    @districts = DistrictMunicipality.all.group_by(&:province_id)
+    @metro_municipalities = MetropolitanMunicipality.all.group_by(&:province_id)
   end
 
   def complaint_duplicate_params
     params.require(:match).permit(:type, :organization_name, :organization_registration_number,
                                   :initiating_branch_id, :initiating_office_id,
-                                  :id_value, :alt_id_value, :lastName, :email, :agency_ids => [])
+                                  :id_value, :alt_id_value, :lastName, :email, :agency_id )
   end
 end
 

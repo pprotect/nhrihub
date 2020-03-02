@@ -37,6 +37,7 @@ module ComplaintsSpecSetupHelpers
     choose('Special Investigations Unit')
     choose('complained_to_subject_agency_yes')
     check_subarea(:good_governance, "Delayed action")
+    select_local_municipal_agency("Lesedi")
     #select(User.admin.first.first_last_name, :from => "assignee")
   end
 
@@ -57,6 +58,7 @@ module ComplaintsSpecSetupHelpers
     choose('Special Investigations Unit')
     choose('complained_to_subject_agency_yes')
     check_subarea(:good_governance, "Delayed action")
+    select_local_municipal_agency("Lesedi")
     #select(User.admin.first.first_last_name, :from => "assignee")
   end
 
@@ -73,6 +75,7 @@ module ComplaintsSpecSetupHelpers
     choose('Special Investigations Unit')
     choose('complained_to_subject_agency_yes')
     check_subarea(:good_governance, "Delayed action")
+    select_local_municipal_agency("Lesedi")
     #select(User.admin.first.first_last_name, :from => "assignee")
   end
 
@@ -227,7 +230,8 @@ module ComplaintsSpecSetupHelpers
     table = CSV.parse(File.read(file), headers: true)
     provinces = Province.all
     table.each do |pa|
-      province = provinces.select{|p| p.name == pa["Province"]}.first
+      #province = provinces.select{|p| p.name == pa["Province"]}.first
+      province = Province.find_or_create_by(name: pa["Province"])
       ProvincialAgency.create(name: pa["Name"], province_id: province.id)
     end
 
