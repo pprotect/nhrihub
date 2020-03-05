@@ -91,11 +91,14 @@ class User < ActiveRecord::Base
       errors.add(:base, :duplicate_first_last_name)
     end
   end
+  PasswordSpecialCharacters = "!@#%$^&*()-+<>"
+  PasswordSpecialCharactersRegex = PasswordSpecialCharacters.chars.map{|c| Regexp.escape(c) }.join("|")
 # the next action on the user's record is account activation
 # at this time, login and password must be present and valid
   validates_presence_of     :login,                      :on => :update
+  validates                 :password,                   :if => :password_required?, :on=>:update, :format => {:with => /(#{PasswordSpecialCharactersRegex})/, :message => "Password must contain #{PasswordSpecialCharacters}" }
   validates_presence_of     :password,                   :if => :password_required?, :on=>:update
-  validates_length_of       :password, :within => 4..40, :if => :password_required?, :on=>:update
+  validates_length_of       :password, :within => 6..40, :if => :password_required?, :on=>:update
   validates_confirmation_of :password,                   :if => :password_confirmation_required?, :on=>:update
   validates_presence_of     :password_confirmation,      :if => :password_confirmation_required?, :on=>:update
   validates_length_of       :login,    :within => 3..40, :on => :update
@@ -400,7 +403,8 @@ private
       # note, we leave the activation_code value in place here
       # just so that the user gets an "already activated" notice if they click
       # on the email link a second time
-      update_attribute( :activated_at, Time.now.utc)
+      # update FAILS if validation fails e.g. password mismatch, so no notification is sent
+      update( activated_at: Time.now.utc)
     @activated = false
   end
 

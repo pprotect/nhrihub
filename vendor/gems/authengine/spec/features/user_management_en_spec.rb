@@ -200,8 +200,8 @@ feature "user account activation", :js => true do
       visit(url)
       expect(page_heading).to match /Welcome #{User.last.first_last_name} to the #{APPLICATION_NAME}/
       fill_in(:user_login, :with => "norm")
-      fill_in(:user_password, :with => "sekret")
-      fill_in(:user_password_confirmation, :with => "sekret")
+      fill_in(:user_password, :with => "sekret*")
+      fill_in(:user_password_confirmation, :with => "sekret*")
       base64_strict = /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/
       base64_urlsafe = /^(?:[A-Za-z0-9+\/])*?$/
       expect{ signup }.to change{ User.last.crypted_password }.from(nil).to(/[a-f0-9]{40}/).
@@ -227,6 +227,17 @@ feature "user account activation", :js => true do
       expect(flash_message).to eq 'Activation code not found. Please contact the database administrator.'
       expect(page_heading).to eq 'Please log in'
     end
+
+    scenario "password rules enforcement -- passwords don't match, password confirmation blank" do
+      url = email_activation_link
+      visit(url)
+      expect(page_heading).to match /Welcome #{User.last.first_last_name} to the #{APPLICATION_NAME}/
+      fill_in(:user_login, :with => "norm")
+      fill_in(:user_password, :with => "abcde")
+      expect{ signup; sleep(1) }.not_to change{ User.last.crypted_password }
+      expect(page).to have_selector("#message_block .warn", text: "Password confirmation doesn't match password, please try again.")
+      expect(page).to have_selector("#message_block .warn", text: "Password confirmation can't be blank")
+    end
   end
 
   context "environment variable disables 2-factor authentication" do
@@ -240,14 +251,49 @@ feature "user account activation", :js => true do
       visit(url)
       expect(page_heading).to match /Welcome #{User.last.first_last_name} to the #{APPLICATION_NAME}/
       fill_in(:user_login, :with => "norm")
-      fill_in(:user_password, :with => "sekret")
-      fill_in(:user_password_confirmation, :with => "sekret")
+      fill_in(:user_password, :with => "sekret&")
+      fill_in(:user_password_confirmation, :with => "sekret&")
       expect{ signup }.to change{ User.last.crypted_password }.from(nil).to(/[a-f0-9]{40}/).
                       and change{ User.last.salt }.from(nil).to(/[a-f0-9]{40}/)
       expect( User.last.public_key ).to be_nil
       expect( User.last.public_key_handle ).to be_nil
       expect(flash_message).to have_text("Your account has been activated")
       expect(page_heading).to eq 'Please log in'
+    end
+
+    scenario "password rules enforcement -- passwords don't match, password confirmation blank" do
+      url = email_activation_link
+      visit(url)
+      expect(page_heading).to match /Welcome #{User.last.first_last_name} to the #{APPLICATION_NAME}/
+      fill_in(:user_login, :with => "norm")
+      fill_in(:user_password, :with => "abcde")
+      expect{ signup; sleep(1) }.not_to change{ User.last.crypted_password }
+      expect(page).to have_selector("#message_block .warn", text: "Password confirmation doesn't match password, please try again.")
+      expect(page).to have_selector("#message_block .warn", text: "Password confirmation can't be blank")
+    end
+
+    scenario "password rules enforcement -- password criteria not met" do
+      url = email_activation_link
+      visit(url)
+      expect(page_heading).to match /Welcome #{User.last.first_last_name} to the #{APPLICATION_NAME}/
+      fill_in(:user_login, :with => "norm")
+      fill_in(:user_password, :with => "abcde")
+      fill_in(:user_password_confirmation, :with => "abcde")
+      expect{ signup; sleep(1) }.not_to change{ User.last.crypted_password }
+      expect(page).to have_selector("#message_block .warn li", text: "Password is too short (minimum is 6 characters)")
+      expect(page).to have_selector("#message_block .warn li", text: "Password must contain !@#%$^&*()-+<>")
+    end
+
+    scenario "password rules enforcement -- password criteria not met" do
+      url = email_activation_link
+      visit(url)
+      expect(page_heading).to match /Welcome #{User.last.first_last_name} to the #{APPLICATION_NAME}/
+      fill_in(:user_login, :with => "norm")
+      fill_in(:user_password, :with => "abcd<")
+      fill_in(:user_password_confirmation, :with => "abcd<")
+      expect{ signup; sleep(1) }.not_to change{ User.last.crypted_password }
+      expect(page).to have_selector("#message_block .warn li", text: "Password is too short (minimum is 6 characters)")
+      expect(page).not_to have_selector("#message_block .warn li", text: "Password must contain !@#%$^&*()-+<>")
     end
   end
 end
