@@ -129,7 +129,6 @@ class User < ActiveRecord::Base
   before_update PasswordEventLogger
 
 
-
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
   # If the ability to add users was extended, may wish to change the attr_accessible to make sure a user cannot assign

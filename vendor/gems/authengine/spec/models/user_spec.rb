@@ -87,7 +87,8 @@ describe "password confirmation" do
 
   context "when a password reset has been initiated" do
     before do
-      @user.update(:password => "sekret&", :password_confirmation => "sekret&", :password_reset_code => "abc23234fab")
+      @user.update(:password => "sekret&", :password_confirmation => "sekret&") # this will trigger callback to reset password_reset_code
+      @user.update(:password_reset_code => "abc23234fab") # so set password reset code separately, after password
     end
 
     it "should validate password when password confirmation matches" do
