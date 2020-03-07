@@ -18,11 +18,15 @@ class Authengine::SessionsController < ApplicationController
       # user submits login, password and signed challenge
       format.html do
         logger.info "user logging in with #{params[:login]}"
-        with_logging request do
+        with_logging request do # see UserExceptionsLogger for #with_logging
           authenticate_and_login(params[:login], params[:password], params[:u2f_sign_response])
         end
       end
     end
+  rescue User::PasswordExpired => exception
+    redirect_to admin_expired_password_path(exception.user.password_expiry_token)
+  rescue User::AuthenticationError => exception
+    failed_login exception.message
   end
 
   # user logs out
@@ -66,8 +70,8 @@ protected
   end
 
   def authenticate_and_login(login, password, u2f_sign_response)
-    user = User.authenticate(login, password, u2f_sign_response)
-    successful_login user
+    @user = User.authenticate(login, password, u2f_sign_response)
+    successful_login @user
   end
 
 private
@@ -93,7 +97,7 @@ private
 
   def failed_login(message)
     logger.info "login failed with message: #{message}"
-    flash[:error] = message
+    flash.now[:error] = message
     render login_template
   end
 

@@ -1,10 +1,12 @@
+require "user_exceptions_logger"
 # Besides the ususal REST actions, this controller contains show_self,
 # edit_self and update_self actions.
 # This permits access to be explicitly controlled via the
 # check_permissions filter, distinguishing between actions on one's own
 # model vs. actions on other users' models.
 class Admin::UsersController < ApplicationController
-  skip_before_action :check_permissions, :only=>[:activate, :signup, :new_password, :change_password, :register_new_token_request, :register_new_token_response, :send_forgot_password_email]
+  include UserExceptionsLogger
+  skip_before_action :check_permissions, :only=>[:activate, :signup, :new_password, :change_password, :change_expired_password, :register_new_token_request, :register_new_token_response, :send_forgot_password_email, :expired_password]
 
   def index
     @users = User.
@@ -39,7 +41,7 @@ class Admin::UsersController < ApplicationController
     flash[:notice] = "a registration email has been sent to #{@user.first_last_name} at #{@user.email}"
     redirect_to admin_users_path
   rescue ActiveRecord::RecordInvalid
-    flash[:error] = t('.record_invalid')
+    flash.now[:error] = t('.record_invalid')
     @roles=Role.all
     render :action => 'new'
   end
@@ -61,8 +63,9 @@ class Admin::UsersController < ApplicationController
   # account was created by admin and now user has entered and submitted username/password, with u2f registration data,
   # here we capture the user's public_key and public_key_handle
   def activate
-    user = User.find_and_activate!(params[:activation_code])
+    user = User.find_with_activation_code(params[:activation_code])
     if user.update(activation_params)
+      user.send(:activate!)
       flash[:notice] =t('admin.users.activate.activated')
       redirect_to root_path
     else
@@ -96,6 +99,33 @@ class Admin::UsersController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     flash[:notice] = t('.flash_notice.not_found')
     redirect_to root_path
+  end
+
+  def expired_password
+    password_expiry_token = params[:password_expiry_token]
+    with_logging request do
+      @user = User.find_by_password_expiry_token(password_expiry_token)
+    end
+    flash.now[:notice]= t('.flash_notice.inform')
+  rescue ActiveRecord::RecordNotFound => exception
+    flash[:notice] = exception.message
+    redirect_to root_path
+  rescue User::BlankPasswordExpiryToken => exception
+    flash[:notice] = exception.message
+    redirect_to root_path
+  end
+
+  # new password values have been entered and we're going to save them here
+  def change_expired_password
+    password_expiry_token = params[:password_expiry_token]
+    @user = User.find_by_password_expiry_token(password_expiry_token)
+
+    if @user.update(params.require(:user).slice(:password, :password_confirmation).permit(:password, :password_confirmation))
+      flash[:notice] = t('.flash_notice.success')
+      redirect_to root_path
+    else
+      render :expired_password
+    end
   end
 
   # new password values have been entered and we're going to save them here

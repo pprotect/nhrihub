@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_15_003348) do
+ActiveRecord::Schema.define(version: 2020_03_05_213819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -761,6 +761,8 @@ ActiveRecord::Schema.define(version: 2020_02_15_003348) do
     t.integer "office_id", limit: 2
     t.string "prefix", limit: 8
     t.string "title"
+    t.datetime "password_expiry_date"
+    t.string "password_expiry_token"
     t.index ["login"], name: "index_users_on_login"
   end
 

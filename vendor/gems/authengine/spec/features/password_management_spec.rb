@@ -2,11 +2,14 @@ require "rails_helper"
 require 'login_helpers'
 require 'navigation_helpers'
 require_relative '../helpers/user_management_helpers'
+require 'access_log_helpers'
 
 feature "Password management, admin resets user password", :js => true do
   include RealLoggedInEnAdminUserHelper # logs in as admin
   include NavigationHelpers
   include UserManagementHelpers
+  include AccessLogHelpers
+
   before do
     visit '/en'
     toggle_navigation_dropdown("Admin")
@@ -25,15 +28,16 @@ feature "Password management, admin resets user password", :js => true do
     visit(new_password_activation_link)
     configure_keystore
     expect(page_heading).to match /Select new password for/
-    fill_in(:user_password, :with => "shinynewsecret")
-    fill_in(:user_password_confirmation, :with => "shinynewsecret")
+    fill_in(:user_password, :with => "shinynewsecret&")
+    fill_in(:user_password_confirmation, :with => "shinynewsecret&")
     original_public_key = User.last.public_key
     submit_button.click
     wait_for_authentication
     expect(flash_message).to eq "Your new password has been saved, you may login below."
     expect(User.last.public_key).to eq original_public_key
+    expect(access_event.exception_type).to eq "user/admin_reset_password_replacement"
     fill_in "User name", :with => "staff"
-    fill_in "Password", :with => "shinynewsecret"
+    fill_in "Password", :with => "shinynewsecret&"
     login_button.click
     sleep(0.2)
     expect(flash_message).to eq "Logged in successfully"
@@ -56,7 +60,8 @@ feature "Password management, admin resets user password", :js => true do
     submit_button.click
     wait_for_authentication
     expect(page_heading).to match /Select new password for/
-    expect(flash_message).to eq "Password confirmation doesn't match password, please try again."
+    expect(page).to have_selector("#message_block .error li", text: "Password Password must contain !@#%$^&*()-+<>")
+    expect(page).to have_selector("#message_block .error li", text: "Password confirmation doesn't match password, please try again.")
   end
 
   scenario "user uses incorrect password reset_token" do
@@ -92,11 +97,7 @@ feature "Password management, user forgets password", :js => true do
   include UserManagementHelpers
 
   before do
-    allow(ENV).to receive(:fetch).and_call_original
-    allow(ENV).to receive(:fetch).with("two_factor_authentication").and_return("enabled")
-    #raise "two-factor authentication must be enabled in config/env.yml for integration tests" unless TwoFactorAuthentication.enabled?
-    visit "/en"
-    configure_keystore
+    enable_two_factor_authentication
   end
 
   it "user does not enter a username" do
@@ -140,17 +141,116 @@ feature "Password management, user forgets password", :js => true do
 
     visit email_activation_link
     expect(page_heading).to match /Select new password for #{User.last.first_last_name}/
-    fill_in(:user_password, :with => "shinynewsecret")
-    fill_in(:user_password_confirmation, :with => "shinynewsecret")
+    fill_in(:user_password, :with => "shinynewsecret#")
+    fill_in(:user_password_confirmation, :with => "shinynewsecret#")
     original_public_key = User.last.public_key
     submit_button.click
     wait_for_authentication
     expect(flash_message).to eq "Your new password has been saved, you may login below."
     expect(User.last.public_key).to eq original_public_key
     fill_in "User name", :with => "staff"
-    fill_in "Password", :with => "shinynewsecret"
+    fill_in "Password", :with => "shinynewsecret#"
     login_button.click
     sleep(0.5)
     expect(flash_message).to eq "Logged in successfully"
   end
+end
+
+feature "Password management, user's password has expired", js: true do
+  include NavigationHelpers
+  include UserManagementHelpers
+  include RegisteredUserHelper
+  include UserManagementHelpers
+  include AccessLogHelpers
+
+  before do
+    disable_two_factor_authentication
+    @staff_user.update(password_expiry_date: Date.today.advance(days: -30))
+  end
+
+  it "should disallow access to password change page for blank password_expiry_code" do
+    visit admin_expired_password_path(:en)
+    expect(page_heading).to eq "Please log in"
+    expect(flash_message).to eq "Invalid password expiry code"
+    expect(access_event.exception_type).to eq "user/blank_password_expiry_token"
+    expect(access_event.login).to be_nil
+    expect(access_event.request_ip).not_to be_nil
+    expect(access_event.request_user_agent).not_to be_nil
+  end
+
+  it "should disallow access to password change page for invalid password expiry_code" do
+    visit admin_expired_password_path(:en, "1234abcd")
+    expect(page_heading).to eq "Please log in"
+    expect(flash_message).to eq "Couldn't find User"
+    expect(access_event.exception_type).to eq "user/invalid_password_expiry_token"
+    expect(access_event.login).to be_nil
+    expect(access_event.request_ip).not_to be_nil
+    expect(access_event.request_user_agent).not_to be_nil
+  end
+
+  it "should guide the user to enter new password" do
+    fill_in "User name", :with => "staff"
+    fill_in "Password", :with => "password"
+    login_button.click
+    expect(flash_message).to eq "Your password has expired, please select a new password."
+    fill_in(:user_password, :with => "shinynewsecret#")
+    fill_in(:user_password_confirmation, :with => "shinynewsecret#")
+    submit_button.click
+    expect(flash_message).to eq "Your new password has been saved, you may login below."
+    expect(access_event.exception_type).to eq "user/expired_password_replacement"
+    expect(access_event.login).to be_nil
+    fill_in "User name", :with => "staff"
+    fill_in "Password", :with => "shinynewsecret#"
+    login_button.click
+    sleep(0.2)
+    expect(flash_message).to eq "Logged in successfully"
+    click_link('Logout')
+  end
+
+  it "should warn user for invalid password" do
+    fill_in "User name", :with => "staff"
+    fill_in "Password", :with => "password"
+    login_button.click
+    expect(flash_message).to eq "Your password has expired, please select a new password."
+    fill_in(:user_password, :with => "shinynewsecret")
+    fill_in(:user_password_confirmation, :with => "shinynewsecret")
+    submit_button.click
+    expect(page).to have_selector("#message_block .error li", text: "Password must contain !@#%$^&*()-+<>")
+    fill_in(:user_password, :with => "shinynewsecret#")
+    fill_in(:user_password_confirmation, :with => "shinynewsecret#")
+    submit_button.click
+    expect(flash_message).to eq "Your new password has been saved, you may login below."
+    expect(access_event.exception_type).to eq "user/expired_password_replacement"
+    expect(access_event.login).to be_nil
+    fill_in "User name", :with => "staff"
+    fill_in "Password", :with => "shinynewsecret#"
+    login_button.click
+    sleep(0.2)
+    expect(flash_message).to eq "Logged in successfully"
+    click_link('Logout')
+  end
+
+  it "should warn user for failed password confirmation" do
+    fill_in "User name", :with => "staff"
+    fill_in "Password", :with => "password"
+    login_button.click
+    expect(flash_message).to eq "Your password has expired, please select a new password."
+    fill_in(:user_password, :with => "shinynewsecret#")
+    fill_in(:user_password_confirmation, :with => "anotherword")
+    submit_button.click
+    expect(page).to have_selector("#message_block .error li", text: "Password confirmation doesn't match password, please try again.")
+    fill_in(:user_password, :with => "shinynewsecret#")
+    fill_in(:user_password_confirmation, :with => "shinynewsecret#")
+    submit_button.click
+    expect(flash_message).to eq "Your new password has been saved, you may login below."
+    expect(access_event.exception_type).to eq "user/expired_password_replacement"
+    expect(access_event.login).to be_nil
+    fill_in "User name", :with => "staff"
+    fill_in "Password", :with => "shinynewsecret#"
+    login_button.click
+    sleep(0.2)
+    expect(flash_message).to eq "Logged in successfully"
+    click_link('Logout')
+  end
+
 end

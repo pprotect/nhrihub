@@ -34,6 +34,8 @@ Rails.application.routes.draw do
       post '/resend_registration_email(/:user_id)' => "users#resend_registration_email", :as => :resend_registration_email
       post '/send_lost_token_email(/:user_id)' => "users#send_lost_token_email", :as => :send_lost_token_email
       get '/new_password(/:password_reset_code)' => "users#new_password", :as => :new_password
+      get '/expired_password(/:password_expiry_token)' => "users#expired_password", :as => :expired_password
+      post '/change_expired_password(/:password_expiry_token)' => "users#change_expired_password", :as => :change_expired_password
       post '/change_password(/:password_reset_code)' => "users#change_password", :as => :change_password
       get '/register_replacement_token_request/(/:replacement_token_registration_code)' => "users#register_new_token_request", :as => "register_new_token_request"
       post '/register_replacement_token_response/(/:replacement_token_registration_code)' => "users#register_new_token_response", :as => "register_new_token_response"

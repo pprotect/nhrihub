@@ -1,4 +1,13 @@
 en:
+  user/invalid_password_expiry_token:
+    access_log_message: "Attempt to access expired password renewal, invalid token"
+  user/expired_password_replacement:
+    access_log_message: "User %{user} replaced expired password"
+  user/admin_reset_password_replacement:
+    access_log_message: "User %{user} replaced password -- reset by admin"
+  user/blank_password_expiry_token:
+    flash_message: "Invalid password expiry code"
+    access_log_message: "Attempt to access expired password renewal, blank token"
   user/token_not_registered:
     flash_message: "You must have a registered key token to log in"
     access_log_message: "Login attempt by %{user}, unregistered token"

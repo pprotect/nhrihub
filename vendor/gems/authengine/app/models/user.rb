@@ -41,6 +41,12 @@ class User < ActiveRecord::Base
     find_by!(:password_reset_code => password_reset_code)
   end
 
+  def self.find_by_password_expiry_token(password_expiry_token)
+    raise BlankPasswordExpiryToken if password_expiry_token.blank?
+    # find_by! raises ActiveRecord::RecordNotFound if not found
+    @user = User.find_by!(password_expiry_token: password_expiry_token)
+  end
+
   def self.find_by_replacement_token_registration_code(replacement_token_registration_code)
     raise BlankReplacementTokenRegistrationCode if replacement_token_registration_code.blank?
     # find_by! raises ActiveRecord::RecordNotFound if not found
@@ -120,6 +126,7 @@ class User < ActiveRecord::Base
 
   before_save :encrypt_password
   before_create {|user| user.make_access_nonce('activation_code') }
+  before_update PasswordEventLogger
 
 
 
@@ -138,17 +145,31 @@ class User < ActiveRecord::Base
   end
   class ActivationCodeNotFound < StandardError; end
   class BlankActivationCode < StandardError; end
-  class BlankPasswordResetCode < StandardError; end
   class AlreadyActivated < StandardError; end
   class BlankPasswordResetCode < StandardError; end
+  class BlankPasswordExpiryToken < StandardError
+    attr_accessor :interpolation_params
+    def initialize
+      # log message carries more detail than the message sent back to the user
+      self.interpolation_params = {exception_type: self.class.name.underscore}
+      # message sent back to the user
+      super I18n.t("#{self.class.name.underscore}.flash_message")
+    end
+  end
   class AuthenticationError < StandardError
     attr_accessor :interpolation_params
     def initialize(interpolation_params)
       # log message carries more detail than the message sent back to the user
       self.interpolation_params = interpolation_params.merge!(exception_type: self.class.name.underscore)
-      #AccessEvent.create interpolation_params.merge!(exception_type: self.class.name.underscore)
       # message sent back to the user
       super I18n.t("#{self.class.name.underscore}.flash_message")
+    end
+  end
+  class PasswordExpired < StandardError;
+    attr_accessor :user
+    def initialize(params)
+      @user = params[:user]
+      @user.update(password_expiry_token: AccessNonce.create)
     end
   end
   class BlankReplacementTokenRegistrationCode < AuthenticationError; end
@@ -201,11 +222,11 @@ class User < ActiveRecord::Base
     lastName[0].upcase
   end
 
-  def self.find_and_activate!(activation_code)
-    user = find_with_activation_code(activation_code)
-    user.send(:activate!)
-    user
-  end
+  #def self.find_and_activate!(activation_code)
+    #user = find_with_activation_code(activation_code)
+    #user.send(:activate!)
+    #user
+  #end
 
   def self.find_with_activation_code(activation_code)
     raise BlankActivationCode if activation_code.nil?
@@ -221,7 +242,8 @@ class User < ActiveRecord::Base
   def self.find_by_login(login)
     raise LoginBlank if login.blank?
     user = find_by(:login => login)
-    raise LoginNotFound.new({login: login}) if user.nil?
+    raise LoginNotFound.new(login: login) if user.nil?
+    raise PasswordExpired.new(user: user) if user.password_expired?
     raise AccountNotActivated.new(user: user) unless user.active? # never see this as user would be nil, login is blank if user is not activated
     raise AccountDisabled.new(user: user) unless user.enabled?
     user
@@ -341,6 +363,11 @@ class User < ActiveRecord::Base
     # reset_password flag to avoid duplicate email notifications.
     update_attribute(:password_reset_code, nil)
     @reset_password = true
+  end
+
+  def password_expired?
+    !self.password_expiry_date.nil? && self.password_expiry_date <= 30.days.ago
+    #true
   end
 
   def recently_forgot_password?

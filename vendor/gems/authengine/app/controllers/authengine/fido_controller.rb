@@ -17,6 +17,8 @@ class Authengine::FidoController < ApplicationController
         end
       end
     end
+  rescue User::AuthenticationError => exception
+    failed_login exception.message
   end
 
   # called in AccessLogger due to exception raised in `generate_challenge`

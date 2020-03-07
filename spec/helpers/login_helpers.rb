@@ -31,11 +31,6 @@ module RegisteredUserHelper
     end
   end
 
-  def remove_user_two_factor_authentication_credentials(user)
-    user = User.where(:login => user).first
-    user.update(:public_key => nil, :public_key_handle => nil)
-  end
-
   def login_button
     page.find('.btn#sign_up')
   end
@@ -47,9 +42,7 @@ module RegisteredUserHelper
     JS
     page.execute_script(js)
   end
-
 private
-
   def create_user(login)
     #user = User.create(:login => login,
                 #:email => Faker::Internet.email,
@@ -140,7 +133,6 @@ module RealLoggedInEnAdminUserHelper
     #resize_browser_window
   end
 end
-
 
 module LoggedInFrAdminUserHelper
   extend RSpec::Core::SharedContext

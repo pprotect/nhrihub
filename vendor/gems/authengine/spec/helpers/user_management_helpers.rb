@@ -3,6 +3,27 @@ require 'rspec/core/shared_context'
 module UserManagementHelpers
   extend RSpec::Core::SharedContext
 
+  def remove_user_two_factor_authentication_credentials(user)
+    user = User.where(:login => user).first
+    user.update(:public_key => nil, :public_key_handle => nil)
+  end
+
+  def disable_two_factor_authentication
+    allow(ENV).to receive(:fetch)
+    allow(ENV).to receive(:fetch).with("two_factor_authentication").and_return("disabled")
+    remove_user_two_factor_authentication_credentials('admin')
+    remove_user_two_factor_authentication_credentials('staff')
+    visit "/en"
+  end
+
+  def enable_two_factor_authentication
+    allow(ENV).to receive(:fetch).and_call_original
+    allow(ENV).to receive(:fetch).with("two_factor_authentication").and_return("enabled")
+    #raise "two-factor authentication must be enabled in config/env.yml for integration tests" unless TwoFactorAuthentication.enabled?
+    visit "/en"
+    configure_keystore
+  end
+
   def user_record_for(user)
     page.find(:xpath, "//tr[contains(td/text(),\"#{user.last_first_name}\")]")
   end
@@ -64,5 +85,4 @@ private
     end
     [host, port]
   end
-
 end

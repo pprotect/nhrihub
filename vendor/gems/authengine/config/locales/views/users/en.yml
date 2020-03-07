@@ -80,6 +80,16 @@ en:
         heading: "Select new password for %{name}"
         password: 'Enter a new password'
         password_confirmation: 'Re-enter the password to confirm'
+      expired_password:
+        flash_notice:
+          invalid: 'Invalid password expiry code'
+          inform: 'Your password has expired, please select a new password.'
+        heading: "Select new password"
+        password: 'Enter a new password'
+        password_confirmation: 'Re-enter the password to confirm'
+      change_expired_password:
+        flash_notice:
+          success: "Your new password has been saved, you may login below."
       change_password:
         flash_notice:
           no_errors: "Your new password has been saved, you may login below."
