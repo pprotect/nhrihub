@@ -165,7 +165,7 @@ feature "Password management, user's password has expired", js: true do
 
   before do
     disable_two_factor_authentication
-    @staff_user.update(password_expiry_date: Date.today.advance(days: -30))
+    @staff_user.update(password_start_date: Date.today.advance(days: -30))
   end
 
   it "should disallow access to password change page for blank password_expiry_code" do
@@ -252,5 +252,4 @@ feature "Password management, user's password has expired", js: true do
     expect(flash_message).to eq "Logged in successfully"
     click_link('Logout')
   end
-
 end

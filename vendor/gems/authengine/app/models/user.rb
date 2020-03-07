@@ -364,9 +364,9 @@ class User < ActiveRecord::Base
     @reset_password = true
   end
 
+  PasswordExpiryPeriod = 30
   def password_expired?
-    !self.password_expiry_date.nil? && self.password_expiry_date <= 30.days.ago
-    #true
+    !self.password_start_date.nil? && self.password_start_date <= PasswordExpiryPeriod.days.ago
   end
 
   def recently_forgot_password?

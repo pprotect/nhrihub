@@ -209,6 +209,7 @@ feature "user account activation", :js => true do
                                                       and change{ User.last.public_key }.from(nil).to(base64_strict).
                                                       and change{ User.last.public_key_handle }.from(nil).to(base64_urlsafe).
                                                       and change{ email_count }.by 1
+      expect(User.last.password_start_date.to_date).to eq Date.today
       expect(flash_message).to have_text("Your account has been activated")
       expect(page_heading).to eq 'Please log in'
       # not normal action, but we test it anyway, user clicks the activation link again
@@ -235,6 +236,7 @@ feature "user account activation", :js => true do
       fill_in(:user_login, :with => "norm")
       fill_in(:user_password, :with => "abcde")
       expect{ signup; sleep(1) }.not_to change{ User.last.crypted_password }
+      expect(User.last.password_start_date&.to_date).to be_nil
       expect(page).to have_selector("#message_block .warn", text: "Password confirmation doesn't match password, please try again.")
       expect(page).to have_selector("#message_block .warn", text: "Password confirmation can't be blank")
     end
@@ -257,6 +259,7 @@ feature "user account activation", :js => true do
                       and change{ User.last.salt }.from(nil).to(/[a-f0-9]{40}/)
       expect( User.last.public_key ).to be_nil
       expect( User.last.public_key_handle ).to be_nil
+      expect( User.last.password_start_date.to_date).to eq Date.today
       expect(flash_message).to have_text("Your account has been activated")
       expect(page_heading).to eq 'Please log in'
     end
@@ -268,6 +271,7 @@ feature "user account activation", :js => true do
       fill_in(:user_login, :with => "norm")
       fill_in(:user_password, :with => "abcde")
       expect{ signup; sleep(1) }.not_to change{ User.last.crypted_password }
+      expect( User.last.password_start_date&.to_date).to be_nil
       expect(page).to have_selector("#message_block .warn", text: "Password confirmation doesn't match password, please try again.")
       expect(page).to have_selector("#message_block .warn", text: "Password confirmation can't be blank")
     end
@@ -280,6 +284,7 @@ feature "user account activation", :js => true do
       fill_in(:user_password, :with => "abcde")
       fill_in(:user_password_confirmation, :with => "abcde")
       expect{ signup; sleep(1) }.not_to change{ User.last.crypted_password }
+      expect( User.last.password_start_date&.to_date).to be_nil
       expect(page).to have_selector("#message_block .warn li", text: "Password is too short (minimum is 6 characters)")
       expect(page).to have_selector("#message_block .warn li", text: "Password must contain !@#%$^&*()-+<>")
     end
@@ -292,6 +297,7 @@ feature "user account activation", :js => true do
       fill_in(:user_password, :with => "abcd<")
       fill_in(:user_password_confirmation, :with => "abcd<")
       expect{ signup; sleep(1) }.not_to change{ User.last.crypted_password }
+      expect( User.last.password_start_date&.to_date).to be_nil
       expect(page).to have_selector("#message_block .warn li", text: "Password is too short (minimum is 6 characters)")
       expect(page).not_to have_selector("#message_block .warn li", text: "Password must contain !@#%$^&*()-+<>")
     end

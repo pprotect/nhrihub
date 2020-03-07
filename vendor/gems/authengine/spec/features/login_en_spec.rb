@@ -48,8 +48,6 @@ feature "Registered user logs in with valid credentials", :js => true do
       expect(access_event.exception_type).to eq "login"
       expect(access_event.request_ip).not_to be_nil
       expect(access_event.request_user_agent).not_to be_nil
-      #expect(@user.password_expiry_date).to eq Date.today.advance(days: 30)
-      #expect(@user.password_expiry_token).to be_nil
       click_link('Logout')
       expect(access_event.exception_type).to eq "logout"
       expect(access_event.request_ip).not_to be_nil
