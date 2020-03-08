@@ -296,3 +296,25 @@ feature "Multiple failed login user lock", js: true do
     expect(page_heading).to eq "Please log in"
   end
 end
+
+feature "admin re-enables locked-out user", js: true do
+  include LoggedInEnAdminUserHelper # logs in as admin
+  include AccessLogHelpers
+  include UserManagementHelpers
+
+  before do
+    disable_two_factor_authentication
+    @staff_user.update_columns(failed_login_count: 3, enabled: false)
+    visit admin_users_path(:en)
+  end
+
+  it "resets failed_login_count when re-enabled" do
+    within(:xpath, ".//tr[contains(td[3],'staff')]") do
+      click_link("enable")
+    end
+    expect(page.find(:xpath, ".//tr[contains(td[3],'staff')]/td[5]").text ).to match /yes/
+    expect(page.find(:xpath, ".//tr[contains(td[3],'staff')]/td[6]/a").text ).to eq 'disable'
+    expect(@staff_user.reload.failed_login_count).to be_zero
+    expect(@staff_user.enabled).to eq true
+  end
+end

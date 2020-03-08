@@ -216,7 +216,7 @@ class Admin::UsersController < ApplicationController
 
   def enable
     @user = User.find(params[:id])
-    unless @user.update_attribute(:enabled, true)
+    unless @user.update(enabled: true, failed_login_count: 0 )
       flash[:error] = t('.flash_error')
     end
     redirect_to admin_users_path
