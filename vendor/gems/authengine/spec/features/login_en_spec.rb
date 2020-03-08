@@ -191,7 +191,7 @@ feature "user logs in", :js => true do
 
   context "when their account has been disabled" do
     before do
-      User.where(:login => 'admin').first.update(:enabled => false)
+      User.where(:login => 'admin').first.update_column(:enabled, false)
     end
 
     scenario "admin logs in" do

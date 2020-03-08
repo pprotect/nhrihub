@@ -103,7 +103,7 @@ class Admin::UsersController < ApplicationController
 
   def expired_password
     password_expiry_token = params[:password_expiry_token]
-    with_logging request do
+    with_logging request do # see UserExceptionsLogger for #with_logging
       @user = User.find_by_password_expiry_token(password_expiry_token)
     end
     flash.now[:notice]= t('.flash_notice.inform')

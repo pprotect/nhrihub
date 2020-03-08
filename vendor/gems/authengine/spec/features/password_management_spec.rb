@@ -125,7 +125,7 @@ feature "Password management, user forgets password", :js => true do
 
   it "user tries to reset but account was disabled" do
     user = User.where(:login => 'staff').first
-    user.send(:update_attribute, :enabled , false)
+    user.update_column(:enabled , false)
     expect(page).to have_selector("h1", :text => "Please log in")
     fill_in "User name", :with => "staff"
     expect{ page.find("#forgot_password").click; wait_for_ajax}.not_to change { ActionMailer::Base.deliveries.count }

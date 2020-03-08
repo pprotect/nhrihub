@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_07_214834) do
+ActiveRecord::Schema.define(version: 2020_03_08_055550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -571,6 +571,13 @@ ActiveRecord::Schema.define(version: 2020_03_07_214834) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "index", array: true
+  end
+
+  create_table "previous_passwords", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "crypted_password"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "project_documents", id: :serial, force: :cascade do |t|

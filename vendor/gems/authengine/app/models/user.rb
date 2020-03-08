@@ -123,24 +123,33 @@ class User < ActiveRecord::Base
   has_many :media_appearances
   has_many :assigns, :autosave => true, :dependent => :destroy
   has_many :complaints, :through => :assigns
+  has_many :previous_passwords
 
   before_save :encrypt_password
   before_create {|user| user.make_access_nonce('activation_code') }
   before_update PasswordEventLogger
-  before_update :disable, if: :too_many_login_fails?
+  before_update :failed_login_disable, if: :too_many_login_fails?
+  after_update :save_previous_password, if: :saved_change_to_crypted_password?
   after_update_commit :log_disabled_status, if: :became_disabled? # after commit b/c the exception causes a rollback and reverse the disabling!
+
+  def save_previous_password
+    previous, current = saved_change_to_crypted_password
+    return if previous.nil?
+    PreviousPassword.add(id, previous)
+  end
 
   FailedLoginDisableThreshold = 3
   def too_many_login_fails?
-    will_save_change_to_failed_login_count? &&
+    will_save_change_to_failed_login_count? && # from InvalidPassword exception
       failed_login_count_change_to_be_saved[1] == FailedLoginDisableThreshold
   end
 
-  def disable
+  def failed_login_disable
     self.enabled = false
   end
 
   def log_disabled_status
+    # FailedLoginDisable < AuthenticationError, rescued in SessionsController#create
     raise FailedLoginDisable.new(user: self)
   end
 
@@ -175,7 +184,7 @@ class User < ActiveRecord::Base
       super I18n.t("#{self.class.name.underscore}.flash_message")
     end
   end
-  class AuthenticationError < StandardError
+  class AuthenticationError < StandardError # it's rescued in SesssionsController#create
     attr_accessor :interpolation_params
     def initialize(interpolation_params)
       # log message carries more detail than the message sent back to the user

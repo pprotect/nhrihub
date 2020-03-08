@@ -87,7 +87,7 @@ describe "password confirmation" do
 
   context "when a password reset has been initiated" do
     before do
-      @user.update(:password => "sekret&", :password_confirmation => "sekret&") # this will trigger callback to reset password_reset_code
+      @user.update(:password => "initial&", :password_confirmation => "initial&") # this will trigger callback to reset password_reset_code
       @user.update(:password_reset_code => "abc23234fab") # so set password reset code separately, after password
     end
 
@@ -96,6 +96,8 @@ describe "password confirmation" do
       @user.reset_password
       expect(@user.errors).to be_empty
       expect(@user.password_reset_code).to be_blank
+      expect(AccessEvent.count).to eq 1
+      expect(AccessEvent.first.exception_type).to eq 'user/admin_reset_password_replacement'
     end
 
     it "should not validate password when password confirmation does not match" do
