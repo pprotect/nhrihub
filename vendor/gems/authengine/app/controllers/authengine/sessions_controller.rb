@@ -62,9 +62,7 @@ class Authengine::SessionsController < ApplicationController
       format.json { render :json => @sessions.to_json(:only => [], :methods => [:user_name, :formatted_login_date, :formatted_logout_date]) }
     end
   end
-
 protected
-
   def remove_session_user_roles
     session[:role] = Marshal.dump SessionRole.new
   end
@@ -73,7 +71,6 @@ protected
     @user = User.authenticate(login, password, u2f_sign_response)
     successful_login @user
   end
-
 private
   def login_template
     # depends on two_factor_authentication configuration
@@ -122,5 +119,4 @@ private
       s.update(logout_date: Time.now, request: request)
     end
   end
-
 end

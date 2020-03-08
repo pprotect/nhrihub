@@ -73,4 +73,10 @@ feature "access events logger", js: true do
     end
   end
 
+  describe "user/failed_login_disable" do
+    it "should create and render an access event" do
+      test_fail_placeholder
+    end
+  end
+
 end

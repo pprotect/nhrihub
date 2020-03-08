@@ -1,4 +1,7 @@
 en:
+  user/failed_login_disable:
+    access_log_message: "Too many failed login attempts by %{user}, account disabled"
+    flash_message: "Too many failed logins. Your account has been disabled."
   user/invalid_password_expiry_token:
     access_log_message: "Attempt to access expired password renewal, invalid token"
   user/expired_password_replacement:

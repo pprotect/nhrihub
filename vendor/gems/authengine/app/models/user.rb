@@ -127,6 +127,26 @@ class User < ActiveRecord::Base
   before_save :encrypt_password
   before_create {|user| user.make_access_nonce('activation_code') }
   before_update PasswordEventLogger
+  before_update :disable, if: :too_many_login_fails?
+  after_update_commit :log_disabled_status, if: :became_disabled? # after commit b/c the exception causes a rollback and reverse the disabling!
+
+  FailedLoginDisableThreshold = 3
+  def too_many_login_fails?
+    will_save_change_to_failed_login_count? &&
+      failed_login_count_change_to_be_saved[1] == FailedLoginDisableThreshold
+  end
+
+  def disable
+    self.enabled = false
+  end
+
+  def log_disabled_status
+    raise FailedLoginDisable.new(user: self)
+  end
+
+  def became_disabled?
+    saved_change_to_enabled == [true,false]
+  end
 
 
   # prevents a user from submitting a crafted form that bypasses activation
@@ -174,11 +194,20 @@ class User < ActiveRecord::Base
   class BlankReplacementTokenRegistrationCode < AuthenticationError; end
   class TokenError < AuthenticationError; end
   class LoginNotFound < AuthenticationError; end
-  class InvalidPassword < AuthenticationError; end
+  class InvalidPassword < AuthenticationError
+    def initialize(interpolation_params)
+      user = interpolation_params[:user]
+      user.increment(:failed_login_count)
+      user.save
+      super
+    end
+  end
   class LoginBlank < AuthenticationError; end
   class TokenNotRegistered < AuthenticationError; end
   class AccountNotActivated < AuthenticationError; end
   class AccountDisabled < AuthenticationError; end
+  class FailedLoginDisable < AuthenticationError; end
+
 
   def org_name
     organization && organization.name

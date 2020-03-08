@@ -250,3 +250,49 @@ feature "User is not logged in but tries to access a page", :js => true do
     expect(page_heading).to eq "Please log in"
   end
 end
+
+feature "Multiple failed login user lock", js: true do
+  include RegisteredUserHelper # from login_helpers.rb
+  include AccessLogHelpers
+  include UserManagementHelpers
+
+  before do
+    disable_two_factor_authentication
+    visit "/en"
+  end
+
+  it "locks out user after 3 failed logins" do
+    expect(@user.reload.failed_login_count).to eq 0
+
+    fill_in "User name", :with => "admin"
+    fill_in "Password", :with => "badpassword"
+    login_button.click
+    expect(flash_message).to have_text("Your username or password is incorrect.")
+    expect(page_heading).to eq "Please log in"
+    expect(@user.reload.failed_login_count).to eq 1
+
+    fill_in "User name", :with => "admin"
+    fill_in "Password", :with => "badpassword"
+    login_button.click
+    expect(flash_message).to have_text("Your username or password is incorrect.")
+    expect(page_heading).to eq "Please log in"
+    expect(@user.reload.failed_login_count).to eq 2
+
+    fill_in "User name", :with => "admin"
+    fill_in "Password", :with => "badpassword"
+    login_button.click
+    expect(flash_message).to have_text("Too many failed logins. Your account has been disabled.")
+    expect(page_heading).to eq "Please log in"
+    expect(@user.reload.failed_login_count).to eq 3
+
+    expect(access_event.exception_type).to eq "user/failed_login_disable"
+    expect(access_event.request_ip).not_to be_nil
+    expect(access_event.request_user_agent).not_to be_nil
+
+    fill_in "User name", :with => "admin"
+    fill_in "Password", :with => "password" # it's correct!
+    login_button.click
+    expect(flash_message).to have_text("Your account has been disabled, please contact administrator.")
+    expect(page_heading).to eq "Please log in"
+  end
+end

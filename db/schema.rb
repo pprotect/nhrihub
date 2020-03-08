@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_07_204320) do
+ActiveRecord::Schema.define(version: 2020_03_07_214834) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -763,6 +763,7 @@ ActiveRecord::Schema.define(version: 2020_03_07_204320) do
     t.string "title"
     t.datetime "password_start_date"
     t.string "password_expiry_token"
+    t.integer "failed_login_count", limit: 2, default: 0
     t.index ["login"], name: "index_users_on_login"
   end
 
