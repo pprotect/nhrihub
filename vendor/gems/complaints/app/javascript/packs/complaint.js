@@ -4,8 +4,6 @@ _.extend(Ractive.defaults.data, {
   all_subareas : source_subareas,
   all_users : source_all_users,
   all_complaint_areas : source_areas,
-  //all_agencies_in_sixes : _.chain(source_all_agencies).groupBy(function(el,i){return Math.floor(i/6)}).toArray().value(),
-  all_staff : source_all_staff,
   permitted_filetypes : source_permitted_filetypes,
   maximum_filesize : source_maximum_filesize,
   communication_permitted_filetypes : source_communication_permitted_filetypes,

@@ -5,10 +5,10 @@ select.form-control#assignee(value = '{{new_assignee_id}}', 'on-change'="@this.r
     | {{else}}
     | {{ t.select_assignee }}
     | {{/if}}
-  | {{#all_staff}}
+  | {{#all_users}}
   option(value = '{{id}}')
     | {{ first_last_name }}
-  | {{/all_staff}}
+  | {{/all_users}}
 
 script.
   import translations from 'translations.js'

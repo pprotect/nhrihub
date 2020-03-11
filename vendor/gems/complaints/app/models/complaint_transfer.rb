@@ -27,7 +27,7 @@ class ComplaintTransfer < ActiveRecord::Base
   end
 
   def event_description
-    transferee.name
+    transferee&.name
   end
 
   def as_timeline_event

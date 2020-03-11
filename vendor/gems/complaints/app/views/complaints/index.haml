@@ -22,7 +22,6 @@
   @source_all_agencies = #{@agencies.to_json.html_safe}
   @source_complaint_bases = #{(@complaint_bases || []).map(&:to_h).to_json.html_safe}
   @source_all_users = #{@users.to_json(:only => :id, :methods => :first_last_name).html_safe}
-  @source_all_staff = #{@staff.to_json.html_safe}
   @source_permitted_filetypes = #{@permitted_filetypes.to_json.html_safe}
   @source_maximum_filesize = #{@maximum_filesize}
   @source_communication_permitted_filetypes = #{@communication_permitted_filetypes.to_json.html_safe}

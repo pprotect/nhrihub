@@ -88,9 +88,9 @@
             | {{ t.select_assignee }}
           span.caret
         ul.dropdown-menu#assignee_filter_select
-          | {{#all_staff}}
+          | {{#all_users}}
           <assigneeFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{first_last_name}}'/>
-          | {{/all_staff}}
+          | {{/all_users}}
 
 style.
   #agency_filter_select{

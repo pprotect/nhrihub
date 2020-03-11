@@ -49,7 +49,6 @@ _.extend(Ractive.defaults.data, {
   areas : source_areas,
   subareas : source_subareas,
   all_agencies : source_all_agencies,
-  all_staff : source_all_staff,
   permitted_filetypes : source_permitted_filetypes,
   maximum_filesize : source_maximum_filesize,
   communication_permitted_filetypes : source_communication_permitted_filetypes,

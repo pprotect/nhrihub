@@ -9,22 +9,14 @@ class ComplaintsController < ApplicationController
     complaints = Complaint.index_page_associations(index_query_params)
     logger.info "complaints length: #{complaints.length}"
 
-    #@selected_status_ids = default_params[:selected_status_ids]
-    #@selected_assignee_id = current_user.id
-
-    # filter controls dropdown options:
-    # TODO looks like some redundancy can be exploited here:
-    @complaint_areas = ComplaintArea.all.sort_by(&:name)
-    @areas = ComplaintArea.all
+    @areas = ComplaintArea.all.sort_by(&:name)
 
     @subareas = ComplaintSubarea.all
     @statuses = ComplaintStatus.select(:id, :name).all
     #this is for the filter control agency select box
     @agencies = Agency.all.group_by(&:classification).collect{|k,v| {classification: k, agencies: v}}
 
-    # TODO looks like some redundancy can be exploited here:
-    @users = User.all
-    @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
+    @users = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
 
     @filter_criteria = default_params
     @complaints = "[#{complaints.map(&:to_json).join(", ").html_safe}]".html_safe
