@@ -1,6 +1,8 @@
 class PreviousPassword < ActiveRecord::Base
   belongs_to :user
-  MaximumPreviousPasswordCount = 12
+
+  # new p/w is checked against the prior one in the users table and the 11 before that in the previous_passwords table
+  MaximumPreviousPasswordCount = 11
 
   after_create :discard_excess
 
@@ -12,6 +14,6 @@ class PreviousPassword < ActiveRecord::Base
   def discard_excess
     ids = PreviousPassword.where(user_id: user_id).order(created_at: :desc).pluck(:id)
     excess_ids = ids.drop(MaximumPreviousPasswordCount)
-    PreviousPassword.where(id: excess_ids).delete_all unless excess_ids.empty?
+    PreviousPassword.delete_by(id: excess_ids) unless excess_ids.empty?
   end
 end

@@ -61,6 +61,7 @@ private
     # USE SQL FOR SLIGHTLY FASTER TEST TIMES
     last_id = ActiveRecord::Base.connection.execute('select last_value from users_id_seq').first['last_value']
     next_id = last_id.succ
+    # here the encrypted password is 'password#'
     sql = <<-SQL.squish
     insert into users (id, login, email, enabled, "firstName", "lastName", organization_id, public_key, public_key_handle,
                        salt, activation_code, activated_at, crypted_password, created_at, updated_at)
@@ -72,7 +73,7 @@ private
                         '1641b615ad281759adf85cd5fbf17fcb7a3f7e87',
                         '9bb0db48971821563788e316b1fdd53dd99bc8ff',
                         timestamp '2011-01-01 01:01',
-                        '660030f1be7289571b0467b9195ff39471c60651',
+                        '16059ecc2a037f7b4b4edd9a5cfdd8bd87bb8150',
                         NOW()::timestamp,
                         NOW()::timestamp);
     SQL
@@ -125,7 +126,7 @@ module RealLoggedInEnAdminUserHelper
     #unless ie_remote?(page) # IE doesn't delete cookies and terminate session between scenarios, so no need for login
     if page.has_selector?("h1", :text => "Please log in")
       fill_in "User name", :with => "admin"
-      fill_in "Password", :with => "password"
+      fill_in "Password", :with => "password#"
       login_button.click # triggers ajax request for challenge, THEN form submit
       wait_for_authentication
     end
@@ -143,7 +144,7 @@ module LoggedInFrAdminUserHelper
     configure_keystore
     if page.has_selector?("h1", :text => "S'il vous plaît connecter")
       fill_in "Nom d'usilateur", :with => "admin"
-      fill_in "Mot de pass", :with => "password"
+      fill_in "Mot de pass", :with => "password#"
       login_button.click
       wait_for_authentication
     end

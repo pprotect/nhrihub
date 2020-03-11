@@ -38,7 +38,7 @@ feature "Registered user logs in with valid credentials", :js => true do
       configure_keystore
 
       fill_in "User name", :with => "admin"
-      fill_in "Password", :with => "password"
+      fill_in "Password", :with => "password#"
       login_button.click
       wait_for_authentication
 
@@ -59,7 +59,7 @@ feature "Registered user logs in with valid credentials", :js => true do
       configure_keystore
 
       fill_in "User name", :with => "staff"
-      fill_in "Password", :with => "password"
+      fill_in "Password", :with => "password#"
       login_button.click
 
       expect(flash_message).to have_text("Logged in successfully")
@@ -87,7 +87,7 @@ feature "Registered user logs in with valid credentials", :js => true do
       visit "/en"
 
       fill_in "User name", :with => "admin"
-      fill_in "Password", :with => "password"
+      fill_in "Password", :with => "password#"
       login_button.click
 
       expect(flash_message).to have_text("Logged in successfully")
@@ -106,7 +106,7 @@ feature "Registered user logs in with valid credentials", :js => true do
       visit "/en"
 
       fill_in "User name", :with => "staff"
-      fill_in "Password", :with => "password"
+      fill_in "Password", :with => "password#"
       login_button.click
 
       expect(flash_message).to have_text("Logged in successfully")
@@ -132,7 +132,7 @@ feature "Registered user logs in with valid credentials", :js => true do
         visit "/en"
 
         fill_in "User name", :with => "admin"
-        fill_in "Password", :with => "password"
+        fill_in "Password", :with => "password#"
         login_button.click
         sleep(0.1) # javascript renders the flash message
 

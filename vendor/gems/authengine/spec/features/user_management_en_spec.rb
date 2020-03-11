@@ -103,10 +103,7 @@ feature "Manage users", :js => true do
     within(:xpath, ".//tr[contains(td[3],'staff')]") do
       click_link("delete")
     end
-    confirm_deletion
-    eventually do
-      expect(page.all(".user").count).to eq 2
-    end
+    expect{confirm_deletion; sleep(1)}.to change{ page.all(".user").count}.from(2).to 1
   end
 
   scenario "edit roles for a user", :js => true do
@@ -256,7 +253,8 @@ feature "user account activation", :js => true do
       fill_in(:user_password, :with => "sekret&")
       fill_in(:user_password_confirmation, :with => "sekret&")
       expect{ signup }.to change{ User.last.crypted_password }.from(nil).to(/[a-f0-9]{40}/).
-                      and change{ User.last.salt }.from(nil).to(/[a-f0-9]{40}/)
+                      and change{ User.last.salt }.from(nil).to(/[a-f0-9]{40}/).
+                      and change{ email_count }.by 1
       expect( User.last.public_key ).to be_nil
       expect( User.last.public_key_handle ).to be_nil
       expect( User.last.password_start_date.to_date).to eq Date.today

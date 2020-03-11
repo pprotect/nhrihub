@@ -12,7 +12,7 @@ feature "Unregistered user tries to log in", :js => true do
     visit "/fr"
 
     fill_in "Nom d'usilateur", :with => "admin"
-    fill_in "Mot de pass", :with => "password"
+    fill_in "Mot de pass", :with => "password#"
     page.find('#sign_up').click
 
     expect(flash_message).to have_text("Votre nom d'utilisateur ou mot de passe est incorrect.")
@@ -28,7 +28,7 @@ feature "Registered user logs in with valid credentials", :js => true do
     configure_keystore
 
     fill_in "Nom d'usilateur", :with => "admin"
-    fill_in "Mot de pass", :with => "password"
+    fill_in "Mot de pass", :with => "password#"
     login_button.click
 
     expect(flash_message).to have_text("Connecté avec succès")
@@ -42,7 +42,7 @@ feature "Registered user logs in with valid credentials", :js => true do
     configure_keystore
 
     fill_in "Nom d'usilateur", :with => "staff"
-    fill_in "Mot de pass", :with => "password"
+    fill_in "Mot de pass", :with => "password#"
     login_button.click
 
     expect(flash_message).to have_text("Connecté avec succès")
@@ -69,7 +69,7 @@ feature "Registered user logs in with invalid credentials", :js => true do
     visit "/fr"
 
     fill_in "Nom d'usilateur", :with => "notvaliduser"
-    fill_in "Mot de pass", :with => "password"
+    fill_in "Mot de pass", :with => "password#"
     login_button.click
 
     expect(flash_message).to have_text("Votre nom d'utilisateur ou mot de passe est incorrect.")

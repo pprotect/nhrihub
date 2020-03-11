@@ -64,8 +64,8 @@ class Admin::UsersController < ApplicationController
   # here we capture the user's public_key and public_key_handle
   def activate
     user = User.find_with_activation_code(params[:activation_code])
+    params[:user][:activated_at] = Time.now.utc
     if user.update(activation_params)
-      user.send(:activate!)
       flash[:notice] =t('admin.users.activate.activated')
       redirect_to root_path
     else
@@ -306,8 +306,8 @@ private
 
   def activation_params
     params.require(:user).
-             slice(:login, :email, :password, :password_confirmation, :u2f_register_response).
-             permit(:login, :email, :password, :password_confirmation, :u2f_register_response)
+             slice(:login, :email, :password, :password_confirmation, :u2f_register_response, :activated_at).
+             permit(:login, :email, :password, :password_confirmation, :u2f_register_response, :activated_at)
   end
 
   def user_params

@@ -158,14 +158,25 @@ end
 
 feature "Password management, user's password has expired", js: true do
   include NavigationHelpers
-  include UserManagementHelpers
   include RegisteredUserHelper
   include UserManagementHelpers
   include AccessLogHelpers
+  let(:user){ @staff_user }
 
   before do
     disable_two_factor_authentication
-    @staff_user.update(password_start_date: Date.today.advance(days: -30))
+    force_expiration_of_password
+  end
+
+  it "should not trigger password expiry change if user fails to authenticate password" do
+    fill_in "User name", :with => "staff"
+    fill_in "Password", :with => "wrongpassword"
+    login_button.click
+    expect(flash_message).to have_text("Your username or password is incorrect.")
+    expect(page_heading).to eq "Please log in"
+    expect(access_event.exception_type).to eq "user/invalid_password"
+    expect(access_event.request_ip).not_to be_nil
+    expect(access_event.request_user_agent).not_to be_nil
   end
 
   it "should disallow access to password change page for blank password_expiry_code" do
@@ -190,7 +201,7 @@ feature "Password management, user's password has expired", js: true do
 
   it "should guide the user to enter new password" do
     fill_in "User name", :with => "staff"
-    fill_in "Password", :with => "password"
+    fill_in "Password", :with => "password#"
     login_button.click
     expect(flash_message).to eq "Your password has expired, please select a new password."
     fill_in(:user_password, :with => "shinynewsecret#")
@@ -209,7 +220,7 @@ feature "Password management, user's password has expired", js: true do
 
   it "should warn user for invalid password" do
     fill_in "User name", :with => "staff"
-    fill_in "Password", :with => "password"
+    fill_in "Password", :with => "password#"
     login_button.click
     expect(flash_message).to eq "Your password has expired, please select a new password."
     fill_in(:user_password, :with => "shinynewsecret")
@@ -232,7 +243,7 @@ feature "Password management, user's password has expired", js: true do
 
   it "should warn user for failed password confirmation" do
     fill_in "User name", :with => "staff"
-    fill_in "Password", :with => "password"
+    fill_in "Password", :with => "password#"
     login_button.click
     expect(flash_message).to eq "Your password has expired, please select a new password."
     fill_in(:user_password, :with => "shinynewsecret#")
@@ -251,5 +262,27 @@ feature "Password management, user's password has expired", js: true do
     sleep(0.2)
     expect(flash_message).to eq "Logged in successfully"
     click_link('Logout')
+  end
+
+  describe "disallow reuse of previous passwords" do
+    before do
+      Rack::Attack.enabled = false # !! multiple logins triggers rack attack
+    end
+
+    it "should disallow use of the original password" do
+      login_and_change_password(login: 'password#', new_password: 'password#')
+      expect(flash_message).to eq "Password cannot be reused."
+    end
+
+    it "should disallow use of the 12th most recent password" do
+      login_and_change_password(login: 'password#', new_password: 'secret1*') #1
+      force_expiration_of_password
+      10.times do |i|
+        login_and_change_password(login: "secret#{i+1}*", new_password: "secret#{i+2}*") #2
+        force_expiration_of_password
+      end
+      login_and_change_password(login: 'secret11*', new_password: 'password#') #12
+      expect(flash_message).to eq "Password cannot be reused."
+    end
   end
 end

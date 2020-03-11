@@ -3,6 +3,22 @@ require 'rspec/core/shared_context'
 module UserManagementHelpers
   extend RSpec::Core::SharedContext
 
+  def login_and_change_password(params)
+    visit '/'
+    fill_in "User name", :with => "staff"
+    fill_in "Password", :with => params[:login]
+    login_button.click
+    expect(flash_message).to eq "Your password has expired, please select a new password."
+    fill_in(:user_password, :with => params[:new_password])
+    fill_in(:user_password_confirmation, :with => params[:new_password])
+    submit_button.click
+    #expect(flash_message).to eq "Your new password has been saved, you may login below."
+  end
+
+  def force_expiration_of_password
+    @staff_user.reload.update(password_start_date: Date.today.advance(days: -30))
+  end
+
   def remove_user_two_factor_authentication_credentials(user)
     user = User.where(:login => user).first
     user.update(:public_key => nil, :public_key_handle => nil)

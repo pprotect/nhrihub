@@ -60,10 +60,9 @@ describe "password confirmation" do
 
   context "when account is activated" do
     it "should validate password when password confirmation matches" do
+      expect(@user.activated_at).to be_blank
       @user.update(:password => "sekret&", :password_confirmation => "sekret&")
-      @user.send(:activate!)
       expect(@user.errors).to be_empty
-      expect(@user.activation_code).not_to be_blank
     end
 
     it "should not validate password when password confirmation does not match" do

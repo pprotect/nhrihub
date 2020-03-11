@@ -101,6 +101,7 @@ end
 
 RackAttackLogger = Logger.new("log/rack-attack.log")
 ActiveSupport::Notifications.subscribe('rack.attack') do |name, start, finish, request_id, req|
+  req = req[:request]
   msg = [start.to_s, req.env['rack.attack.match_type'], req.ip, req.request_method, req.fullpath, ('"' + req.user_agent.to_s + '"')].join(' ')
   if [:throttle, :blocklist].include? req.env['rack.attack.match_type']
     RackAttackLogger.error(msg)

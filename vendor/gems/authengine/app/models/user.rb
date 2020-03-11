@@ -102,6 +102,7 @@ class User < ActiveRecord::Base
 # the next action on the user's record is account activation
 # at this time, login and password must be present and valid
   validates_presence_of     :login,                      :on => :update
+  validates                 :password,                   :previously_unused_password => true, :on=>:update
   validates                 :password,                   :if => :password_required?, :on=>:update, :format => {:with => /(#{PasswordSpecialCharactersRegex})/, :message => "Password must contain #{PasswordSpecialCharacters}" }
   validates_presence_of     :password,                   :if => :password_required?, :on=>:update
   validates_length_of       :password, :within => 6..40, :if => :password_required?, :on=>:update
@@ -145,15 +146,21 @@ class User < ActiveRecord::Base
   end
 
   def failed_login_disable
+    @failed_login_disable = true
     self.enabled = false
   end
 
   def log_disabled_status
     # FailedLoginDisable < AuthenticationError, rescued in SessionsController#create
-    raise FailedLoginDisable.new(user: self)
+    # only raise exception for too many failed logins, not for disable by admin
+    if @failed_login_disable
+      @failed_login_disable = false
+      raise FailedLoginDisable.new(user: self)
+    end
   end
 
   def became_disabled?
+    # could be disabled by admin or disabled by too many login fails
     saved_change_to_enabled == [true,false]
   end
 
@@ -280,7 +287,7 @@ class User < ActiveRecord::Base
     raise LoginBlank if login.blank?
     user = find_by(:login => login)
     raise LoginNotFound.new(login: login) if user.nil?
-    raise PasswordExpired.new(user: user) if user.password_expired?
+    #raise PasswordExpired.new(user: user) if user.password_expired?
     raise AccountNotActivated.new(user: user) unless user.active? # never see this as user would be nil, login is blank if user is not activated
     raise AccountDisabled.new(user: user) unless user.enabled?
     user
@@ -315,7 +322,7 @@ class User < ActiveRecord::Base
 
   # Returns true if the user has just been activated.
   def activating?
-    @activated
+    saved_change_to_activated_at?
   end
 
   # Encrypts some data with the salt.
@@ -360,6 +367,7 @@ class User < ActiveRecord::Base
 
   def authenticated_password?(password)
     raise InvalidPassword.new({login: login, user: self}) unless crypted_password == encrypt(password)
+    raise PasswordExpired.new(user: self) if password_expired?
     true
   end
 
@@ -457,19 +465,6 @@ protected
 
   def destroy_access_nonce(type)
     send("#{type}=", nil)
-  end
-
-
-private
-
-  def activate!
-    @activated = true # triggers the notification
-      # note, we leave the activation_code value in place here
-      # just so that the user gets an "already activated" notice if they click
-      # on the email link a second time
-      # update FAILS if validation fails e.g. password mismatch, so no notification is sent
-      update( activated_at: Time.now.utc)
-    @activated = false
   end
 
 end
