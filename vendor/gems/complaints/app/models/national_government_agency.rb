@@ -1,5 +1,4 @@
 class NationalGovernmentAgency < Agency
-
   def as_json(options={})
     super(except: [:created_at, :updated_at, :code], methods: [:type, :description])
   end
@@ -14,8 +13,3 @@ class NationalGovernmentAgency < Agency
      selected_national_agency_id: id }
   end
 end
-
-
-
-
-

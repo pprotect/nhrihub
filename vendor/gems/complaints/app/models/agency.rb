@@ -10,9 +10,10 @@ class Agency < ActiveRecord::Base
      local: local}
   end
 
-  NationalTypes   = ['NationalGovernmentAgency', 'NationalGovernmentInstitution', 'DemocracySupportingStateInstitution']
-  ProvincialTypes = ['ProvincialAgency']
-  LocalTypes      = ["MetropolitanMunicipality", "LocalMunicipality"]
+  NationalTypes        = ['NationalGovernmentAgency', 'NationalGovernmentInstitution', 'DemocracySupportingStateInstitution']
+  ProvincialTypes      = ['ProvincialAgency']
+  LocalTypes           = ["MetropolitanMunicipality", "LocalMunicipality"]
+  MetroProvincialTypes = ["MetropolitanMunicipality", "ProvincialAgency"] # they both are classified by province
 
   def self.national
     where(type: NationalTypes).group_by(&:type)
@@ -28,6 +29,15 @@ class Agency < ActiveRecord::Base
         h[province_id] = municipalities.group_by{|m| m.district_id || 0 } # 0 id will connote MetropolitanMunicipality
         h
       end
+  end
+
+  def self.classified
+    local_municipalities = LocalMunicipality.includes(district_municipality: :province)
+    metro_provincial     = Agency.where(type: MetroProvincialTypes).includes(:province)
+    national_agencies    = Agency.where(type: NationalTypes)
+    (national_agencies + metro_provincial + local_municipalities).
+      group_by(&:classification).
+      collect{|k,v| {classification: k, agencies: v}}
   end
 
   def self.unassigned_first

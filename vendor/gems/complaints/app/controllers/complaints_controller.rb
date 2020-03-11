@@ -14,7 +14,7 @@ class ComplaintsController < ApplicationController
     @subareas = ComplaintSubarea.all
     @statuses = ComplaintStatus.select(:id, :name).all
     #this is for the filter control agency select box
-    @agencies = Agency.all.group_by(&:classification).collect{|k,v| {classification: k, agencies: v}}
+    @agencies = Agency.classified
 
     @users = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
 

@@ -1,5 +1,4 @@
 class NationalGovernmentInstitution < Agency
-
   def as_json(options={})
     super(except: [:created_at, :updated_at, :code], methods: [:type, :description])
   end
