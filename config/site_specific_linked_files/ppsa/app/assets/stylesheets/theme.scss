@@ -1,22 +1,29 @@
+//  Burgundy light: #9D3546 dark: #820426
+//  Gold/ Yellow #FDAE33
+$site_bg: #b18f5069;
+$site_bg_shade: darken($site_bg, 8%);
+$banner_bg: #9d3546;
+$banner_bg_dark: #820426;
+$banner_main_text: #f6ae33;
+
 $light_on_dark: #F2F2E7;
 $dark_blue: #337AB7;
 $green : #5CB85C;
 $red : #C12E2A;
-$banner_bg: #104c77;
 $banner_border: #FCCD0F;
-$banner_main_text: #e09600;
 $banner_sub_text: #E4E2D9;
-$site_bg: #ccc5b8;
 $h1: #556F91;
 $well_bg_light: #e8dfcd;
 $well_bg_dark: #dad0bf;
 $well_border: #aba58d;
 $error_red : #a94442;
 
-.navbar-brand {
-  background-image: none;
-  background-repeat: no-repeat;
-  background-size: 56px;
-  width: 69px;
-  margin-left: 0px !important; // b/c bootstrap seems to be forcing -15px!
-}
+// define all the colors for the navbar menu, top-level items
+$nav_text : $light_on_dark;
+// hover
+$nav_hover: lighten($banner_bg, 8%);
+$nav_hover_text : lighten($nav_text, 8%);
+// active
+$nav_active: lighten($nav_hover, 8%);
+// filter_controls
+$filter_control_bg: $banner_bg;

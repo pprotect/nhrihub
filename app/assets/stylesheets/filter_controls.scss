@@ -1,5 +1,7 @@
+@import 'theme';
+
 .filter_control_box {
-  background-color : #9A9375;
+  background-color : $filter_control_bg;
   margin-bottom : 6px;
   border-radius : 10px;
   padding-bottom : 12px;
