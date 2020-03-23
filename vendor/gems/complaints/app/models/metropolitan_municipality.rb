@@ -5,12 +5,16 @@ class MetropolitanMunicipality < Agency
     super(except: [:created_at, :updated_at, :code], methods: [:type, :description])
   end
 
+  def province_name
+    province.name
+  end
+
   def description
     "#{province.name} province, #{name} metropolitan municipality"
   end
 
   def classification
-    "#{province.name} Metropolitan Municipalitie"
+    "#{province.name} Metropolitan Municipalities"
   end
 
   def agency_select_params

@@ -1,7 +1,8 @@
 class ComplaintAdminController < ApplicationController
   def show
+    @provinces = Province.order(:name).select(:name, :id).to_json
     @agency = Agency.new
-    @agencies = Agency.all.to_json(:only => [:name, :full_name, :id], :methods => [:delete_allowed])
+    @agency_groups = Agency.hierarchy.to_json
     @legislation = Legislation.new
     @legislations = Legislation.all.to_json(only: [:short_name, :full_name, :id], methods: [:delete_allowed])
     @complaint_document_filetypes = ComplaintDocument.permitted_filetypes

@@ -1,6 +1,7 @@
 class AgenciesController < ApplicationController
   def create
-    agency = Agency.create(agency_params)
+    type = agency_params[:type].constantize
+    agency = type.create(agency_params)
     render :json => agency, :status => 200
   end
 
@@ -12,6 +13,6 @@ class AgenciesController < ApplicationController
 
   private
   def agency_params
-    params.require(:agency).permit(:name, :full_name)
+    params.require(:agency).permit(:name, :type, :province_id, :district_id)
   end
 end

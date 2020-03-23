@@ -19,8 +19,8 @@ class Agency < ActiveRecord::Base
     where(type: NationalTypes).group_by(&:type)
   end
 
-  def self.provincial
-    where(type: ProvincialTypes).group_by(&:province_id)
+  def self.provincial(group_by = 'province_id')
+    includes(:province).where(type: ProvincialTypes).group_by{|p| p.send(group_by) }
   end
 
   def self.local
@@ -56,6 +56,40 @@ class Agency < ActiveRecord::Base
 
   def self.top_level_grouping
     {national: national, provincial: provincial, local: local}
+  end
+
+  def self.national_hierarchy
+    national.map{|k,v| {type: k, name: k.tableize.humanize.titlecase, collection: v}}
+  end
+
+  def self.provincial_hierarchy
+    provincial('province_name').sort.map{|k,v| {id: v.first.province_id, type: 'ProvincialAgency', name: k, collection: v}}
+  end
+
+  def self.local_hierarchy
+    provinces = Province.pluck(:id,:name).sort.inject({}) do |h,(id,name)|
+      h[name] = {:id=>id, "District Municipalities"=>{},"Metropolitan Municipalities"=>[]}
+      h
+    end
+
+    district_collection = LocalMunicipality.includes(district_municipality: :province).all.
+      group_by(&:district_municipality).
+      inject(provinces) do |h,(district,local_municipalities)|
+        h[district.province.name]["District Municipalities"][district.name] = {district_id: district.id, collection: local_municipalities.map(&:name)}
+        h
+    end
+
+    collection = MetropolitanMunicipality.includes(:province).all.
+      inject(district_collection) do |h,mm|
+        h[mm.province.name]["Metropolitan Municipalities"] << mm.name
+        h
+      end
+  end
+
+  def self.hierarchy
+    ['National', 'Provincial', 'Local'].collect do |type|
+      {name: type, collection: self.send("#{type.downcase}_hierarchy")}
+    end
   end
 
   def selected

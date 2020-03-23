@@ -1,0 +1,308 @@
+:css
+  .panel-heading#secondary_accordion_panel, .panel-heading#agency_group_panel,
+  .panel-heading#province_metro_panel, .panel-heading#province_districts_panel,
+  .panel-heading#province_district_panel {
+    margin-left:0px;
+    width:100%;
+    border-bottom-right-radius:3px;
+    background-image: -webkit-linear-gradient(top, #F5F5F5 0%, #E8E8E8 100%);
+    background-image: -o-linear-gradient(top, whitesmoke 0%, #e8e8e8 100%);
+    background-image: linear-gradient(to bottom, #DBD2AB 0%, #D4CCA8 100%);
+  }
+  .panel-default {
+    border-color: #B5AD8B;
+  }
+  .panel-collapse {
+    margin-left:0px;
+    margin-right:0px;
+    background-color: #D8D0AA
+  }
+  .panel-group {
+    margin-bottom: 0px;
+  }
+  #agency_error {
+    font-size:0.8em;
+    padding-left:4px;
+    position:relative;
+    top:-4px;
+    width:100%;
+  }
+  #add_agency {
+    line-height:1.8;
+    position:relative;
+    top:2px;
+  }
+  #agency_form {
+    padding-top:6px;
+    padding-bottom:6px;
+  }
+  #agency_form input {
+    height:28px;
+    padding:6px 12px;
+  }
+  .agency, #agency_form {
+    margin-left: 90px;
+  }
+  #agency_form .col-md-1 {
+    margin-left: -15px;
+  }
+
+.admin.well
+  .row
+    .col-md-12.agencies.panel-group#agencies_accordion
+
+%script#agencies_template{type: 'template/html'}
+  <nationalAgencyGroup collection='{{agencies[0].collection}}' />
+  <provincialAgencyGroup collection='{{agencies[1].collection}}' />
+  <localAgencyGroup collection='{{agencies[2].collection}}' />
+
+%script#national_agency_group_template{type: 'ractive/template'}
+  .panel.panel-default
+    .row.agencies.panel-heading#agency_group_panel
+      .col-md-4.text National
+      .col-md-2
+        %a{"data-parent" => "#agencies_accordion", "data-toggle" => "collapse", :href => "#national_collapse"}
+          %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show national agency types'}
+    .panel-collapse.collapse#national_collapse
+      .panel-body
+        .panel-group#national_secondary_accordion
+          {{#collection}}
+          <secondaryNationalCollection type='{{type}}' name='{{name}}' collection='{{collection}}' />
+          {{/collection}}
+
+%script#agency_form_template{type: 'ractive/template'}
+  %form.row.form-group#agency_form
+    .col-md-1
+      %button.btn.btn-success.btn-xs#add_agency{ 'on-click'=>'create()'} Add Agency
+      %input{type: 'hidden', name:'agency[type]', value: '{{type}}'}
+      %input{type: 'hidden', name:'agency[province_id]', value: '{{province_id}}'}
+      %input{type: 'hidden', name:'agency[district_id]', value: '{{district_id}}'}
+    .col-md-4
+      = text_field_tag 'agency[name]', '{{name}}', :id => 'new_agency', :placeholder => '{{placeholder}}', :class => 'form-control', 'on-keydown'=>'remove_errors()', 'autocomplete'=>'off'
+      %span.help-block#blank_name_error{:class => "{{#blank_name_error}}has-error{{/}}"}= t('.blank_name_error_message')
+      %span.help-block#duplicate_name_error{:class => "{{#duplicate_name_error}}has-error{{/}}"}= t('.duplicate_name_error_message')
+
+%script#provincial_agency_group_template{type: 'ractive/template'}
+  .panel.panel-default
+    .row.agencies.panel-heading#agency_group_panel
+      .col-md-4.text Provincial
+      .col-md-2
+        %a{"data-parent" => "#agencies_accordion", "data-toggle" => "collapse", :href => "#provincial_collapse"}
+          %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show provinces'}
+    .panel-collapse.collapse#provincial_collapse
+      .panel-body
+        .panel-group#provincial_secondary_accordion
+          {{#collection}}
+          <secondaryProvincialCollection id='{{id}}' type='{{type}}' name='{{name}}' collection='{{collection}}' />
+          {{/collection}}
+
+%script#local_agency_group_template{type: 'ractive/template'}
+  .panel.panel-default
+    .row.agencies.panel-heading#agency_group_panel
+      .col-md-4.text Local
+      .col-md-2
+        %a{"data-parent" => "#agencies_accordion", "data-toggle" => "collapse", :href => "#local_collapse"}
+          %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show provinces'}
+    .panel-collapse.collapse#local_collapse
+      .panel-body
+        .panel-group#local_secondary_accordion
+          {{#collection:province_name}}
+          <localAgenciesProvince id='{{id}}' province_name='{{province_name}}' collection='{{collection}}' />
+          {{/collection}}
+
+%script#secondary_national_collection_template{type: 'ractive/template'}
+  .panel.panel-default
+    .row.agencies.panel-heading#secondary_accordion_panel
+      .col-md-4.text {{name}}
+      .col-md-2
+        %a{"data-parent" => "#national_secondary_accordion", "data-toggle" => "collapse", :href => '#{{name.underscore()}}'}
+          %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show offices'}
+    .panel-collapse.collapse{id: "{{name.underscore()}}"}
+      .panel-body
+        {{#collection}}
+        .agency {{name}}
+        {{/collection}}
+        <agencyForm type='{{type}}' />
+
+%script#secondary_provincial_collection_template{type: 'ractive/template'}
+  .panel.panel-default
+    .row.agencies.panel-heading#secondary_accordion_panel
+      .col-md-4.text {{name}}
+      .col-md-2
+        %a{"data-parent" => "#provincial_secondary_accordion", "data-toggle" => "collapse", :href => "#provincial_secondary_accordion_{{name.underscore()}}"}
+          %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show offices'}
+    .panel-collapse.collapse{id: "provincial_secondary_accordion_{{name.underscore()}}"}
+      .panel-body
+        {{#collection}}
+        .agency {{name}}
+        {{/collection}}
+        <agencyForm province_id='{{id}}' type='{{type}}' />
+
+%script#local_agencies_province_template{type: 'ractive/template'}
+  .panel.panel-default
+    .row.agencies.panel-heading#secondary_accordion_panel
+      .col-md-4.text {{province_name}}
+      .col-md-2
+        %a{"data-parent" => "#local_secondary_accordion", "data-toggle" => "collapse", :href => "#local_provinces_accordion_{{province_name.underscore()}}"}
+          %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show offices'}
+    .panel-collapse.collapse{id: "local_provinces_accordion_{{province_name.underscore()}}"}
+      .panel-body
+        .panel-group{id: "local_provinces_{{province_name.underscore()}}"}
+          .panel.panel-default
+            .row.agencies.panel-heading#province_metro_panel
+              .col-md-4.text Metropolitan Municipalities
+              .col-md-2
+                %a{"data-parent" => '#local_provinces_{{province_name.underscore()}}', "data-toggle" => "collapse", :href => '#{{province_name.underscore()}}_metropolitan'}
+                  %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show offices'}
+            .panel-collapse.collapse{id: "{{province_name.underscore()}}_metropolitan"}
+              .panel-body
+                <metroMunicipalities province_id='{{id}}' type='MetropolitanMunicipality' collection='{{metro_collection}}' />
+
+          .panel.panel-default
+            .row.agencies.panel-heading#province_districts_panel
+              .col-md-4.text District Municipalities
+              .col-md-2
+                %a{"data-parent" => '#local_provinces_{{province_name.underscore()}}', "data-toggle" => "collapse", :href => '#{{province_name.underscore()}}_districts_accordion'}
+                  %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show offices'}
+            .panel-collapse.collapse{id: "{{province_name.underscore()}}_districts_accordion"}
+              .panel-body
+                .panel-group{id: "{{province_name.underscore()}}_districts"}
+                  <districts province_name='{{province_name.underscore()}}' collection='{{district_collection}}' />
+
+%script#metro_municipalities_template{type: 'ractive/template'}
+  {{#collection}}
+  .metropolitan_municipality.agency {{this}}
+  {{/collection}}
+  <agencyForm province_id='{{province_id}}' type='{{type}}' />
+
+%script#districts_template{type: 'ractive/template'}
+  {{#collection:district_name}}
+  .panel.panel-default
+    .row.agencies.panel-heading#province_district_panel
+      .col-md-4.text {{district_name}}
+      .col-md-2
+        %a{"data-parent" => '#{{province_name}}_districts', "data-toggle" => "collapse", :href => '#{{district_name.underscore()}}_local'}
+          %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show offices'}
+    .panel-collapse.collapse{id: "{{district_name.underscore()}}_local"}
+      .panel-body
+        <localMunicipalities district_id='{{district_id}}' type='LocalMunicipality' collection='{{collection}}' />
+  {{/collection}}
+
+%script#local_municipalities_template{type: 'ractive/template'}
+  {{#collection}}
+  .local_municipality.agency {{.}}
+  {{/collection}}
+  <agencyForm district_id='{{district_id}}' type='{{type}}' />
+
+= javascript_include_tag :ractive_validator
+
+:coffeescript
+  $ ->
+    agency_groups_data = #{@agency_groups.html_safe}
+    provinces_data = #{@provinces.html_safe}
+
+    AgencyForm = Ractive.extend
+      template: '#agency_form_template'
+      onconfig: ->
+        @validator = new Validator(@)
+      oninit : ->
+        @set
+          validation_criteria :
+            blank_name : 'notBlank'
+            duplicate_name : ['unique', @get('duplication_list')]
+      computed:
+        placeholder: ->
+          switch this.get('type')
+            when "NationalGovernmentAgency" then "Enter government agency"
+            when "NationalGovernmentInstitution" then "Enter government institution"
+            when "ProvincialAgency" then "Enter provincial agency"
+            when "MetropolitanMunicipality" then "Enter metropolitan municipality"
+            when "LocalMunicipality" then "Enter local municipality"
+            else "Enter democracy-supporting institution"
+        blank_name:
+          get: -> @get('name')
+          set: (val)-> @set('name', val)
+        duplicate_name:
+          get: -> @get('name')
+          set: (val)-> @set('name', val)
+        duplication_list: ->
+          list = []
+          @parent.get('collection').forEach (c)-> list[list.length]= c.name
+          list
+      create: ->
+        event.preventDefault()
+        url = Routes.agencies_path('en')
+        data = $(@find('#agency_form')).serialize()
+        if @validate()
+          $.ajax
+            method: 'post'
+            url: url
+            data: data
+            success: @add_agency
+            context: @
+      add_agency: (data,status,jqxhr)->
+        name = data['name']
+        $(@find('form')).before("<div class='agency'>"+name+"</div>")
+        $(@find('#new_agency')).val('')
+      remove_errors: ->
+        @set('blank_name_error', false)
+        @set('duplicate_name_error', false)
+
+    SecondaryNationalCollection = Ractive.extend
+      template: '#secondary_national_collection_template'
+      components:
+        agencyForm: AgencyForm
+
+    SecondaryProvincialCollection = Ractive.extend
+      template: '#secondary_provincial_collection_template'
+      components:
+        agencyForm: AgencyForm
+
+    MetroMunicipalities = Ractive.extend
+      template: '#metro_municipalities_template'
+      components:
+        agencyForm: AgencyForm
+
+    LocalMunicipalities = Ractive.extend
+      template: '#local_municipalities_template'
+      components:
+        agencyForm: AgencyForm
+
+    Districts = Ractive.extend
+      template: '#districts_template'
+      components:
+        localMunicipalities: LocalMunicipalities
+
+    LocalAgenciesProvince = Ractive.extend
+      template: '#local_agencies_province_template'
+      computed:
+        metro_collection: -> this.get('collection')[this.get('province_name')]["Metropolitan Municipalities"]
+        district_collection: -> this.get('collection')[this.get('province_name')]["District Municipalities"]
+      components:
+        metroMunicipalities: MetroMunicipalities
+        districts: Districts
+
+    NationalAgencyGroup = Ractive.extend
+      template: '#national_agency_group_template'
+      components:
+        secondaryNationalCollection: SecondaryNationalCollection
+
+    ProvincialAgencyGroup = Ractive.extend
+      template: '#provincial_agency_group_template'
+      components:
+        secondaryProvincialCollection: SecondaryProvincialCollection
+
+    LocalAgencyGroup = Ractive.extend
+      template: '#local_agency_group_template'
+      components:
+        localAgenciesProvince: LocalAgenciesProvince
+
+    window.agencies = new Ractive
+      el: '#agencies_accordion'
+      template: '#agencies_template'
+      data:
+        agencies: agency_groups_data
+      components:
+        nationalAgencyGroup: NationalAgencyGroup
+        provincialAgencyGroup: ProvincialAgencyGroup
+        localAgencyGroup: LocalAgencyGroup

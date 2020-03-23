@@ -26,4 +26,5 @@
 //= require js-routes
 //= require locale
 // require flash // cannot include it here as it borks the javascript testing, so include it in each page's script
+//= require string
 Ractive.DEBUG = false

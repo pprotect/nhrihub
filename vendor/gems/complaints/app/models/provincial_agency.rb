@@ -13,6 +13,10 @@ class ProvincialAgency < Agency
     "#{province.name} province, #{name} Provincial Agency"
   end
 
+  def province_name
+    province.name
+  end
+
   def agency_select_params
     {top_level_category: 'provincial_agencies',
      selected_province_id: province_id,

@@ -304,3 +304,5 @@ DemocracySupportingStateInstitutions = ["The Auditor-General",
                                         "The Human Rights Commission",
                                         "The Independent Electoral Commission",
                                         "The Public Protector"]
+
+Provinces = ["Gauteng", "Mpumalanga", "North West", "Western Cape", "Limpopo", "Free State", "Northern Cape", "Eastern Cape", "KwaZulu-Natal"]

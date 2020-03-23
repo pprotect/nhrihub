@@ -12,6 +12,10 @@ class LocalMunicipality < Agency
      agency_id: id }
   end
 
+  def province_name
+    district_municipality.province.name
+  end
+
   def classification
     "#{district_municipality.province.name} Province, local municipalities"
   end
