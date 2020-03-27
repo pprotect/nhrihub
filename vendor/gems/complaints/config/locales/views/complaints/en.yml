@@ -39,6 +39,7 @@ en:
       areas: "Areas and subareas"
       offices: "Offices and Branches"
       legislations: "Legislation"
+      import: "Validate and Import Legacy Data"
     agencies_admin:
       add_agency: "Add agency"
       abbrev: "abbreviation"

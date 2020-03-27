@@ -47,6 +47,8 @@ gem 'whenever', :require => false
 # ruby configuration of content security policy
 gem 'secure_headers', :git => 'https://github.com/twitter/secureheaders', :branch => 'master', :require => 'secure_headers'
 
+gem 'excess', :path => 'vendor/gems/excess'
+
 group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'

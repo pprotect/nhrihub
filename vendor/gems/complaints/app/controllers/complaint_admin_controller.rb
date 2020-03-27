@@ -24,4 +24,27 @@ class ComplaintAdminController < ApplicationController
     @create_office_url = office_group_office_index_path("office_group_id")
     @create_office_group_url = office_group_index_path
   end
+
+  def validate
+    file = validation_params[:source_file]
+    filename = file.original_filename
+    path = Rails.root.join('tmp', 'import_data', filename)
+    tempfile = file.tempfile
+    File.open(path, "wb") { |f| f.write(File.read(tempfile)) }
+    @report = ComplaintCsvFileValidator.new(validation_params, path)
+
+    respond_to do |format|
+      format.xlsx do
+        render :xlsx => "import_data_validation_report",
+               :layout => false,
+               :template=> "complaints/validate",
+               :formats => [:xml], :handlers => [:builder]
+      end
+    end
+  end
+
+  private
+  def validation_params
+    params.require(:validate).permit(:column, :source_file)
+  end
 end

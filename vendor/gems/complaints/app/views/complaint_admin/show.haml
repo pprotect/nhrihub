@@ -3,7 +3,8 @@
 .message_block
 %h1=t('.heading')
 
-%h4= t('.agencies')
+%h4{style: 'width: 200px;display: inline-block;'}= t('.agencies')
+%button.btn.btn-primary.btn-sm#print_agencies{'onclick':'print_agencies()', style: "width: 120px; color: white; float: right;" } Print agencies list
 =render partial: 'agencies_admin'
 
 %h4=t('.offices')
@@ -33,3 +34,6 @@
 
 %h4= t(".legislations")
 = render :partial => 'legislations_config'
+
+%h4= t('.import')
+= render :partial => 'validate'

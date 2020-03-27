@@ -1,0 +1,30 @@
+#instructions_modal.modal.fade{:role => "dialog", :tabindex => "-1"}
+  .modal-dialog.modal-lg{:role => "document"}
+    .modal-content
+      .modal-header
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+        %h4.modal-title Instructions for validating import data files
+      .modal-body
+        %h5 File format
+        %ul
+          %li File must be an Excel workbook with a single worksheet, that has been saved in .csv format.
+          %li If the Excel file contains multiple worksheets, please split them into multiple workbooks, and validate them separately.
+          %li The column headings must be the same as the list in the "select column" dropdown.
+        %h5 Validating the data
+        %ul
+          %li Because of the large amount of data, and the large proportion that needs to have its format normalised, the validation is performed on a column-by-column basis.
+          %li When you select a column to validate, the required data pattern is explained. Eventually all columns must validate with zero errors. In order for a column to validate, some of its contents may have to be removed and placed into a new column. In this case, please contact the developer so that validation for the new column can be added to the validation tool.
+          %li 
+            The workflow for normalizing the data is
+            %ul
+              %li Choose a file, and select a column to validate.
+              %li Click 'Validate'.
+              %li Study the errors in the spreadsheet of errors that is produced.
+              %li Fix the errors in the Excel file, so that the data matches the patterns described.
+              %li Save the Excel file as a .csv file.
+              %li Repeat until zero errors are reported.
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
+
+

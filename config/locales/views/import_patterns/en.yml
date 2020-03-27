@@ -1,0 +1,9 @@
+en:
+  import_patterns:
+    a_pattern: 'LLLL...LL LLL   a group of letters (last name) followed by a group of 1-3 letters (initials)<br />or<br />LL LLL...LL a group of 1-2 letters (initials) followed by a group of letters (last name)<br />last name may be preceded by \"VAN\", \"VAN DER\", or \"DE\"'
+    b_pattern: 'dd.mm.yy, d.mm.yy, d.m.yy, dd.m.yy'
+    c_pattern: 'dd.mm.yy, d.mm.yy, d.m.yy, dd.m.yy'
+    d_pattern: 'nnnnnn/nn<br />two groups of 6 digits and 2 digits separated by \"/\"'
+    e_pattern: 'dd.mm.yy, d.mm.yy, d.m.yy, dd.m.yy'
+    f_pattern: 'one of the national, provincial, metropolitan or local agencies, see list above'
+

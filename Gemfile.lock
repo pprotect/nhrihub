@@ -84,6 +84,13 @@ PATH
     dashboard (0.0.1)
 
 PATH
+  remote: vendor/gems/excess
+  specs:
+    excess (0.0.1)
+      haml
+      rails (~> 6.0.1)
+
+PATH
   remote: vendor/gems/internal_documents
   specs:
     internal_documents (0.0.1)
@@ -565,6 +572,7 @@ DEPENDENCIES
   complaints!
   dashboard!
   database_cleaner (~> 1.6.1)
+  excess!
   factory_bot_rails (~> 4.0)
   faker
   flamegraph

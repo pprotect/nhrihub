@@ -198,6 +198,11 @@
 
 :coffeescript
   $ ->
+    window.print_agencies = ->
+      console.log('print')
+
+:coffeescript
+  $ ->
     agency_groups_data = #{@agency_groups.html_safe}
     provinces_data = #{@provinces.html_safe}
 

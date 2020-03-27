@@ -5,7 +5,8 @@ Rails.application.routes.draw do
     end
     resources :communication_documents, :only => [:destroy, :show]
     resources :complaint_documents, :only => [:destroy, :show]
-    resource :complaint_admin, :only => :show, :to => 'complaint_admin#show'
+    get 'complaint_admin/show', :to => 'complaint_admin#show'
+    post 'complaint_admin/validate', :to => 'complaint_admin#validate'
     resources :complaints
     get 'complaints/new/:type', to: 'complaints#new', as: "complaint_register"
     get 'duplicate_complaints', to: 'duplicate_complaints#index'

@@ -41,7 +41,7 @@ SimpleNavigation::Configuration.run do |navigation|
       ad.item :gg, t('layout.nav.projects'), project_admin_path
       ad.item :corp_svcs, t('layout.nav.strat_plan'), strategic_plans_admin_path
       ad.item :or_media, t('layout.nav.media'), media_appearance_admin_path
-      ad.item :compl, t('layout.nav.complaints'), complaint_admin_path
+      ad.item :compl, t('layout.nav.complaints'), complaint_admin_show_path
       ad.item :doc, t('layout.nav.int_docs'), internal_document_admin_path
       ad.item :dash, t('layout.nav.dashboard'), dashboard_index_path
     end

@@ -56,7 +56,8 @@ Rails.application.configure do
   } ]
 
   # autoload vendor/gems files for every request
-  config.autoload_paths += Dir.glob(Rails.root.join("vendor", "gems", "**", "app", "**", "{models,views,controllers,domain_models}"))
+  config.autoload_paths += Dir.glob(Rails.root.join("vendor", "gems", "**", "app", "**", "{models,views,controllers,domain_models,helpers}"))
+  config.autoload_paths += Dir.glob(Rails.root.join("vendor", "gems", "excess", "lib", "excess"))
   config.autoload_paths += Dir.glob(Rails.root.join( "app", "domain_models"))
   config.autoload_paths += Dir.glob(Rails.root.join( "app", "domain_models", "report_utilities"))
   config.autoload_paths += Dir.glob(Rails.root.join( "**", "app", "domain_models"))
