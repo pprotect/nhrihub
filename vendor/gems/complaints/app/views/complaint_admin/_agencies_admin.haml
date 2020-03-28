@@ -106,8 +106,8 @@
     .panel-collapse.collapse#local_collapse
       .panel-body
         .panel-group#local_secondary_accordion
-          {{#collection:province_name}}
-          <localAgenciesProvince id='{{id}}' province_name='{{province_name}}' collection='{{collection}}' />
+          {{#collection}}
+          <localAgenciesProvince id='{{id}}' name='{{name}}' collection='{{collection}}' />
           {{/collection}}
 
 %script#secondary_national_collection_template{type: 'ractive/template'}
@@ -141,56 +141,56 @@
 %script#local_agencies_province_template{type: 'ractive/template'}
   .panel.panel-default
     .row.agencies.panel-heading#secondary_accordion_panel
-      .col-md-4.text {{province_name}}
+      .col-md-4.text {{name}}
       .col-md-2
-        %a{"data-parent" => "#local_secondary_accordion", "data-toggle" => "collapse", :href => "#local_provinces_accordion_{{province_name.underscore()}}"}
+        %a{"data-parent" => "#local_secondary_accordion", "data-toggle" => "collapse", :href => "#local_provinces_accordion_{{name.underscore()}}"}
           %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show offices'}
-    .panel-collapse.collapse{id: "local_provinces_accordion_{{province_name.underscore()}}"}
+    .panel-collapse.collapse{id: "local_provinces_accordion_{{name.underscore()}}"}
       .panel-body
-        .panel-group{id: "local_provinces_{{province_name.underscore()}}"}
+        .panel-group{id: "local_provinces_{{name.underscore()}}"}
           .panel.panel-default
             .row.agencies.panel-heading#province_metro_panel
               .col-md-4.text Metropolitan Municipalities
               .col-md-2
-                %a{"data-parent" => '#local_provinces_{{province_name.underscore()}}', "data-toggle" => "collapse", :href => '#{{province_name.underscore()}}_metropolitan'}
+                %a{"data-parent" => '#local_provinces_{{name.underscore()}}', "data-toggle" => "collapse", :href => '#{{province_name.underscore()}}_metropolitan'}
                   %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show offices'}
             .panel-collapse.collapse{id: "{{province_name.underscore()}}_metropolitan"}
               .panel-body
-                <metroMunicipalities province_id='{{id}}' type='MetropolitanMunicipality' collection='{{metro_collection}}' />
+                <metroMunicipalities name='{{name}}' province_id='{{id}}' type='MetropolitanMunicipality' collection='{{metro_collection}}' />
 
           .panel.panel-default
             .row.agencies.panel-heading#province_districts_panel
               .col-md-4.text District Municipalities
               .col-md-2
-                %a{"data-parent" => '#local_provinces_{{province_name.underscore()}}', "data-toggle" => "collapse", :href => '#{{province_name.underscore()}}_districts_accordion'}
+                %a{"data-parent" => '#local_provinces_{{name.underscore()}}', "data-toggle" => "collapse", :href => '#{{name.underscore()}}_districts_accordion'}
                   %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show offices'}
-            .panel-collapse.collapse{id: "{{province_name.underscore()}}_districts_accordion"}
+            .panel-collapse.collapse{id: "{{name.underscore()}}_districts_accordion"}
               .panel-body
-                .panel-group{id: "{{province_name.underscore()}}_districts"}
-                  <districts province_name='{{province_name.underscore()}}' collection='{{district_collection}}' />
+                .panel-group{id: "{{name.underscore()}}_districts"}
+                  <districts province_name='{{name.underscore()}}' collection='{{district_collection}}' />
 
 %script#metro_municipalities_template{type: 'ractive/template'}
   {{#collection}}
-  .metropolitan_municipality.agency {{this}}
+  .metropolitan_municipality.agency {{name}}
   {{/collection}}
   <agencyForm province_id='{{province_id}}' type='{{type}}' />
 
 %script#districts_template{type: 'ractive/template'}
-  {{#collection:district_name}}
+  {{#collection}}
   .panel.panel-default
     .row.agencies.panel-heading#province_district_panel
-      .col-md-4.text {{district_name}}
+      .col-md-4.text {{name}}
       .col-md-2
-        %a{"data-parent" => '#{{province_name}}_districts', "data-toggle" => "collapse", :href => '#{{district_name.underscore()}}_local'}
+        %a{"data-parent" => '#{{province_name}}_districts', "data-toggle" => "collapse", :href => '#{{name.underscore()}}_local'}
           %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show offices'}
-    .panel-collapse.collapse{id: "{{district_name.underscore()}}_local"}
+    .panel-collapse.collapse{id: "{{name.underscore()}}_local"}
       .panel-body
         <localMunicipalities district_id='{{district_id}}' type='LocalMunicipality' collection='{{collection}}' />
   {{/collection}}
 
 %script#local_municipalities_template{type: 'ractive/template'}
   {{#collection}}
-  .local_municipality.agency {{.}}
+  .local_municipality.agency {{name}}
   {{/collection}}
   <agencyForm district_id='{{district_id}}' type='{{type}}' />
 
@@ -199,7 +199,7 @@
 :coffeescript
   $ ->
     window.print_agencies = ->
-      console.log('print')
+      window.location = "#{agency_reporter_agency_list_path(:en,:docx)}"
 
 :coffeescript
   $ ->
@@ -281,8 +281,8 @@
     LocalAgenciesProvince = Ractive.extend
       template: '#local_agencies_province_template'
       computed:
-        metro_collection: -> this.get('collection')[this.get('province_name')]["Metropolitan Municipalities"]
-        district_collection: -> this.get('collection')[this.get('province_name')]["District Municipalities"]
+        metro_collection: -> _(this.get('collection')).findWhere({name: "MetropolitanMunicipalities"}).collection
+        district_collection: -> _(this.get('collection')).findWhere({name: "DistrictMunicipalities"}).collection
       components:
         metroMunicipalities: MetroMunicipalities
         districts: Districts

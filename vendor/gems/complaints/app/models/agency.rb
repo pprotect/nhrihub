@@ -67,21 +67,27 @@ class Agency < ActiveRecord::Base
   end
 
   def self.local_hierarchy
-    provinces = Province.pluck(:id,:name).sort.inject({}) do |h,(id,name)|
-      h[name] = {:id=>id, "District Municipalities"=>{},"Metropolitan Municipalities"=>[]}
-      h
+    provinces = Province.pluck(:id,:name).sort.collect do |id,name|
+      { name: name,
+        id: id,
+        collection: [{name: "DistrictMunicipalities", collection: []},
+                     {name: "MetropolitanMunicipalities", collection: []}]
+      }
     end
 
     district_collection = LocalMunicipality.includes(district_municipality: :province).all.
       group_by(&:district_municipality).
       inject(provinces) do |h,(district,local_municipalities)|
-        h[district.province.name]["District Municipalities"][district.name] = {district_id: district.id, collection: local_municipalities.map(&:name)}
+        district_municipalities = h.find{|m| m[:name]==district.province.name}[:collection].find{|c| c[:name] == "DistrictMunicipalities"}
+        district_collection = {district_id: district.id, name: district.name, collection: local_municipalities.map{|lm|{name: lm.name}}}
+        district_municipalities[:collection] << district_collection
         h
     end
 
     collection = MetropolitanMunicipality.includes(:province).all.
       inject(district_collection) do |h,mm|
-        h[mm.province.name]["Metropolitan Municipalities"] << mm.name
+        metropolitan_municipalities = h.find{|m| m[:name]==mm.province.name}[:collection].find{|c| c[:name] == "MetropolitanMunicipalities"}
+        metropolitan_municipalities[:collection] << {name: mm.name}
         h
       end
   end

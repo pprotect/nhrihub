@@ -6,7 +6,10 @@ class ReportTemplate
     @context = context
     generate_template(context)
     if options[:list]
-      split_template
+      split_template_as_list
+      cleanup_header
+    elsif options[:tree]
+      split_template_as_tree
       cleanup_header
     end
   end
@@ -20,11 +23,23 @@ class ReportTemplate
     IO.write(file_name, File.open(file_name) { |f| DocxCleaner.new(f.read).consolidate })
   end
 
-  def split_template
+  def split_template_as_list
     view_path = context::Root.join(context::TEMPLATE_PATH)
     file_name = view_path.join('docx', 'word','document.xml')
     template = File.open(file_name){ |f| f.read }
     end_of_row_tag = "</w:tr>"
+    head, body, tail = template.split(end_of_row_tag)
+    IO.write(view_path.join("_head.xml"),head+end_of_row_tag)
+    IO.write(view_path.join("_list_item_template.xml"),body+end_of_row_tag)
+    IO.write(view_path.join("_tail.xml"),tail)
+  end
+
+  def split_template_as_tree
+    view_path = context::Root.join(context::TEMPLATE_PATH)
+    file_name = view_path.join('docx', 'word','document.xml')
+    template = File.open(file_name){ |f| f.read }
+    end_of_row_tag = "</w:tr>"
+    #TODO need to extract tree hierarchy here
     head, body, tail = template.split(end_of_row_tag)
     IO.write(view_path.join("_head.xml"),head+end_of_row_tag)
     IO.write(view_path.join("_list_item_template.xml"),body+end_of_row_tag)

@@ -59,6 +59,11 @@ GIT
     secure_headers (6.1.1)
 
 PATH
+  remote: vendor/gems/agency_reporter
+  specs:
+    agency_reporter (0.0.1)
+
+PATH
   remote: vendor/gems/authengine
   specs:
     authengine (0.0.4)
@@ -553,6 +558,7 @@ PLATFORMS
 DEPENDENCIES
   acme_plugin (~> 0.0.10)
   activestorage
+  agency_reporter!
   authengine!
   aws-sdk (~> 2)
   bootsnap
