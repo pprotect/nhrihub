@@ -1,14 +1,16 @@
-%a{"data-target" => "#instructions_modal", "data-toggle" => "modal", :style => "cursor:pointer; display:block; margin-bottom:12px;"} Instructions...
+%a{"data-target" => "#instructions_modal", "data-toggle" => "modal", :style => "cursor:pointer; display:inline-block; margin-bottom:12px; font-size: larger;"} Instructions...
 
 =render partial: 'instructions_modal'
 
 =form_with url: complaint_admin_validate_path(:en,:xlsx), id: 'validate_form', multipart: true do
-  %input{name: 'validate[source_file]', type: :file}
-  %select{name: 'validate[column]', 'onchange':'show_pattern()', style: 'height:32px;margin-top: 12px;'}
+  %input#validate_source_file{name: 'validate[source_file]', type: :file}
+  #file_error.error
+  %select#validate_column{name: 'validate[column]', 'onchange':'show_pattern()', style: 'height:32px;margin-top: 12px;'}
     %option{disabled: true, selected: true} select column
-    = ComplaintCsvFileValidator::Columns.each do |k,v|
+    = ComplaintCsvFileValidator::Columns.slice(*("A".."L")).each do |k,v|
       %option{value: k}= v
   %button.btn.btn-success.btn-sm#validate{type: :submit, style: 'cursor: pointer;'}  Validate
+  #column_error.error
 %div#patterns{style: "margin-top:12px;"}
   #title{style: "font-size: larger;"}
   #description{style: "margin-left:12px"}
@@ -18,10 +20,44 @@
 :coffeescript
   $ ->
     select_options = #{ComplaintCsvFileValidator::Columns.to_json.html_safe}
-    data_patterns = JSON.parse('#{ComplaintCsvFileValidator::DataPatterns.to_json.html_safe}')
+    data_patterns = #{ComplaintCsvFileValidator::DataPatterns.to_json.html_safe}
+
     window.show_pattern = ->
       val = $('#validate_form select').val()
       col = select_options[val]
       pattern = data_patterns[val]
       $('#patterns #title').text("Data patterns for column: \""+col+"\"")
       $('#description').html(pattern)
+
+    $('button#validate').on 'click', ->
+      event.preventDefault()
+      if valid_params()
+        $('form#validate_form').submit()
+
+    $('#validate_source_file').on 'change', ->
+       $('#file_error').text("")
+
+    $('#validate_column').on 'change', ->
+      $('#column_error').text("")
+
+   valid_params = ->
+     vf = validate_file()
+     vc = validate_column()
+     vf && vc
+
+   validate_file = ->
+     if $('#validate_source_file').val().length == 0
+       $('#file_error').text("Please select a file.")
+       false
+     else if !(/\.csv$/).test($('#validate_source_file').val())
+       $('#file_error').text("Only .csv files permitted.")
+       false
+     else
+       true
+
+    validate_column = ->
+      if $('#validate_column').val() == null
+        $('#column_error').text("Please select a column to validate.")
+        false
+      else
+        true

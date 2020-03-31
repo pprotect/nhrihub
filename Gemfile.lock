@@ -345,6 +345,8 @@ GEM
       kramdown (~> 2.0)
     launchy (2.4.3)
       addressable (~> 2.3)
+    levenshtein-ffi (1.1.0)
+      ffi (~> 1.9)
     libv8 (3.16.14.19)
     liquid (4.0.3)
     listen (3.2.0)
@@ -596,6 +598,7 @@ DEPENDENCIES
   jquery-rails
   js-routes
   launchy
+  levenshtein-ffi
   magic_lamp
   media!
   message_block!

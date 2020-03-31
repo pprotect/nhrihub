@@ -72,6 +72,7 @@ end
 gem 'haml-rails'
 gem 'haml', '~> 5.1.0'
 gem 'html2haml', '~> 2.2.0'
+gem 'levenshtein-ffi'
 
 # putting rspec-rails in the test group, vs. test and development
 # is the workaround for the suite running twice!
