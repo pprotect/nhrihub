@@ -12,7 +12,7 @@ class CreateOfficesOfficeGroups < ActiveRecord::Migration[6.0]
       t.string "short_name"
       t.datetime "created_at", precision: 6, null: false
       t.datetime "updated_at", precision: 6, null: false
-      #t.integer "province_id"
+      t.integer "province_id"
     end
   end
 end
