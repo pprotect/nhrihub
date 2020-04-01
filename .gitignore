@@ -27,6 +27,7 @@ config/deploy/ppsa.rb
 
 app/assets/images/banner_logo.png
 app/assets/stylesheets/theme.scss
+app/assets/stylesheets/site_specific.scss.erb
 lib/constants.rb
 public/.htaccess
 public/assets

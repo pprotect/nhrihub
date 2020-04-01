@@ -5,7 +5,7 @@ set :tmp_dir, "/var/www/nhrihub/tmp_dir" # dev server
 #set :tmp_dir, '/var/www/nhri-hub.com/tmp_dir' # vps server
 
 # .htaccess is required by passenger on this server
-append :linked_files, 'public/.htaccess', 'config/initializers/action_mailer.rb', 'vendor/gems/authengine/app/views/authengine/user_mailer/signup_notification.en.html.erb'
+append :linked_files, 'public/.htaccess', 'config/initializers/action_mailer.rb', 'vendor/gems/authengine/app/views/authengine/user_mailer/signup_notification.en.html.erb', 'app/assets/stylesheets/site_specific.scss.erb'
 append :assets_roles, 'demo' # triggers asset precompilation if necessary
 
 set :migration_role, "db" # triggers migration
