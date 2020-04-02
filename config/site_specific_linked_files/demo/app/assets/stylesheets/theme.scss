@@ -2,7 +2,9 @@ $light_on_dark: #F2F2E7;
 $dark_blue: #337AB7;
 $green : #5CB85C;
 $red : #C12E2A;
-$banner_bg: #104c77;
+//$banner_bg: #104c77;
+$banner_bg: #820246;
+$banner_bg_dark: #820426;
 $banner_border: #FCCD0F;
 $banner_main_text: #e09600;
 $banner_sub_text: #E4E2D9;
@@ -37,3 +39,14 @@ $error_red : #a94442;
   border-radius: 7px;
   width: 100%;
 }
+
+// define all the colors for the navbar menu, top-level items
+$nav_text : $light_on_dark;
+// hover
+$nav_hover: lighten($banner_bg, 8%);
+$nav_hover_text : lighten($nav_text, 8%);
+// active
+$nav_active: lighten($nav_hover, 8%);
+
+// filter_controls
+$filter_control_bg: $banner_bg;

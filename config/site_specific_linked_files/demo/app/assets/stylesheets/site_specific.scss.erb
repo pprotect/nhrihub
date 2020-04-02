@@ -1,0 +1,48 @@
+.navbar-brand {
+  background-image: none;
+  background-repeat: no-repeat;
+  background-size: 56px;
+  width: 69px;
+  margin-left: 0px !important; // b/c bootstrap seems to be forcing -15px!
+}
+
+// login page
+#banner {
+  background: $banner_bg_dark;
+  display: flex;
+  position: relative;
+  //padding-left: 130px;
+  -webkit-box-shadow: 9px 4px 34px 0px rgba(0,0,0,0.57);
+  -moz-box-shadow: 9px 4px 34px 0px rgba(0,0,0,0.57);
+  box-shadow: 9px 4px 34px 0px rgba(0,0,0,0.57);
+  top: -60px; // b/c body padding is 60px
+  border-color: $banner_border;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 7px;
+  width: 100%;
+  height: 220px;
+}
+
+#banner #brand {
+  width: 280px;
+  background-image: url(<%= asset_path 'banner_logo.jpg' %>);
+  background-size: 100%;
+  background-repeat-x: no-repeat;
+  background-repeat-y: no-repeat;
+}
+
+#banner #title {
+  background: #ffffff;
+  background: -moz-linear-gradient(left,  #ffffff 0%, $banner_bg_dark 34%, $banner_bg_dark 34%);
+  background: -webkit-linear-gradient(left,  #ffffff 0%,$banner_bg_dark 34%,$banner_bg_dark 34%);
+  background: linear-gradient(to right,  #ffffff 0%,$banner_bg_dark 34%,$banner_bg_dark 34%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#{$banner_bg_dark}',GradientType=1 );
+
+  padding-left: 133px;
+  padding-top: 68px;
+}
+
+#banner #sub {
+  display: none;
+}
