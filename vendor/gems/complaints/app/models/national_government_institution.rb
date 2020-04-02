@@ -3,7 +3,7 @@ class NationalGovernmentInstitution < Agency
     super(except: [:created_at, :updated_at, :code], methods: [:type, :description])
   end
 
-  alias_method :description, :name
+  alias_attribute :description, :name
 
   def classification
     "National Government Institutions"
