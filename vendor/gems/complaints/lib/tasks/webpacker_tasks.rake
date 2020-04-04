@@ -15,8 +15,13 @@ namespace :complaints do
       end
     end
 
+    desc "Install root deps with yarn"
+    task :yarn_install do
+      system "yarn install --no-progress --production"
+    end
+
     desc "Compile JavaScript packs using webpack for production with digests"
-    task compile: [:yarn_install, :environment] do
+    task compile: [:yarn_install, :root_yarn_install, :environment] do
       Webpacker.with_node_env("production") do
         ensure_log_goes_to_stdout do
           if Complaints.webpacker.commands.compile
