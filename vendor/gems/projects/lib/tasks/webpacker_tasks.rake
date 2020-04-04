@@ -78,9 +78,9 @@ end
 skip_webpacker_precompile = %w(no false n f).include?(ENV["WEBPACKER_PRECOMPILE"])
 
 unless skip_webpacker_precompile
-  Webpack.logger.info "invoke projects webpacker compilation"
+  Webpacker.logger.info "invoke projects webpacker compilation"
 else
-  Webpack.logger.info "don't invoke projects webpacker compilation"
+  Webpacker.logger.info "don't invoke projects webpacker compilation"
 end
 
 unless skip_webpacker_precompile
