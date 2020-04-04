@@ -10,15 +10,15 @@ namespace :complaints do
   namespace :webpacker do
     desc "Install deps with yarn"
     task :yarn_install do
-      Webpacker.logger.info "root yarn install"
+      Webpacker.logger.info "yarn install"
       Dir.chdir(File.join(__dir__, "../..")) do
         system "yarn install --no-progress --production"
       end
     end
 
     desc "Install root deps with yarn"
-    task :yarn_install do
-      Webpacker.logger.info "yarn install"
+    task :root_yarn_install do
+      Webpacker.logger.info "root yarn install"
       system "yarn install --no-progress --production"
     end
 
