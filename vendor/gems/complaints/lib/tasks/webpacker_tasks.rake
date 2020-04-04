@@ -10,6 +10,7 @@ namespace :complaints do
   namespace :webpacker do
     desc "Install deps with yarn"
     task :yarn_install do
+      Webpacker.logger.info "root yarn install"
       Dir.chdir(File.join(__dir__, "../..")) do
         system "yarn install --no-progress --production"
       end
@@ -17,11 +18,12 @@ namespace :complaints do
 
     desc "Install root deps with yarn"
     task :yarn_install do
+      Webpacker.logger.info "yarn install"
       system "yarn install --no-progress --production"
     end
 
     desc "Compile JavaScript packs using webpack for production with digests"
-    task compile: [:yarn_install, :root_yarn_install, :environment] do
+    task compile: [:root_yarn_install, :yarn_install, :environment] do
       Webpacker.with_node_env("production") do
         ensure_log_goes_to_stdout do
           if Complaints.webpacker.commands.compile
