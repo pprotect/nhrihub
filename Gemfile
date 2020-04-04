@@ -58,7 +58,7 @@ group :development do
   ## capistrano add-ons
   gem 'capistrano-bundler'
   gem 'capistrano-passenger'
-  gem 'capistrano-faster-assets'
+  #gem 'capistrano-faster-assets'
   gem 'rvm1-capistrano3', require: false
   # specify higher rev than required by capistrano in order to get
   # fixed connection pooling and faster deploys
