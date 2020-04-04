@@ -20,10 +20,10 @@ namespace :complaints do
       Webpacker.with_node_env("production") do
         ensure_log_goes_to_stdout do
           if Complaints.webpacker.commands.compile
-            Webpacker.logger.inform "successful webpacker compilation"
+            Webpacker.logger.info "successful webpacker compilation"
             # Successful compilation!
           else
-            Webpacker.logger.inform "failed webpacker compilation"
+            Webpacker.logger.info "failed webpacker compilation"
             # Failed compilation
             exit!
           end
@@ -64,7 +64,7 @@ def enhance_assets_precompile
   # yarn:install was added in Rails 5.1
   deps = yarn_install_available? ? [] : ["complaints:webpacker:yarn_install"]
   Rake::Task["assets:precompile"].enhance(deps) do
-    Webpacker.logger.inform "invoke complaints:webpacker:compile"
+    Webpacker.logger.info "invoke complaints:webpacker:compile"
     Rake::Task["complaints:webpacker:compile"].invoke
   end
 end
@@ -74,10 +74,10 @@ skip_webpacker_precompile = %w(no false n f).include?(ENV["WEBPACKER_PRECOMPILE"
 
 #unless skip_webpacker_precompile
   if Rake::Task.task_defined?("assets:precompile")
-    Webpacker.logger.inform "invoke enhance_assets_precompile"
+    Webpacker.logger.info "invoke enhance_assets_precompile"
     enhance_assets_precompile
   else
-    Webpacker.logger.inform "invoke assets precompile with webpacker dependency"
+    Webpacker.logger.info "invoke assets precompile with webpacker dependency"
     Rake::Task.define_task("assets:precompile" => "complaints:webpacker:compile")
   end
 #end
