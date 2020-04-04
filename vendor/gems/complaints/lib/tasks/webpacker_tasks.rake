@@ -20,8 +20,10 @@ namespace :complaints do
       Webpacker.with_node_env("production") do
         ensure_log_goes_to_stdout do
           if Complaints.webpacker.commands.compile
+            Webpacker.logger.inform "successful webpacker compilation"
             # Successful compilation!
           else
+            Webpacker.logger.inform "failed webpacker compilation"
             # Failed compilation
             exit!
           end
