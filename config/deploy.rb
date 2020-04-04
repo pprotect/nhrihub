@@ -60,7 +60,7 @@ set :default_env, {WEBPACKER_PRECOMPILE: true}
 #set :passenger_restart_options, -> { "#{deploy_to} --ignore-app-not-running" }
 
 # for the capistrano-faster-assets gem
-set :assets_dependencies, %w(app/assets lib/assets vendor/assets Gemfile.lock config/routes.rb) + Dir.glob('vendor/gems/**/app/assets')
+#set :assets_dependencies, %w(app/assets lib/assets vendor/assets Gemfile.lock config/routes.rb) + Dir.glob('vendor/gems/**/app/assets')
 
 set :assets_roles, ["web", "app"]
 

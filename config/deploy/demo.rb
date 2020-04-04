@@ -11,7 +11,7 @@ append :assets_roles, 'demo' # triggers asset precompilation if necessary
 set :migration_role, "db" # triggers migration
 
 set :passenger_roles, "demo" # triggers passenger restart after update
-set :passenger_restart_with_touch, true # on this server, the more modern passenger restart doesn't work.
+set :passenger_restart_command, "touch tmp/restart.txt"
 
 set :branch, "master"
 

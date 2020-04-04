@@ -78,12 +78,6 @@ end
 skip_webpacker_precompile = %w(no false n f).include?(ENV["WEBPACKER_PRECOMPILE"])
 
 unless skip_webpacker_precompile
-  Webpacker.logger.info "invoke projects webpacker compilation"
-else
-  Webpacker.logger.info "don't invoke projects webpacker compilation"
-end
-
-unless skip_webpacker_precompile
   if Rake::Task.task_defined?("assets:precompile")
     Webpacker.logger.info "invoke projects enhanced_projects_assets_precompile"
     enhanced_projects_assets_precompile
