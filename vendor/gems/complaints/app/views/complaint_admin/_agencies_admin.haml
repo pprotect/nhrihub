@@ -152,9 +152,9 @@
             .row.agencies.panel-heading#province_metro_panel
               .col-md-4.text Metropolitan Municipalities
               .col-md-2
-                %a{"data-parent" => '#local_provinces_{{name.underscore()}}', "data-toggle" => "collapse", :href => '#{{province_name.underscore()}}_metropolitan'}
+                %a{"data-parent" => '#local_provinces_{{name.underscore()}}', "data-toggle" => "collapse", :href => '#{{name.underscore()}}_metropolitan'}
                   %i.fa.fa-caret-right{'data-toggle'=>:tooltip, :title=>'show offices'}
-            .panel-collapse.collapse{id: "{{province_name.underscore()}}_metropolitan"}
+            .panel-collapse.collapse{id: "{{name.underscore()}}_metropolitan"}
               .panel-body
                 <metroMunicipalities name='{{name}}' province_id='{{id}}' type='MetropolitanMunicipality' collection='{{metro_collection}}' />
 

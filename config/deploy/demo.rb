@@ -61,7 +61,6 @@ set :deploy_to, '/var/www/nhrihub' # vps server
 # which it shouldn't when rvm is not available
 #set :rvm_map_bins, []
 
-
 # Custom SSH Options
 # ==================
 # You may pass any option but keep in mind that net/ssh understands a

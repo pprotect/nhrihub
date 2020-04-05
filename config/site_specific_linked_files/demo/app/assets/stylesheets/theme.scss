@@ -1,14 +1,18 @@
+//PPSA colors
+$burgundy_light: #9D3546;
+$burgundy_dark: #820426;
+$gold: #FDAE33;
+
 $light_on_dark: #F2F2E7;
 $dark_blue: #337AB7;
 $green : #5CB85C;
 $red : #C12E2A;
-//$banner_bg: #104c77;
-$banner_bg: #820246;
-$banner_bg_dark: #820426;
+$banner_bg: $burgundy_light;
+$banner_bg_dark: $burgundy_light;
 $banner_border: #FCCD0F;
-$banner_main_text: #e09600;
-$banner_sub_text: #E4E2D9;
-$site_bg: #ccc5b8;
+$banner_main_text: $gold;
+$banner_sub_text: $gold;
+$site_bg: #f3c97c69;
 $site_bg_shade: darken($site_bg, 8%);
 $h1: #556F91;
 $well_bg_light: #e8dfcd;
