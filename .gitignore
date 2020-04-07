@@ -13,7 +13,9 @@
 
 # Ignore all logfiles and tempfiles.
 /log/*
-**/tmp/**/*
+/tmp/**/*
+!/tmp/import_data
+!/tmp/import_data/.keep
 
 /config/secrets.yml
 .DS_Store
@@ -44,7 +46,7 @@ config/site_specific_linked_files/demo/key/keyfile.pem
 key/keyfile.pem
 config/site_specific_linked_files/current_config.yml
 vendor/gems/authengine/app/views/authengine/user_mailer/signup_notification.en.html.erb
-vendor/gems/complaints/tmp/**/*
+vendor/gems/**/tmp/**/*
 vendor/gems/complaints/public/complaints_packs/**/*
 vendor/gems/projects/public/projects_packs/**/*
 storage/
