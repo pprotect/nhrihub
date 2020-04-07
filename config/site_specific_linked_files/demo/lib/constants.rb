@@ -304,3 +304,5 @@ DemocracySupportingStateInstitutions = ["The Auditor-General",
                                         "The Public Protector"]
 
 Provinces = ["Gauteng", "Mpumalanga", "North West", "Western Cape", "Limpopo", "Free State", "Northern Cape", "Eastern Cape", "KwaZulu-Natal"]
+
+AWS_ACCOUNT_ID = "not specified"
