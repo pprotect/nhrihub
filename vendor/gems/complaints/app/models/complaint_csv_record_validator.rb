@@ -3,9 +3,9 @@ require 'levenshtein'
 class ComplaintCsvRecordValidator
   class InvalidRecordError < StandardError
     attr_accessor :message
-    def initialize
-      class_name = self.class.name.split('::')[1] 
-      @message = class_name.underscore.humanize
+    def initialize(message = nil)
+      class_name = self.class.name.split('::')[1]
+      @message = message ? message : class_name.underscore.humanize
     end
   end
   class InvalidName < InvalidRecordError; end
@@ -21,24 +21,29 @@ class ComplaintCsvRecordValidator
   class InvalidAct < InvalidRecordError; end
   class InstitutionComplainedAgainsError < InvalidRecordError; end
   class DateError < InvalidRecordError; end
-  class UnrecognizedAgency < InvalidRecordError; end
+  class UnrecognizedAgency < InvalidRecordError
+    def initialize(messages)
+      super messages.join(', ')
+    end
+  end
   class AgencyNotSpecified < InvalidRecordError; end
   class UnrecognizedDistrict < InvalidRecordError; end
   class UnknownMunicipality < InvalidRecordError; end
 
-  attr_accessor :complaint, :column_validation, :errors, :ref, :value, :agency_names, :district_names, :branch_information, :metro, :muni, :local, :provincial_gov, :province
+  attr_accessor :complaint, :column_validation, :errors, :ref, :value, :agency_names, :district_names, :branch_information, :metro, :muni, :local, :provincial_gov, :province, :regional_names
 
   ProvinceAbbreviations = { "GP"=>"Gauteng", "MP"=>"Mpumalanga", "NW"=>"North West", "WC"=>"Western Cape",
                             "LP"=>"Limpopo", "FS"=>"Free State", "NC"=>"Northern Cape", "EC"=>"Eastern Cape",
                             "KZN"=>"KwaZulu-Natal"}
 
-  def initialize(complaint,column_name,ref,agency_names,district_names)
+  def initialize(complaint,column_name,ref,agency_names,district_names,regional_names)
     @complaint = complaint
     @column_validation = "validate_"+ column_name.downcase.gsub(/\//,' ').gsub(/\s+/,'_')
     @ref = ref
     @errors = [ref, complaint[column_name]]
     @agency_names = agency_names
     @district_names = district_names
+    @regional_names = regional_names
   end
 
   def valid?
@@ -129,11 +134,10 @@ class ComplaintCsvRecordValidator
   def search_database(institution)
     exists = agency_names.map(&:downcase).any? do |name|
       if name=~/south african/
-        #snippet = name.gsub(/south african/,'').strip
-        #institution.downcase.match(/south african? #{snippet}/) # Africa or African
         Levenshtein.distance(institution.downcase, name) <=2
       else
-        institution.downcase.match(/(department of )?#{name}/)
+        #institution.downcase.match(/(department of )?#{name}/)
+        institution.downcase == name
       end
     end
     return [institution, exists]
@@ -219,13 +223,13 @@ class ComplaintCsvRecordValidator
   end
 
   def validate_institution_complained_against
-    institution = complaint["INSTITUTION COMPLAINED AGAINST"]
-    raise AgencyNotSpecified if institution.nil?
-    institution.gsub!(/9NC\)/,'(NC)') # an occasional typo, easier to fix it than deal with the regexp failure it causes!
-    institutions = institution
-    exists = false
+    institutions = complaint["INSTITUTION COMPLAINED AGAINST"]
+    raise AgencyNotSpecified if institutions.nil?
+    institutions.gsub!(/9NC\)/,'(NC)') # an occasional typo, easier to fix it than deal with the regexp failure it causes!
     self.branch_information = nil
-    institutions.split('/').map(&:strip).each do |institution|
+    multiple = institutions.split('/').length > 1
+    error_messages = []
+    institutions.split('/').map(&:strip).each_with_index do |institution, index|
       institution, province, initials, self.branch_information = identify_institution_by_generic_pattern(institution)
       institution, component_exists = search_database(institution)
       unless component_exists
@@ -236,10 +240,17 @@ class ComplaintCsvRecordValidator
       end
       institution = institution&.titlecase if component_exists
       File.open(Rails.root.join('test.txt'),"a"){|f| f.puts complaint["INSTITUTION COMPLAINED AGAINST"]} unless component_exists
-      exists = true if component_exists
+      unless component_exists
+        if !multiple
+          error_messages << "Invalid agency"
+        else
+          i = index + 1
+          error_messages << "#{i}#{i.ordinal} agency invalid"
+        end
+      end
     end
 
-    raise UnrecognizedAgency unless exists
+    raise UnrecognizedAgency.new(error_messages) unless error_messages.length.zero?
     true
   end
 
@@ -281,7 +292,9 @@ class ComplaintCsvRecordValidator
   def validate_assessor
     assessor =  complaint["ASSESSOR"]
     assessor_first_name, assessor_last_name = names = assessor.split(' ') unless assessor.blank?
-    valid = assessor.blank? || User.where(firstName: assessor_first_name, lastName: assessor_last_name).exists?
+    #valid = assessor.blank? || User.where(firstName: assessor_first_name, lastName: assessor_last_name).exists?
+    special_case = assessor == "JOHN NHLANHLA KHUMALO"
+    valid = assessor.blank? || names.length == 2 || special_case
     raise InvalidAssessor unless valid
     true
   end
@@ -290,7 +303,9 @@ class ComplaintCsvRecordValidator
     province_names = ProvinceAbbreviations.values
     allocated_to = complaint["ALLOCATED TO UNIT / PROVINCE"]
     return true unless allocated_to
-    valid_provincial_office = province_names.any?{|p| p==allocated_to.downcase.strip}
+    valid_provincial_office = province_names.any?{|p| p.downcase==allocated_to.downcase.strip}
+    valid_regional_office = regional_names.any?{|ro| allocated_to=~/#{ro}/}
+    regional_names = Office.regional.pluck(:name)
     kzn = allocated_to.downcase.gsub(/ /,"") == "kwazulunatal"
     valid_head_office = (allocated_to.strip =~ /ADMI?NISTRATIVE JUSTICE AND SERVICE DELIVER/) ||
                         (allocated_to.strip =~ /GOOD GOVERNANCE AND INTEGRITY/) ||
@@ -299,7 +314,7 @@ class ComplaintCsvRecordValidator
     understood_but_not_appropriate =  allocated_to.match(/(#{notations.join('|')})/)
     provincial_ggi = province_names.any?{|p| allocated_to.downcase.strip =~ /#{p}/ && allocated_to.downcase.strip=~/ggi/} || allocated_to == "KWAZULU NATAL-GGI"
 
-    valid = valid_provincial_office || valid_head_office || understood_but_not_appropriate || kzn || provincial_ggi
+    valid = valid_provincial_office || valid_regional_office || valid_head_office || understood_but_not_appropriate || kzn || provincial_ggi
     raise InvalidAllocatedToUnit unless valid
     true
   end
@@ -323,8 +338,9 @@ class ComplaintCsvRecordValidator
     day, month, year = date_string.split('.')&.map(&:to_i)
     valid_day = [*1..31].include? day
     valid_month = [*1..12].include? month
-    valid_year = [*17..20].include? year
+    valid_year = [*15..20,*2015..2020].include? year
     if valid_day && valid_month && valid_year
+      year = year%2000 # some entries include 20yy and some do not
       return Date.new(year+2000, month, day)
     else
       raise DateError

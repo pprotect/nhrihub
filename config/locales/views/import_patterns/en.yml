@@ -1,13 +1,14 @@
 en:
   import_patterns:
     a_pattern: 'LLLL...LL LLL   a group of letters (last name) followed by a group of 1-3 letters (initials)<br />or<br />LL LLL...LL a group of 1-2 letters (initials) followed by a group of letters (last name)<br />last name may be preceded by \"VAN\", \"VAN DER\", \"DE\", \"VAN DEN\", \"DA\", \"DER\", \"DU\" and \"LE\"<br/>titles recognized are DR, DOCTOR, PROF, CLLR, ADV, REV'
-    b_pattern: 'dd.mm.yy, d.mm.yy, d.m.yy, dd.m.yy'
-    c_pattern: 'dd.mm.yy, d.mm.yy, d.m.yy, dd.m.yy'
-    d_pattern: 'nnnnnn/nn<br />two groups of 6 digits and 2 digits separated by \"/\"<br/>\"duplicate of nnnnnn/nn\" flags are interpreted appropriately'
-    e_pattern: 'dd.mm.yy, d.mm.yy, d.m.yy, dd.m.yy'
-    f_pattern: 'one of the national, provincial, metropolitan or local agencies, see list above<br \">Province must be specified (parenthesised abbreviation) to disambiguate provincial agencies.<br\">notations \"REFERRAL\", \"REJECTION\", \"DUPLICATE\", \"NON JURISDICTION\", \"FILE CLOSED\" are interpreted as status.'
-    g_pattern: "first name and last name of any staff member<br/>If a legitimate name is flagged as unknown, add the staff member in Admin -> Manage Users."
+    b_pattern: 'dd.mm.(20)yy, d.mm.(20)yy, d.m.(20)yy, dd.m.(20)yy'
+    c_pattern: 'dd.mm.(20)yy, d.mm.(20)yy, d.m.(20)yy, dd.m.(20)yy'
+    d_pattern: 'nnnnnn/nn<br />two groups of 6 digits and 2 digits separated by "/"<br/>"duplicate of nnnnnn/nn" flags are interpreted appropriately'
+    e_pattern: 'dd.mm.(20)yy, d.mm.(20)yy, d.m.(20)yy, dd.m.(20)yy'
+    f_pattern: 'One of the office or branches of PPSA, see "Offices and Branches" above<br \>Notations "REFERRAL", "REJECTION", "DUPLICATE", "NON JURISDICTION", "FILE CLOSED" are interpreted as status.'
+    g_pattern: "First name and last name of any staff member<br/>If a legitimate name is flagged as unknown, add the staff member in Admin -> Manage Users."
     h_pattern: "This field appears to have no meaning in the context of a CMA"
-    i_pattern: "When 'ALLOCATED TO UNIT/PROVINCE' is 'REJECTION' or 'CLOSED' or 'REFERRAL', this field is interpreted as free text explanation of the rejection, closure, or referral.<br/> \"DUPLICATE\", \"NON JURISDICTION\" and \"FILE CLOSED\" in this field are intpreted appropriately."
-    j_pattern: "Matches the \"short name\" of any of the legislations (above)"
+    i_pattern: 'When "ALLOCATED TO UNIT/PROVINCE" is "REJECTION" or "CLOSED" or "REFERRAL", this field is interpreted as free text explanation of the rejection, closure, or referral.<br/> "DUPLICATE", "NON JURISDICTION" and "FILE CLOSED" in this field are intpreted appropriately.'
+    j_pattern: 'Matches the "short name" of any of the legislations (above)'
     k_pattern: ""
+    l_pattern: 'Either a single institution or else multiple institutions separated by "/"<br/>Institution(s) must be one of the national, provincial, metropolitan or local agencies, see "Agencies" list above<br \>Province must be specified (parenthesised abbreviation) to disambiguate provincial agencies with identical names.<br />Notations "REFERRAL", "REJECTION", "DUPLICATE", "NON JURISDICTION", "FILE CLOSED" are interpreted as status.'

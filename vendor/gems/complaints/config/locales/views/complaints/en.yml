@@ -37,7 +37,7 @@ en:
       agencies: "Agencies"
       empty: "None configured"
       areas: "Areas and subareas"
-      offices: "Offices and Branches"
+      offices: "PPSA Offices and Branches"
       legislations: "Legislation"
       import: "Validate and Import Legacy Data"
     agencies_admin:
