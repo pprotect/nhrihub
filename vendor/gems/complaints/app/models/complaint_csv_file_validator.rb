@@ -25,10 +25,10 @@ class ComplaintCsvFileValidator
     @lines_analysed = 0
     @errors_found = 0
     @errored_records = []
-    puts "b /Users/lesnightingill/Code/ppsa/vendor/gems/complaints/app/models/complaint_csv_record_validator.rb:144 if institution=~/STUDENT FINANCIAL/"
-    puts "info breakpoints"
-    puts "del <breakpoint number>"
-    debugger
+    #puts "b /Users/lesnightingill/Code/ppsa/vendor/gems/complaints/app/models/complaint_csv_record_validator.rb:144 if institution=~/STUDENT FINANCIAL/"
+    #puts "info breakpoints"
+    #puts "del <breakpoint number>"
+    #debugger
     `:> test.txt`
     table.each do |complaint|
       validator = ComplaintCsvRecordValidator.new(complaint,column_name,complaint["REFERENCE NUMBER"],agency_names,district_names,regional_names)

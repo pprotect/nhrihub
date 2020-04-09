@@ -63,6 +63,14 @@ feature "projects index", :js => true do
   end
 
   feature "adding or deleting a project" do
+    it "adds a project that does not have a file attachment or subareas" do # b/c there was a bug!
+      add_project.click
+      fill_in('project_title', :with => "new project title")
+      fill_in('project_description', :with => "new project description")
+      add_a_performance_indicator
+      expect{ save_project.click; wait_for_ajax }.to change{ Project.count }.from(2).to(3)
+    end
+
     it "adds a project that does not have a file attachment" do
       add_project.click
       fill_in('project_title', :with => "new project title")
