@@ -11,7 +11,7 @@ require 'agency_admin_helpers'
 feature "complaint bases admin", :js => true do
   let(:area_model){ ComplaintArea }
   let(:subarea_model){ ComplaintSubarea }
-  let(:admin_page){ complaint_admin_path('en') }
+  let(:admin_page){ complaint_admin_show_path('en') }
   it_behaves_like "area subarea admin"
 end
 
@@ -28,20 +28,20 @@ end
 feature "legislation admin", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   scenario "none configured yet" do
-    visit complaint_admin_path('en')
+    visit complaint_admin_show_path('en')
     expect(page).to have_selector("h4",:text=>"Legislation")
     expect(page).to have_selector('#legislations td#empty', :text => "None configured")
   end
 
   scenario "some legislations are configured" do
     FactoryBot.create(:legislation, :short_name => "ABC", :full_name => "Anywhere But Colma")
-    visit complaint_admin_path('en')
+    visit complaint_admin_show_path('en')
     expect(page).to have_selector('#legislations .legislation td.short_name', :text => 'ABC')
     expect(page).to have_selector('#legislations .legislation td.full_name', :text => 'Anywhere But Colma')
   end
 
   scenario "add a valid legislation" do
-    visit complaint_admin_path('en')
+    visit complaint_admin_show_path('en')
     page.find('input#legislation_short_name').set('ABC')
     page.find('input#legislation_full_name').set('Anywhere But Calaveras')
     expect{page.find('button#add_legislation').click; wait_for_ajax}.to change{Legislation.count}.from(0).to(1)
@@ -53,7 +53,7 @@ feature "legislation admin", :js => true do
   end
 
   scenario "add an invalid legislation (blank name)" do
-    visit complaint_admin_path('en')
+    visit complaint_admin_show_path('en')
     page.find('input#legislation_short_name').set('ABC')
     expect{page.find('button#add_legislation').click; wait_for_ajax}.not_to change{Legislation.count}
     expect(page).to have_selector('#full_name_error', :text => "Full name can't be blank")
@@ -63,7 +63,7 @@ feature "legislation admin", :js => true do
 
   scenario "add a legislation with duplicate name" do
     FactoryBot.create(:legislation, :short_name => "ABC", :full_name => "Anywhere But Colma")
-    visit complaint_admin_path('en')
+    visit complaint_admin_show_path('en')
     page.find('input#legislation_short_name').set('abc') # case insensitive
     page.find('input#legislation_full_name').set('Anywhere But Chelmsford')
     expect{page.find('button#add_legislation').click; wait_for_ajax}.not_to change{Legislation.count}
@@ -74,7 +74,7 @@ feature "legislation admin", :js => true do
 
   scenario "add a legislation with duplicate full name" do
     FactoryBot.create(:legislation, :short_name => "ABC", :full_name => "Anywhere But Colma")
-    visit complaint_admin_path('en')
+    visit complaint_admin_show_path('en')
     page.find('input#legislation_short_name').set('XYZ')
     page.find('input#legislation_full_name').set('Anywhere But colma') # case insensitive!
     expect{page.find('button#add_legislation').click; wait_for_ajax}.not_to change{Legislation.count}
@@ -85,14 +85,14 @@ feature "legislation admin", :js => true do
 
   scenario "delete a legislation that is not associated with any complaint" do
     FactoryBot.create(:legislation, :short_name => "ABC", :full_name => "Anywhere But Colma")
-    visit complaint_admin_path('en')
+    visit complaint_admin_show_path('en')
     expect{find("#legislations .legislation .delete_legislation").click; wait_for_ajax}.to change{Legislation.count}.from(1).to(0)
   end
 
   scenario "delete a legislation that is already associated with a complaint" do
     legislation = FactoryBot.create(:legislation, :short_name => "ABC", :full_name => "Anywhere But Colma")
     FactoryBot.create(:complaint, :legislations => [legislation])
-    visit complaint_admin_path('en')
+    visit complaint_admin_show_path('en')
     expect{find("#legislations .legislation .delete_legislation").click; wait_for_ajax}.not_to change{Legislation.count}
     expect(page).to have_selector('.delete_disallowed_message', :text => "cannot delete a legislation that is associated with complaints")
     find('h1').click # click anywhere, 'body' doesn't seem to work anymore
@@ -113,7 +113,7 @@ feature "agency admin", :js => true do
     FactoryBot.create(:national_government_agency, name: "Department of Agriculture")
     FactoryBot.create(:national_government_institution, name: "Independent Complaints Directorate")
     FactoryBot.create(:democracy_supporting_state_institution, name: "The Auditor-General")
-    visit complaint_admin_path('en')
+    visit complaint_admin_show_path('en')
     open_accordion('National')
     expect(page).to have_selector('.panel-heading', text: 'National Government Agencies')
     expect(page).to have_selector('.panel-heading', text: 'National Government Institutions')
@@ -135,7 +135,7 @@ feature "agency admin", :js => true do
     FactoryBot.create(:provincial_agency, name: "Treasury", province_id: gauteng_province.id)
     FactoryBot.create(:provincial_agency, name: "Treasury", province_id: northern_cape_province.id)
     FactoryBot.create(:provincial_agency, name: "Treasury", province_id: kwazulu_natal_province.id)
-    visit complaint_admin_path('en')
+    visit complaint_admin_show_path('en')
     open_accordion('Provincial')
     expect(page).to have_selector('.panel-heading', text: 'Gauteng')
     expect(page).to have_selector('.panel-heading', text: 'Northern Cape')
@@ -145,7 +145,7 @@ feature "agency admin", :js => true do
   scenario "local agencies are configured" do
     FactoryBot.create(:metropolitan_municipality, province_id: gauteng_province.id, name: "City of Johannesburg")
     FactoryBot.create(:local_municipality, province_id: gauteng_province.id, district_id: sedibeng_district.id , name: "Midvaal")
-    visit complaint_admin_path('en')
+    visit complaint_admin_show_path('en')
 
     open_accordion('Local')
     expect(page).to have_selector('.panel-heading', text: 'Gauteng')
@@ -171,7 +171,7 @@ feature "agency admin", :js => true do
   feature "add a national government agency" do
     before do
       FactoryBot.create(:national_government_agency, name: "Department of Agriculture")
-      visit complaint_admin_path('en')
+      visit complaint_admin_show_path('en')
       open_accordion('National')
 
       sleep(0.4)
@@ -205,7 +205,7 @@ feature "agency admin", :js => true do
   feature "add a national government institution" do
     before do
       FactoryBot.create(:national_government_institution, name: "Department of Agriculture")
-      visit complaint_admin_path('en')
+      visit complaint_admin_show_path('en')
       open_accordion('National')
 
       sleep(0.4)
@@ -223,7 +223,7 @@ feature "agency admin", :js => true do
   feature "add a democracy-supporting institution" do
     before do
       FactoryBot.create(:democracy_supporting_state_institution , name: "Department of Agriculture")
-      visit complaint_admin_path('en')
+      visit complaint_admin_show_path('en')
       open_accordion('National')
 
       sleep(0.4)
@@ -241,7 +241,7 @@ feature "agency admin", :js => true do
   feature "add a provincial agency" do
     before do
       FactoryBot.create(:provincial_agency, province_id: gauteng_province.id, name: "Department of Agriculture")
-      visit complaint_admin_path('en')
+      visit complaint_admin_show_path('en')
       open_accordion('Provincial')
 
       sleep(0.4)
@@ -259,7 +259,7 @@ feature "agency admin", :js => true do
   feature "add a metropolitan municipality" do
     before do
       FactoryBot.create(:metropolitan_municipality, province_id: gauteng_province.id, name: "Caesaromagus")
-      visit complaint_admin_path('en')
+      visit complaint_admin_show_path('en')
       open_accordion('Local')
 
       sleep(0.4)
@@ -280,7 +280,7 @@ feature "agency admin", :js => true do
   feature "add a local municipality" do
     before do
       FactoryBot.create(:local_municipality, district_id: sedibeng_district.id, name: "Caesaromagus")
-      visit complaint_admin_path('en')
+      visit complaint_admin_show_path('en')
       open_accordion('Local')
 
       sleep(0.4)
@@ -302,7 +302,7 @@ feature "agency admin", :js => true do
   end
 
   #scenario "add an invalid agency (blank name)" do
-  #visit complaint_admin_path('en')
+  #visit complaint_admin_show_path('en')
   #page.find('form#new_agency input#agency_name').set('ABC')
   #expect{page.find('button#add_agency').click; wait_for_ajax}.not_to change{Agency.count}
   #expect(page).to have_selector('#invalid_agency_error', :text => "fields cannot be blank")
@@ -312,7 +312,7 @@ feature "agency admin", :js => true do
 
   #scenario "add an agency with duplicate name" do
   #FactoryBot.create(:agency, :name => "ABC", :full_name => "Anywhere But Colma")
-  #visit complaint_admin_path('en')
+  #visit complaint_admin_show_path('en')
   #page.find('form#new_agency input#agency_name').set('abc') # case insensitive
   #page.find('form#new_agency input#agency_full_name').set('Anywhere But Chelmsford')
   #expect{page.find('button#add_agency').click; wait_for_ajax}.not_to change{Agency.count}
@@ -326,7 +326,7 @@ end
 feature "complaint area/subarea admin", :js => true do
   let(:area_model){ ComplaintArea }
   let(:subarea_model){ ComplaintSubarea }
-  let(:admin_page){ complaint_admin_path('en') }
+  let(:admin_page){ complaint_admin_show_path('en') }
   it_behaves_like 'area subarea admin'
 end
 

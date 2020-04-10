@@ -38,9 +38,9 @@ script.
       national(){ return this.get('agency_select_params.top_level_category') == 'national' },
       provincial(){ return this.get('agency_select_params.top_level_category') == 'provincial_agencies' },
       local(){ return this.get('agency_select_params.top_level_category') == 'municipalities' },
-      national_agencies(){return this.get('agencies').national},
-      provincial_agencies(){return this.get('agencies').provincial},
-      district_municipalities(){return this.get('agencies').local},
+      national_agencies(){return       _(this.get('agencies')).findWhere({name: 'National'}).collection },
+      provincial_agencies(){return     _(this.get('agencies')).findWhere({name: 'Provincial'}).collection },
+      district_municipalities(){return _(this.get('agencies')).findWhere({name: 'Local'}).collection },
       agency_id:{
         get(){
           if(this.get('national')){

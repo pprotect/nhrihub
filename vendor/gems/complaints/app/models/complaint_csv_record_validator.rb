@@ -65,7 +65,7 @@ class ComplaintCsvRecordValidator
    if institution.match(/(\((#{ProvinceAbbreviations.keys.join('|')})\))/) # parenthesized province abbreviation
      m0,m1,m2 = $~.to_a
      institution = institution.gsub(m1,'').strip #extract the province
-     self.province = ProvinceAbbreviations[m2] # identify province from abbreviation
+     province = ProvinceAbbreviations[m2] # identify province from abbreviation
    elsif institution.match(/((#{ProvinceAbbreviations.keys.map{|k| "(?:-|\s)#{k}(?:\s|$)"}.join('|')}))/) # non-parenthesized province abbreviation
      m0,m1,m2 = $~.to_a
      institution = institution.gsub(m1,'').strip #extract the province
@@ -136,8 +136,8 @@ class ComplaintCsvRecordValidator
       if name=~/south african/
         Levenshtein.distance(institution.downcase, name) <=2
       else
-        #institution.downcase.match(/(department of )?#{name}/)
-        institution.downcase == name
+        institution.downcase.match(/(department of )?#{name}/)
+        #institution.downcase == name
       end
     end
     return [institution, exists]

@@ -37,7 +37,6 @@ feature "Manage users", :js => true do
     fill_in("First name", :with => "Norman")
     fill_in("Last name", :with => "Normal")
     fill_in("Email", :with => "norm@normco.com")
-    debugger
     select("Gauteng", :from => 'user_office_id')
     # ensure that mail was actually sent
     expect{click_button("Save")}.to change { email_count }.by(1)

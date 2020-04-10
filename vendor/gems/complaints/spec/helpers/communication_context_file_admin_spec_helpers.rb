@@ -24,6 +24,6 @@ module CommunicationContextFileAdminSpecHelpers
   end
 
   def admin_page
-    complaint_admin_path('en')
+    complaint_admin_show_path('en')
   end
 end

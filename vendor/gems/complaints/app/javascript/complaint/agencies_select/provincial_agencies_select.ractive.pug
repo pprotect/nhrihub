@@ -28,7 +28,7 @@ script.
     },
     computed:{
       collection(){
-        return this.get('provincial_agencies')[this.get('agency_select_params.selected_province_id')]
+        return _(this.get('provincial_agencies')).findWhere({id: this.get('agency_select_params.selected_province_id')}).collection
       },
       province_selected(){
         var sel = this.get('agency_select_params.selected_province_id')

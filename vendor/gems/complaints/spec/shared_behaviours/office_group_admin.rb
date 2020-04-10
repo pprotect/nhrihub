@@ -8,7 +8,7 @@ RSpec.shared_examples  "office and office group admin" do
     include OfficeGroupOfficeAdminCommonHelpers
 
     before do
-      visit complaint_admin_path('en') 
+      visit complaint_admin_show_path('en') 
     end
 
     scenario 'default office_groups and offices' do
