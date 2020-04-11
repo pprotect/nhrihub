@@ -1,4 +1,17 @@
 module ApplicationHelper
+  def javascript_environment_tag
+    if Rails.env.test? || Rails.env.jstest?
+      javascript_tag "$.fx.off = true;"
+      javascript_tag "window.env = 'test'"
+    elsif Rails.env.development?
+      javascript_tag "window.env = 'dev'"
+    elsif Rails.env.production?
+      javascript_tag "window.env = 'production'"
+    elsif Rails.env.staging?
+      javascript_tag "window.env = 'staging'"
+    end
+  end
+
   def attribution
     '<div>Some icons made by <a href="http://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>'.html_safe
   end
