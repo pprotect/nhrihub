@@ -17,11 +17,16 @@ class ApplicationController < ActionController::Base
   before_action :check_browser
   before_action :check_permissions, :log_exception_notifier_data
   before_action :mini_profiler if Rails.env.staging?
+  before_action :get_git_ref
 
   around_action :with_locale
   before_action :set_title
 
 private
+  def get_git_ref
+    @git_ref = Rails.env.production? ?  File.read(Rails.root.join("REVISION")).chars[0..5].join : ""
+  end
+
   def check_browser
     two_factor_authentication_status = ENV.fetch('two_factor_authentication')
     two_factor_authentication_enabled = !(two_factor_authentication_status =~ /enabled/).nil?
