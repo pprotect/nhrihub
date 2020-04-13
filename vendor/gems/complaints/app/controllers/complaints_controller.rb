@@ -119,7 +119,7 @@ class ComplaintsController < ApplicationController
 
   private
   def populate_associations
-    @areas = ComplaintArea.all
+    @areas = ComplaintArea.includes(:subareas).all
     @subareas = ComplaintSubarea.all
     @agencies = Agency.hierarchy # {national: xx, provincial: xx, local: xx}
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
@@ -128,17 +128,18 @@ class ComplaintsController < ApplicationController
     @communication_maximum_filesize    = CommunicationDocument.maximum_filesize * 1000000
     @communication_permitted_filetypes = CommunicationDocument.permitted_filetypes
     @statuses = ComplaintStatus.ordered.select(:id, :name).all
-    @office_groups = OfficeGroup.national_regional_provincial
+    @office_groups = OfficeGroup.national_regional_provincial.includes(:offices => :province)
     @branches = Office.branches
     @status_memo_options = ComplaintStatus::CloseMemoOptions
     @legislations = Legislation.all
     @provinces = Province.all.sort_by(&:name)
+    @provinces = Province.includes(:metropolitan_municipalities, :district_municipalities => {:local_municipalities => {:district_municipality => :province}}).all.sort_by(&:name)
     #@national_government_agencies = NationalGovernmentAgency.all.sort_by(&:name)
     #@national_government_institutions = NationalGovernmentInstitution.all.sort_by(&:name)
     #@democracy_institutions = DemocracySupportingStateInstitution.all.sort_by(&:name)
     #@provincial_agencies = Agency.provincial.group_by(&:province_id)
-    @districts = DistrictMunicipality.all.group_by(&:province_id)
-    @metro_municipalities = MetropolitanMunicipality.all.group_by(&:province_id)
+    @districts = DistrictMunicipality.includes(:local_municipalities => {:district_municipality => :province}).all.group_by(&:province_id)
+    @metro_municipalities = MetropolitanMunicipality.includes(:province).all.group_by(&:province_id)
   end
 
   def default_params
@@ -163,7 +164,7 @@ class ComplaintsController < ApplicationController
     params.require(:complaint).permit( :firstName, :lastName, :title, :city, :home_phone, :new_assignee_id,
                                        :dob, :email, :complained_to_subject_agency, :desired_outcome, :gender, :details,
                                        :date, :imported, :complaint_area_id, 'new_transferee_id',
-                                       :cell_phone, :fax, :province, :postal_code, :id_type, :id_value, :alt_id_type, :alt_id_value,
+                                       :cell_phone, :fax, :province_id, :postal_code, :id_type, :id_value, :alt_id_type, :alt_id_value,
                                        :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
                                        :organization_name, :organization_registration_number, :legislation_id, :agency_id,
                                        :complaint_transfers_attributes => [:user_id, :office_id],

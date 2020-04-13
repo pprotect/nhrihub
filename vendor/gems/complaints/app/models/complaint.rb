@@ -35,6 +35,7 @@ class Complaint < ActiveRecord::Base
   accepts_nested_attributes_for :jurisdiction_assignments
   has_many :complaint_legislations
   has_many :legislations, through: :complaint_legislations
+  belongs_to :province
 
   attr_accessor :witness_name, :heading
 
@@ -232,6 +233,7 @@ class Complaint < ActiveRecord::Base
                            :complaint_area_id,
                            :subarea_ids,
                            :area_subarea_ids,
+                           :province_id,
                            #:agency_id,
                            :agency_description,
                            :agency_select_params,

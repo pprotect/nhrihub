@@ -12,7 +12,8 @@
     "jstransformer-scss": "^1.0.0",
     "pug-html-loader": "^1.1.5",
     "webpack": "^4.35.3",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "south-african-id-parser": "^1.0.0"
   },
   "devDependencies": {
     "webpack-dev-server": "^3.4.1"

@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '=6.0.1'
+gem 'rails', '=6.0.2.2'
 gem 'sprockets', '~> 3.0'
 gem 'activestorage'
 
@@ -21,7 +21,7 @@ gem 'coffee-rails'#, '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer',  "~> 0.12.3", platforms: :ruby
 
-gem 'i18n'
+gem 'rails-i18n', '~> 6.0.0'
 
 gem 'rb-readline'
 

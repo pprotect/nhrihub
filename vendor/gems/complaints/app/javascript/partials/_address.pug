@@ -38,7 +38,7 @@
         input#city.form-control(autocomplete='none', "on-keydown" = "@this.remove_attribute_error('city')", value = "{{city}}")/
         span#city_error.help-block.error {{ t.city_error_message }}
 
-  div.form-group('class-has-error' = 'province_error', 'data-toggle'='edit')
+  div.form-group('class-has-error' = 'province_id_error', 'data-toggle'='edit')
     .col-md-2
       .edit
         span.complaint_label.required {{ t.province }}
@@ -46,9 +46,13 @@
         span.complaint_label {{ t.province }}
     .col-md-2
       .edit
-        input.form-control#province(autocomplete='none', value = '{{province}}', 'on-keydown'="@this.remove_attribute_error('province')")
+        select.form-control#province(value = '{{province_id}}', 'on-change'="@this.remove_attribute_error('province_id')")
+          option(value='0', disabled='disabled', selected='selected') Select province...
+          | {{#provinces}}
+          option(value='{{id}}') {{name}}
+          | {{/provinces}}
         span.help-block.error#province_error {{ t.province_error_message }}
-      .no_edit.in#province {{ province }}
+      .no_edit.in#province {{ province_name }}
 
   div.form-group('class-has-error' = 'postal_code_error', 'data-toggle'='edit')
     .col-md-2

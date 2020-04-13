@@ -89,12 +89,13 @@
         .col-md-3.edit
           label
             | {{ t.passport }}
-            input#identify_by_passport(type = 'radio', name = '{{id_type}}', value = 'Passport number')
+            input#identify_by_passport(type = 'radio', name = '{{id_type}}', value = 'Passport number', 'on-change'="@this.remove_attribute_error('id_value')")
           label
             | {{ t.id }}
             input#identify_by_id(type = 'radio', name = '{{id_type}}', value = 'State id')
         .col-md-3.edit
-          input.form-control.dupe_check#id_value(autocomplete='none', type = 'text', name = 'id_value', value= "{{id_value}}")
+          input.form-control.dupe_check#id_value(autocomplete='none', type = 'text', name = 'id_value', value= "{{id_value}}", 'on-keydown'="@this.remove_attribute_error('id_value')")
+          span.help-block.error#id_value_error('class-has-error'='id_value_error') {{ t.id_value_error_message }}
         .col-md-3.no_edit.in#id_type {{ id_type }}
         .col-md-3.no_edit.in#id_value {{ id_value }}
 
@@ -201,6 +202,7 @@ script.
   window._ = _
   import ComplaintBase from 'complaint_base'
   import translations from 'translations.js'
+  import SAIDParser from 'south-african-id-parser'
 
   export default ComplaintBase.extend({
     template : $TEMPLATE,
@@ -216,7 +218,7 @@ script.
       },
       persistent_attributes() {
         return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
-          'city','province','postal_code','complaint_area_id', 'new_transferee_id',
+          'city','province_id','postal_code','complaint_area_id', 'new_transferee_id',
           'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
           'status_changes_attributes', 'new_assignee_id', 'subarea_ids', 'legislation_id',
           'agency_id', 'attached_documents_attributes', 'details', 'new_jurisdiction_branch_id',
@@ -229,7 +231,7 @@ script.
           lastName : ['notBlank'],
           city : ['notBlank'],
           postal_code : ['notBlank'],
-          province : ['notBlank'],
+          province_id : 'nonZero',
           complaint_area_id : 'numeric',
           subarea_id_count : 'nonZero',
           //new_assignee_id: ['nonZero', {if : () => {return (this.get('new_complaint') && this.get('editing'))}}],
@@ -250,6 +252,7 @@ script.
           fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
           status_memo: ()=>{return this.findComponent('closedStatusRadio').validate() },
           agency_id: 'numeric',
+          id_value: ()=>{ return !(this.get('id_type') == 'State id') || SAIDParser.validate(this.get('id_value')) }, // true means it's valid
         };
       },
     },

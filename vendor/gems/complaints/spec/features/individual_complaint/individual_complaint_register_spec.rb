@@ -24,7 +24,7 @@ feature "complaint pages navigation", :js => true do
   end
 end
 
-feature "complaint register", :js => true do
+feature "complaint register after skip dupe check", :js => true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecSetupHelpers
   include ComplaintsSpecHelpers
@@ -97,7 +97,7 @@ feature "complaint register", :js => true do
     fill_in('physical_address', :with => '1311 Santa Rosa Avenue')
     fill_in('postal_address', :with => '8844 Sebastopol Road')
     fill_in('city', :with => "Normaltown")
-    fill_in('province', with: 'Gondwanaland')
+    select('Gauteng', from: 'province')
     fill_in('postal_code', with: '12345')
     fill_in('email', :with => "norm@acme.co.ws")
     fill_in('home_phone', :with => "555-1212")
@@ -140,7 +140,7 @@ feature "complaint register", :js => true do
     expect(complaint.physical_address).to eq "1311 Santa Rosa Avenue"
     expect(complaint.postal_address).to eq "8844 Sebastopol Road"
     expect(complaint.city).to eq "Normaltown"
-    expect(complaint.province).to eq "Gondwanaland"
+    expect(complaint.province.name).to eq "Gauteng"
     expect(complaint.postal_code).to eq "12345"
     expect(complaint.email).to eq "norm@acme.co.ws"
     expect(complaint.home_phone).to eq "555-1212"
@@ -176,7 +176,7 @@ feature "complaint register", :js => true do
     expect(find('#complaint #physical_address').text).to eq "1311 Santa Rosa Avenue"
     expect(find('#complaint #postal_address').text).to eq  "8844 Sebastopol Road"
     expect(find('#complaint #city').text).to eq "Normaltown"
-    expect(find('#complaint #province').text).to eq 'Gondwanaland'
+    expect(find('#complaint #province').text).to eq 'Gauteng'
     expect(find('#complaint #postal_code').text).to eq '12345'
     expect(find('#complaint #email').text).to eq "norm@acme.co.ws"
     expect(find('#complaint #home_phone').text).to eq "555-1212"
@@ -235,16 +235,15 @@ feature "complaint register", :js => true do
     expect(page).to have_selector('#lastName_error', :text => "You must enter a last name")
     expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     expect(page).to have_selector('#city_error', :text => 'You must enter a city')
-    expect(page).to have_selector('#province_error', :text => 'You must enter a province')
     expect(page).to have_selector('#postal_code_error', :text => 'You must enter a postal code')
-    #expect(page).to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
     expect(page).to have_selector('#complaint_area_id_error', :text => 'You must select an area')
+    expect(page).not_to have_selector('#id_value_error', :text => 'Invalid SA ID') # only when type SA ID is checked
     expect(page).to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
     expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
     expect(page).to have_selector('#preferred_means_error', :text => "You must select a preferred means of communication")
     expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
-    expect(page).to have_selector('#province_error', :text => "You must enter a province")
+    expect(page).to have_selector('#province_error', :text => "You must select a province")
     expect(page).to have_selector('#postal_code_error', :text => "You must enter a postal code")
     expect(page).to have_selector('#agency_id_error', :text => "You must select an agency")
     fill_in('lastName', :with => "Normal")
@@ -255,8 +254,8 @@ feature "complaint register", :js => true do
     expect(page).not_to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     fill_in('city', :with => "Leaden Roding")
     expect(page).not_to have_selector('#city_error', :text => 'You must enter a city')
-    fill_in('province', with: 'Gondwanaland')
-    expect(page).not_to have_selector('#province_error', :text => "You must enter a province")
+    select('Gauteng', from: 'province')
+    expect(page).not_to have_selector('#province_error', :text => "You must select a province")
     fill_in('postal_code', with: '12345')
     expect(page).not_to have_selector('#postal_code_error', :text => "You must enter a postal code")
     # preferred means --mail
@@ -290,9 +289,8 @@ feature "complaint register", :js => true do
     expect(page).to have_selector('#fax_error', :text => "Fax designated as preferred communication means. You must enter a fax number")
     choose('Mail')
     expect(page).not_to have_selector('#fax_error', :text => "Fax designated as preferred communication means. You must enter a fax number")
+    fill_in("postal_address", with: "some text") # get rid of the mail error
 
-    #select(User.admin.first.first_last_name, :from => "assignee")
-    #expect(page).not_to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
     choose('special_investigations_unit')
     expect(page).not_to have_selector('#complaint_area_id_error', :text => 'You must select an area')
     check_subarea(:special_investigations_unit, "Unreasonable delay")
@@ -301,6 +299,20 @@ feature "complaint register", :js => true do
     expect(page).not_to have_selector('#details_error', :text => "You must enter the complaint details")
     select_local_municipal_agency("Lesedi")
     expect(page).not_to have_selector('#agency_id_error', :text => "You must select an agency")
+    # SA ID validation:
+    choose('Passport')
+    expect(page).not_to have_selector('#id_value_error', :text => 'Invalid SA ID')
+    choose('SA ID')
+    save_complaint(false)
+    expect(page).to have_selector('#id_value_error', :text => 'Invalid SA ID')
+    fill_in('id_value',with: invalid_sa_id) # enter anything removes the error
+    expect(page).not_to have_selector('#id_value_error', :text => 'Invalid SA ID')
+    save_complaint(false)
+    expect(page).to have_selector('#id_value_error', :text => 'Invalid SA ID')
+    fill_in('id_value',with: valid_sa_id) # enter anything removes the error
+    save_complaint(false)
+    expect(page).not_to have_selector('#id_value_error', :text => 'Invalid SA ID')
+
     expect(page).not_to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
   end
 

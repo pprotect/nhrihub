@@ -10,6 +10,14 @@ module ComplaintsSpecHelpers
   include RemindersSpecCommonHelpers
   include NotesSpecCommonHelpers
 
+  def invalid_sa_id
+    "12341234"
+  end
+
+  def valid_sa_id
+    "9001049818080"
+  end
+
   def set_filter_controls_text_field(name,value)
   # in the tests below we set ractive values directly b/c setting the
   # input values results in an ajax request for each character typed

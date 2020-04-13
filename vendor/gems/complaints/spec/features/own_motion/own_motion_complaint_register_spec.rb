@@ -69,7 +69,7 @@ feature "complaints index", :js => true do
     fill_in('physical_address', :with => '1311 Santa Rosa Avenue')
     fill_in('postal_address', :with => '8844 Sebastopol Road')
     fill_in('city', :with => "Normaltown")
-    fill_in('province', with: 'Gondwanaland')
+    select('Gauteng', from: 'province')
     fill_in('postal_code', with: '12345')
     fill_in('email', :with => "norm@acme.co.ws")
     fill_in('home_phone', :with => "555-1212")
@@ -105,7 +105,7 @@ feature "complaints index", :js => true do
     expect(complaint.physical_address).to eq "1311 Santa Rosa Avenue"
     expect(complaint.postal_address).to eq "8844 Sebastopol Road"
     expect(complaint.city).to eq "Normaltown"
-    expect(complaint.province).to eq "Gondwanaland"
+    expect(complaint.province.name).to eq "Gauteng"
     expect(complaint.postal_code).to eq "12345"
     expect(complaint.email).to eq "norm@acme.co.ws"
     expect(complaint.home_phone).to eq "555-1212"
@@ -135,7 +135,7 @@ feature "complaints index", :js => true do
     expect(find('#complaint #physical_address').text).to eq "1311 Santa Rosa Avenue"
     expect(find('#complaint #postal_address').text).to eq  "8844 Sebastopol Road"
     expect(find('#complaint #city').text).to eq "Normaltown"
-    expect(find('#complaint #province').text).to eq 'Gondwanaland'
+    expect(find('#complaint #province').text).to eq 'Gauteng'
     expect(find('#complaint #postal_code').text).to eq '12345'
     expect(find('#complaint #email').text).to eq "norm@acme.co.ws"
     expect(find('#complaint #home_phone').text).to eq "555-1212"
@@ -193,7 +193,7 @@ feature "complaints index", :js => true do
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
     expect(page).to have_selector('#lastName_error', :text => "You must enter a last name")
     expect(page).to have_selector('#city_error', :text => 'You must enter a city')
-    expect(page).to have_selector('#province_error', :text => 'You must enter a province')
+    expect(page).to have_selector('#province_error', :text => 'You must select a province')
     expect(page).to have_selector('#postal_code_error', :text => 'You must enter a postal code')
     #expect(page).to have_selector('#new_assignee_id_error', :text => 'You must designate an assignee')
     expect(page).to have_selector('#complaint_area_id_error', :text => 'You must select an area')
@@ -201,7 +201,7 @@ feature "complaints index", :js => true do
     expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
     expect(page).to have_selector('#preferred_means_error', :text => "You must select a preferred means of communication")
     expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
-    expect(page).to have_selector('#province_error', :text => "You must enter a province")
+    expect(page).to have_selector('#province_error', :text => "You must select a province")
     expect(page).to have_selector('#postal_code_error', :text => "You must enter a postal code")
     expect(page).to have_selector('#agency_id_error', :text => "You must select an agency")
     fill_in('lastName', :with => "Normal")
@@ -210,8 +210,8 @@ feature "complaints index", :js => true do
     expect(page).not_to have_selector('#firstName_error', :text => "You must enter a last name")
     fill_in('city', :with => "Leaden Roding")
     expect(page).not_to have_selector('#city_error', :text => 'You must enter a city')
-    fill_in('province', with: 'Gondwanaland')
-    expect(page).not_to have_selector('#province_error', :text => "You must enter a province")
+    select('Gauteng', from: 'province')
+    expect(page).not_to have_selector('#province_error', :text => "You must select a province")
     fill_in('postal_code', with: '12345')
     expect(page).not_to have_selector('#postal_code_error', :text => "You must enter a postal code")
     # preferred means --mail

@@ -61,7 +61,7 @@ def sa_province
   Faker::Config.locale = "en-ZA"
   province = Faker::Address.provinces
   Faker::Config.locale = "en"
-  province
+  Province.find_or_create_by(name: province)
 end
 
 def sa_postal_code
@@ -94,7 +94,7 @@ FactoryBot.define do
     physical_address { Faker::Address.street_address }
     postal_address { "PO Box #{rand(5000)}" }
     city { sa_city }
-    province { sa_province }
+    province_id { sa_province.id }
     postal_code { sa_postal_code }
     cell_phone { Faker::SouthAfrica.cell_phone }
     home_phone { Faker::SouthAfrica.phone_number }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_08_055550) do
+ActiveRecord::Schema.define(version: 2020_04_12_194507) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -323,7 +323,6 @@ ActiveRecord::Schema.define(version: 2020_03_08_055550) do
     t.string "physical_address"
     t.string "postal_address"
     t.string "city"
-    t.string "province"
     t.string "postal_code"
     t.string "cell_phone"
     t.string "home_phone"
@@ -335,6 +334,7 @@ ActiveRecord::Schema.define(version: 2020_03_08_055550) do
     t.string "alt_id_other_type"
     t.integer "initiating_branch_id"
     t.integer "initiating_office_id"
+    t.integer "province_id", limit: 2, default: 0
     t.index ["case_reference"], name: "index_complaints_on_case_reference", unique: true
   end
 

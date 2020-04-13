@@ -47,8 +47,11 @@ import Legislations from 'partials/_legislations.pug'
 import LegislationSelector from 'legislation_selector.ractive.pug'
 
 export default Ractive.extend({
-el: '#complaint',
+  el: '#complaint',
   computed : {
+    province_name(){
+      return _(this.get('provinces')).findWhere({id: this.get('province_id')}).name
+    },
     agency_id:{
       get(){
         return this.findComponent('agenciesSelector').get('agency_id');

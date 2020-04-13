@@ -124,6 +124,7 @@ en:
     first_name : "First name(s)"
     gender : 'Gender'
     id: 'SA ID'
+    id_value_error_message: "Invalid SA ID"
     initiating_branch: 'Initiating branch'
     initiating_office: 'Initiating office'
     lastName : "Last name"
@@ -155,7 +156,7 @@ en:
     prison: 'Prison ID'
     principal_id: 'Principal ID'
     province: 'Province'
-    province_error_message: 'You must enter a province'
+    province_error_message: 'You must select a province'
     reminders : "Reminders"
     required : "Required"
     select_initiating_branch: "Select initiating branch"
