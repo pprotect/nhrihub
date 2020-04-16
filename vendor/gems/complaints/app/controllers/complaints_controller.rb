@@ -149,14 +149,14 @@ class ComplaintsController < ApplicationController
   def index_query_params
     params.
       permit(:complainant, :from, :to, :case_reference, :city, :phone,
-             :selected_agency_id, :selected_assignee_id, :locale, :mandate_id, :type,
+             :selected_agency_id, :selected_assignee_id, :locale, :mandate_id, :type, :format,
              :selected_status_ids => [], :selected_complaint_area_ids => [],
              :selected_subarea_ids => [],
               ).
       with_defaults(default_params).
       slice(:selected_assignee_id, :selected_status_ids, :complainant,
             :from, :to, :city, :phone, :selected_complaint_area_ids,
-            :selected_subarea_ids, :case_reference,
+            :selected_subarea_ids, :case_reference, :format,
             :selected_agency_id )
   end
 

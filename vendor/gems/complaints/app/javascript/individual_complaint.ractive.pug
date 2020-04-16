@@ -252,7 +252,7 @@ script.
           fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
           status_memo: ()=>{return this.findComponent('closedStatusRadio').validate() },
           agency_id: 'numeric',
-          id_value: ()=>{ if(!_.isNull(this.get('id_value'))){this.set('id_value',this.get('id_value').trim())};
+          id_value: ()=>{ if(!_.isNull(this.get('id_value'))){this.set('id_value',this.get('id_value').toString().trim())};
                           return !(this.get('id_type') == 'State id') || SAIDParser.validate(this.get('id_value')) }, // true means it's valid
         };
       },
