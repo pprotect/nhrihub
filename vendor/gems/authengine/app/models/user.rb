@@ -102,7 +102,7 @@ class User < ActiveRecord::Base
 # the next action on the user's record is account activation
 # at this time, login and password must be present and valid
   validates_presence_of     :login,                      :on => :update
-  validates                 :password,                   :previously_unused_password => true, :on=>:update
+  validates                 :password,                   :previously_unused_password => true, :on=>:update # see PreviouslyUnusedPasswordValidator 
   validates                 :password,                   :if => :password_required?, :on=>:update, :format => {:with => /(#{PasswordSpecialCharactersRegex})/, :message => "Password must contain #{PasswordSpecialCharacters}" }
   validates_presence_of     :password,                   :if => :password_required?, :on=>:update
   validates_length_of       :password, :within => 6..40, :if => :password_required?, :on=>:update
@@ -218,7 +218,11 @@ class User < ActiveRecord::Base
       super
     end
   end
-  class LoginBlank < AuthenticationError; end
+  class LoginBlank < AuthenticationError
+    def initialize
+      super(login: "")
+    end
+  end
   class TokenNotRegistered < AuthenticationError; end
   class AccountNotActivated < AuthenticationError; end
   class AccountDisabled < AuthenticationError; end

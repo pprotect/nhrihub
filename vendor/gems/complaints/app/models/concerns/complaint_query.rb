@@ -80,7 +80,7 @@ module ComplaintQuery
 
     def before_date(to)
       return no_filter if to.blank?
-      where("complaints.date_received <= ?", Time.parse(to).end_of_day)
+      where("complaints.date_received <= ?", Time.zone.parse(to).end_of_day)
     end
 
     def with_complainant_fragment_match(complainant_fragment)

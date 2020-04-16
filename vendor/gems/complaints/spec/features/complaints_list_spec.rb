@@ -507,7 +507,8 @@ feature "selects complaints by match of date ranges", :js => true do
 
   it "should return complaints created before the 'to' date" do
     expect(complaints.count).to eq 12
-    d = Date.today.advance(months: -2)
+    #d = Date.today.advance(months: -2)
+    d = Time.zone.now.advance(months: -2)
     select_datepicker_date('#to',d.year,d.month,d.day)
     wait_for_ajax
     sleep(2)

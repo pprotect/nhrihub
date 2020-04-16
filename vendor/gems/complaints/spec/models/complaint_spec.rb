@@ -165,7 +165,7 @@ describe "#as_json" do
                                                      "timeline_events", "communications", "subarea_ids", "area_subarea_ids",
                                                      "cell_phone", "city", "complaint_area_id", "complaint_type",
                                                      "alt_id_type", "physical_address", "agency_description", "agency_select_params", "legislation_id",
-                                                     "postal_address", "postal_code", "preferred_means", "province",
+                                                     "postal_address", "postal_code", "preferred_means", "province_id",
                                                      "alt_id_value", "alt_id_other_type", "fax", "home_phone", "id_type",
                                                      "id_value", "organization_name", "organization_registration_number", "initiating_branch_id", "initiating_office_id"]
       expect(@complaints.first["id"]).to eq Complaint.first.id # Complaint.first sorts by id in ascending order, returns lowest id/case_ref
@@ -243,7 +243,7 @@ describe "#as_json" do
                                                      "timeline_events", "communications", "subarea_ids", "area_subarea_ids",
                                                      "cell_phone", "city", "complaint_area_id", "complaint_type",
                                                      "alt_id_type", "physical_address", "agency_description", "agency_select_params", "legislation_id",
-                                                     "postal_address", "postal_code", "preferred_means", "province",
+                                                     "postal_address", "postal_code", "preferred_means", "province_id",
                                                      "alt_id_value", "alt_id_other_type", "fax", "home_phone", "id_type",
                                                      "id_value", "organization_name", "organization_registration_number", "initiating_branch_id", "initiating_office_id"]
       expect(@complaints.first["reminders"]).to be_empty

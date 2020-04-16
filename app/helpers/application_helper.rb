@@ -1,8 +1,7 @@
 module ApplicationHelper
   def javascript_environment_tag
     if Rails.env.test? || Rails.env.jstest?
-      javascript_tag "$.fx.off = true;"
-      javascript_tag "window.env = 'test'"
+      javascript_tag "$.fx.off = true; window.env = 'test'"
     elsif Rails.env.development?
       javascript_tag "window.env = 'dev'"
     elsif Rails.env.production?
