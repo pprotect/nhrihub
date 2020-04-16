@@ -15,7 +15,7 @@ module ComplaintsSpecHelpers
   end
 
   def valid_sa_id
-    "9001049818080"
+    " 9001049818080 " # valid id with leading/trailing spaces
   end
 
   def set_filter_controls_text_field(name,value)

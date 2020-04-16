@@ -87,8 +87,8 @@ feature "complaint register", :js => true do
     fill_in('firstName', :with => "Norman")
     fill_in('dob', :with => "08/09/1950")
     select_male_gender
-    choose('Passport')
-    fill_in('id_value', :with => "12341234")
+    choose('SA ID')
+    fill_in('id_value', :with => valid_sa_id)
     expect(page).not_to have_selector('#alt_id_other_type', visible: true)
     choose('identify_by_other_id')
     expect(page).to have_selector('#alt_id_other_type')
@@ -132,8 +132,8 @@ feature "complaint register", :js => true do
     expect(complaint.firstName).to eq "Norman"
     expect(complaint.dob).to eq "08/09/1950" # dd/mm/yyyy
     expect(complaint.gender).to eq 'M'
-    expect(complaint.id_type).to eq 'Passport number'
-    expect(complaint.id_value).to eq 12341234
+    expect(complaint.id_type).to eq 'State id'
+    expect(complaint.id_value).to eq valid_sa_id.strip.to_i
     expect(complaint.alt_id_type).to eq 'other'
     expect(complaint.alt_id_other_type).to eq 'immigration card'
     expect(complaint.alt_id_value).to eq '1b2b3bc'
@@ -169,8 +169,8 @@ feature "complaint register", :js => true do
     expect(find('#complaint #firstName').text).to eq "Norman"
     expect(find('#complaint #complainant_dob').text).to eq "Sep 8, 1950"
     expect(find('#complaint #gender').text).to eq "M"
-    expect(find('#complaint #id_type').text).to eq "Passport number"
-    expect(find('#complaint #id_value').text).to eq "12341234"
+    expect(find('#complaint #id_type').text).to eq "State id"
+    expect(find('#complaint #id_value').text).to eq valid_sa_id.strip.to_s
     expect(find('#complaint #alt_id_name').text).to eq 'immigration card'
     expect(find('#complaint #alt_id_value').text).to eq '1b2b3bc'
     expect(find('#complaint #physical_address').text).to eq "1311 Santa Rosa Avenue"
