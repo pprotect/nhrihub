@@ -98,6 +98,6 @@ script.
       return this.set('filter_criteria.to',selectedDate);
     },
     generate_report() {
-      return window.location=Routes.complaints_path('en',{format : 'docx'});
+      return window.location= window.location.pathname + ".docx"+ window.location.search
     }
   };
