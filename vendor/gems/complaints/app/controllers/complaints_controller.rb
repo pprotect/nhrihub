@@ -33,7 +33,7 @@ class ComplaintsController < ApplicationController
         render :index, :layout => 'application_webpack'
       end
       format.docx do
-        send_file ComplaintsReport.new(Complaint.all).docfile
+        send_file ComplaintsReport.new(complaints).docfile
       end
     end
   end
