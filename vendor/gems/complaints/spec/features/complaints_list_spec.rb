@@ -333,7 +333,6 @@ feature "complaints index", :js => true do
     expect(downloaded_file).to eq filename
   end
 
-
   it "deletes a complaint" do
     expect{delete_complaint; confirm_deletion; wait_for_ajax}.to change{ Complaint.count }.by(-1).
                                            and change{ complaints.count }.by(-1)
@@ -391,6 +390,27 @@ feature "reloads complaints if a different assignee is selected", js: true do
     wait_for_ajax
     select_assignee_dropdown_should_be_checked_for(signed_in_user)
     complaints_should_be_assigned_to(signed_in_user)
+  end
+end
+
+feature "shows complaints that are unassigned", js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include NavigationHelpers
+  include ComplaintsSpecHelpers
+
+  before do
+    populate_database(:individual_complaint)
+    Complaint.destroy_all
+    @unassigned_complaint = FactoryBot.create(:complaint, :registered, :with_associations)
+    visit complaints_path('en')
+  end
+
+  it "should show the complaints assigned to the checked assignee" do
+    expect(complaints.count).to eq 0
+    select_assignee('Unassigned')
+    expect(complaints.count).to eq 1
+    expect(first_complaint.find('.case_reference').text).to eq @unassigned_complaint.case_reference.to_s
   end
 end
 

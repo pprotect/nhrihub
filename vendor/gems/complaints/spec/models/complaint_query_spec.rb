@@ -278,3 +278,25 @@ describe "#with_case_reference_match" do
     end
   end
 end
+
+describe "#for_assignee" do
+  let(:user){ FactoryBot.create(:user) }
+  let(:assigned_complaint){ FactoryBot.create(:complaint, assigned_to: user) }
+  let(:unassigned_complaint){ FactoryBot.create(:complaint) }
+
+  it "returns no results if assignee_id is nil" do
+    expect(Complaint.for_assignee(nil)).to be_empty
+  end
+
+  it "returns no results if assignee_id is blank" do
+    expect(Complaint.for_assignee(nil)).to be_empty
+  end
+
+  it "matches assigned_complaint when assignee.id is specified" do
+    expect(Complaint.for_assignee(user.id)).to eq [assigned_complaint]
+  end
+
+  it "matches unassigned_complaint when assignee.id is 0" do
+    expect(Complaint.for_assignee(0)).to eq [unassigned_complaint]
+  end
+end

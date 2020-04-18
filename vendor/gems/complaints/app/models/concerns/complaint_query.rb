@@ -17,12 +17,17 @@ module ComplaintQuery
     end
 
     def for_assignee(user_id = nil)
-      user_id && !user_id.blank? ?
+      if user_id && !user_id.blank? && !user_id.to_i.zero?
         select(' complaints.*, assigns.created_at, assigns.user_id, assigns.complaint_id').
         joins(:assigns).
         merge(Assign.most_recent_for_assignee(user_id))
-        :
+      elsif user_id && !user_id.blank? && user_id.to_i.zero?
+        select(' complaints.*, assigns.created_at, assigns.user_id, assigns.complaint_id').
+        left_outer_joins(:assigns).
+        where(assigns: {id: nil})
+      else
         where("1=0")
+      end
     end
 
     def with_agencies(selected_agency_id, options = {})
