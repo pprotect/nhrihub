@@ -93,7 +93,7 @@ feature 'edit complaint', js: true do
     expect(page).to have_selector("#complaint_documents .document .filename", :text => "first_upload_file.pdf")
     select_datepicker_date("#date_received",Date.today.year,Date.today.month,23)
     sleep(0.2) # javascript
-    expect(page.find('#date_received').value).to eq "#{Date.today.strftime('%b 23, %Y')}"
+    expect(page.find('#date_received').value).to eq "#{Date.today.strftime('23/%m/%Y')}"
 
     expect{ edit_save }.to change{ IndividualComplaint.find(1).lastName }.to("Normal").
                        and change{ IndividualComplaint.find(1).firstName }.to("Norman").
@@ -124,11 +124,11 @@ feature 'edit complaint', js: true do
     expect( individual_complaint.reload.agencies.count ).to eq 1
     expect( individual_complaint.reload.date_received.to_date).to eq Date.new(Date.today.year, Date.today.month, 23)
 
-    expect(page).to have_selector('#complainant_dob', :text => "Aug 19, 1950")
+    expect(page).to have_selector('#complainant_dob', :text => "19/08/1950")
     expect(page).to have_selector('#desired_outcome', :text => "Things are more better")
     expect(page).to have_selector('#complaint_details', :text => "the boy stood on the burning deck")
     expect(page).to have_selector('#complained_to_subject_agency', :text => "no")
-    expect(page).to have_selector('#date',:text => Date.new(Date.today.year, Date.today.month, 23).strftime("%b %-e, %Y"))
+    expect(page).to have_selector('#date',:text => Date.new(Date.today.year, Date.today.month, 23).strftime(Complaint::DateFormat))
 
     within good_governance_area do
       IndividualComplaint.first.complaint_subareas.good_governance.map(&:name).each do |subarea_name|
@@ -226,7 +226,7 @@ feature 'edit complaint', js: true do
     expect(page.find('#complaint_details').value).to eq original_complaint.details
     expect(page.find('#desired_outcome').value).to eq original_complaint.desired_outcome.to_s
     expect(page.find('#complained_to_subject_agency_yes')).not_to be_checked
-    expect(find('#date_received').value).to eq original_complaint.date_received.strftime("%b %-e, %Y")
+    expect(find('#date_received').value).to eq original_complaint.date_received.strftime(Complaint::DateFormat)
     new_assignee_id = page.evaluate_script("complaint.get('new_assignee_id')")
     expect(new_assignee_id).to be_zero
     expect(find('#current_assignee').text).to eq original_complaint.assignees.first.first_last_name

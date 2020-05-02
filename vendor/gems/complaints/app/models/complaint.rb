@@ -3,6 +3,7 @@
 class Complaint < ActiveRecord::Base
   #include Cache
   include ComplaintQuery
+  DateFormat = "%d/%m/%Y"
 
   enum preferred_means: [:mail, :email, :home_phone, :cell_phone, :fax]
   enum id_type: ["undefined", "Passport number", "State id"], _prefix: true
@@ -70,7 +71,8 @@ class Complaint < ActiveRecord::Base
       selected_status_ids:         ComplaintStatus.default.map(&:id),
       selected_complaint_area_ids: ComplaintArea.pluck(:id),
       selected_subarea_ids:        ComplaintSubarea.pluck(:id),
-      selected_agency_id:         "all"}
+      selected_agency_id:         "all",
+      selected_office_id: ""}
   end
 
   def self.possible_duplicates(params)
@@ -83,19 +85,20 @@ class Complaint < ActiveRecord::Base
   end
 
   def self.filtered(query)
-    #logger.info "for_assignee: #{for_assignee(query[:selected_assignee_id]).length}"
-    #logger.info "with_status: #{with_status(query[:selected_status_ids]).length}"
-    #logger.info "with_complaint_area_ids: #{with_complaint_area_ids(query[:selected_complaint_area_ids]).length}"
-    #logger.info "with_case_reference_match: #{with_case_reference_match(query[:case_reference]).length}"
-    #logger.info "with_complainant_fragment_match: #{with_complainant_fragment_match(query[:complainant]).length}"
-    #logger.info "since_date: #{since_date(query[:from]).length}"
-    #logger.info "before_date: #{before_date(query[:to]).length}"
-    #logger.info "with_city: #{with_city(query[:city]).length}"
-    #logger.info "with_phone: #{with_phone(query[:phone]).length}"
-    #logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
-    #logger.info "with_agencies: #{with_agencies(query[:selected_agency_id]).length}"
+    logger.info "for_assignee: #{for_assignee(query[:selected_assignee_id]).length}"
+    logger.info "with_status: #{with_status(query[:selected_status_ids]).length}"
+    logger.info "with_complaint_area_ids: #{with_complaint_area_ids(query[:selected_complaint_area_ids]).length}"
+    logger.info "with_case_reference_match: #{with_case_reference_match(query[:case_reference]).length}"
+    logger.info "with_complainant_fragment_match: #{with_complainant_fragment_match(query[:complainant]).length}"
+    logger.info "since_date: #{since_date(query[:from]).length}"
+    logger.info "before_date: #{before_date(query[:to]).length}"
+    logger.info "with_city: #{with_city(query[:city]).length}"
+    logger.info "with_phone: #{with_phone(query[:phone]).length}"
+    logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
+    logger.info "with_agencies: #{with_agencies(query[:selected_agency_id]).length}"
+    logger.info "transferred_to: #{transferred_to(query[:selected_office_id]).length}"
     select("DISTINCT ON (complaints.id) complaints.*").
-    for_assignee(query[:selected_assignee_id]).
+      for_assignee(query[:selected_assignee_id]).
       with_status(query[:selected_status_ids]).
       with_complaint_area_ids(query[:selected_complaint_area_ids]).
       with_case_reference_match(query[:case_reference]).
@@ -105,7 +108,8 @@ class Complaint < ActiveRecord::Base
       with_city(query[:city]).
       with_phone(query[:phone]).
       with_subareas(query[:selected_subarea_ids]).
-      with_agencies(query[:selected_agency_id])
+      with_agencies(query[:selected_agency_id]).
+      transferred_to(query[:selected_office_id])
   end
 
   def self.index_page_associations(query)
@@ -291,12 +295,9 @@ class Complaint < ActiveRecord::Base
   end
 
   def dob
-    read_attribute("dob").strftime("%d/%m/%Y") unless read_attribute("dob").blank?
+    read_attribute("dob").strftime(DateFormat) unless read_attribute("dob").blank?
   end
-
-  def date_of_birth
-    read_attribute("dob").strftime("%b %e, %Y") unless read_attribute("dob").blank?
-  end
+  alias :date_of_birth :dob
 
   def attached_documents
     complaint_documents
@@ -331,7 +332,7 @@ class Complaint < ActiveRecord::Base
   end
 
   def date
-    date_received.strftime("%b %-e, %Y") unless date_received.nil?
+    date_received.strftime(DateFormat) unless date_received.nil?
   end
 
   def date=(val)

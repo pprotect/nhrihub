@@ -1,8 +1,6 @@
 var EditInPlace = require("exports-loader?EditInPlace!edit_in_place")
-import 'jquery-ui/ui/widgets/datepicker'
 import EditBackup from 'edit_backup'
 import AreasSelector from 'complaint/areas_selector'
-//import Agencies from 'agencies'
 import Agency from 'agency.ractive.pug'
 import AgenciesSelector from 'agencies_select/agencies_selector'
 import Area from 'area'
@@ -19,8 +17,6 @@ import Communications from 'communications.ractive.pug'
 var RactiveLocalMethods = require("exports-loader?local_methods!ractive_local_methods")
 import translations from 'translations.js'
 import Validator from 'validator'
-var SingleMonthDatepicker = require("exports-loader?SingleMonthDatepicker!single_month_datepicker.coffee")
-Ractive.decorators.single_month_datepicker = SingleMonthDatepicker
 import reminders from 'reminders.ractive.pug'
 import notes from 'notes.ractive.pug'
 import 'bootstrap'
@@ -44,7 +40,9 @@ import Actions from 'partials/_actions.pug'
 import Address from 'partials/_address.pug'
 import ContactInfo from 'partials/_contact_info.pug'
 import Legislations from 'partials/_legislations.pug'
+import DateReceived from 'partials/_date_received.pug'
 import LegislationSelector from 'legislation_selector.ractive.pug'
+import Datepicker from 'datepicker'
 
 export default Ractive.extend({
   el: '#complaint',
@@ -193,6 +191,7 @@ export default Ractive.extend({
     address: Address,
     contact_info: ContactInfo,
     legislations: Legislations,
+    date_received: DateReceived,
   },
   oninit() {
     this.set({
@@ -235,6 +234,7 @@ export default Ractive.extend({
     transferees: Transferees,
     jurisdictionBranchSelector: JurisdictionBranchSelector,
     legislationSelector: LegislationSelector,
+    datepicker: Datepicker,
   },
   observe: {
     'agency_select_params.top_level_category': {

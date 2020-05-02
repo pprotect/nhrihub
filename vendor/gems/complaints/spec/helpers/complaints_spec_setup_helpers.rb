@@ -19,6 +19,8 @@ module ComplaintsSpecSetupHelpers
     page.find(:xpath, ".//li[contains(./a/div/text(),'Administrative Justice')]")
     page.find('#initiating_branch_select').click
 
+    fill_in('date_received', with: Date.today.strftime(Complaint::DateFormat))
+
     #Subject/beneficiary
     fill_in('firstName', :with => "Norman")
     fill_in('lastName', :with => "Normal")
@@ -42,6 +44,7 @@ module ComplaintsSpecSetupHelpers
   end
 
   def complete_organization_complaint_required_fields
+    fill_in('date_received', with: Date.today.strftime(Complaint::DateFormat))
     fill_in('organization_name', :with => "Acme Corp.")
     fill_in('contact_first_name', :with => "Norman")
     fill_in('contact_last_name', :with => "Normal")
@@ -63,6 +66,7 @@ module ComplaintsSpecSetupHelpers
   end
 
   def complete_individual_complaint_required_fields
+    fill_in('date_received', with: Date.today.strftime(Complaint::DateFormat))
     fill_in('lastName', :with => "Normal")
     fill_in('firstName', :with => "Norman")
     fill_in('dob', :with => "08/09/1950")
@@ -78,13 +82,18 @@ module ComplaintsSpecSetupHelpers
     select_local_municipal_agency("Lesedi")
   end
 
-  def populate_database(type)
+  def populate_associations
     create_offices
     create_complaint_areas
     create_agencies
     create_staff
     create_complaint_statuses
     populate_areas_subareas
+    set_file_defaults
+  end
+
+  def populate_database(type)
+    populate_associations
     user = User.where(:login => 'admin').first
     staff_user = User.where(:login => 'staff').first
     FactoryBot.create( type, :registered,
@@ -119,7 +128,6 @@ module ComplaintsSpecSetupHelpers
                       :communications => _communications,
                       :organization_name => Faker::Company.name,
                       :organization_registration_number => "56785678")
-    set_file_defaults
   end
 
   def create_legislations

@@ -10,10 +10,18 @@ class Communication < ActiveRecord::Base
   default_scope { order('date DESC') }
 
   def as_json(options = {})
-    super(:methods => [ :user, :attached_documents, :communicants])
+    super(:methods => [ :formatted_date, :user, :attached_documents, :communicants])
   end
 
   def attached_documents
     communication_documents
+  end
+
+  def formatted_date
+    date&.strftime(Complaint::DateFormat)
+  end
+
+  def formatted_date=(val)
+    write_attribute(:date, Date.parse(val))
   end
 end

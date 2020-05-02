@@ -28,3 +28,4 @@ en:
       remove_communicant: "remove communicant"
       address: "Address"
       save_error: "Save failed with: %{status}, %{message}"
+      delete_communication_confirmation_message: "Are you sure you want to delete this communication?"

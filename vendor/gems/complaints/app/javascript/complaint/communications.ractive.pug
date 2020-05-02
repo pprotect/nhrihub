@@ -10,7 +10,7 @@ div.modal#communications_modal( class-fade='fade' tabindex="-1" role="dialog" ar
         i.fa.fa-plus.fa-sm#add_communication( data-toggle="tooltip" data-placement="bottom" title="add communication" 'on-click'='@this.new_communication()')
         div#communications(style="margin-bottom:80px;")
           | {{#communications}}
-          <communication parent='{{parent}}' communicants='{{communicants}}' id='{{id}}' maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' complaint_id='{{complaint_id}}' direction='{{direction}}' mode='{{mode}}' note='{{note}}' user='{{user}}' date='{{date}}' attached_documents='{{attached_documents}}' />
+          <communication parent='{{parent}}' communicants='{{communicants}}' id='{{id}}' maximum_filesize='{{maximum_filesize}}' permitted_filetypes='{{permitted_filetypes}}' complaint_id='{{complaint_id}}' direction='{{direction}}' mode='{{mode}}' note='{{note}}' user='{{user}}' formatted_date='{{formatted_date}}' attached_documents='{{attached_documents}}' />
           | {{/communications}}
 
 script.
@@ -32,7 +32,7 @@ script.
       };
     },
     computed:{
-      fade: function(){return window.env!='test'}
+      fade: function(){return window.env!='test'},
     },
     onrender(){
       $(this.find('#communications_modal')).on('hidden.bs.modal',this.onModalClose.bind(this))
@@ -44,7 +44,7 @@ script.
           complaint_id:this.get('parent').get('id'),
           mode : null,
           direction : null,
-          date:new Date(),
+          formatted_date: $.datepicker.formatDate("dd/mm/yy", new Date()),
           attached_documents : [],
           communicants : [{name: ""}],
           note : ""

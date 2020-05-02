@@ -1,5 +1,3 @@
-require 'rails_helper'
-$:.unshift File.expand_path '../../helpers', __FILE__
 require 'login_helpers'
 require 'complaints_spec_setup_helpers'
 require 'navigation_helpers'
@@ -7,20 +5,14 @@ require 'download_helpers'
 require 'complaints_spec_helpers'
 require 'complaints_communications_spec_helpers'
 require 'upload_file_helpers'
-require 'notes_spec_common_helpers'
-require 'notes_behaviour'
 
-feature "complaints communications", :js => true do
-  include LoggedInEnAdminUserHelper # sets up logged in admin user
+RSpec.shared_examples  "complaint communications" do
   include ComplaintsSpecSetupHelpers
   include NavigationHelpers
   include ComplaintsSpecHelpers
   include ComplaintsCommunicationsSpecHelpers
   include UploadFileHelpers
-
-  before(:context) do
-    Webpacker.compile
-  end
+  include DownloadHelpers
 
   it "should show a list of communicaitons" do
     expect(page).to have_selector('#communications_modal')
@@ -31,7 +23,7 @@ feature "complaints communications", :js => true do
     add_communication
     expect(page).to have_selector('#new_communication')
     within new_communication do
-      set_datepicker('new_communication_date',"May 19, 2016")
+      set_datepicker('new_communication_date',"19/05/2016")
       choose("Email")
 
       # Received direction allows only one communicant
@@ -96,8 +88,9 @@ feature "complaints communications", :js => true do
     expect(communication.mode).to eq "email"
     # ActiveRecord stores the date field as Postgres "timestamp without time zone" type, with UTC being assumed
     raw_persisted_date = ActiveRecord::Base.connection.execute("select date from communications where note='Some note text'")[0]["date"]
-    expect(raw_persisted_date).to eq "2016-05-19 07:00:00"
-    expect(communication.date.in_time_zone("Pacific Time (US & Canada)")).to eq "Thu, 19 May 2016 00:00:00 PDT -07:00"
+    # date entered was "19/05/2016. with time assumed to be 0000, it's interpreted in the apps time zone and stored as UTC
+    expect(raw_persisted_date).to eq "2016-05-18 22:00:00"
+    expect(communication.date.in_time_zone).to eq "Thu, 19 May 2016 00:00:00 SAST +02:00"
     expect(communication.direction).to eq "sent"
     expect(communication.user.first_last_name).to eq User.first.first_last_name
     expect(communication.note).to eq "Some note text"
@@ -110,7 +103,7 @@ feature "complaints communications", :js => true do
     # on the browser
     communication = page.all('#communications .communication')[1]
     within communication do
-      expect(find('.date').text).to eq "May 19, 2016"
+      expect(find('.date').text).to eq "19/05/2016"
       expect(find('.by').text).to eq User.first.first_last_name
       expect(all('.with')[0].text).to eq "Harry Harker"
       expect(all('.with')[1].text).to eq "Harriet Harker"
@@ -121,7 +114,7 @@ feature "complaints communications", :js => true do
     expect(page).to have_selector('#single_note_modal .note_text', :text => "Some note text")
     dismiss_the_note_modal
     # ensure reverse chronological order
-    expect(page.all('#communications .communication .date').map(&:text)).to eq [DateTime.now.to_date.strftime("%b %-e, %Y"),"May 19, 2016"]
+    expect(page.all('#communications .communication .date').map(&:text)).to eq [Time.zone.now.to_date.strftime(Complaint::DateFormat),"19/05/2016"]
   end
 
   it "terminates adding with modal close" do
@@ -136,7 +129,7 @@ feature "complaints communications", :js => true do
     add_communication
     expect(page).to have_selector('#new_communication')
     within new_communication do
-      set_datepicker('new_communication_date',"May 19, 2016")
+      set_datepicker('new_communication_date',"19/05/2016")
       sleep(0.4)
       choose("Email")
 
@@ -258,7 +251,7 @@ feature "complaints communications", :js => true do
     expect(page).to have_selector('#new_communication')
     within new_communication do
       choose("Email")
-      set_datepicker('new_communication_date',"2016, May 19")
+      set_datepicker('new_communication_date',"19/05/2016")
       choose("Received")
       fill_in("note", :with => "Some note text")
       attach_file('communication_document_file', upload_document)
@@ -268,7 +261,7 @@ feature "complaints communications", :js => true do
     cancel_add
     add_communication
     expect(page).to have_selector('#new_communication')
-    expect(page.find('#new_communication_date').value).to eq DateTime.now.to_date.strftime("%b %-e, %Y")
+    expect(page.find('#new_communication_date').value).to eq DateTime.now.to_date.strftime(Complaint::DateFormat)
     expect(page).not_to have_checked_field('#email_mode')
     expect(page).not_to have_checked_field('#phone_mode')
     expect(page).not_to have_checked_field('#letter_mode')
@@ -280,21 +273,6 @@ feature "complaints communications", :js => true do
   it "should delete a communication" do
     expect{ delete_communication; confirm_deletion; wait_for_ajax }.to change{ Communication.count }.by(-1).
                                   and change{ communications.count }.from(1).to(0)
-  end
-
-end
-
-feature "communications files", :js => true do
-  include LoggedInEnAdminUserHelper # sets up logged in admin user
-  include ComplaintsSpecSetupHelpers
-  include NavigationHelpers
-  include ComplaintsSpecHelpers
-  include ComplaintsCommunicationsSpecHelpers
-  include UploadFileHelpers
-  include DownloadHelpers
-
-  before(:context) do
-    Webpacker.compile
   end
 
   it "should validate file size when adding" do

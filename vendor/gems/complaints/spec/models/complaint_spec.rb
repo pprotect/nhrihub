@@ -216,7 +216,7 @@ describe "#as_json" do
       expect(DateTime.parse(@complaints.first["timeline_events"].first["date"]).strftime("%s")).to eq Complaint.first.status_changes.first.date.to_datetime.strftime("%s")
       expect(@complaints.first["timeline_events"].first["event_description"]).to eq Complaint.first.status_changes.first.event_description
       expect(@complaints.first["timeline_events"].first["user_name"]).to eq Complaint.first.status_changes.first.user_name
-      expect(@complaints.first["communications"].first.keys).to match_array ["attached_documents", "communicants", "complaint_id", "date", "direction", "id", "mode", "note", "user", "user_id"]
+      expect(@complaints.first["communications"].first.keys).to match_array ["attached_documents", "communicants", "complaint_id", "date", "formatted_date", "direction", "id", "mode", "note", "user", "user_id"]
       expect(@complaints.first["communications"].first["attached_documents"].first.keys ).to match_array ["communication_id", "original_filename", "filesize", "id", "lastModifiedDate", "original_type", "title", "user_id"]
       expect(@complaints.first["communications"].first["communicants"].first.keys).to match_array ["address", "email", "id", "name", "organization_id", "phone", "title_key"]
     end

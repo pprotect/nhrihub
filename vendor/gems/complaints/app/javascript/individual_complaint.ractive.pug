@@ -17,13 +17,7 @@
         .col-md-2.complaint_label  {{ t.complaint_type }}
         .col-md-6#complaint_type {{ complaint_type }}
 
-      .row('data-toggle' = 'edit')
-        .col-md-2
-          label {{ t.date_received }}
-        .col-md-8.date_received
-          .no_edit.in#date {{formatted_date}}
-          .edit
-            input.form-control#date_received(autocomplete='off', type = 'text', value = "{{date}}", "as-single_month_datepicker"=true)
+      | {{>date_received }}
 
       .row('class-hidden'='new_complaint')
         .col-md-2
@@ -54,7 +48,7 @@
                 span.help-block.error#lastName_error {{ t.lastName_error_message }}
 
       .row
-        .col-md-12.form-group("class-has-error" = "dob_error", "data-toggle" = "edit", style='padding-top:0px; padding-bottom:0px;')
+        .col-md-12.form-group( "data-toggle" = "edit", style='padding-top:0px; padding-bottom:0px;')
           .row.no_edit.in
             .col-md-2
               label {{ t.dob }}
@@ -68,8 +62,7 @@
             .col-md-2
               label.required {{ t.dob }}
             .col-md-2
-              input#dob.form-control(autocomplete='none', placeholder="dd/mm/yyyy", "on-keydown" = "@this.remove_attribute_error('dob')", style = "width:112px", value = "{{dob}}")/
-              span#dob_error.help-block.error {{ t.dob_error_message }}
+              <datepicker date_error='{{dob_error}}' year_range='-100:0' date='{{dob}}' id='dob' />
             .col-md-2(style = "text-align:right")
               label {{ t.gender }}
             .col-md-5
@@ -184,9 +177,6 @@ style.
     position: relative;
     top: -2px;
   }
-  #date_received {
-    width: inherit;
-  }
   input#id_value {
     margin-top: -8px;
   }
@@ -236,12 +226,10 @@ script.
           subarea_id_count : 'nonZero',
           //new_assignee_id: ['nonZero', {if : () => {return (this.get('new_complaint') && this.get('editing'))}}],
           dob: () => {
-            const date_regex = new RegExp(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); // dd/mm/yyyy
-            const match = date_regex.exec(this.get('dob'));
-            const valid_day = match && (parseInt(match[1]) <= 31);
-            const valid_month = match && (parseInt(match[2]) <= 12);
-            const valid_year = match && (parseInt(match[3]) <= (new Date).getFullYear()) && (parseInt(match[3]) >= 1900 );
-            return !_.isNull(match) && valid_day && valid_month && valid_year;
+            return this.findAllComponents('datepicker')[1].validate()
+          },
+          date_received: () => {
+            return this.findAllComponents('datepicker')[0].validate()
           },
           details : ['notBlank'],
           preferred_means : 'notBlank',

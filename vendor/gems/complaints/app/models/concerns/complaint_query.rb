@@ -21,12 +21,12 @@ module ComplaintQuery
         select(' complaints.*, assigns.created_at, assigns.user_id, assigns.complaint_id').
         joins(:assigns).
         merge(Assign.most_recent_for_assignee(user_id))
-      elsif user_id && !user_id.blank? && user_id.to_i.zero?
+      elsif user_id && !user_id.blank? && user_id.to_i.zero? # user_id == 0 is interpreted as "unassigned"
         select(' complaints.*, assigns.created_at, assigns.user_id, assigns.complaint_id').
         left_outer_joins(:assigns).
         where(assigns: {id: nil})
       else
-        where("1=0")
+        where("1=1")
       end
     end
 
@@ -81,11 +81,19 @@ module ComplaintQuery
       return no_filter if from.blank?
       time_from = Time.zone.local_to_utc(Time.parse(from)).beginning_of_day
       where("complaints.date_received >= ?", time_from)
+    rescue Exception => e
+      # if user enters text manually, vs datepicker, Time.parse fails on incomplete input
+      no_results
     end
 
     def before_date(to)
       return no_filter if to.blank?
       where("complaints.date_received <= ?", Time.zone.parse(to).end_of_day)
+    end
+
+    def transferred_to(office_id)
+      return no_filter if office_id.blank?
+      joins(:complaint_transfers).where('complaint_transfers.office_id = ?', office_id)
     end
 
     def with_complainant_fragment_match(complainant_fragment)

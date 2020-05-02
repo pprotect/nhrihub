@@ -25,6 +25,7 @@ class ComplaintsController < ApplicationController
     @permitted_filetypes = ComplaintDocument.permitted_filetypes
     @communication_maximum_filesize    = CommunicationDocument.maximum_filesize * 1000000
     @communication_permitted_filetypes = CommunicationDocument.permitted_filetypes
+    @office_groups = OfficeGroup.all
     respond_to do |format|
       format.json do
         render :json => complaints
@@ -149,7 +150,7 @@ class ComplaintsController < ApplicationController
   def index_query_params
     params.
       permit(:complainant, :from, :to, :case_reference, :city, :phone,
-             :selected_agency_id, :selected_assignee_id, :locale, :mandate_id, :type, :format,
+             :selected_agency_id, :selected_assignee_id, :selected_office_id, :locale, :mandate_id, :type, :format,
              :selected_status_ids => [], :selected_complaint_area_ids => [],
              :selected_subarea_ids => [],
               ).
@@ -157,7 +158,7 @@ class ComplaintsController < ApplicationController
       slice(:selected_assignee_id, :selected_status_ids, :complainant,
             :from, :to, :city, :phone, :selected_complaint_area_ids,
             :selected_subarea_ids, :case_reference, :format,
-            :selected_agency_id )
+            :selected_agency_id, :selected_office_id )
   end
 
   def complaint_params

@@ -3,12 +3,6 @@ require 'rspec/core/shared_context'
 module ComplaintsCommunicationsSpecHelpers
   extend RSpec::Core::SharedContext
 
-  before do
-    populate_database(:individual_complaint)
-    visit complaints_path('en')
-    open_communications_modal
-  end
-
   def close_communications_modal
     page.find("button.close").click
   end
@@ -42,6 +36,9 @@ module ComplaintsCommunicationsSpecHelpers
   end
 
   def set_datepicker(id,date)
+    # why 3x focus? dunno!
+    page.execute_script %Q{ $('##{id}').trigger('focus') } # trigger datepicker
+    page.execute_script %Q{ $('##{id}').trigger('focus') } # trigger datepicker
     page.execute_script %Q{ $('##{id}').trigger('focus') } # trigger datepicker
     page.execute_script %Q{ $('##{id}').datepicker('setDate','#{date}') }
     page.execute_script %Q{ $('##{id}').datepicker('hide') } # trigger the onClose handler

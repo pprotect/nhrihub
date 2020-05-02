@@ -167,7 +167,7 @@ feature "complaint register", :js => true do
     expect(find('#complaint #title').text).to eq "Ambassador"
     expect(find('#complaint #lastName').text).to eq "Normal"
     expect(find('#complaint #firstName').text).to eq "Norman"
-    expect(find('#complaint #complainant_dob').text).to eq "Sep 8, 1950"
+    expect(find('#complaint #complainant_dob').text).to eq "08/09/1950"
     expect(find('#complaint #gender').text).to eq "M"
     expect(find('#complaint #id_type').text).to eq "State id"
     expect(find('#complaint #id_value').text).to eq valid_sa_id.strip.to_s
@@ -186,7 +186,7 @@ feature "complaint register", :js => true do
     expect(find('#complaint #complaint_details').text).to eq "a long story about lots of stuff"
     expect(find('#complaint #desired_outcome').text).to eq "Life gets better"
     expect(find('#complaint #complained_to_subject_agency').text).to eq "yes"
-    expect(find('#complaint #date').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
+    expect(find('#complaint #date').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime(Complaint::DateFormat)
     #expect(find('#complaint #current_assignee').text).to eq user.first_last_name
     expect(find('#complaint #timeline .timeline_event .event_label').text).to eq 'Initial status'
     #expect(find('#complaint .gender').text).to eq "male" # this should work, but I postponed troubleshooting in favour of other activities!
@@ -231,6 +231,7 @@ feature "complaint register", :js => true do
 
   it "does not add a new complaint that is invalid" do
     save_complaint(false)
+    expect(page).to have_selector('#date_received_error', :text => "You must enter date with format dd/mm/yyyy")
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
     expect(page).to have_selector('#lastName_error', :text => "You must enter a last name")
     expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
@@ -239,18 +240,38 @@ feature "complaint register", :js => true do
     expect(page).to have_selector('#complaint_area_id_error', :text => 'You must select an area')
     expect(page).not_to have_selector('#id_value_error', :text => 'Invalid SA ID') # only when type SA ID is checked
     expect(page).to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
-    expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     expect(page).to have_selector('#details_error', :text => "You must enter the complaint details")
     expect(page).to have_selector('#preferred_means_error', :text => "You must select a preferred means of communication")
     expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
     expect(page).to have_selector('#province_error', :text => "You must select a province")
     expect(page).to have_selector('#postal_code_error', :text => "You must enter a postal code")
-    expect(page).to have_selector('#agency_id_error', :text => "You must select an agency")
+ 
+    # date_received
+    fill_in('date_received', with: "19/19/1919")
+    expect(page).not_to have_selector('#date_received_error')
+    save_complaint(false)
+    expect(page).to have_selector('#date_received_error', :text => "You must enter date with format dd/mm/yyyy")
+
+    fill_in('date_received', :with => "19/08/1968")
+    expect(page).not_to have_selector('#date_received_error')
+    # /date_received
+
+   expect(page).to have_selector('#agency_id_error', :text => "You must select an agency")
     fill_in('lastName', :with => "Normal")
     expect(page).not_to have_selector('#lastName_error', :text => "You must enter a first name")
     fill_in('firstName', :with => "Norman")
     expect(page).not_to have_selector('#firstName_error', :text => "You must enter a last name")
+
+    # DOB
+    fill_in('dob', with: "19/19/1919")
+    expect(page).not_to have_selector('#dob_error')
+    save_complaint(false)
+    expect(page).to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
+
     fill_in('dob', :with => "19/08/1968")
+    expect(page).not_to have_selector('#dob_error')
+    #/ DOB
+
     expect(page).not_to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     fill_in('city', :with => "Leaden Roding")
     expect(page).not_to have_selector('#city_error', :text => 'You must enter a city')
@@ -341,9 +362,9 @@ feature "complaint register", :js => true do
 
     # on the server
     complaint = IndividualComplaint.last
-    expect(complaint.date_received.to_date).to eq Date.today
+    expect(complaint.date_received.to_date).to eq Time.zone.now.to_date
 
     # on the client
-    expect(page.find('.date_received').text).to eq Date.today.strftime("%b %-e, %Y")
+    expect(page.find('.date_received').text).to eq Time.zone.now.to_date.strftime(Complaint::DateFormat)
   end
 end

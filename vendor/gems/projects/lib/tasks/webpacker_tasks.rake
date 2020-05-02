@@ -69,7 +69,6 @@ def enhanced_projects_assets_precompile
   # yarn:install was added in Rails 5.1
   deps = yarn_install_available? ? [] : ["projects:webpacker:yarn_install"]
   Rake::Task["assets:precompile"].enhance(deps) do
-    Webpacker.logger.info "invoke projects:webpacker:compile"
     Rake::Task["projects:webpacker:compile"].invoke
   end
 end
@@ -79,10 +78,8 @@ skip_webpacker_precompile = %w(no false n f).include?(ENV["WEBPACKER_PRECOMPILE"
 
 unless skip_webpacker_precompile
   if Rake::Task.task_defined?("assets:precompile")
-    Webpacker.logger.info "invoke projects enhanced_projects_assets_precompile"
     enhanced_projects_assets_precompile
   else
-    Webpacker.logger.info "invoke project assets precompile with webpacker dependency"
     Rake::Task.define_task("assets:precompile" => "projects:webpacker:compile")
   end
 end

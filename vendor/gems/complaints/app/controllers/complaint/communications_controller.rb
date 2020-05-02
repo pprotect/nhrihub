@@ -1,7 +1,7 @@
 class Complaint::CommunicationsController < ApplicationController
   def create
-    # date comes in here from javascript, which is in the timezone of the browser
-    # in javascript, need to provide utc datetime based on the application's timezone
+    # incoming date presumed to be in app's time zone
+    # saved in utc equivalent
     communication = Communication.new(communication_params)
     communication.user = current_user
     if communication.save
@@ -32,7 +32,7 @@ class Complaint::CommunicationsController < ApplicationController
 
   private
   def communication_params
-    params.require(:communication).permit(:user_id, :complaint_id, :direction, :mode, :date, :note,
+    params.require(:communication).permit(:user_id, :complaint_id, :direction, :mode, :formatted_date, :note,
                                           :communication_documents_attributes => [:file, :title, :original_filename, :original_type, :filesize, :lastModifiedDate],
                                           :communicants_attributes => [:name])
   end

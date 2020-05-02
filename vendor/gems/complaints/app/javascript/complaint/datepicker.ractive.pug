@@ -1,0 +1,62 @@
+div.form-group
+  input.form-control(id='{{id}}', autocomplete='off', placeholder='dd/mm/yyyy', "data-year-range"='{{yearRange}}' type = 'text', value = "{{date}}", "as-single_month_datepicker"=true, 'on-keydown'='@this.remove_errors()')
+  span.help-block.error("class-has-error"="date_error", id='{{id}}_error') {{ error_message }}
+
+style.
+  input {
+    width: auto;
+  }
+  span {
+    width: 240px;
+  }
+
+script.
+  import Validator from 'validator'
+  import 'jquery-ui/ui/widgets/datepicker'
+  import translations from 'translations.js'
+  var SingleMonthDatepicker = require("exports-loader?SingleMonthDatepicker!single_month_datepicker.coffee")
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    css: $CSS,
+    decorators: {
+      single_month_datepicker: SingleMonthDatepicker
+    },
+    data : function(){
+      return {
+        t : translations.t('datepicker'),
+      }
+    },
+    onconfig() {
+      return this.validator = new Validator(this);
+    },
+    computed: {
+      error_message(){
+        return this.get('t')[this.get('id')+'_error_message']
+      },
+      yearRange(){
+        // take the passed-in value if it's > 2000, else interpret it as a delta from current year
+        if(!_.isNull(this.get('year_range')) ){
+            var [start_year, end_year] = _(this.get('year_range').split(':')).map(function(i){return parseInt(i)})
+            var current_year = new Date().getFullYear()
+            start_year = start_year > 2000 ? start_year : start_year + current_year
+            end_year = end_year > 2000 ? end_year : end_year + current_year
+            return start_year+":"+end_year
+          }
+      },
+      has_errors() {
+        return this.validator.has_errors();
+      },
+      validation_criteria() {
+        return {
+          date : () => {
+            if(_.isEmpty(this.get('date'))){ return false }
+            try{ $.datepicker.parseDate("dd/mm/yy", this.get('date')); return true } catch(error){ return false }
+          }
+        }
+      }
+    },
+    remove_errors(){
+      this.set('date_error', false)
+    }
+  })

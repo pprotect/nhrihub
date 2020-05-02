@@ -14,12 +14,25 @@ def rand_filename
   Faker::Lorem.words(number: l).join('_').downcase + ".docx"
 end
 
+
+def transfer_to(transferred_to) 
+  return [] if transferred_to.nil?
+  if transferred_to.is_a? Integer
+    office_id = transferred_to
+  else
+    office_id = transferred_to.id
+  end
+  [ComplaintTransfer.new( office_id: office_id )]
+end
+
 def admin_assigns(assignees)
   assignees = [assignees] unless assignees.is_a?(Array)
   if assignees.empty?
     []
   else
-    assignees.each_with_index.map{|assignee, i| Assign.new(created_at: (5*(i+1)).days.ago, assignee: assignee, assigner:assignee) }
+    assignees.
+      each_with_index.
+      map{|assignee, i| Assign.new(created_at: (5*(i+1)).days.ago, assignee: assignee, assigner:assignee) }
   end
 end
 
@@ -103,8 +116,10 @@ FactoryBot.define do
 
     transient do
       assigned_to {[]}
+      transferred_to {}
     end
     assigns { admin_assigns(assigned_to) }
+    complaint_transfers { transfer_to(transferred_to) }
 
     trait :corporate_services do
       complaint_area_id { ComplaintArea.find_or_create_by(:name => "Corporate Services").id }

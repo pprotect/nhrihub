@@ -18,13 +18,7 @@
         .col-md-2.complaint_label  {{ t.complaint_type }}
         .col-md-6#complaint_type {{ complaint_type }}
 
-      .row('data-toggle' = 'edit')
-        .col-md-2
-          label {{ t.date_received }}
-        .col-md-8.date_received
-          .no_edit.in#date {{formatted_date}}
-          .edit
-            input.form-control#date_received(autocomplete='off', type = 'text', value = "{{date}}", "as-single_month_datepicker"=true)
+      | {{>date_received }}
 
       .row('class-hidden'='new_complaint')
         .col-md-2
@@ -216,6 +210,9 @@ script(type='text/javascript').
           complaint_area_id : 'numeric',
           subarea_id_count : 'nonZero',
           //new_assignee_id: ['nonZero', {if : () => {return (this.get('new_complaint') && this.get('editing'))}}],
+          date_received: () => {
+            return this.findAllComponents('datepicker')[0].validate()
+          },
           details : ['notBlank'],
           preferred_means : 'notBlank',
           postal_address: ['notBlank', {if: ()=>this.get('preferred_means') == 'mail'}],

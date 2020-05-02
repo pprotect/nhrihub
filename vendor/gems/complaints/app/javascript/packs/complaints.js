@@ -34,7 +34,7 @@ window.complaints_page_data = function(){
     default_filter_criteria: source_filter_criteria,
     filter_criteria: urlQueryParams(),
     all_agencies : source_all_agencies,
-    all_subareas : source_subareas
+    all_subareas : source_subareas,
   }
 };
 
@@ -49,6 +49,7 @@ _.extend(Ractive.defaults.data, {
   areas : source_areas,
   subareas : source_subareas,
   all_agencies : source_all_agencies,
+  all_office_groups : source_office_groups,
   permitted_filetypes : source_permitted_filetypes,
   maximum_filesize : source_maximum_filesize,
   communication_permitted_filetypes : source_communication_permitted_filetypes,

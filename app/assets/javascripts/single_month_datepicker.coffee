@@ -6,10 +6,14 @@ SingleMonthDatepicker = (node)->
     changeMonth: true
     changeYear: true
     numberOfMonths: 1
-    dateFormat: "M d, yy"
+    dateFormat: "dd/mm/yy"
     onClose: (selectedDate) ->
       unless selectedDate == ""
-        object = Ractive.getNodeInfo(node).ractive
+        object = Ractive.getContext(node).ractive
         object.set('formatted_date',selectedDate)
+        object.set('date',selectedDate)
+        object.validate()
+  if node.dataset.yearRange != ""
+    $(node).datepicker('option', 'yearRange', node.dataset.yearRange)
   teardown : ->
     $(node).datepicker('destroy')

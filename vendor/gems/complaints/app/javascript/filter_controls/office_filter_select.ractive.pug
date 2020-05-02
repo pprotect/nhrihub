@@ -1,0 +1,30 @@
+include filter_select_template.pug
+
+style.
+  li { width: 400px; }
+
+script.
+  import Toggle from './toggle'
+
+  export default Ractive.extend(Toggle).extend({
+    template : $TEMPLATE,
+    css: $CSS,
+    source: 'filter_criteria.selected_office_id',
+    computed : {
+      selected : {
+        get() {
+          var all_selected = this.get(this.source) == 'all';
+          var this_selected = this.get(this.source) == this.get('id');
+          return all_selected || this_selected
+        },
+        set(val){
+          if (val) {
+            console.log('set selected_office_id')
+            return this.set({'filter_criteria.selected_office_id':this.get('id'),'filter_criteria.selected_assignee_id':""});
+          } else {
+            return this.set(this.source,null);
+          }
+        }
+      }
+    }
+  })

@@ -36,9 +36,9 @@
           <statusFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{name}}' />
           | {{/statuses}}
     .col-md-2
-      input.form-control#from(type="text", name="from", placeholder ='{{ t.date_from }}', autocomplete='off', value = "{{filter_criteria.from}}", style = 'position:relative; z-index:12;')
+      <datepicker year_range='2015:0' id='from' date='{{filter_criteria.from}}' />
     .col-md-2
-      input.form-control#to(type="text", name="to", placeholder ='{{ t.date_to }}', autocomplete='off', value = "{{filter_criteria.to}}", style = 'position:relative; z-index:12;')
+      <datepicker year_range='2015:0' id='to' date='{{filter_criteria.to}}' />
     .col-md-2
       .btn-group.select
         button.btn.btn-default.dropdown-toggle(type='button', 'data-toggle'='dropdown')
@@ -56,6 +56,8 @@
       | {{ t.complaint_basis }}
     .col-md-2(class-active="@this.is_active('assignee')")
       | {{ t.assignee }}
+    .col-md-2(class-active="@this.is_active('office')")
+      | {{ t.office }}
   .row(style = "margin-bottom:12px;")
     .col-md-2
       .btn-group.select
@@ -85,15 +87,31 @@
       .btn-group.select
         button.btn.btn-default.dropdown-toggle#assignee_select(type='button', 'data-toggle'='dropdown')
           span.filter-option.pull-left 
-            | {{ t.select_assignee }}
+            | {{ selected_assignee_name }}
           span.caret
         ul.dropdown-menu#assignee_filter_select
           <assigneeFilterSelect filter_criteria='{{filter_criteria}}' id='0' name='Unassigned'/>
           | {{#all_users}}
           <assigneeFilterSelect filter_criteria='{{filter_criteria}}' id='{{id}}' name='{{first_last_name}}'/>
           | {{/all_users}}
+    .col-md-2
+      .btn-group.select
+        button.btn.btn-default.dropdown-toggle#office_select(type='button', 'data-toggle'='dropdown')
+          span.filter-option.pull-left 
+            | {{ selected_office_name }}
+          span.caret
+        ul.dropdown-menu#office_filter_select
+          | {{#all_office_groups}}
+          #office_group_name {{ name }}
+          | {{#offices }}
+          <officeFilterSelect filter_criteria='{{filter_criteria}}' name='{{name}}' id='{{id}}' />
+          | {{/offices }}
+          | {{/all_office_groups}}
 
 style.
+  #office_group_name{
+    margin-left: 12px;
+  }
   #agency_filter_select{
     width: 400px;
   }
@@ -103,15 +121,21 @@ style.
     font-size: 1.6em;
     line-height: 12px;
   }
+  #from_error, #to_error{
+    color: #ff5502;
+    width: 260px;
+  }
 
 script.
   import SubareaFilterSelect from 'subarea_filter_select'
   import AgencyFilterGroupSelect from 'agency_filter_group_select'
   import AreaFilterSelect from 'area_filter_select'
   import AssigneeFilterSelect from 'assignee_filter_select'
+  import OfficeFilterSelect from 'office_filter_select'
   import StatusFilterSelect from 'status_filter_select'
   import translations from 'translations.js'
   import SelectClear from 'select_clear'
+  import Datepicker from 'datepicker'
 
   export default Ractive.extend({
     template : $TEMPLATE,
@@ -121,13 +145,14 @@ script.
       agencyFilterGroupSelect : AgencyFilterGroupSelect,
       areaFilterSelect : AreaFilterSelect,
       assigneeFilterSelect : AssigneeFilterSelect,
+      officeFilterSelect: OfficeFilterSelect,
       statusFilterSelect : StatusFilterSelect,
       selectClear : SelectClear,
+      datepicker: Datepicker,
     },
     data : function(){ return {
       t : translations.t('filter_controls'),
       default_subarea_ids :  _.map(complaints_page_data().all_subareas,function(d){return d.id }),
-      //default_agency_ids :  _.map(complaints_page_data().all_agencies,function(d){return d.id})
       default_agency_id: "all"
     }},
     observe: {
@@ -139,12 +164,31 @@ script.
         }
       }
     },
+    computed: {
+      selected_assignee_name(){
+        var selected_assignee_id = parseInt(this.get('filter_criteria.selected_assignee_id'))
+        if(_.isNaN(selected_assignee_id)){ return this.get('t.select_assignee')}
+        var name = _(this.get('all_users')).findWhere({id: selected_assignee_id})['first_last_name']
+        return name
+      },
+      all_offices(){
+        return _.chain(this.get('all_office_groups')).
+        map(function(og){return og.offices}).
+        flatten().
+        value()
+      },
+      selected_office_name(){
+        var selected_office_id = parseInt(this.get('filter_criteria.selected_office_id'))
+        if((selected_office_id==0) || _.isNaN(selected_office_id)){ return this.get('t.select_office')}
+        var name = _(this.get('all_offices')).findWhere({id: selected_office_id})['name']
+        return name
+      }
+    },
     clear_filter() {
-      //complaints_page_data().filter_criteria.case_reference = null
       this.set('filter_criteria',$.extend(true,{},complaints_page_data().default_filter_criteria));
+      this.findAllComponents('datepicker')[0].set('date_error',false)
+      this.findAllComponents('datepicker')[1].set('date_error',false)
       window.history.pushState({foo: "bar"},"unused title string",window.location.origin + window.location.pathname);
-      //complaints.fetch();
-      //return this.set_filter_from_query_string();
     },
     set_filter_from_query_string() {
       const search_string = (_.isEmpty( window.location.search) || _.isNull( window.location.search)) ? '' : window.location.search.split("=")[1];

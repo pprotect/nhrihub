@@ -99,7 +99,7 @@ describe "#next" do
     end
 
     context "and start_date is in the future" do
-      let(:start_date){ DateTime.new(2020,8,1)}
+      let(:start_date){ DateTime.now.advance(months: 5)}
       it "should be equal to the start date" do
         reminder.calculate_next
         expect(reminder_next).to eq start_date

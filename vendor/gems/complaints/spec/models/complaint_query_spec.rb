@@ -22,7 +22,7 @@ describe "scope class methods" do
     it "returns complaints based on assignee" do
       expect(Complaint.for_assignee(@user.id)).to eq Complaint.all.select{|c| c.current_assignee_id == @user.id}
       expect(Complaint.for_assignee(@staff_user.id)).to eq Complaint.all.select{|c| c.current_assignee_id == @staff_user.id}
-      expect(Complaint.for_assignee).to be_empty
+      expect(Complaint.for_assignee.length).to eq 2
     end
   end
 
@@ -80,12 +80,12 @@ describe "scope class methods" do
     end
 
     it "returns complaints before the 'to' date" do
-      date_string = Date.today.advance(months: -3).strftime("%Y, %b %d")
+      date_string = Time.zone.now.advance(months: -3).strftime("%Y, %b %d")
       expect(Complaint.before_date(date_string).count).to eq 6
     end
 
     it "returns complaints since the 'from' date" do
-      date_string = Date.today.advance(months: -3).strftime("%Y, %b %d")
+      date_string = Time.zone.now.advance(months: -3).strftime("%Y, %b %d")
       expect(Complaint.since_date(date_string).count).to eq 9
     end
   end
@@ -298,5 +298,19 @@ describe "#for_assignee" do
 
   it "matches unassigned_complaint when assignee.id is 0" do
     expect(Complaint.for_assignee(0)).to eq [unassigned_complaint]
+  end
+end
+
+describe "#transferred_to" do
+  let(:gauteng){ Province.find_or_create_by(name: 'Gauteng') }
+  let(:gauteng_office){ Office.create(province_id: gauteng.id) }
+  let!(:gauteng_complaint){ FactoryBot.create(:complaint, transferred_to: gauteng_office ) }
+
+  let(:limpopo){ Province.find_or_create_by(name: 'Limpopo') }
+  let(:limpopo_office){ Office.create(province_id: limpopo.id) }
+  let!(:limpopo_complaint){ FactoryBot.create(:complaint, transferred_to: limpopo_office ) }
+
+  it "should return complaints transferred to the specified office" do
+    expect(Complaint.transferred_to(gauteng_office.id)).to eq [gauteng_complaint]
   end
 end

@@ -1,0 +1,7 @@
+.row.form-group('data-toggle' = 'edit')
+  .col-md-2
+    label.required {{ t.date_received }}
+  .col-md-8.date_received
+    .no_edit.in#date {{formatted_date}}
+    .edit
+      <datepicker date_error='{{date_received_error}}' year_range='-5:0' date='{{date}}' id='date_received' />

@@ -151,7 +151,7 @@ feature "organization complaint intake", :js => true do
     expect(find('#complaint #complaint_details').text).to eq "a long story about lots of stuff"
     expect(find('#complaint #desired_outcome').text).to eq "Life gets better"
     expect(find('#complaint #complained_to_subject_agency').text).to eq "yes"
-    expect(find('#complaint #date').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime("%b %-e, %Y")
+    expect(find('#complaint #date').text).to eq Date.new(Date.today.year, Date.today.month, 16).strftime(Complaint::DateFormat)
     #expect(find('#complaint #current_assignee').text).to eq user.first_last_name
     expect(find('#complaint #timeline .timeline_event .event_label').text).to eq 'Initial status'
     #expect(find('#complaint .gender').text).to eq "male" # this should work, but I postponed troubleshooting in favour of other activities!
@@ -196,6 +196,7 @@ feature "organization complaint intake", :js => true do
 
   it "does not add a new complaint that is invalid" do
     save_complaint(false)
+    expect(page).to have_selector('#date_received_error', :text => "You must enter date with format dd/mm/yyyy")
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
     expect(page).to have_selector('#lastName_error', :text => "You must enter a last name")
     expect(page).to have_selector('#city_error', :text => 'You must enter a city')
@@ -209,6 +210,17 @@ feature "organization complaint intake", :js => true do
     expect(page).to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
     expect(page).to have_selector('#postal_code_error', :text => "You must enter a postal code")
     expect(page).to have_selector('#agency_id_error', :text => "You must select an agency")
+
+    # date_received
+    fill_in('date_received', with: "19/19/1919")
+    expect(page).not_to have_selector('#date_received_error')
+    save_complaint(false)
+    expect(page).to have_selector('#date_received_error', :text => "You must enter date with format dd/mm/yyyy")
+
+    fill_in('date_received', :with => "19/08/1968")
+    expect(page).not_to have_selector('#date_received_error')
+    # /date_received
+
     fill_in('contact_last_name', :with => "Normal")
     expect(page).not_to have_selector('#lastName_error', :text => "You must enter a first name")
     fill_in('contact_first_name', :with => "Norman")
@@ -289,9 +301,9 @@ feature "organization complaint intake", :js => true do
 
     # on the server
     complaint = Complaint.last
-    expect(complaint.date_received.to_date).to eq Date.today
+    expect(complaint.date_received.to_date).to eq Time.zone.now.to_date
 
     # on the client
-    expect(page.find('.date_received').text).to eq Date.today.strftime("%b %-e, %Y")
+    expect(page.find('.date_received').text).to eq Time.zone.now.to_date.strftime(Complaint::DateFormat)
   end
 end

@@ -19,7 +19,9 @@ def query_hash(query_string)
       h[attr.to_sym] = h[attr.to_sym] ? h[attr.to_sym] << val.to_i : [val.to_i]
     else
       attr,val = el.split('=')
-      if val.nil? || val&.match(/\d+/)
+      if val.nil? 
+        val = ""
+      elsif val&.match(/\d+/)
         val = val.to_i
       end
       h[attr.to_sym] = val
@@ -53,6 +55,8 @@ feature "complaints index query string", js: true do
   include ComplaintsSpecHelpers
   include ComplaintsSpecSetupHelpers
 
+  let(:current_user_name){ @user.first_last_name }
+
   before do
     ComplaintStatus::Names.each{|n| ComplaintStatus.create(name: n)}
     ComplaintArea::DefaultNames.each{|n| ComplaintArea.create(name: n)}
@@ -66,70 +70,26 @@ feature "complaints index query string", js: true do
   end
 
   it "defaults to reflect default query values" do
-    expect(query_hash(query_string)).to match_hash({ case_reference: 0,
-                                                     city: 0,
-                                                     complainant: 0,
-                                                     selected_agency_id: "all",
-                                                     selected_assignee_id: @user.id,
-                                                     selected_status_ids: ComplaintStatus.default.map(&:id),
-                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id),
-                                                     selected_subarea_ids: ComplaintSubarea.pluck(:id),
-                                                     from: 0, to: 0, phone: 0 })
+    expect(query_hash(query_string)).to match_hash(default_query_params.merge!({selected_assignee_id: @user.id}))
   end
 
   it "defaults to current user as assignee" do
-    open_dropdown('Select assignee')
+    expect(page).to have_selector('#assignee_select>span', text: current_user_name )
+    open_dropdown(current_user_name)
     sleep(0.2) # javascript
-    expect( page.find(:xpath, "//li[contains(./a/div,\"#{@user.first_last_name}\")]")[:class]).to match /selected/
+    expect( page.find(:xpath, "//li[contains(./a/div,\"#{current_user_name}\")]")[:class]).to match /selected/
   end
 
   it "records query params in url query string" do
     select_assignee('Norman Normal')
-    expect(query_hash(query_string)).to match_hash({ case_reference: 0,
-                                                     city: 0,
-                                                     complainant: 0,
-                                                     selected_agency_id: "all",
-                                                     selected_assignee_id: @norm.id,
-                                                     selected_subarea_ids: ComplaintSubarea.pluck(:id),
-                                                     selected_status_ids: ComplaintStatus.default.map(&:id),
-                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id),
-                                                     from: 0, to: 0, phone: 0
-                                                    })
+    expect(query_hash(query_string)).to match_hash(default_query_params.merge!({selected_assignee_id: @norm.id}))
     clear_filter_fields
-    expect(query_hash(query_string)).to match_hash({ case_reference: 0,
-                                                     city: 0,
-                                                     complainant: 0,
-                                                     selected_agency_id: "all",
-                                                     selected_assignee_id: @user.id,
-                                                     selected_subarea_ids: ComplaintSubarea.pluck(:id),
-                                                     selected_status_ids: ComplaintStatus.default.map(&:id),
-                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id),
-                                                     from:0, to: 0, phone: 0
-                                                    })
+    expect(query_hash(query_string)).to match_hash(default_query_params.merge!({selected_assignee_id: @user.id}))
     clear_options('Select agency')
-    expect(query_hash(query_string)).to match_hash({ case_reference: 0,
-                                                     city: 0,
-                                                     complainant: 0,
-                                                     selected_agency_id: 0,
-                                                     selected_assignee_id: @user.id,
-                                                     selected_subarea_ids: ComplaintSubarea.pluck(:id),
-                                                     selected_status_ids: ComplaintStatus.default.map(&:id),
-                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id),
-                                                     from: 0, to: 0, phone: 0
-                                                    })
+    expect(query_hash(query_string)).to match_hash(default_query_params.merge!({selected_assignee_id: @user.id, selected_agency_id: 0}))
     select_all_options('Select agency')
     wait_for_ajax
-    expect(query_hash(query_string)).to match_hash({ case_reference: 0,
-                                                     city: 0,
-                                                     complainant: 0,
-                                                     selected_agency_id: "all",
-                                                     selected_assignee_id: @user.id,
-                                                     selected_subarea_ids: ComplaintSubarea.pluck(:id),
-                                                     selected_status_ids: ComplaintStatus.default.map(&:id),
-                                                     selected_complaint_area_ids: ComplaintArea.pluck(:id),
-                                                     from: 0, to: 0, phone: 0
-                                                    })
-
+    expect(query_hash(query_string)).to match_hash(default_query_params.merge!({selected_assignee_id: @user.id}))
   end
 end
 
@@ -215,7 +175,7 @@ feature "complaints index", :js => true do
     Mandate.all.each do |mandate|
       expect(page).to have_selector('#mandate_filter_select li a div', :text => mandate.name)
     end
-    page.find('button', :text => 'Select assignee').click
+    page.find('button', :text => @user.first_last_name).click
     User.staff.all.each do |user|
       expect(page).to have_selector('#assignee_filter_select li a div', :text => user.first_last_name)
     end
@@ -258,7 +218,7 @@ feature "complaints index", :js => true do
   it "shows basic information for each complaint" do
     within first_complaint do
       expect(find('.current_assignee').text).to eq Complaint.first.assignees.first.first_last_name
-      expect(find('.date_received').text).to eq Complaint.first.date_received.strftime("%b %-e, %Y")
+      expect(find('.date_received').text).to eq Complaint.first.date_received.strftime(Complaint::DateFormat)
       expect(all('#timeline .timeline_event').first.text).to match /#{Complaint.first.status_changes.first.event_description}/
       expect(all('#timeline .timeline_event .user_name').first.text).to match /#{Complaint.first.status_changes.first.user.first_last_name}/
       expect(all('#timeline .timeline_event .date').first.text).to match /#{Complaint.first.status_changes.first.change_date.getlocal.to_date.strftime("%b %-e, %Y")}/
@@ -376,7 +336,7 @@ feature "reloads complaints if a different assignee is selected", js: true do
     select_assignee_dropdown_should_be_checked_for(signed_in_user)
     complaints_should_be_assigned_to(signed_in_user)
     open_status_id = ComplaintStatus.where(:name => 'Registered').first.id
-    expected_complaint = Complaint.with_status(open_status_id).for_assignee(User.first).first
+    expected_complaint = Complaint.with_status(open_status_id).for_assignee(User.first.id).first
     expect(first_complaint.find('.case_reference').text).to eq expected_complaint.case_reference.to_s
 
     # go back to norman
@@ -399,10 +359,9 @@ feature "shows complaints that are unassigned", js: true do
   include NavigationHelpers
   include ComplaintsSpecHelpers
 
+  let!(:unassigned_complaint){ populate_associations; FactoryBot.create(:complaint, :registered, :with_associations, :assessment) }
+
   before do
-    populate_database(:individual_complaint)
-    Complaint.destroy_all
-    @unassigned_complaint = FactoryBot.create(:complaint, :registered, :with_associations)
     visit complaints_path('en')
   end
 
@@ -410,7 +369,56 @@ feature "shows complaints that are unassigned", js: true do
     expect(complaints.count).to eq 0
     select_assignee('Unassigned')
     expect(complaints.count).to eq 1
-    expect(first_complaint.find('.case_reference').text).to eq @unassigned_complaint.case_reference.to_s
+    expect(first_complaint.find('.case_reference').text).to eq unassigned_complaint.case_reference.to_s
+  end
+end
+
+feature "office/assignee filter interaction", js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include NavigationHelpers
+  include ComplaintsSpecHelpers
+
+  let(:username){ User.first.first_last_name }
+
+  before do
+    visit complaints_path('en')
+  end
+
+  it "should show the complaints assigned to the checked assignee" do
+    expect(page).to have_selector('#assignee_select>span', text: username )
+    open_dropdown 'Select office'
+    expect(page.all('#office_select li').map{|el| el[:class]}.any?{|cl| cl=="selected"}).to eq false
+    select_option('Gauteng').click
+    expect(page).to have_selector('#office_select>span', text: 'Gauteng' )
+    expect(page).to have_selector('#assignee_select>span', text: 'Select assignee' )
+    open_dropdown 'Select assignee'
+    expect(page.all('#assignee_filter_select li').map{|el| el[:class]}.any?{|cl| cl=="selected"}).to eq false
+    select_option(username).click
+    expect(page).to have_selector('#office_select>span', text: 'Select office' )
+  end
+end
+
+feature "select complaints by office transfer", js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include NavigationHelpers
+  include ComplaintsSpecHelpers
+
+  let(:username){ User.first.first_last_name }
+  let(:gauteng){ Province.find_or_create_by(name: "Gauteng") }
+  let(:office){ Office.find_or_create_by(province_id: gauteng.id) }
+  let!(:complaint){ populate_associations; FactoryBot.create(:individual_complaint, :with_associations, :assessment, transferred_to: office) }
+
+  before do
+    visit complaints_path('en')
+  end
+
+  it "shows complaints transferred to the selected office" do
+    expect(page).to have_selector('#assignee_select>span', text: username ) # initial (default) condition
+    open_dropdown 'Select office'
+    select_option('Gauteng').click
+    expect(complaints.count).to eq 1
   end
 end
 
@@ -498,27 +506,60 @@ feature "selects complaints by match of date ranges", :js => true do
     create_subareas
     create_agencies
     user = User.first
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, date_received: 1.month.ago)
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, date_received: 1.month.ago.end_of_day)
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, date_received: 1.month.ago.beginning_of_day)
+    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 1.month.ago)
+    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 1.month.ago.end_of_day)
+    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 1.month.ago.beginning_of_day)
 
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, date_received: 2.months.ago)
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, date_received: 2.months.ago.end_of_day)
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, date_received: 2.months.ago.beginning_of_day)
+    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 2.months.ago)
+    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 2.months.ago.end_of_day)
+    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 2.months.ago.beginning_of_day)
 
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, date_received: 3.months.ago)
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, date_received: 3.months.ago.end_of_day)
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, date_received: 3.months.ago.beginning_of_day)
+    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 3.months.ago)
+    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 3.months.ago.end_of_day)
+    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 3.months.ago.beginning_of_day)
 
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, date_received: 4.months.ago)
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, date_received: 4.months.ago.end_of_day)
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, date_received: 4.months.ago.beginning_of_day)
+    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 4.months.ago)
+    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 4.months.ago.end_of_day)
+    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 4.months.ago.beginning_of_day)
     visit complaints_path(:en)
+  end
+
+  it "warns user for invalid 'since' date" do
+    expect(complaints.count).to eq 12
+    page.execute_script("$('#from').datepicker('show');")
+    fill_in('from', with: '1')
+    page.execute_script("$('#from').datepicker('hide');")
+    expect(page).to have_selector("#from_error", text: "Invalid date, format must be dd/mm/yyyy")
+    page.execute_script("$('#from').datepicker('show');")
+    fill_in('from', with: '18/18/1888')
+    page.execute_script("$('#from').datepicker('hide');")
+    expect(page).to have_selector("#from_error", text: "Invalid date, format must be dd/mm/yyyy")
+    page.execute_script("$('#from').datepicker('show');")
+    fill_in('from', with: '18/05/1999')
+    page.execute_script("$('#from').datepicker('hide');")
+    expect(page).not_to have_selector("#from_error")
+  end
+
+  it "warns user for invalid 'before' date" do
+    expect(complaints.count).to eq 12
+    page.execute_script("$('#to').datepicker('show');")
+    fill_in('to', with: '1')
+    page.execute_script("$('#to').datepicker('hide');")
+    expect(page).to have_selector("#to_error", text: "Invalid date, format must be dd/mm/yyyy")
+    page.execute_script("$('#to').datepicker('show');")
+    fill_in('to', with: '18/18/1888')
+    page.execute_script("$('#to').datepicker('hide');")
+    expect(page).to have_selector("#to_error", text: "Invalid date, format must be dd/mm/yyyy")
+    page.execute_script("$('#to').datepicker('show');")
+    fill_in('to', with: '18/05/1999')
+    page.execute_script("$('#to').datepicker('hide');")
+    expect(page).not_to have_selector("#to_error")
   end
 
   it "should return complaints created since the 'since' date" do
     expect(complaints.count).to eq 12
-    d = Date.today.advance(months: -3)
+    #d = Date.today.advance(months: -3)
+    d = Time.zone.now.advance(months: -3)
     select_datepicker_date('#from',d.year,d.month,d.day)
     wait_for_ajax
     sleep(2)
@@ -544,7 +585,8 @@ feature "selects complaints by match of date ranges", :js => true do
     sleep(2)
     expect(complaints.count).to eq 9
 
-    d = Date.today.advance(months: -2)
+    #d = Date.today.advance(months: -2)
+    d = Time.zone.now.advance(months: -2)
     select_datepicker_date('#to',d.year,d.month,d.day)
 
     wait_for_ajax
