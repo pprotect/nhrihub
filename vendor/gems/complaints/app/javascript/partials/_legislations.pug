@@ -2,10 +2,20 @@
   .no_edit.in
     .col-md-2
       label {{ t.related_legislation }}
-    .col-md-5#legislation_name {{ related_legislation_name }}
+    .col-md-10#legislation_names
+      | {{#related_legislation_names }}
+      span.legislation_name {{.}}
+      | {{/related_legislation_names }}
   .edit
     .col-md-2
       label {{ t.assign_legislation }}
     .col-md-5
-      <legislationSelector editing = {{update_complaint}} legislations={{legislations}} legislation_id = {{legislation_id}} />
-
+      .btn-group.select
+        button.btn.btn-default.dropdown-toggle#legislation_select(type='button', 'data-toggle'='dropdown')
+          span.filter-option.pull-left 
+            | {{ t.select_legislation }}
+          span.caret
+        ul.dropdown-menu#legislation_options
+          | {{#legislations}}
+          <legislationSelector legislation_ids='{{legislation_ids}}' id={{id}} name={{name}} />
+          | {{/legislations}}

@@ -74,6 +74,7 @@ en:
     agency_id_error_message: "You must select an agency"
     complainant: 'Complainant'
     assign_legislation: 'Related legislation'
+    select_legislation: "Select related legislation..."
     assessment_memo: 'Information pending'
     register_heading: "%{type} Complaint Intake"
     add_file: "Add file"
@@ -169,7 +170,7 @@ en:
     status_memo_error_message:  "You must supply a reason for closing"
     status_memo_default_prompt: "Close memo"
     fax_error_message: "Fax designated as preferred communication means. You must enter a fax number"
-    related_legislation: "Related legislation"
+    related_legislation: "Related legislation(s)"
 
   own_motion:
     cell_phone: "Cell phone"
@@ -252,9 +253,6 @@ en:
 
   jurisdiction_branch_selector:
     select_jurisdiction_branch: "Select jurisdiction branch..."
-
-  legislation_selector:
-    select_legislation: "Select related legislation..."
 
   transferee_selector:
     select_transferee: 'Transfer to...'

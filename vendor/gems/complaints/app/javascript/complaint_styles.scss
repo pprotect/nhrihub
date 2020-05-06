@@ -1,0 +1,47 @@
+span.legislation_name:not(:last-child):after {
+  content : ';'
+}
+span.legislation_name:not(:first-child) {
+  padding-left: 0.45em;
+}
+.editable_container .edit.in{
+  z-index: auto
+  }
+#alt_id_other_type_field label { width: 120px; }
+#alt_id_other_type_field .edit { display: flex;}
+#complainant #firstName, #complainant #title {margin-right: .25em;}
+#complainant .edit .col-md-4{
+  padding-top:0px;
+}
+#complainant .edit .col-md-4:nth-of-type(2), #complainant .edit .col-md-4:nth-of-type(3){
+  margin-top: -5px;
+}
+#alt_id_other_type_field.visible { display: block; }
+#alt_id_other_type_field:not(.visible) { display: none; }
+.complaint_label { font-weight: 700; }
+#identify_by_pension_id, #identify_by_prison_id, #identify_by_other_id {
+  margin-left:12px;
+  margin-right:12px;
+}
+#alt_id_other_type {
+  margin-left: 12px;
+}
+#save_complaint .fa, #edit_save .fa, #edit_cancel .fa, #check_dupes .fa, .fileinput-button .fa, #proceed_to_intake .fa {
+  color: white;
+  margin-right: 6px;
+  position: relative;
+  top: -1px;
+}
+.fileinput-button {
+  position: relative;
+  top: -2px;
+}
+input#id_value {
+  margin-top: -8px;
+}
+.form-control[disabled]{
+  background-color: #e2dfdf;
+}
+#status_row {
+  height: 48px;
+}

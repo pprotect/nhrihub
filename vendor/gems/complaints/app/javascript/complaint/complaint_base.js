@@ -58,11 +58,14 @@ export default Ractive.extend({
         this.findComponent('agenciesSelector').set('agency_id', val);
       }
     },
-    related_legislation_name(){
-      if(!_.isNaN(parseInt(this.get('legislation_id')))){
-        return _(this.get('legislations')).findWhere({id: this.get('legislation_id')}).name
+    related_legislation_names(){
+      if(!_.isEmpty(this.get('legislation_ids'))){
+        var that = this
+        var legislations = _(this.get('legislations')).
+                             filter(function(l){return that.get('legislation_ids').indexOf(l.id) != -1})
+        return _(legislations).map(function(l){return l.name})
       }else{
-        return 'not configured'
+        return ['not configured']
       }
     },
     timeline_events_recent_first(){

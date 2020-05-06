@@ -312,19 +312,30 @@ RSpec.shared_examples  "complaint lifecycle" do
   end
 
   describe "related legislation assignment" do
-    let(:legislation_name){ Legislation.first.name }
+    let(:legislation_name){ Legislation.limit(1).offset(0).first.name }
+    let(:another_legislation_name){ Legislation.limit(1).offset(1).first.name }
+
     before do
       visit complaint_path('en', complaint.id)
       expect(Legislation.count).to be > 0 # make sure some are configured!
     end
 
     it "associates legislation with complaint" do
-      expect(page.find('#legislation_name').text).to eq "not configured"
+      expect(page.find('#legislation_names').text).to eq "not configured"
       edit_complaint
-      expect(page.all('select#legislation option').count).to eq Legislation.count + 1
-      select(legislation_name, from: 'legislation')
+      page.find('#legislation_select>span.filter-option').click #open dropdown
+      expect(page.all('ul#legislation_options li').count).to eq Legislation.count
+      select_option(legislation_name).click
+      page.find('#legislation_select>span.filter-option').click #close dropdown as it covers the save button
       expect{edit_save}.to change{ComplaintLegislation.count}.by 1
-      expect(page.find('#legislation_name').text).to eq legislation_name
+      expect(page.find('#legislation_names').text).to eq legislation_name
+      edit_complaint
+      page.find('#legislation_select>span.filter-option').click #open dropdown
+      expect(page.all('ul#legislation_options li').count).to eq Legislation.count
+      select_option(another_legislation_name).click
+      page.find('#legislation_select>span.filter-option').click #close dropdown as it covers the save button
+      expect{edit_save}.to change{ComplaintLegislation.count}.by 1
+      expect(page.find('#legislation_names').text).to include another_legislation_name
     end
   end
 

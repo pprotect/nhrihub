@@ -1,17 +1,10 @@
-select.form-control#legislation(value = '{{legislation_id}}')
-  option(value='0', disabled=true, style = "color:#333") {{ t.select_legislation }}
-  | {{#legislations}}
-  option(value='{{id}}') {{ name }}
-  | {{/legislations}}
+include ../filter_controls/item_select_template.pug
 
 script.
-  import translations from 'translations.js'
+  import Toggle from '../filter_controls/toggle'
 
   export default Ractive.extend({
     template : $TEMPLATE,
-    data : function(){ return {
-      t : translations.t('legislation_selector'),
-      legislation_id: 0
-    }},
-  });
+    source: 'legislation_ids'
+    }).extend(Toggle)
 

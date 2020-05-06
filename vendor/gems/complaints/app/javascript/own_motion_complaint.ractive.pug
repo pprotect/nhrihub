@@ -113,48 +113,8 @@
 
       <buttons mode='{{mode}}' editing='{{editing}}' has_errors='{{has_errors}}' />
 
-style.
-  #complainant #firstName, #complainant #title {margin-right: .25em;}
-  #complainant .edit .col-md-4{
-    padding-top:0px;
-  }
-  #complainant .edit .col-md-4:nth-of-type(2), #complainant .edit .col-md-4:nth-of-type(3){
-    margin-top: -5px;
-  }
-  #alt_id_other_type_field.visible { display: block; }
-  #alt_id_other_type_field:not(.visible) { display: none; }
-  .complaint_label { font-weight: 700; }
-  #identify_by_pension_id, #identify_by_prison_id, #identify_by_other_id {
-    margin-left:12px;
-    margin-right:12px;
-  }
-  #alt_id_other_type {
-    margin-left: 12px;
-  }
-  #save_complaint .fa, #edit_save .fa, #edit_cancel .fa, #check_dupes .fa, .fileinput-button .fa, #proceed_to_intake .fa {
-    color: white;
-    margin-right: 6px;
-    position: relative;
-    top: -1px;
-  }
-  .fileinput-button {
-    position: relative;
-    top: -2px;
-  }
-  #date_received {
-    height: 34px;
-  }
-  .single_level>li>a.opt {
-    padding-left: 1em !important;
-    width: 400px;
-  }
-  #date_received {
-    width: inherit;
-  }
-  .form-control[disabled]{
-    background-color: #e2dfdf;
-  }
-  #status_row { height: 48px;}
+style
+  include:scss complaint_styles.scss
 
 script(type='text/javascript').
   window.$ = window.jQuery = $ // it's the only method I could get to work for making $ available globally!
@@ -195,7 +155,7 @@ script(type='text/javascript').
         return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
           'city','province_id','postal_code','complaint_area_id', 'new_transferee_id',
           'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
-          'status_changes_attributes', 'new_assignee_id', 'subarea_ids', 'legislation_id',
+          'status_changes_attributes', 'new_assignee_id', 'subarea_ids', 'legislation_ids',
           'agency_id', 'attached_documents_attributes', 'details', 'new_jurisdiction_branch_id',
           'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
           'firstName', 'lastName', 'title', 'type'];

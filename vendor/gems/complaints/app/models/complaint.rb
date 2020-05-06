@@ -177,14 +177,6 @@ class Complaint < ActiveRecord::Base
     case_reference <=> other.case_reference
   end
 
-  def legislation_id=(val)
-    self.complaint_legislations = [ComplaintLegislation.new(complaint_id:id, legislation_id: val)]
-  end
-
-  def legislation_id
-    legislations.pluck(:id).first
-  end
-
   def complaint_type
     type&.underscore&.humanize
   end
@@ -241,7 +233,7 @@ class Complaint < ActiveRecord::Base
                            #:agency_id,
                            :agency_description,
                            :agency_select_params,
-                           :legislation_id,
+                           :legislation_ids,
                            :timeline_events,
                            :communications] }
     end
