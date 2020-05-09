@@ -255,7 +255,6 @@ feature "complaint register", :js => true do
     fill_in('date_received', :with => "19/08/1968")
     expect(page).not_to have_selector('#date_received_error')
     # /date_received
-
    expect(page).to have_selector('#agency_id_error', :text => "You must select an agency")
     fill_in('lastName', :with => "Normal")
     expect(page).not_to have_selector('#lastName_error', :text => "You must enter a first name")

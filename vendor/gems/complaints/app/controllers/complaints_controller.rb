@@ -135,10 +135,6 @@ class ComplaintsController < ApplicationController
     @legislations = Legislation.all
     @provinces = Province.all.sort_by(&:name)
     @provinces = Province.includes(:metropolitan_municipalities, :district_municipalities => {:local_municipalities => {:district_municipality => :province}}).all.sort_by(&:name)
-    #@national_government_agencies = NationalGovernmentAgency.all.sort_by(&:name)
-    #@national_government_institutions = NationalGovernmentInstitution.all.sort_by(&:name)
-    #@democracy_institutions = DemocracySupportingStateInstitution.all.sort_by(&:name)
-    #@provincial_agencies = Agency.provincial.group_by(&:province_id)
     @districts = DistrictMunicipality.includes(:local_municipalities => {:district_municipality => :province}).all.group_by(&:province_id)
     @metro_municipalities = MetropolitanMunicipality.includes(:province).all.group_by(&:province_id)
   end

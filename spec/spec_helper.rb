@@ -26,6 +26,7 @@ require_relative './support/wait_for_authentication'
 require_relative './support/wait_for_modal'
 require_relative './support/wait_for_accordion'
 require_relative './support/example_dot_com'
+require_relative './support/postgres_helper.rb'
 require_relative 'helpers/download_helpers'
 
 

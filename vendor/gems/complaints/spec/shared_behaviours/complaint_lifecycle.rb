@@ -8,11 +8,12 @@ RSpec.shared_examples  "complaint lifecycle" do
   include ComplaintsSpecSetupHelpers
 
   before do
-    create_legislations
-    create_offices
-    create_agencies
-    create_complaint_statuses
-    populate_areas_subareas
+    with_capture 'Complaints::Engine', :legislations, :agencies, :complaint_statuses, :areas, :subareas, :district_municipalities  do
+      create_legislations
+      create_agencies
+      create_complaint_statuses
+      populate_areas_subareas
+    end
     visit complaint_path('en', complaint.id)
     edit_complaint
   end

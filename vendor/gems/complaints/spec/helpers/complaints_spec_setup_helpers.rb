@@ -89,11 +89,13 @@ module ComplaintsSpecSetupHelpers
     create_staff
     create_complaint_statuses
     populate_areas_subareas
-    set_file_defaults
   end
 
   def populate_database(type)
-    populate_associations
+    with_capture "Complaints::Engine", :complaints, :areas, :subareas, :agencies, :district_municipalities, :complaint_statuses do
+      populate_associations
+    end
+    set_file_defaults
     user = User.where(:login => 'admin').first
     staff_user = User.where(:login => 'staff').first
     FactoryBot.create( type, :registered,
