@@ -8,7 +8,7 @@ class ProvincialAgency < Agency
 
   def as_json(options={})
     if options.blank?
-      super(except: [:created_at, :updated_at, :code], methods: [:type, :description])
+      super(except: [:created_at, :updated_at, :code], methods: [:type, :description, :selection_vector])
     else
       super options
     end

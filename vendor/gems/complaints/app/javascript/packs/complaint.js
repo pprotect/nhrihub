@@ -15,7 +15,7 @@ _.extend(Ractive.defaults.data, {
   i18n: window.i18n,
   status_memo_options,
   legislations,
-  agencies,
+  agency_tree,
   provinces,
   districts,
   metro_municipalities,

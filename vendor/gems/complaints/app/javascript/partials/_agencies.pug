@@ -3,11 +3,11 @@
     label.required {{ t.agency }}
   .col-md-10
     #agencies.no_edit.in
-      | {{#agency_ids}}
-      <agency agency_id='{{.}}' />
-      | {{/agency_ids}}
+      | {{#agencies}}
+      .agency {{description}}
+      | {{/agencies}}
     .edit
-      | {{#agency_ids}}
-      <agenciesSelector selection_vector='{{selection_vector}}' metro_municipalities='{{metro_municipalities}}' districts='{{districts}}' provinces='{{provinces}}' agencies='{{agencies}}' />
-      | {{/agency_ids}}
+      | {{#agencies}}
+      <agenciesSelector selection_vector='{{selection_vector}}' metro_municipalities='{{metro_municipalities}}' districts='{{districts}}' provinces='{{provinces}}' agency_tree='{{agency_tree}}' />
+      | {{/agencies}}
       span.help-block.error#agency_id_error {{ t.agency_id_error_message }}

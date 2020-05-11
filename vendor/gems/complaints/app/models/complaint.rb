@@ -221,7 +221,7 @@ class Complaint < ActiveRecord::Base
                            :subarea_ids,
                            :area_subarea_ids,
                            :province_id,
-                           :agency_ids,
+                           :agencies,
                            :legislation_ids,
                            :timeline_events,
                            :communications] }

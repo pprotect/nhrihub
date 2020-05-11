@@ -13,11 +13,16 @@ feature 'show complaint with multiple agencies', js: true do
   include ComplaintsSpecHelpers
 
   let(:individual_complaint){ IndividualComplaint.first }
-  let(:agency){ LocalMunicipality.first }
-  let(:province_name){ agency.district_municipality.province.name }
-  let(:province_key){ province_name.gsub(/\s/,'_').downcase }
-  let(:district_name){ agency.district_municipality.name }
-  let(:district_key){ district_name.gsub(/\s/,'_').downcase }
+  let(:first_agency){ LocalMunicipality.first }
+  let(:first_province_name){ first_agency.district_municipality.province.name }
+  let(:first_province_key){ first_province_name.gsub(/\s/,'_').downcase }
+  let(:first_district_name){ first_agency.district_municipality.name }
+  let(:first_district_key){ first_district_name.gsub(/\s/,'_').downcase }
+  let(:second_agency){ LocalMunicipality.second }
+  let(:second_province_name){ second_agency.district_municipality.province.name }
+  let(:second_province_key){ second_province_name.gsub(/\s/,'_').downcase }
+  let(:second_district_name){ second_agency.district_municipality.name }
+  let(:second_district_key){ second_district_name.gsub(/\s/,'_').downcase }
 
   before do
     populate_database(:individual_complaint)
@@ -29,10 +34,18 @@ feature 'show complaint with multiple agencies', js: true do
     edit_complaint
     expect(page.all('#agencies_select').count).to eq 2
     # first two agencies are assigned, both local municipalities
-    expect(page.all('#agencies_select').first.find('option', text: 'Local')).to be_selected
-    expect(page.find('#provinces_select option', text: province_name)).to be_selected
-    expect(page.find("##{province_key} option", text: district_name)).to be_selected
-    expect(page.find("##{district_key} option", text: agency.name)).to be_selected
+    within page.all('.agency_select_container')[0] do
+      expect(page.find('#agencies_select option', text: 'Local')).to be_selected
+      expect(page.find('#provinces_select option', text: first_province_name)).to be_selected
+      expect(page.find("##{first_province_key} option", text: first_district_name)).to be_selected
+      expect(page.find("##{first_district_key} option", text: first_agency.name)).to be_selected
+    end
+    within page.all('.agency_select_container')[1] do
+      expect(page.find('#agencies_select option', text: 'Local')).to be_selected
+      expect(page.find('#provinces_select option', text: second_province_name)).to be_selected
+      expect(page.find("##{second_province_key} option", text: second_district_name)).to be_selected
+      expect(page.find("##{second_district_key} option", text: second_agency.name)).to be_selected
+    end
   end
 end
 

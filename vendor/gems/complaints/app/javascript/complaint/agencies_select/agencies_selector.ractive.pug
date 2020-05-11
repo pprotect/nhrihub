@@ -1,4 +1,4 @@
-.div(style='display:flex;')
+.div.agency_select_container(style='display:flex;')
   select.dupe_check.form-control#agencies_select(value='{{selection_vector.top_level_category}}')
     option#prompt(disabled=true, selected='selected') select...
     option(value="national") National
@@ -55,9 +55,9 @@ script.
       national(){ return this.get('selection_vector.top_level_category') == 'national' },
       provincial(){ return this.get('selection_vector.top_level_category') == 'provincial_agencies' },
       local(){ return this.get('selection_vector.top_level_category') == 'municipalities' },
-      national_agencies(){return       _(this.get('agencies')).findWhere({name: 'National'}).collection },
-      provincial_agencies(){return     _(this.get('agencies')).findWhere({name: 'Provincial'}).collection },
-      district_municipalities(){return _(this.get('agencies')).findWhere({name: 'Local'}).collection },
+      national_agencies(){return       _(this.get('agency_tree')).findWhere({name: 'National'}).collection },
+      provincial_agencies(){return     _(this.get('agency_tree')).findWhere({name: 'Provincial'}).collection },
+      district_municipalities(){return _(this.get('agency_tree')).findWhere({name: 'Local'}).collection },
       agency_id:{
         get(){
           if(this.get('national')){

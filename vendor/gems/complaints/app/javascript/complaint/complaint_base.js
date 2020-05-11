@@ -1,7 +1,6 @@
 var EditInPlace = require("exports-loader?EditInPlace!edit_in_place")
 import EditBackup from 'edit_backup'
 import AreasSelector from 'complaint/areas_selector'
-import Agency from 'agency.ractive.pug'
 import AgenciesSelector from 'agencies_select/agencies_selector'
 import Area from 'area'
 import Assignees from 'assignees'
@@ -183,7 +182,6 @@ export default Ractive.extend({
     lifecycle: Lifecycle,
     documents: Documents,
     agencies: _Agencies,
-    agency: Agency,
     areas: Areas,
     subareas: Subareas,
     complained_to_agency: ComplainedToAgency,
@@ -220,8 +218,6 @@ export default Ractive.extend({
   },
   components : {
     areasSelector : AreasSelector,
-    //agencies : Agencies,
-    agency: Agency,
     agenciesSelector : AgenciesSelector,
     area : Area,
     assignees : Assignees,
