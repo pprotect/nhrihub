@@ -25,12 +25,13 @@ class AccessEvent < ActiveRecord::Base
     where('access_events.created_at >= :window',{:window => DateTime.now.advance(window)} )
   end
 
-  def self.filtered_by_user(username)
-    if username.blank? || username=='all'
+  def self.filtered_by_user(user_id)
+    if user_id.blank? || user_id=='all'
       all
     else
-      first, last = username.split(' ')
-      joins(:user).where(users: {firstName: first, lastName: last})
+      #first, last = username.split(' ')
+      #joins(:user).where(users: {firstName: first, lastName: last})
+      joins(:user).where(users: {id: user_id})
     end
   end
 

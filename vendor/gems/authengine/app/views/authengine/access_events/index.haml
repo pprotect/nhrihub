@@ -34,7 +34,7 @@
           - for user in @users
             %li.dropdown-header.user_filter
               %a
-                %div{id: user.first_last_name}= user.first_last_name
+                %div{id: user.id}= user.first_last_name
                 %div.fa.fa-check
     .col-md-3
       .btn-group.select{:style=>"width:240px;"}
@@ -62,13 +62,13 @@
         $('#'+param+'_select li').removeClass('selected')
         $('#'+param+'_select li a div[id="'+val+'"]').closest('li').addClass('selected')
       return {
-          set: (param,value)->
+          set: (param,value,text)->
             values[param] = value
-            update_display(param,value)
+            update_display(param,text)
           inspect: -> values
           reset: ->
             _.each(_.keys(default_values),(val)=>
-                @set(val,default_values[val])
+                @set(val,default_values[val],default_values[val])
               )
         }
       )()
@@ -84,7 +84,8 @@
        $(event.target).closest('li').addClass('selected')
        changed_parameter = $(event.target).closest('ul').attr('id').replace(/_select/,'')
        new_val = $(event.target).parent().find('div').first().attr('id')
-       filter.set(changed_parameter, new_val)
+       button_text = $(event.target).parent().find('div').first().text()
+       filter.set(changed_parameter, new_val, button_text)
        fetch()
 
     $('i.erase').on 'click', (event)->
