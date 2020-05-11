@@ -29,8 +29,6 @@ class AccessEvent < ActiveRecord::Base
     if user_id.blank? || user_id=='all'
       all
     else
-      #first, last = username.split(' ')
-      #joins(:user).where(users: {firstName: first, lastName: last})
       joins(:user).where(users: {id: user_id})
     end
   end
