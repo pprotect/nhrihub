@@ -8,6 +8,6 @@
       | {{/agency_ids}}
     .edit
       | {{#agency_ids}}
-      <agenciesSelector agency_select_params='{{agency_select_params}}' metro_municipalities='{{metro_municipalities}}' districts='{{districts}}' provinces='{{provinces}}' agencies='{{agencies}}' />
+      <agenciesSelector selection_vector='{{selection_vector}}' metro_municipalities='{{metro_municipalities}}' districts='{{districts}}' provinces='{{provinces}}' agencies='{{agencies}}' />
       | {{/agency_ids}}
       span.help-block.error#agency_id_error {{ t.agency_id_error_message }}

@@ -1,10 +1,10 @@
-select.dupe_check.form-control#provinces_select(value='{{agency_select_params.selected_province_id}}')
+select.dupe_check.form-control#provinces_select(value='{{selection_vector.selected_province_id}}')
   option#prompt(value='0', disabled=true, selected=true) select province...
   | {{#provinces}}
   option(value='{{id}}') {{name}}
   | {{/provinces}}
 .tertiary('class-show'='province_is_selected')
-  <districtSelect agency_select_params='{{agency_select_params}}' tertiary_key='{{tertiary_key}}' province_districts='{{province_districts}}' province_metro='{{province_metro}}' />
+  <districtSelect selection_vector='{{selection_vector}}' tertiary_key='{{tertiary_key}}' province_districts='{{province_districts}}' province_metro='{{province_metro}}' />
 
 style.
   .tertiary { display: none; }
@@ -27,17 +27,17 @@ script.
     },
     computed:{
       province_districts(){
-        return this.get('districts')[this.get('agency_select_params.selected_province_id')]
+        return this.get('districts')[this.get('selection_vector.selected_province_id')]
       },
       province_metro(){
-        return this.get('metro_municipalities')[this.get('agency_select_params.selected_province_id')]
+        return this.get('metro_municipalities')[this.get('selection_vector.selected_province_id')]
       },
       province_is_selected(){
-        var sel = this.get('agency_select_params.selected_province_id')
+        var sel = this.get('selection_vector.selected_province_id')
         return !_.isUndefined(sel) && (sel != "0")
       },
       selected_province(){
-        return _(this.get('provinces')).findWhere({id: this.get('agency_select_params.selected_province_id')})
+        return _(this.get('provinces')).findWhere({id: this.get('selection_vector.selected_province_id')})
       },
       tertiary_key(){
         if(this.get('province_is_selected')){

@@ -18,7 +18,7 @@ class DemocracySupportingStateInstitution < Agency
     "Democracy-Supporting Government Institutions"
   end
 
-  def agency_select_params
+  def selection_vector
     {top_level_category: 'national',
      national_agency_type: 'democracy_institutions',
      selected_national_agency_id: id }

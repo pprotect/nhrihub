@@ -5,13 +5,13 @@ class LocalMunicipality < Agency
 
   def as_json(options={})
     if options.blank?
-      super(except: [:created_at, :updated_at, :code], methods: [:type, :agency_select_params, :agency_id, :description])
+      super(except: [:created_at, :updated_at, :code], methods: [:type, :selection_vector, :agency_id, :description])
     else
       super options
     end
   end
 
-  def agency_select_params
+  def selection_vector
     {top_level_category: 'municipalities',
      selected_province_id: district_municipality.province_id,
      selected_id: district_id,

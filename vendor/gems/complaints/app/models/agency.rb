@@ -48,7 +48,7 @@ class Agency < ActiveRecord::Base
 
   def as_json(options={})
     if options.blank?
-      super(:except => [:created_at, :updated_at, :code], :methods => [:selected, :type, :agency_select_params, :description])
+      super(:except => [:created_at, :updated_at, :code], :methods => [:selected, :type, :selection_vector, :description])
     else
       super options
     end

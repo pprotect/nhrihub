@@ -16,7 +16,7 @@ class NationalGovernmentInstitution < Agency
     "National Government Institutions"
   end
 
-  def agency_select_params
+  def selection_vector
     {top_level_category: 'national',
      national_agency_type: 'government_institutions',
      selected_national_agency_id: id }

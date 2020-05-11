@@ -185,8 +185,8 @@ class Complaint < ActiveRecord::Base
     #agencies.map(&:descriptions)
   #end
 
-  #def agency_select_params
-    #agencies.map(&:agency_select_params)
+  #def selection_vector
+    #agencies.map(&:selection_vector)
   #end
 
   def type_as_symbol

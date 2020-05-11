@@ -1,4 +1,4 @@
-select.dupe_check.form-control#government_agencies_select(value='{{agency_select_params.selected_national_agency_id}}')
+select.dupe_check.form-control#government_agencies_select(value='{{selection_vector.selected_national_agency_id}}')
   option#prompt(value="0", disabled=true, selected='selected') {{ prompt }}
   | {{#collection}}
   option(value='{{id}}') {{ name }}

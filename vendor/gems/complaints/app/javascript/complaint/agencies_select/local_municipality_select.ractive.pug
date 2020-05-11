@@ -1,4 +1,4 @@
-select.dupe_check.form-control(id='{{quarternary_key}}', value='{{agency_select_params.agency_id}}')
+select.dupe_check.form-control(id='{{quarternary_key}}', value='{{selection_vector.agency_id}}')
   option(value='0', disabled=true, selected=true) select local agency...
   | {{#local_municipalities}}
   option(value='{{id}}') {{ name }}

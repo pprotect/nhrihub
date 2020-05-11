@@ -4,7 +4,7 @@ export default {
     const stashed_attributes = _(this.get()).pick(stashable_attributes);
     Object.assign(stashed_attributes, {attached_documents : this.get('attached_documents')});
     this.stashed_instance = $.extend(true,{},stashed_attributes);
-    this.stashed_agency_select_config = $.extend(true,{},this.get('agency_select_params'));
+    this.stashed_agency_select_config = $.extend(true,{},this.get('selection_vector'));
   },
   restore() {
     this.set(this.stashed_instance);
@@ -20,7 +20,7 @@ export default {
     for(var i=0; i<attrs.length; i++){
       var attr = attrs[i];
       if(config_attrs.indexOf(attr) != -1){
-        this.set('agency_select_params.'+attr,params[attr])
+        this.set('selection_vector.'+attr,params[attr])
       }
     }
   },

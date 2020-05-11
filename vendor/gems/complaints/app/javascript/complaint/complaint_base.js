@@ -240,18 +240,18 @@ export default Ractive.extend({
     datepicker: Datepicker,
   },
   observe: {
-    'agency_select_params.top_level_category': {
+    'selection_vector.top_level_category': {
       handler(value, old, path, idx){
         if(!_.isUndefined(old)){
-          this.set('agency_select_params.selected_province_id', "0")
+          this.set('selection_vector.selected_province_id', "0")
         }
       }
     },
-    'agency_select_params.selected_province_id': {
+    'selection_vector.selected_province_id': {
       handler(value, old, path, idx){
         if(!_.isUndefined(old)){
-          this.set('agency_select_params.provincial_agency_id', "0")
-          this.set('agency_select_params.selected_id', "0")
+          this.set('selection_vector.provincial_agency_id', "0")
+          this.set('selection_vector.selected_id', "0")
         }
       }
     },

@@ -1,15 +1,15 @@
 .div(style='display:flex;')
-  select.dupe_check.form-control#agencies_select(value='{{agency_select_params.top_level_category}}')
+  select.dupe_check.form-control#agencies_select(value='{{selection_vector.top_level_category}}')
     option#prompt(disabled=true, selected='selected') select...
     option(value="national") National
     option(value="provincial_agencies") Provincial
     option(value="municipalities") Local
   .secondary('class-show'="national")
-    <nationalAgenciesSelect agency_select_params='{{agency_select_params}}' national_agencies='{{national_agencies}}' />
+    <nationalAgenciesSelect selection_vector='{{selection_vector}}' national_agencies='{{national_agencies}}' />
   .secondary('class-show'="provincial")
-    <provincialAgenciesSelect agency_select_params='{{agency_select_params}}' provinces='{{provinces}}' provincial_agencies='{{provincial_agencies}}' />
+    <provincialAgenciesSelect selection_vector='{{selection_vector}}' provinces='{{provinces}}' provincial_agencies='{{provincial_agencies}}' />
   .secondary('class-show'="local")
-    <localAgenciesSelect agency_select_params='{{agency_select_params}}' provinces='{{provinces}}' districts='{{districts}}' metro_municipalities='{{metro_municipalities}}' />
+    <localAgenciesSelect selection_vector='{{selection_vector}}' provinces='{{provinces}}' districts='{{districts}}' metro_municipalities='{{metro_municipalities}}' />
   #add_agency('class-show'='has_agency', 'on-click'='@this.parent.add_agency()')
     .btn.btn-default.btn-success
       i.fa.fa-plus.fa-lg
@@ -52,9 +52,9 @@ script.
       localAgenciesSelect: LocalAgenciesSelect,
     },
     computed:{
-      national(){ return this.get('agency_select_params.top_level_category') == 'national' },
-      provincial(){ return this.get('agency_select_params.top_level_category') == 'provincial_agencies' },
-      local(){ return this.get('agency_select_params.top_level_category') == 'municipalities' },
+      national(){ return this.get('selection_vector.top_level_category') == 'national' },
+      provincial(){ return this.get('selection_vector.top_level_category') == 'provincial_agencies' },
+      local(){ return this.get('selection_vector.top_level_category') == 'municipalities' },
       national_agencies(){return       _(this.get('agencies')).findWhere({name: 'National'}).collection },
       provincial_agencies(){return     _(this.get('agencies')).findWhere({name: 'Provincial'}).collection },
       district_municipalities(){return _(this.get('agencies')).findWhere({name: 'Local'}).collection },

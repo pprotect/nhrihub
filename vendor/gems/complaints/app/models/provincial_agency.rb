@@ -22,7 +22,7 @@ class ProvincialAgency < Agency
     province.name
   end
 
-  def agency_select_params
+  def selection_vector
     {top_level_category: 'provincial_agencies',
      selected_province_id: province_id,
      provincial_agency_id: id }

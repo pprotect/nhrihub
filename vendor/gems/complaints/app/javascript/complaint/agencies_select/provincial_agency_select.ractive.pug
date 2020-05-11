@@ -1,4 +1,4 @@
-select.dupe_check.form-control(id='{{tertiary_key}}', value='{{agency_select_params.provincial_agency_id}}')
+select.dupe_check.form-control(id='{{tertiary_key}}', value='{{selection_vector.provincial_agency_id}}')
   option(value='0', disabled=true, selected=true) select provincial agency...
   | {{#collection }}
   option(value='{{id}}') {{ name }}

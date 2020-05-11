@@ -22,7 +22,7 @@ class MetropolitanMunicipality < Agency
     "#{province.name} Metropolitan Municipalities"
   end
 
-  def agency_select_params
+  def selection_vector
     {top_level_category: 'municipalities',
      selected_province_id: province_id,
      selected_id: id }
