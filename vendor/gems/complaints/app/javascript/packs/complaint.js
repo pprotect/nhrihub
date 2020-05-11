@@ -11,6 +11,7 @@ _.extend(Ractive.defaults.data, {
   statuses : source_statuses,
   office_groups : source_office_groups,
   branches : source_branches,
+  all_agencies : source_all_agencies,
   i18n: window.i18n,
   status_memo_options,
   legislations,

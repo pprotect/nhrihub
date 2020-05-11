@@ -112,8 +112,9 @@ feature "complaint register", :js => true do
     check_subarea(:good_governance, "Delayed action")
     check_subarea(:human_rights, "CAT")
     check_subarea(:special_investigations_unit, "Unreasonable delay")
-    #select(user.first_last_name, :from => "assignee")
-    select_local_municipal_agency("Lesedi")
+    select_local_municipal_agency("#agency_0", "Lesedi")
+    page.find('#add_agency').click
+    select_local_municipal_agency("#agency_1", "Midvaal")
     attach_file("complaint_fileinput", upload_document)
     fill_in("attached_document_title", :with => "Complaint Document")
 

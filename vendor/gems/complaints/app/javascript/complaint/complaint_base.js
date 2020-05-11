@@ -263,6 +263,9 @@ export default Ractive.extend({
       }
     },
   },
+  add_agency(){
+    console.log('add agency')
+  },
   proceed_to_intake(){
     history.pushState({},"anything",this.get('url'));
     this.enable_all_inputs();

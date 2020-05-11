@@ -7,6 +7,35 @@ require 'upload_file_helpers'
 require 'active_storage_helpers'
 require 'parse_email_helpers'
 
+feature 'show complaint with multiple agencies', js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include ComplaintsSpecHelpers
+
+  let(:individual_complaint){ IndividualComplaint.first }
+  let(:agency){ LocalMunicipality.first }
+  let(:province_name){ agency.district_municipality.province.name }
+  let(:province_key){ province_name.gsub(/\s/,'_').downcase }
+  let(:district_name){ agency.district_municipality.name }
+  let(:district_key){ district_name.gsub(/\s/,'_').downcase }
+
+  before do
+    populate_database(:individual_complaint)
+    visit complaint_path(:en, individual_complaint.id)
+  end
+
+  it "should list multiple agencies" do
+    expect(page.all('#agencies .agency').map(&:text)).to match_array individual_complaint.agencies.map(&:description)
+    edit_complaint
+    expect(page.all('#agencies_select').count).to eq 2
+    # first two agencies are assigned, both local municipalities
+    expect(page.all('#agencies_select').first.find('option', text: 'Local')).to be_selected
+    expect(page.find('#provinces_select option', text: province_name)).to be_selected
+    expect(page.find("##{province_key} option", text: district_name)).to be_selected
+    expect(page.find("##{district_key} option", text: agency.name)).to be_selected
+  end
+end
+
 feature 'edit complaint', js: true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecSetupHelpers

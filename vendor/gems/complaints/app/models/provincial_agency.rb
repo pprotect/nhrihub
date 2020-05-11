@@ -1,16 +1,21 @@
 class ProvincialAgency < Agency
   belongs_to :province
+  belongs_to :district_municipality, foreign_key: nil # facilitates eager loading of disparate agency types
 
   def classification
     "#{province.name} Provincial Agencies"
   end
 
   def as_json(options={})
-    super(except: [:created_at, :updated_at, :code], methods: [:type, :description])
+    if options.blank?
+      super(except: [:created_at, :updated_at, :code], methods: [:type, :description])
+    else
+      super options
+    end
   end
 
   def description
-    "#{province.name} province, #{name} Provincial Agency"
+    "#{name} Provincial Agency (in #{province.name} province)"
   end
 
   def province_name

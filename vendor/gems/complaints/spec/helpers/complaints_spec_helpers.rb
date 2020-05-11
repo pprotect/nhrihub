@@ -9,6 +9,12 @@ module ComplaintsSpecHelpers
   include RemindersSpecCommonHelpers
   include NotesSpecCommonHelpers
 
+  def descend_selection_hierarchy_to(agency)
+    select('National', from:'agencies_select')
+    select('National government agencies', from: 'national_agencies_select')
+    select(selected_government_agency.name, from: 'government_agencies_select')
+  end
+
   def default_query_params
     { case_reference: "",
       city: "",
@@ -233,11 +239,13 @@ module ComplaintsSpecHelpers
     find('.show_complaint').click
   end
 
-  def select_local_municipal_agency(name)
-    select('Local', from: 'agencies_select')
-    select('Gauteng', from: 'provinces_select')
-    select('Sedibeng', from: 'gauteng')
-    select(name, from: 'sedibeng')
+  def select_local_municipal_agency(context, name)
+    within context do
+      select('Local', from: 'agencies_select')
+      select('Gauteng', from: 'provinces_select')
+      select('Sedibeng', from: 'gauteng')
+      select(name, from: 'sedibeng')
+    end
   end
 
   def select_datepicker_date(id,year,month,day)

@@ -181,22 +181,13 @@ class Complaint < ActiveRecord::Base
     type&.underscore&.humanize
   end
 
-  def agency_id=(val)
-    self.agencies = [Agency.find(val)]
-  rescue ActiveRecord::RecordNotFound 
-  end
+  #def agency_descriptions
+    #agencies.map(&:descriptions)
+  #end
 
-  def agency_description
-    Agency.find(agency_id)&.description unless agency_id.zero?
-  end
-
-  def agency_select_params
-    agency_id.zero? ? {} : Agency.find(agency_id)&.agency_select_params
-  end
-
-  def agency_id
-    agency_ids.first || 0
-  end
+  #def agency_select_params
+    #agencies.map(&:agency_select_params)
+  #end
 
   def type_as_symbol
     type.gsub(/Complaint$/,'').underscore
@@ -230,9 +221,7 @@ class Complaint < ActiveRecord::Base
                            :subarea_ids,
                            :area_subarea_ids,
                            :province_id,
-                           #:agency_id,
-                           :agency_description,
-                           :agency_select_params,
+                           :agency_ids,
                            :legislation_ids,
                            :timeline_events,
                            :communications] }
@@ -276,10 +265,6 @@ class Complaint < ActiveRecord::Base
       alt_id_other_type :
       alt_id_type
   end
-
-  #def agency_ids
-    #complaint_agencies.map(&:agency_id)
-  #end
 
   # assumed to be valid date_string, checked in client before submitting
   def dob=(date_string)

@@ -3,7 +3,11 @@ class DistrictMunicipality < ActiveRecord::Base
   has_many :local_municipalities, foreign_key: :district_id
 
   def as_json(options={})
-    super(except: [:created_at, :updated_at], methods: [:type, :local_municipalities])
+    if options.blank?
+      super(except: [:created_at, :updated_at], methods: [:type, :local_municipalities])
+    else
+      super options
+    end
   end
 
   def type

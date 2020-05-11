@@ -1,13 +1,12 @@
-span.agency
-  | {{name}}
+.agency {{description}}
 
 script.
   export default Ractive.extend({
     template : $TEMPLATE,
     computed : {
-      name() {
+      description() {
         const agency = _(this.get('all_agencies')).findWhere({id : this.get('agency_id')});
-        if (_.isUndefined(agency)) { return null; } else { return agency.name; }
+        if (_.isUndefined(agency)) { return null; } else { return agency.description; }
       }
     },
     data(){ return {} },

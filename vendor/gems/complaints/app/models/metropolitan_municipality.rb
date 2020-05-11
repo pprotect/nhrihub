@@ -1,8 +1,13 @@
 class MetropolitanMunicipality < Agency
   belongs_to :province
+  belongs_to :district_municipality, foreign_key: nil # facilitates eager loading of disparate agency types
 
   def as_json(options={})
-    super(except: [:created_at, :updated_at, :code], methods: [:type, :description])
+    if options.blank?
+      super(except: [:created_at, :updated_at, :code], methods: [:type, :description])
+    else
+      super options
+    end
   end
 
   def province_name
@@ -10,7 +15,7 @@ class MetropolitanMunicipality < Agency
   end
 
   def description
-    "#{province.name} province, #{name} metropolitan municipality"
+    "#{name} metropolitan municipality (in #{province.name} province)"
   end
 
   def classification

@@ -277,7 +277,6 @@ feature "agency select: menu intialization", js: true do
       expect(page.find("##{district_key} option", text: agency.name)).to be_selected
     end
   end
-
 end
 
 feature "agency select: cancel after editing", js: true do
@@ -379,3 +378,36 @@ feature "select box cascade", js: true do
   end
 end
 
+feature "add a second agency", js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include ComplaintsSpecHelpers
+
+  # province: Northern Cape, district_municipality: ZF Mgcawu, local_municipality: !Kheis
+  let(:agency){ LocalMunicipality.first }
+  let(:complaint){ ComplaintAgency.where(complaint_id: IndividualComplaint.first.id).destroy_all; IndividualComplaint.first.reload }
+  let(:selected_government_agency){ NationalGovernmentAgency.first }
+
+  before do
+    populate_database(:individual_complaint)
+    visit complaint_path(:en, complaint.id)
+    edit_complaint
+  end
+
+  describe "add agency button" do
+    it "is shown only when the first agency is fully selected" do
+      expect(page).not_to have_selector('#add_agency')
+      descend_selection_hierarchy_to(selected_government_agency)
+      expect(page).to have_selector('#add_agency')
+    end
+
+    it "triggers another agency select box hierarchy" do
+      expect(page).to have_selector('#agencies_select', count: 1)
+      expect(page).not_to have_selector('#add_agency')
+      descend_selection_hierarchy_to(selected_government_agency)
+      expect(page).to have_selector('#add_agency')
+      page.find('#add_agency').click
+      expect(page).to have_selector('#agencies_select', count: 2)
+    end
+  end
+end

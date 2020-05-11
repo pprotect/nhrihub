@@ -12,6 +12,7 @@
   @source_areas = #{@areas.to_json.html_safe}
   @source_subareas = #{@subareas.to_json.html_safe}
   @agencies = #{@agencies.to_json.html_safe}
+  @source_all_agencies = #{@all_agencies.to_json(only: :id, methods: :description).html_safe}
   @source_all_staff = #{@staff.to_json.html_safe}
   @source_all_users = #{@staff.to_json.html_safe}
   @source_permitted_filetypes = #{@permitted_filetypes.to_json.html_safe}

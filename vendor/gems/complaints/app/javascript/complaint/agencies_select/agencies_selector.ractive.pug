@@ -10,6 +10,9 @@
     <provincialAgenciesSelect agency_select_params='{{agency_select_params}}' provinces='{{provinces}}' provincial_agencies='{{provincial_agencies}}' />
   .secondary('class-show'="local")
     <localAgenciesSelect agency_select_params='{{agency_select_params}}' provinces='{{provinces}}' districts='{{districts}}' metro_municipalities='{{metro_municipalities}}' />
+  #add_agency('class-show'='has_agency', 'on-click'='@this.parent.add_agency()')
+    .btn.btn-default.btn-success
+      i.fa.fa-plus.fa-lg
 
 style.
   #agencies_select {
@@ -20,6 +23,20 @@ style.
   }
   .secondary { display: none; }
   .secondary.show {display: flex !important; }
+  #add_agency {
+    display: none;
+  }
+  #add_agency .btn {
+    height: 31px;
+    top: 2px;
+    position: relative;
+    width: 31px;
+    padding-top: 4px;
+    padding-left: 7px;
+  }
+  #add_agency .btn i{
+    color: white;
+  }
 
 script.
   import NationalAgenciesSelect from './national_agencies_select.ractive.pug'
@@ -61,6 +78,9 @@ script.
             }
         }
       },
+      has_agency(){
+        var id = this.get('agency_id')
+        return _.isNumber(id) && (id != 0)
+      }
     },
   });
-

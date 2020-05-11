@@ -217,7 +217,7 @@ module ComplaintsSpecSetupHelpers
   end
 
   def _agencies
-    [ Agency.find(rand(Agency.count)+1) ]
+    Agency.limit(2) 
   end
 
   def complaint_docs

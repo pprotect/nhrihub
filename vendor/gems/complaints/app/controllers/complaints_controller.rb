@@ -123,6 +123,7 @@ class ComplaintsController < ApplicationController
     @areas = ComplaintArea.includes(:subareas).all
     @subareas = ComplaintSubarea.all
     @agencies = Agency.hierarchy # {national: xx, provincial: xx, local: xx}
+    @all_agencies = Agency.includes(:province, district_municipality: :province)
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
     @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
     @permitted_filetypes = ComplaintDocument.permitted_filetypes

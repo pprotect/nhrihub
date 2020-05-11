@@ -1,8 +1,14 @@
 class LocalMunicipality < Agency
   belongs_to :district_municipality, foreign_key: :district_id
+  belongs_to :province, foreign_key: nil # facilitates eager loading of disparate agency types
+  alias_attribute :agency_id, :id
 
   def as_json(options={})
-    super(except: [:created_at, :updated_at, :code], methods: [:type, :agency_select_params, :agency_id, :description])
+    if options.blank?
+      super(except: [:created_at, :updated_at, :code], methods: [:type, :agency_select_params, :agency_id, :description])
+    else
+      super options
+    end
   end
 
   def agency_select_params
@@ -21,10 +27,6 @@ class LocalMunicipality < Agency
   end
 
   def description
-    "#{district_municipality.province.name} province, #{district_municipality.name} district, #{name} municipality"
-  end
-
-  def agency_id
-   id
+    "#{name} municipality (in #{district_municipality.province.name} province, #{district_municipality.name} district)"
   end
 end
