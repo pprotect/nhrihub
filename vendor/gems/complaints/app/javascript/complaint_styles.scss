@@ -32,6 +32,22 @@ span.legislation_name:not(:first-child) {
   position: relative;
   top: -1px;
 }
+#add_agency {
+  display: inline-block;
+  position: relative;
+  left: 32px;
+}
+#add_agency .btn {
+  height: 31px;
+  top: 2px;
+  position: relative;
+  width: 31px;
+  padding-top: 4px;
+  padding-left: 7px;
+}
+#add_agency .btn i{
+  color: white;
+}
 .fileinput-button {
   position: relative;
   top: -2px;

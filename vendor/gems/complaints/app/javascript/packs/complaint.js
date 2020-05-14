@@ -45,6 +45,7 @@ window.onpopstate = function(event) {
 };
 
 $(function() {
+  if(env=='test'){ $.fx.off=true }
   start_page();
   // capture complaint data for current url
   history.replaceState({content: complaint_data},"whatever",window.location.pathname)

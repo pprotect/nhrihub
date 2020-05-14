@@ -190,7 +190,7 @@ describe "selects complaints matching the selected subarea" do
   end
 end
 
-describe "selects complaints matching the selected agency" do
+describe "selects complaints matching the selected agency (complaint list filter scenario)" do
   include ComplaintsSpecSetupHelpers
 
   let(:user){ FactoryBot.create(:user) }
@@ -220,6 +220,41 @@ describe "selects complaints matching the selected agency" do
     expect(@foo_complaint.agency_ids).to include unassigned_agency.id
     expect(Complaint.with_agencies([unassigned_agency.id])).to eq [ @foo_complaint ]
   end
+end
+
+describe "selects complaints matching any of the supplied agency ids (complaint duplicate search scenario)" do
+  include ComplaintsSpecSetupHelpers
+
+  let(:complaints){ DuplicateComplaint.with_any_agencies_matching(agencies) }
+  let(:first_agency){ Agency.limit(1).offset(0).first }
+  let(:second_agency){ Agency.limit(1).offset(1).first }
+  let(:third_agency){ Agency.limit(1).offset(2).first }
+
+  before do
+    create_agencies
+    @foo_complaint = FactoryBot.create(:complaint, agencies: [first_agency])
+    @bar_complaint = FactoryBot.create(:organization_complaint, agencies: [first_agency, second_agency])
+    @baz_complaint = FactoryBot.create(:complaint, agencies: [third_agency])
+  end
+
+  it "should return all complaints matching any of the passed-in ids" do
+    agencies = [first_agency.id]
+    complaints= Complaint.with_any_agencies_matching(agencies)
+    expect(complaints).to match_array [@foo_complaint.becomes(DuplicateComplaint), @bar_complaint.becomes(DuplicateComplaint)]
+    expect(complaints.map(&:class).map(&:name)).to match_array ['DuplicateComplaint', 'DuplicateComplaint']
+  end
+
+  it "should return all complaints matching any of the passed-in ids" do
+    agencies = [second_agency.id, third_agency.id]
+    complaints= Complaint.with_any_agencies_matching(agencies) 
+    expect(complaints).to match_array [@baz_complaint.becomes(DuplicateComplaint), @bar_complaint.becomes(DuplicateComplaint)]
+  end
+
+  it "should return no complaints if request ids array is empty" do
+    complaints= Complaint.with_any_agencies_matching([]) 
+    expect(complaints).to be_empty
+  end
+
 end
 
 describe "selects complaints with home- cell- or fax-number matching" do

@@ -112,9 +112,9 @@ feature "complaint register", :js => true do
     check_subarea(:good_governance, "Delayed action")
     check_subarea(:human_rights, "CAT")
     check_subarea(:special_investigations_unit, "Unreasonable delay")
-    select_local_municipal_agency("#agency_0", "Lesedi")
+    select_local_municipal_agency(page.all('.agency_select_container')[0], "Lesedi")
     page.find('#add_agency').click
-    select_local_municipal_agency("#agency_1", "Midvaal")
+    select_local_municipal_agency(page.all('.agency_select_container')[1], "Midvaal")
     attach_file("complaint_fileinput", upload_document)
     fill_in("attached_document_title", :with => "Complaint Document")
 
@@ -198,7 +198,7 @@ feature "complaint register", :js => true do
       end
     end
 
-    expect(find('.agency').text).to eq "Gauteng province, Sedibeng district, Lesedi municipality"
+    expect(all('.agency').map(&:text)).to match_array ["Lesedi municipality (in Gauteng province, Sedibeng district)", "Midvaal municipality (in Gauteng province, Sedibeng district)"]
 
     within complaint_documents do
       doc = page.all('.complaint_document')[0]
@@ -256,7 +256,7 @@ feature "complaint register", :js => true do
     fill_in('date_received', :with => "19/08/1968")
     expect(page).not_to have_selector('#date_received_error')
     # /date_received
-   expect(page).to have_selector('#agency_id_error', :text => "You must select an agency")
+    expect(page).to have_selector('#agency_id_error', :text => "You must select an agency")
     fill_in('lastName', :with => "Normal")
     expect(page).not_to have_selector('#lastName_error', :text => "You must enter a first name")
     fill_in('firstName', :with => "Norman")
@@ -318,7 +318,7 @@ feature "complaint register", :js => true do
     expect(page).not_to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
     fill_in('complaint_details', :with => "random text")
     expect(page).not_to have_selector('#details_error', :text => "You must enter the complaint details")
-    select_local_municipal_agency("Lesedi")
+    select_local_municipal_agency(page.all('.agency_select_container')[0], "Lesedi")
     expect(page).not_to have_selector('#agency_id_error', :text => "You must select an agency")
     # SA ID validation:
     choose('Passport')

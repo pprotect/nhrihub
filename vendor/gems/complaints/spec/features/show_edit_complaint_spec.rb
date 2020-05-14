@@ -33,19 +33,38 @@ feature 'show complaint with multiple agencies', js: true do
     expect(page.all('#agencies .agency').map(&:text)).to match_array individual_complaint.agencies.map(&:description)
     edit_complaint
     expect(page.all('#agencies_select').count).to eq 2
+    expect(page).to have_selector('#add_agency')
     # first two agencies are assigned, both local municipalities
     within page.all('.agency_select_container')[0] do
       expect(page.find('#agencies_select option', text: 'Local')).to be_selected
       expect(page.find('#provinces_select option', text: first_province_name)).to be_selected
       expect(page.find("##{first_province_key} option", text: first_district_name)).to be_selected
       expect(page.find("##{first_district_key} option", text: first_agency.name)).to be_selected
+      expect(page).to have_selector('#remove_agency')
     end
     within page.all('.agency_select_container')[1] do
       expect(page.find('#agencies_select option', text: 'Local')).to be_selected
       expect(page.find('#provinces_select option', text: second_province_name)).to be_selected
       expect(page.find("##{second_province_key} option", text: second_district_name)).to be_selected
       expect(page.find("##{second_district_key} option", text: second_agency.name)).to be_selected
+      expect(page).to have_selector('#remove_agency')
     end
+  end
+
+  it "should add an agency selector" do
+    edit_complaint
+    expect{page.find('#add_agency').click}.to change{ page.all('.agency_select_container').count }.from(2).to(3)
+  end
+
+  it "should remove an agency selector" do
+    edit_complaint
+    expect{page.all('#remove_agency').first.click}.to change{ page.all('.agency_select_container').count }.from(2).to(1)
+  end
+
+  it "should not remove the last agency selector" do
+    edit_complaint
+    page.all('#remove_agency').first.click
+    expect(page).not_to have_selector('#remove_agency')
   end
 end
 

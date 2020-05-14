@@ -75,28 +75,19 @@ class Complaint < ActiveRecord::Base
       selected_office_id: ""}
   end
 
-  def self.possible_duplicates(params)
-    agency_match = Complaint.with_agencies(params[:agency_id], match: :exact).sort_by(&:case_reference).map{|c| c.becomes(DuplicateComplaint)}
-    source = params[:type]
-    complainant_match = Complaint.
-                           send(:"with_duplicate_#{source}_complainant",params).
-                           map{|c| c.becomes(DuplicateComplaint)}
-    { complainant_match: complainant_match, agency_match: agency_match }
-  end
-
   def self.filtered(query)
-    logger.info "for_assignee: #{for_assignee(query[:selected_assignee_id]).length}"
-    logger.info "with_status: #{with_status(query[:selected_status_ids]).length}"
-    logger.info "with_complaint_area_ids: #{with_complaint_area_ids(query[:selected_complaint_area_ids]).length}"
-    logger.info "with_case_reference_match: #{with_case_reference_match(query[:case_reference]).length}"
-    logger.info "with_complainant_fragment_match: #{with_complainant_fragment_match(query[:complainant]).length}"
-    logger.info "since_date: #{since_date(query[:from]).length}"
-    logger.info "before_date: #{before_date(query[:to]).length}"
-    logger.info "with_city: #{with_city(query[:city]).length}"
-    logger.info "with_phone: #{with_phone(query[:phone]).length}"
-    logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
-    logger.info "with_agencies: #{with_agencies(query[:selected_agency_id]).length}"
-    logger.info "transferred_to: #{transferred_to(query[:selected_office_id]).length}"
+    #logger.info "for_assignee: #{for_assignee(query[:selected_assignee_id]).length}"
+    #logger.info "with_status: #{with_status(query[:selected_status_ids]).length}"
+    #logger.info "with_complaint_area_ids: #{with_complaint_area_ids(query[:selected_complaint_area_ids]).length}"
+    #logger.info "with_case_reference_match: #{with_case_reference_match(query[:case_reference]).length}"
+    #logger.info "with_complainant_fragment_match: #{with_complainant_fragment_match(query[:complainant]).length}"
+    #logger.info "since_date: #{since_date(query[:from]).length}"
+    #logger.info "before_date: #{before_date(query[:to]).length}"
+    #logger.info "with_city: #{with_city(query[:city]).length}"
+    #logger.info "with_phone: #{with_phone(query[:phone]).length}"
+    #logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
+    #logger.info "with_agencies: #{with_agencies(query[:selected_agency_id]).length}"
+    #logger.info "transferred_to: #{transferred_to(query[:selected_office_id]).length}"
     select("DISTINCT ON (complaints.id) complaints.*").
       for_assignee(query[:selected_assignee_id]).
       with_status(query[:selected_status_ids]).

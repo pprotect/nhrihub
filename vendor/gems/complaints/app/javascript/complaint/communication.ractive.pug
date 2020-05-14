@@ -141,7 +141,7 @@ script(type='text/javascript').
     formData() {
       return this.asFormData(this.get('persistent_attributes'));
     }, // in ractive_local_methods, returns a FormData instance
-    update_persist(success, error, context) { // called by EditInPlace
+    update_persist(success, error, context) { // called by InpageEditDecorator
       if (this.validate()) {
         const data = this.formData();
         return $.ajax({

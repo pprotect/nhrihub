@@ -142,7 +142,7 @@
 
       | {{>documents }}
 
-      <buttons mode='{{mode}}' editing='{{editing}}' has_errors='{{has_errors}}' />
+      <buttons mode='{{mode}}' editing='{{editing}}' has_errors='{{has_errors}}' invalid_query='{{invalid_query}}' />
 
 style
   include:scss complaint_styles.scss
@@ -153,8 +153,9 @@ script.
   import ComplaintBase from 'complaint_base'
   import translations from 'translations.js'
   import SAIDParser from 'south-african-id-parser'
+  require("array_equals.js")
 
-  export default ComplaintBase.extend({
+  var complaint = ComplaintBase.extend({
     template : $TEMPLATE,
     css: $CSS,
     data : function(){
@@ -164,7 +165,14 @@ script.
     },
     computed : {
       dupe_check_attributes() {
-        return ['type', 'id_value', 'alt_id_value', 'lastName', 'email', 'agency_id'];
+        return ['type', 'id_value', 'alt_id_value', 'lastName', 'email', 'agency_ids'];
+      },
+      dupe_check_values(){
+        var that=this
+        return _(this.get('dupe_check_attributes')).reduce(function(memo,attr){
+          memo[memo.length] = that.get(attr)
+          return memo
+          }, [])
       },
       persistent_attributes() {
         return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
@@ -204,4 +212,17 @@ script.
         };
       },
     },
+    observe: {
+      'dupe_check_values': {
+        handler(value, old, path, idx){
+          var changed_values = !value.equals(old)
+          var valid_ids = !_.isEmpty(this.get('agency_ids')) && _(this.get('agency_ids')).all(function(i){return _.isNumber(i)})
+          if(changed_values && valid_ids){
+            this.set('invalid_query',false)
+          }
+        }
+      }
+    },
     })
+
+  export default complaint

@@ -9,6 +9,10 @@ module ComplaintsSpecHelpers
   include RemindersSpecCommonHelpers
   include NotesSpecCommonHelpers
 
+  def first_agency_selector
+    page.all('.agency_select_container')[0]
+  end
+
   def descend_selection_hierarchy_to(agency)
     select('National', from:'agencies_select')
     select('National government agencies', from: 'national_agencies_select')

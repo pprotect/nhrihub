@@ -1,4 +1,4 @@
-const EditInPlace = function(node,id){
+const InpageEditDecorator = function(node,id){
   const ractive = this;
   const edit = new InpageEdit({
     object : this,
@@ -20,4 +20,4 @@ const EditInPlace = function(node,id){
     };
 };
 
-Ractive.decorators.inpage_edit = EditInPlace;
+Ractive.decorators.inpage_edit = InpageEditDecorator;

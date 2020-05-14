@@ -11,7 +11,7 @@ feature "agency select", js: true do
   let(:complaint){ IndividualComplaint.first }
 
   before do
-    populate_database(:individual_complaint)
+    populate_database(:individual_complaint, agency_count: 1)
     visit complaint_path(:en, complaint.id)
     edit_complaint
   end
@@ -128,7 +128,7 @@ feature "agency select", js: true do
         it "should add the selected provincial agency to the complaint" do
           select(selected_provincial_agency.name, from: 'eastern_cape')
           edit_save
-          expect(complaint.agency_id).to eq selected_provincial_agency.id
+          expect(complaint.agency_ids).to eq [selected_provincial_agency.id]
           expect(page.find('#agencies').text).to eq selected_provincial_agency.description
           edit_complaint
           expect( page.find('#provinces_select option', text: selected_province.name)).to be_selected
@@ -173,7 +173,7 @@ feature "agency select", js: true do
 
         it "should add the selected metropolitan municipality to the complaint" do
           edit_save
-          expect(complaint.agency_id).to eq selected_metro.id
+          expect(complaint.agency_ids).to eq [selected_metro.id]
           expect(page.find('#agencies').text).to eq selected_metro.description
         end
       end
@@ -191,7 +191,7 @@ feature "agency select", js: true do
         it "should add the selected local municipality to the complaint" do
           select(selected_local_muni_name, from: dropdown_id)
           edit_save
-          expect(complaint.agency_id).to eq selected_local_municipality.id
+          expect(complaint.agency_ids).to eq [selected_local_municipality.id]
           expect(page.find('#agencies').text).to eq selected_local_municipality.description
         end
       end
@@ -208,7 +208,7 @@ feature "agency select: menu intialization", js: true do
 
   before do
     populate_database(:individual_complaint)
-    complaint.update(agency_id: agency.id)
+    complaint.update(agency_ids: [agency.id])
     visit complaint_path(:en, complaint.id)
     edit_complaint
   end
@@ -288,7 +288,7 @@ feature "agency select: cancel after editing", js: true do
 
   before do
     populate_database(:individual_complaint)
-    complaint.update(agency_id: agency.id)
+    complaint.update(agency_ids: [agency.id])
     visit complaint_path(:en, complaint.id)
     edit_complaint
   end
@@ -348,7 +348,7 @@ feature "select box cascade", js: true do
 
   before do
     populate_database(:individual_complaint)
-    complaint.update(agency_id: agency.id)
+    complaint.update(agency_ids: [agency.id])
     visit complaint_path(:en, complaint.id)
     edit_complaint
   end
@@ -385,27 +385,20 @@ feature "add a second agency", js: true do
 
   # province: Northern Cape, district_municipality: ZF Mgcawu, local_municipality: !Kheis
   let(:agency){ LocalMunicipality.first }
-  let(:complaint){ ComplaintAgency.where(complaint_id: IndividualComplaint.first.id).destroy_all; IndividualComplaint.first.reload }
+  #let(:complaint){ ComplaintAgency.where(complaint_id: IndividualComplaint.first.id).destroy_all; IndividualComplaint.first.reload }
+  let(:complaint){ IndividualComplaint.first }
   let(:selected_government_agency){ NationalGovernmentAgency.first }
 
   before do
-    populate_database(:individual_complaint)
+    populate_database(:individual_complaint, agency_count: 1)
     visit complaint_path(:en, complaint.id)
     edit_complaint
   end
 
   describe "add agency button" do
-    it "is shown only when the first agency is fully selected" do
-      expect(page).not_to have_selector('#add_agency')
-      descend_selection_hierarchy_to(selected_government_agency)
-      expect(page).to have_selector('#add_agency')
-    end
-
     it "triggers another agency select box hierarchy" do
       expect(page).to have_selector('#agencies_select', count: 1)
-      expect(page).not_to have_selector('#add_agency')
       descend_selection_hierarchy_to(selected_government_agency)
-      expect(page).to have_selector('#add_agency')
       page.find('#add_agency').click
       expect(page).to have_selector('#agencies_select', count: 2)
     end

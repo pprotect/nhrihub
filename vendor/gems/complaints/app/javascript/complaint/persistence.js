@@ -33,7 +33,7 @@ export default {
   progress_bar_create() {
     return this.findComponent('progressBar').start();
   },
-  update_persist(success, error, context) { // called by EditInPlace
+  update_persist(success, error, context) { // called by InpageEditDecorator
     if (this.validate()) {
       const data = this.formData();
       return $.ajax({

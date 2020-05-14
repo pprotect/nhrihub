@@ -1,4 +1,4 @@
-var EditInPlace = require("exports-loader?EditInPlace!edit_in_place")
+var InpageEditDecorator = require("exports-loader?InpageEditDecorator!inpage_edit_decorator")
 import EditBackup from 'edit_backup'
 import AreasSelector from 'complaint/areas_selector'
 import AgenciesSelector from 'agencies_select/agencies_selector'
@@ -49,9 +49,10 @@ export default Ractive.extend({
     province_name(){
       return _(this.get('provinces')).findWhere({id: this.get('province_id')}).name
     },
-    agency_id:{
+    agency_ids:{
       get(){
-        return this.findComponent('agenciesSelector').get('agency_id');
+        var ids = _(this.findAllComponents('agenciesSelector')).map(function(as){return as.get('agency_id')});
+        return _(ids).reject(function(i){return _.isNull(i)})
       },
       set(val){
         this.findComponent('agenciesSelector').set('agency_id', val);
@@ -173,8 +174,8 @@ export default Ractive.extend({
     duplication_query(){
       var attrs = this.get('dupe_check_attributes');
       var that = this;
-      var query = {};
-      _(attrs).map(function(attr){query["match["+attr+"]"]=that.get(attr)})
+      var query = {match: {}};
+      _(attrs).map(function(attr){query.match[attr]=that.get(attr)})
       return query
     }
   },
@@ -235,32 +236,8 @@ export default Ractive.extend({
     legislationSelector: LegislationSelector,
     datepicker: Datepicker,
   },
-  observe: {
-    'selection_vector.top_level_category': {
-      handler(value, old, path, idx){
-        if(!_.isUndefined(old)){
-          this.set('selection_vector.selected_province_id', "0")
-        }
-      }
-    },
-    'selection_vector.selected_province_id': {
-      handler(value, old, path, idx){
-        if(!_.isUndefined(old)){
-          this.set('selection_vector.provincial_agency_id', "0")
-          this.set('selection_vector.selected_id', "0")
-        }
-      }
-    },
-    'agency_id':{
-      handler(value,old,path,idx){
-        if(!_.isNaN(value)){
-          this.set('agency_id_error',false)
-        }
-      }
-    },
-  },
   add_agency(){
-    console.log('add agency')
+    this.push('agencies',{id: null})
   },
   proceed_to_intake(){
     history.pushState({},"anything",this.get('url'));
@@ -276,17 +253,29 @@ export default Ractive.extend({
     $(this.el).find('input:not(.dupe_check), select:not(.dupe_check)').attr('disabled',true)
     $(this.el).find('.fileinput-button').attr('disabled',true)
   },
+  query_has_values(query){
+    var relevant_attributes = _(query.match).omit('type')
+    var values = _.values(relevant_attributes)
+    return !_(values).all(function(val){return _.isEmpty(val)}) // null value or empty array
+  },
+  validate_query(query){
+    var valid = this.query_has_values(query)
+    this.set('invalid_query', !valid)
+    return valid
+  },
   check_dupes(){
-    const data = $.param(this.get('duplication_query'));
-    return $.ajax({
-      method : 'get',
-      data,
-      url : Routes.duplicate_complaints_path('en'),
-      success : this.fetch_dupes_callback,
-      context : this,
-      processData : false,
-      contentType : false
-    });
+    const query = this.get('duplication_query');
+    if(this.validate_query(query)){
+      return $.ajax({
+        method : 'get',
+        data: $.param(query),
+        url : Routes.duplicate_complaints_path('en'),
+        success : this.fetch_dupes_callback,
+        context : this,
+        processData : false,
+        contentType : false
+      });
+    }
   },
   fetch_dupes_callback(response, status, jqxhr){
     this.set('agencyMatch', response.agency_match)

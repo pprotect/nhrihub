@@ -1,20 +1,36 @@
-.div.agency_select_container(style='display:flex;')
-  select.dupe_check.form-control#agencies_select(value='{{selection_vector.top_level_category}}')
-    option#prompt(disabled=true, selected='selected') select...
-    option(value="national") National
-    option(value="provincial_agencies") Provincial
-    option(value="municipalities") Local
-  .secondary('class-show'="national")
-    <nationalAgenciesSelect selection_vector='{{selection_vector}}' national_agencies='{{national_agencies}}' />
-  .secondary('class-show'="provincial")
-    <provincialAgenciesSelect selection_vector='{{selection_vector}}' provinces='{{provinces}}' provincial_agencies='{{provincial_agencies}}' />
-  .secondary('class-show'="local")
-    <localAgenciesSelect selection_vector='{{selection_vector}}' provinces='{{provinces}}' districts='{{districts}}' metro_municipalities='{{metro_municipalities}}' />
-  #add_agency('class-show'='has_agency', 'on-click'='@this.parent.add_agency()')
-    .btn.btn-default.btn-success
-      i.fa.fa-plus.fa-lg
+.row.agency_select_container(style='display:flex;')
+  .col-md-11(style='display:flex;')
+    select.dupe_check.form-control#agencies_select(value='{{selection_vector.top_level_category}}')
+      option#prompt(disabled=true, selected='selected') {{ t.select }}
+      option(value="national") {{ t.national }}
+      option(value="provincial_agencies") {{ t.provincial }}
+      option(value="municipalities") {{ t.local }}
+    .secondary('class-show'="national")
+      <nationalAgenciesSelect selection_vector='{{selection_vector}}' national_agencies='{{national_agencies}}' />
+    .secondary('class-show'="provincial")
+      <provincialAgenciesSelect selection_vector='{{selection_vector}}' provinces='{{provinces}}' provincial_agencies='{{provincial_agencies}}' />
+    .secondary('class-show'="local")
+      <localAgenciesSelect selection_vector='{{selection_vector}}' provinces='{{provinces}}' districts='{{districts}}' metro_municipalities='{{metro_municipalities}}' />
+  .col-md-1#remove_agency('class-show'='not_last_agency', 'on-click'='@this.remove()')
+    .btn.btn-default.btn-danger
+      i.fa.fa-minus.fa-lg
 
 style.
+  #last_agency_removal_error {
+    display: none;
+  }
+  #remove_agency {
+    display: none;
+  }
+  #remove_agency .btn {
+    height: 26px;
+    width: 26px;
+    padding-left: 6px;
+    padding-top: 4px;
+    position: relative;
+    top: 4px;
+    font-size: .8em;
+  }
   #agencies_select {
     width: 140px;
   }
@@ -23,25 +39,12 @@ style.
   }
   .secondary { display: none; }
   .secondary.show {display: flex !important; }
-  #add_agency {
-    display: none;
-  }
-  #add_agency .btn {
-    height: 31px;
-    top: 2px;
-    position: relative;
-    width: 31px;
-    padding-top: 4px;
-    padding-left: 7px;
-  }
-  #add_agency .btn i{
-    color: white;
-  }
 
 script.
   import NationalAgenciesSelect from './national_agencies_select.ractive.pug'
   import ProvincialAgenciesSelect from './provincial_agencies_select.ractive.pug'
   import LocalAgenciesSelect from './local_agencies_select.ractive.pug'
+  import translations from 'translations.js'
 
   export default Ractive.extend({
     template : $TEMPLATE,
@@ -51,6 +54,11 @@ script.
       provincialAgenciesSelect: ProvincialAgenciesSelect,
       localAgenciesSelect: LocalAgenciesSelect,
     },
+    data : function(){
+      return {
+        t : translations.t('agencies_selector'),
+      }
+    },
     computed:{
       national(){ return this.get('selection_vector.top_level_category') == 'national' },
       provincial(){ return this.get('selection_vector.top_level_category') == 'provincial_agencies' },
@@ -58,6 +66,9 @@ script.
       national_agencies(){return       _(this.get('agency_tree')).findWhere({name: 'National'}).collection },
       provincial_agencies(){return     _(this.get('agency_tree')).findWhere({name: 'Provincial'}).collection },
       district_municipalities(){return _(this.get('agency_tree')).findWhere({name: 'Local'}).collection },
+      agency(){
+        return {agency_id: this.get('agency_id'), selection_vector: this.get('selection_vector')}
+      },
       agency_id:{
         get(){
           if(this.get('national')){
@@ -66,6 +77,8 @@ script.
               return this.findComponent('provincialAgenciesSelect').get('agency_id')
             }else if(this.get('local')){
               return this.findComponent('localAgenciesSelect').get('agency_id')
+            }else{
+              return null
             }
         },
         set(val){
@@ -78,9 +91,39 @@ script.
             }
         }
       },
-      has_agency(){
-        var id = this.get('agency_id')
-        return _.isNumber(id) && (id != 0)
+      not_last_agency(){
+        return this.parent.get('agencies').length > 1
+      },
+    },
+    remove(){
+      var id = this.get('agency_id')
+      var index = this.parent.findAllComponents('agenciesSelector').indexOf(this)
+      var parent = this.parent
+      var remove_callback = function(){
+        parent.splice('agencies',index,1)
       }
+      $(this.find('.agency_select_container')).slideUp(300, remove_callback)
+    },
+    observe: {
+      'agency_id': {
+        handler(value, old, path, idx){
+          this.parent.remove_attribute_error('agency_ids')
+        }
+      },
+      'selection_vector.top_level_category': {
+        handler(value, old, path, idx){
+          if(!_.isUndefined(old)){
+            this.set('selection_vector.selected_province_id', "0")
+          }
+        }
+      },
+      'selection_vector.selected_province_id': {
+        handler(value, old, path, idx){
+          if(!_.isUndefined(old)){
+            this.set('selection_vector.provincial_agency_id', "0")
+            this.set('selection_vector.selected_id', "0")
+          }
+        }
+      },
     },
   });

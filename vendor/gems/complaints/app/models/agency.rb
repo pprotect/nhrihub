@@ -109,4 +109,8 @@ class Agency < ActiveRecord::Base
   def delete_allowed
     complaints.count.zero?
   end
+
+  def selection_vector
+    {}
+  end
 end

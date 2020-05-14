@@ -48,6 +48,8 @@ script.
         get(){
           if(this.get('province_is_selected')){
               return this.findComponent('districtSelect').get('agency_id')
+            }else{
+              return null
             }
         },
         set(val){

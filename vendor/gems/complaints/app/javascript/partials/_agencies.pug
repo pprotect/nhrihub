@@ -1,6 +1,9 @@
-.row.form-group('class-has-error' = 'agency_id_error', 'data-toggle'='edit')
+.row.form-group('class-has-error' = 'agency_ids_error', 'data-toggle'='edit')
   .col-md-2
     label.required {{ t.agency }}
+    #add_agency.edit('on-click'='@this.add_agency()')
+      .btn.btn-default.btn-success
+        i.fa.fa-plus.fa-lg
   .col-md-10
     #agencies.no_edit.in
       | {{#agencies}}

@@ -35,7 +35,9 @@ script.
       agency_id:{
         get(){
           if(this.get('national_agencies_type_selected')){
-             return this.get('selection_vector.selected_national_agency_id');
+              return this.get('selection_vector.selected_national_agency_id');
+            }else{
+              return null
             }
         },
         set(val){
