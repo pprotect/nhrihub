@@ -28,6 +28,8 @@ export default {
     this.set(response);
     this.editor.load();
     var complaint_id = this.get('id')
+    console.log("persistence save_complaint_callback :: PUSHSTATE")
+    console.dir(response)
     history.pushState({page:"save_complaint_callback", content: response},"whatever","/en/complaints/"+complaint_id)
   },
   progress_bar_create() {

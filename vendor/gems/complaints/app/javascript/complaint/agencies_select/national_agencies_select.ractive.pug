@@ -34,10 +34,10 @@ script.
       collection(){ if(this.get('national_agencies_type_selected')){ return this.get(this.get('selection_vector.national_agency_type'))} },
       agency_id:{
         get(){
-          if(this.get('national_agencies_type_selected')){
+          if(this.get('national_agencies_type_selected') && _.isNumber( this.get('selection_vector.selected_national_agency_id'))){
               return this.get('selection_vector.selected_national_agency_id');
             }else{
-              return null
+              return null;
             }
         },
         set(val){

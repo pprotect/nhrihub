@@ -251,7 +251,6 @@ RSpec.configure do |config| # rspec-expectations config goes here. You can use a
   config.before(:each) do |example|
     begin
       DatabaseCleaner.strategy = example.metadata[:js] ? :truncation : :transaction
-      #DatabaseCleaner.strategy = example.metadata[:js] ? :deletion : :transaction
       DatabaseCleaner.start
       Rails.root.join('tmp', 'cache').children.each{|dir| FileUtils.remove_dir(dir, true) unless dir.to_s.match(/assets/)}
     rescue DatabaseCleaner::NoORMDetected
@@ -265,5 +264,7 @@ RSpec.configure do |config| # rspec-expectations config goes here. You can use a
     rescue DatabaseCleaner::NoORMDetected
     end
   end
+
+  config.example_status_persistence_file_path = "rspec_log.txt"
 
 end

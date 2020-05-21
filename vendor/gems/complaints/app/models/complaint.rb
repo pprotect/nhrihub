@@ -76,18 +76,22 @@ class Complaint < ActiveRecord::Base
   end
 
   def self.filtered(query)
-    #logger.info "for_assignee: #{for_assignee(query[:selected_assignee_id]).length}"
-    #logger.info "with_status: #{with_status(query[:selected_status_ids]).length}"
-    #logger.info "with_complaint_area_ids: #{with_complaint_area_ids(query[:selected_complaint_area_ids]).length}"
-    #logger.info "with_case_reference_match: #{with_case_reference_match(query[:case_reference]).length}"
-    #logger.info "with_complainant_fragment_match: #{with_complainant_fragment_match(query[:complainant]).length}"
-    #logger.info "since_date: #{since_date(query[:from]).length}"
-    #logger.info "before_date: #{before_date(query[:to]).length}"
-    #logger.info "with_city: #{with_city(query[:city]).length}"
-    #logger.info "with_phone: #{with_phone(query[:phone]).length}"
-    #logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
-    #logger.info "with_agencies: #{with_agencies(query[:selected_agency_id]).length}"
-    #logger.info "transferred_to: #{transferred_to(query[:selected_office_id]).length}"
+    # just for debugging
+    if ENV['log_filter'] == 'true'
+      logger.info "for_assignee: #{for_assignee(query[:selected_assignee_id]).length}"
+      logger.info "with_status: #{with_status(query[:selected_status_ids]).length}"
+      logger.info "with_complaint_area_ids: #{with_complaint_area_ids(query[:selected_complaint_area_ids]).length}"
+      logger.info "with_case_reference_match: #{with_case_reference_match(query[:case_reference]).length}"
+      logger.info "with_complainant_fragment_match: #{with_complainant_fragment_match(query[:complainant]).length}"
+      logger.info "since_date: #{since_date(query[:from]).length}"
+      logger.info "before_date: #{before_date(query[:to]).length}"
+      logger.info "with_city: #{with_city(query[:city]).length}"
+      logger.info "with_phone: #{with_phone(query[:phone]).length}"
+      logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
+      logger.info "with_agencies: #{with_agencies(query[:selected_agency_id]).length}"
+      logger.info "transferred_to: #{transferred_to(query[:selected_office_id]).length}"
+    end
+
     select("DISTINCT ON (complaints.id) complaints.*").
       for_assignee(query[:selected_assignee_id]).
       with_status(query[:selected_status_ids]).
@@ -213,6 +217,7 @@ class Complaint < ActiveRecord::Base
                            :area_subarea_ids,
                            :province_id,
                            :agencies,
+                           :agency_ids,
                            :legislation_ids,
                            :timeline_events,
                            :communications] }

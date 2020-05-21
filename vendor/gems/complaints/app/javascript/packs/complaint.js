@@ -25,18 +25,21 @@ import IndividualComplaint from '../individual_complaint.ractive.pug'
 import OrganizationComplaint from '../organization_complaint.ractive.pug'
 import OwnMotionComplaint from '../own_motion_complaint.ractive.pug'
 window.start_page = function(){
+  window.new_complaint_data = complaint_data()
   if((typeof mode) != 'undefined'){
-    complaint_data["mode"] = mode
+    new_complaint_data["mode"] = mode
+    new_complaint_data["heading"] = i18n.heading
+    new_complaint_data["type"] = type
   }
   if(type == "individual"){
-    window.complaint = new IndividualComplaint({data: complaint_data}) }
+    window.complaint = new IndividualComplaint({data: new_complaint_data}) }
   else if(type == "organization"){
-    window.complaint = new OrganizationComplaint({data: complaint_data}) }
+    window.complaint = new OrganizationComplaint({data: new_complaint_data}) }
   else if(type == "own_motion"){
-    window.complaint = new OwnMotionComplaint({data: complaint_data}) }
+    window.complaint = new OwnMotionComplaint({data: new_complaint_data}) }
   else
     throw "complaint type not recognized in app/javascript/packs/complaint.js"
-  complaint.set({heading: i18n.heading, type: type});
+  //complaint.set({heading: i18n.heading, type: type});
 }
 
 window.onpopstate = function(event) {
@@ -48,6 +51,6 @@ $(function() {
   if(env=='test'){ $.fx.off=true }
   start_page();
   // capture complaint data for current url
-  history.replaceState({content: complaint_data},"whatever",window.location.pathname)
+  history.replaceState({content: new_complaint_data, diagnostic: "start_page"},"whatever",window.location.pathname)
 });
 

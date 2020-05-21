@@ -40,8 +40,8 @@ feature "own motion complaint duplicate check", :js => true do
 
   before do
     populate_database(:individual_complaint)
-    complaint1.update(agency_id: agency.id)
-    complaint2.update(agency_id: agency.id)
+    complaint1.update(agency_ids: [agency.id])
+    complaint2.update(agency_ids: [agency.id])
     visit complaint_intake_path('en', 'own_motion')
   end
 
@@ -84,8 +84,13 @@ feature "own motion complaint duplicate check", :js => true do
 
   end
 
+  it "should warn user if no duplicate check attributes are entered" do
+    page.find(".btn#check_dupes").click
+    expect(page).to have_selector('#invalid_query_error', text: "You must complete at least one field for duplicate checking")
+  end
+
   it "should show duplicates matching the selected agency" do
-    select_local_municipal_agency("Lesedi")
+    select_local_municipal_agency(page.all('.agency_select_container')[0], "Lesedi")
     page.find(".btn#check_dupes").click
     wait_for_ajax
     expect(page).to have_selector('h4.modal-title', text: "Possible duplicates")

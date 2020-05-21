@@ -84,7 +84,7 @@ feature 'edit complaint', js: true do
 
   before do
     populate_database(:individual_complaint)
-    individual_complaint.update(agency_id: lesedi.id)
+    individual_complaint.update(agency_ids: [lesedi.id])
     visit complaint_path(:en, individual_complaint.id)
   end
 
@@ -147,7 +147,7 @@ feature 'edit complaint', js: true do
     uncheck_subarea(:human_rights, "CAT") # originall had "CAT" "ICESCR"
     uncheck_subarea(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
     # AGENCY
-    select_local_municipal_agency('Emfuleni')
+    select_local_municipal_agency(page.all('.agency_select_container')[0],'Emfuleni')
     # DOCUMENTS
     attach_file("complaint_fileinput", upload_document)
     fill_in("attached_document_title", :with => "added complaint document")
@@ -267,7 +267,7 @@ feature 'edit complaint', js: true do
     select_datepicker_date("#date_received",Date.today.year,Date.today.month,9)
     select(User.admin.last.first_last_name, :from => "assignee")
     choose('special_investigations_unit')
-    select_local_municipal_agency('Emfuleni')
+    select_local_municipal_agency(page.all('.agency_select_container')[0],'Emfuleni')
     attach_file("complaint_fileinput", upload_document)
     fill_in("attached_document_title", :with => "some text any text")
     edit_cancel
@@ -317,7 +317,7 @@ feature 'edit complaint', js: true do
     uncheck_subarea(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
     uncheck_subarea(:special_investigations_unit, "Not properly investigated") #originally had "Unreasonable delay" "Not properly investigated"
     # AGENCY
-    select_local_municipal_agency("Emfuleni")
+    select_local_municipal_agency(page.all('.agency_select_container')[0],'Emfuleni')
     expect{ edit_save }.not_to change{ IndividualComplaint.first}
 
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
@@ -359,7 +359,7 @@ feature 'edit complaint', js: true do
     uncheck_subarea(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
     uncheck_subarea(:special_investigations_unit, "Not properly investigated") #originally had "Unreasonable delay" "Not properly investigated"
     # AGENCY
-    select_local_municipal_agency('Emfuleni')
+    select_local_municipal_agency(page.all('.agency_select_container')[0],'Emfuleni')
     expect{ edit_save }.not_to change{ IndividualComplaint.first}
 
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")

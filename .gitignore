@@ -16,6 +16,7 @@
 /tmp/**/*
 !/tmp/import_data
 !/tmp/import_data/.keep
+rspec_log.txt
 
 /config/secrets.yml
 .DS_Store

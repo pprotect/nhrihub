@@ -215,8 +215,7 @@ feature "complaint register", :js => true do
     #expect( complaint_url ).to match (/^https:\/\/#{SITE_URL}/)
     #expect( header_field('From')).to eq "NHRI Hub Administrator<no_reply@nhri-hub.com>"
     #expect( header_field('List-Unsubscribe-Post')).to eq "List-Unsubscribe=One-Click"
-    #expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.reload.unsubscribe_code, host: SITE_URL, protocol: :https)
-    #expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/[0-9a-f]{40}$/) # unsubscribe code
+    #expect( header_field('List-Unsubscribe')).to eq admin_unsubscribe_url(:en,user.id, user.reload.unsubscribe_code, host: SITE_URL, protocol: :https) #expect( unsubscribe_url ).to match (/\/en\/admin\/unsubscribe\/#{user.id}\/[0-9a-f]{40}$/) # unsubscribe code
 
     # back button
     page.go_back

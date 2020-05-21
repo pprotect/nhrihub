@@ -49,15 +49,25 @@ export default Ractive.extend({
     province_name(){
       return _(this.get('provinces')).findWhere({id: this.get('province_id')}).name
     },
-    agency_ids:{
-      get(){
-        var ids = _(this.findAllComponents('agenciesSelector')).map(function(as){return as.get('agency_id')});
-        return _(ids).reject(function(i){return _.isNull(i)})
-      },
-      set(val){
-        this.findComponent('agenciesSelector').set('agency_id', val);
-      }
-    },
+    //agency_ids(){
+        //var ids = _(this.findAllComponents('agenciesSelector')).map(function(as){return as.get('agency_id')});
+        //return _(ids).reject(function(i){return _.isNull(i)})
+        //var ass = this.findAllComponents('agenciesSelector')
+        //var ids = []
+        //for(var i=0; i<ass.length; i++){
+          //ids[i] = ass[i].get('agency_id')
+        //}
+        //return ids
+    //},
+    //agency_ids:{
+      //get(){
+        //var ids = _(this.findAllComponents('agenciesSelector')).map(function(as){return as.get('agency_id')});
+        //return _(ids).reject(function(i){return _.isNull(i)})
+      //},
+      //set(val){
+        //this.findComponent('agenciesSelector').set('agency_id', val);
+      //}
+    //},
     related_legislation_names(){
       if(!_.isEmpty(this.get('legislation_ids'))){
         var that = this
@@ -239,6 +249,13 @@ export default Ractive.extend({
   add_agency(){
     this.push('agencies',{id: null})
   },
+  remove_agency_id(id){
+    this.set('agency_ids', _(this.get('agency_ids')).without(id))
+  },
+  add_agency_id(id){
+    this.push('agency_ids',id)
+    this.remove_attribute_error('agency_ids')
+  },
   proceed_to_intake(){
     history.pushState({},"anything",this.get('url'));
     this.enable_all_inputs();
@@ -256,7 +273,8 @@ export default Ractive.extend({
   query_has_values(query){
     var relevant_attributes = _(query.match).omit('type')
     var values = _.values(relevant_attributes)
-    return !_(values).all(function(val){return _.isEmpty(val)}) // null value or empty array
+    let emptyArray = val=> _.isArray(val) && val.map(l=>!_.isNumber(l)).every(l=>l) 
+    return !values.every(val=>_.isEmpty(val) || emptyArray(val)) // null value or empty array
   },
   validate_query(query){
     var valid = this.query_has_values(query)

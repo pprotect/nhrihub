@@ -255,6 +255,10 @@ describe "selects complaints matching any of the supplied agency ids (complaint 
     expect(complaints).to be_empty
   end
 
+  it "should return no complaints if request ids array contains blank string" do
+    complaints= Complaint.with_any_agencies_matching([""]) 
+    expect(complaints).to be_empty
+  end
 end
 
 describe "selects complaints with home- cell- or fax-number matching" do

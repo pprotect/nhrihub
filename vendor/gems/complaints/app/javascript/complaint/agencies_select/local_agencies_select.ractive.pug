@@ -47,7 +47,12 @@ script.
       agency_id:{
         get(){
           if(this.get('province_is_selected')){
-              return this.findComponent('districtSelect').get('agency_id')
+              var agency_id = this.findComponent('districtSelect').get('agency_id')
+              if(!_.isUndefined( agency_id )){
+                return agency_id
+              }else{
+                return null
+              }
             }else{
               return null
             }
