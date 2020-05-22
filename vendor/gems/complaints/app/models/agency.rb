@@ -83,7 +83,7 @@ class Agency < ActiveRecord::Base
       group_by(&:district_municipality).
       inject(provinces) do |h,(district,local_municipalities)|
         district_municipalities = h.find{|m| m[:name]==district.province.name}[:collection].find{|c| c[:name] == "DistrictMunicipalities"}
-        district_collection = {district_id: district.id, name: district.name, collection: local_municipalities.map{|lm|{name: lm.name}}}
+        district_collection = {district_id: district.id, name: district.name, collection: local_municipalities.sort_by(&:select_option_sort_criterion).map{|lm|{name: lm.name}}}
         district_municipalities[:collection] << district_collection
         h
     end

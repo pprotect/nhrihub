@@ -39,6 +39,9 @@ namespace :agencies do
         LocalMunicipality.create(name: name, province_id: province.id, district_id: district.id, code: lm["Code"])
       end
     end
+    DistrictMunicipality.all.each do |dm|
+      LocalMunicipality.create(name:"District government", district_id: dm.id, province_id: dm.province_id)
+    end
   end
 
   desc "import provincial agencies"

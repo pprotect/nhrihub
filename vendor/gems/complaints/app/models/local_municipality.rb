@@ -27,6 +27,18 @@ class LocalMunicipality < Agency
   end
 
   def description
-    "#{name} municipality (in #{district_municipality.province.name} province, #{district_municipality.name} district)"
+    is_district_government? ?
+      "#{district_municipality.name} district government" :
+      "#{name} municipality (in #{district_municipality.province.name} province, #{district_municipality.name} district)"
+  end
+
+  def is_district_government?
+    name.match(/District government/)
+  end
+
+  def select_option_sort_criterion
+    sort_field = is_district_government? ? "aaa"+name : name  # put District government first
+    sort_field.gsub!(/!/, '') # sort !Kheis by alpha
+    sort_field.downcase # ensure uMlalazi etc are appropriately sorted
   end
 end

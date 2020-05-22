@@ -15,7 +15,9 @@ class ProvincialAgency < Agency
   end
 
   def description
-    "#{name} Provincial Agency (in #{province.name} province)"
+    is_provincial_government? ?
+      "#{province.name} provincial government" :
+      "#{name} Provincial Agency (in #{province.name} province)"
   end
 
   def province_name
@@ -28,8 +30,12 @@ class ProvincialAgency < Agency
      provincial_agency_id: id }
   end
 
+  def is_provincial_government?
+    name.match(/Provincial government/)
+  end
+
   def select_option_sort_criterion
-    sort_field = name.match(/Provincial government/) ? "aaa"+name : name  # put Provincial government first
+    sort_field = is_provincial_government? ? "aaa"+name : name  # put Provincial government first
     sort_field.downcase # ensure e-Government is appropriately sorted
   end
 end
