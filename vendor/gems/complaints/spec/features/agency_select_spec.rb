@@ -484,16 +484,21 @@ feature "select box cascade", js: true do
   end
 end
 
-feature "add a second agency", js: true do
+feature "add a multiple agencies", js: true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecSetupHelpers
   include ComplaintsSpecHelpers
 
-  # province: Northern Cape, district_municipality: ZF Mgcawu, local_municipality: !Kheis
-  let(:agency){ LocalMunicipality.first }
-  #let(:complaint){ ComplaintAgency.where(complaint_id: IndividualComplaint.first.id).destroy_all; IndividualComplaint.first.reload }
   let(:complaint){ IndividualComplaint.first }
-  let(:selected_government_agency){ NationalGovernmentAgency.first }
+  let(:first_agency){ complaint.agencies.first }
+  let(:nga){ NationalGovernmentAgency.first }
+  let(:ngi){ NationalGovernmentInstitution.first }
+  let(:dssi){ DemocracySupportingStateInstitution.first }
+  let(:pa){ ProvincialAgency.first }
+  let(:lm){ LocalMunicipality.first }
+  let(:mm){ MetropolitanMunicipality.first }
+
+  let(:agencies){ [nga, ngi, pa, dssi, lm, mm] }
 
   before do
     populate_database(:individual_complaint, agency_count: 1)
@@ -504,9 +509,14 @@ feature "add a second agency", js: true do
   describe "add agency button" do
     it "triggers another agency select box hierarchy" do
       expect(page).to have_selector('#agencies_select', count: 1)
-      descend_selection_hierarchy_to(selected_government_agency)
-      page.find('#add_agency').click
-      expect(page).to have_selector('#agencies_select', count: 2)
+      agencies.each do |agency|
+        page.find('#add_agency').click
+        within page.all('.agency_select_container').last do
+          descend_selection_hierarchy_to(agency)
+        end
+      end
+      edit_save
+      expect(page.all('#agencies .agency').map(&:text)).to match_array [first_agency.description, nga.description, ngi.description, dssi.description, pa.description, lm.description, mm.description]
     end
   end
 end

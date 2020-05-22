@@ -14,9 +14,49 @@ module ComplaintsSpecHelpers
   end
 
   def descend_selection_hierarchy_to(agency)
-    select('National', from:'agencies_select')
-    select('National government agencies', from: 'national_agencies_select')
-    select(selected_government_agency.name, from: 'government_agencies_select')
+    select_dependency_map = {
+      top_level_category: {
+        'selector' => 'agencies_select',
+        'national' => 'National',
+        'provincial_agencies' => 'Provincial',
+        'municipalities' => 'Local'
+      },
+      national_agency_type: {
+        'selector' => 'national_agencies_select',
+        'government_agencies' => 'National government agencies',
+        'government_institutions' => 'National government institutions',
+        'democracy_institutions' => 'Democracy-supporting government institutions'
+      },
+      selected_national_agency_id: {
+        'selector' => 'government_agencies_select',
+        'select_option' => agency.name
+      },
+      selected_province_id: {
+        'selector' => 'provinces_select',
+        'select_option' => agency&.province&.name
+      },
+      provincial_agency_id: {
+        'selector' => agency&.province&.name&.gsub(/ /,'')&.underscore,
+        'select_option' => agency.name
+      },
+      selected_id: {
+        'selector' => agency&.province&.name&.gsub(/ /,'')&.underscore,
+        'select_option' => agency&.district_municipality&.name || agency.name
+      },
+      agency_id: {
+        'selector' => agency&.district_municipality&.name&.downcase&.gsub(/ /,'_') || agency&.province&.name&.downcase&.gsub(/ /,'_'),
+        'select_option' => agency.name
+      }
+    }
+    agency.selection_vector.each_pair do |k,v|
+      map = select_dependency_map[k]
+      raise 'selection vector key not mapped' if map.nil?
+      unless map.has_key? "select_option"
+        select map[v], from: map["selector"]
+      else
+        select map["select_option"], from: map["selector"]
+      end
+    end
   end
 
   def default_query_params
