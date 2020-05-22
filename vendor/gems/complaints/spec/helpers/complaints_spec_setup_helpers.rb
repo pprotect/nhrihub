@@ -39,8 +39,7 @@ module ComplaintsSpecSetupHelpers
     choose('Special Investigations Unit')
     choose('complained_to_subject_agency_yes')
     check_subarea(:good_governance, "Delayed action")
-    select_local_municipal_agency("Lesedi")
-    #select(User.admin.first.first_last_name, :from => "assignee")
+    select_local_municipal_agency(page.all('.agency_select_container')[0], "Lesedi")
   end
 
   def complete_organization_complaint_required_fields
@@ -61,8 +60,7 @@ module ComplaintsSpecSetupHelpers
     choose('Special Investigations Unit')
     choose('complained_to_subject_agency_yes')
     check_subarea(:good_governance, "Delayed action")
-    select_local_municipal_agency("Lesedi")
-    #select(User.admin.first.first_last_name, :from => "assignee")
+    select_local_municipal_agency(page.all('.agency_select_container')[0], "Lesedi")
   end
 
   def complete_individual_complaint_required_fields
@@ -79,7 +77,7 @@ module ComplaintsSpecSetupHelpers
     choose('Special Investigations Unit')
     choose('complained_to_subject_agency_yes')
     check_subarea(:good_governance, "Delayed action")
-    select_local_municipal_agency("Lesedi")
+    select_local_municipal_agency(page.all('.agency_select_container')[0], "Lesedi")
   end
 
   def populate_associations
@@ -89,11 +87,15 @@ module ComplaintsSpecSetupHelpers
     create_staff
     create_complaint_statuses
     populate_areas_subareas
-    set_file_defaults
   end
 
-  def populate_database(type)
-    populate_associations
+  def populate_database(type, options={})
+    # start rspec with capture=true one time to trigger capture to file
+    # after that seed data will be loaded from files
+    with_capture "Complaints::Engine", :complaints, :areas, :subareas, :agencies, :district_municipalities, :complaint_statuses do
+      populate_associations
+    end
+    set_file_defaults
     user = User.where(:login => 'admin').first
     staff_user = User.where(:login => 'staff').first
     FactoryBot.create( type, :registered,
@@ -108,7 +110,7 @@ module ComplaintsSpecSetupHelpers
                       :details => Faker::Lorem.sentence,
                       :complaint_documents => complaint_docs,
                       :complaint_area_id => _complaint_area_id,
-                      :agencies => _agencies,
+                      :agencies => _agencies(options[:agency_count] || 2),
                       :communications => _communications,
                       :organization_name => "Acme Corp",
                       :organization_registration_number => "12341234")
@@ -124,7 +126,7 @@ module ComplaintsSpecSetupHelpers
                       :details => Faker::Lorem.sentence,
                       :complaint_documents => complaint_docs,
                       :complaint_area_id => _complaint_area_id,
-                      :agencies => _agencies,
+                      :agencies => _agencies(options[:agency_count] || 2),
                       :communications => _communications,
                       :organization_name => Faker::Company.name,
                       :organization_registration_number => "56785678")
@@ -214,8 +216,8 @@ module ComplaintsSpecSetupHelpers
     ComplaintArea.find_or_create_by( :name => "Human Rights").id
   end
 
-  def _agencies
-    [ Agency.find(rand(Agency.count)+1) ]
+  def _agencies(count)
+    Agency.limit(count) 
   end
 
   def complaint_docs

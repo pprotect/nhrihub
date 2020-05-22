@@ -164,7 +164,7 @@ describe "#as_json" do
                                                      "date", "date_of_birth", "current_status", "status_id", "attached_documents",
                                                      "timeline_events", "communications", "subarea_ids", "area_subarea_ids",
                                                      "cell_phone", "city", "complaint_area_id", "complaint_type",
-                                                     "alt_id_type", "physical_address", "agency_description", "agency_select_params", "legislation_ids",
+                                                     "alt_id_type", "physical_address", "agency_ids", "agencies", "legislation_ids",
                                                      "postal_address", "postal_code", "preferred_means", "province_id",
                                                      "alt_id_value", "alt_id_other_type", "fax", "home_phone", "id_type",
                                                      "id_value", "organization_name", "organization_registration_number", "initiating_branch_id", "initiating_office_id"]
@@ -242,7 +242,7 @@ describe "#as_json" do
                                                      "date", "date_of_birth", "current_status", "status_id", "attached_documents",
                                                      "timeline_events", "communications", "subarea_ids", "area_subarea_ids",
                                                      "cell_phone", "city", "complaint_area_id", "complaint_type",
-                                                     "alt_id_type", "physical_address", "agency_description", "agency_select_params", "legislation_ids",
+                                                     "alt_id_type", "physical_address", "agency_ids", "agencies", "legislation_ids",
                                                      "postal_address", "postal_code", "preferred_means", "province_id",
                                                      "alt_id_value", "alt_id_other_type", "fax", "home_phone", "id_type",
                                                      "id_value", "organization_name", "organization_registration_number", "initiating_branch_id", "initiating_office_id"]

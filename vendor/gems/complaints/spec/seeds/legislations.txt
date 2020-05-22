@@ -1,0 +1,13 @@
+1	PPA	Public Protector Act	2020-05-08 15:04:05.902611	2020-05-08 15:04:05.902611
+2	EMEA	Executive Members Ethics Act	2020-05-08 15:04:05.905994	2020-05-08 15:04:05.905994
+3	PAIA	Promotion of Access to Information Act	2020-05-08 15:04:05.908544	2020-05-08 15:04:05.908544
+4	PDA	Protected Disclosures Act	2020-05-08 15:04:05.911837	2020-05-08 15:04:05.911837
+5	PCCAA	Prevention and Combating of Corrupt Activities Act	2020-05-08 15:04:05.914391	2020-05-08 15:04:05.914391
+6	PFMA	Public Finance Management Act	2020-05-08 15:04:05.926555	2020-05-08 15:04:05.926555
+7	PEPUDA	Promotion of Equality and Prevention of Unfair Discrimination Act	2020-05-08 15:04:05.950322	2020-05-08 15:04:05.950322
+8	NARSSA	Electoral Commission Act, National Archives and Records Service Act	2020-05-08 15:04:05.955435	2020-05-08 15:04:05.955435
+9	NERA	National Energy Regulatory Act	2020-05-08 15:04:05.959829	2020-05-08 15:04:05.959829
+10	LA	Lotteries Act	2020-05-08 15:04:05.963691	2020-05-08 15:04:05.963691
+11	SIUSTA	Special Investigating Units and Special Tribunals Act	2020-05-08 15:04:05.967248	2020-05-08 15:04:05.967248
+12	NEMA	National Environmental Management Act	2020-05-08 15:04:05.970415	2020-05-08 15:04:05.970415
+13		The Constitution	2020-05-08 15:04:06.00012	2020-05-08 15:04:06.00012

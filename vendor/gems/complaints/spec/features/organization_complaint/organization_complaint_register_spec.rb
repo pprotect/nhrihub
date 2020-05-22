@@ -87,7 +87,7 @@ feature "organization complaint intake", :js => true do
     check_subarea(:human_rights, "CAT")
     check_subarea(:special_investigations_unit, "Unreasonable delay")
     #select(user.first_last_name, :from => "assignee")
-    select_local_municipal_agency('Lesedi')
+    select_local_municipal_agency(page.all('.agency_select_container')[0], "Lesedi")
     attach_file("complaint_fileinput", upload_document)
     fill_in("attached_document_title", :with => "Complaint Document")
 
@@ -162,7 +162,7 @@ feature "organization complaint intake", :js => true do
       end
     end
 
-    expect(find('.agency').text).to eq "Gauteng province, Sedibeng district, Lesedi municipality"
+    expect(find('.agency').text).to eq "Lesedi municipality (in Gauteng province, Sedibeng district)"""
 
     within complaint_documents do
       doc = page.all('.complaint_document')[0]
@@ -271,7 +271,7 @@ feature "organization complaint intake", :js => true do
     expect(page).not_to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
     fill_in('complaint_details', :with => "random text")
     expect(page).not_to have_selector('#details_error', :text => "You must enter the complaint details")
-    select_local_municipal_agency("Lesedi")
+    select_local_municipal_agency(page.all('.agency_select_container')[0], "Lesedi")
     expect(page).not_to have_selector('#agency_id_error', :text => "You must select an agency")
     expect(page).not_to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
   end

@@ -93,7 +93,7 @@ class ComplaintsController < ApplicationController
   def new
     populate_associations
     @type = params[:type]
-    @complaint = Complaint.new
+    @complaint = Complaint.new(agencies: [Agency.new])
     @edit = true
     @mode = "register"
     @title = t('.heading', type: params[:type].titlecase)
@@ -120,9 +120,11 @@ class ComplaintsController < ApplicationController
 
   private
   def populate_associations
+    #TODO most of these can be cached
     @areas = ComplaintArea.includes(:subareas).all
     @subareas = ComplaintSubarea.all
-    @agencies = Agency.hierarchy # {national: xx, provincial: xx, local: xx}
+    @agency_tree = Agency.hierarchy # {national: xx, provincial: xx, local: xx}
+    @all_agencies = Agency.includes(:province, district_municipality: :province)
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
     @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
     @permitted_filetypes = ComplaintDocument.permitted_filetypes
@@ -133,13 +135,8 @@ class ComplaintsController < ApplicationController
     @branches = Office.branches
     @status_memo_options = ComplaintStatus::CloseMemoOptions
     @legislations = Legislation.all
-    @provinces = Province.all.sort_by(&:name)
     @provinces = Province.includes(:metropolitan_municipalities, :district_municipalities => {:local_municipalities => {:district_municipality => :province}}).all.sort_by(&:name)
-    #@national_government_agencies = NationalGovernmentAgency.all.sort_by(&:name)
-    #@national_government_institutions = NationalGovernmentInstitution.all.sort_by(&:name)
-    #@democracy_institutions = DemocracySupportingStateInstitution.all.sort_by(&:name)
-    #@provincial_agencies = Agency.provincial.group_by(&:province_id)
-    @districts = DistrictMunicipality.includes(:local_municipalities => {:district_municipality => :province}).all.group_by(&:province_id)
+    @districts = DistrictMunicipality.includes(:province, :local_municipalities => {:district_municipality => :province}).all.group_by(&:province_id)
     @metro_municipalities = MetropolitanMunicipality.includes(:province).all.group_by(&:province_id)
   end
 
@@ -167,7 +164,7 @@ class ComplaintsController < ApplicationController
                                        :date, :imported, :complaint_area_id, 'new_transferee_id',
                                        :cell_phone, :fax, :province_id, :postal_code, :id_type, :id_value, :alt_id_type, :alt_id_value,
                                        :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
-                                       :organization_name, :organization_registration_number, :agency_id,
+                                       :organization_name, :organization_registration_number, :agency_ids => [],
                                        :legislation_ids => [],
                                        :complaint_transfers_attributes => [:user_id, :office_id],
                                        :jurisdiction_assignments_attributes => [:user_id, :branch_id],

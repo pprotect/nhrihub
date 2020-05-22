@@ -7,6 +7,67 @@ require 'upload_file_helpers'
 require 'active_storage_helpers'
 require 'parse_email_helpers'
 
+feature 'show complaint with multiple agencies', js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include ComplaintsSpecHelpers
+
+  let(:individual_complaint){ IndividualComplaint.first }
+  let(:first_agency){ LocalMunicipality.first }
+  let(:first_province_name){ first_agency.district_municipality.province.name }
+  let(:first_province_key){ first_province_name.gsub(/\s/,'_').downcase }
+  let(:first_district_name){ first_agency.district_municipality.name }
+  let(:first_district_key){ first_district_name.gsub(/\s/,'_').downcase }
+  let(:second_agency){ LocalMunicipality.second }
+  let(:second_province_name){ second_agency.district_municipality.province.name }
+  let(:second_province_key){ second_province_name.gsub(/\s/,'_').downcase }
+  let(:second_district_name){ second_agency.district_municipality.name }
+  let(:second_district_key){ second_district_name.gsub(/\s/,'_').downcase }
+
+  before do
+    populate_database(:individual_complaint)
+    visit complaint_path(:en, individual_complaint.id)
+  end
+
+  it "should list multiple agencies" do
+    expect(page.all('#agencies .agency').map(&:text)).to match_array individual_complaint.agencies.map(&:description)
+    edit_complaint
+    expect(page.all('#agencies_select').count).to eq 2
+    expect(page).to have_selector('#add_agency')
+    # first two agencies are assigned, both local municipalities
+    within page.all('.agency_select_container')[0] do
+      expect(page.find('#agencies_select option', text: 'Local')).to be_selected
+      expect(page.find('#provinces_select option', text: first_province_name)).to be_selected
+      expect(page.find("##{first_province_key} option", text: first_district_name)).to be_selected
+      expect(page.find("##{first_district_key} option", text: first_agency.name)).to be_selected
+      expect(page).to have_selector('#remove_agency')
+    end
+    within page.all('.agency_select_container')[1] do
+      expect(page.find('#agencies_select option', text: 'Local')).to be_selected
+      expect(page.find('#provinces_select option', text: second_province_name)).to be_selected
+      expect(page.find("##{second_province_key} option", text: second_district_name)).to be_selected
+      expect(page.find("##{second_district_key} option", text: second_agency.name)).to be_selected
+      expect(page).to have_selector('#remove_agency')
+    end
+  end
+
+  it "should add an agency selector" do
+    edit_complaint
+    expect{page.find('#add_agency').click}.to change{ page.all('.agency_select_container').count }.from(2).to(3)
+  end
+
+  it "should remove an agency selector" do
+    edit_complaint
+    expect{page.all('#remove_agency').first.click}.to change{ page.all('.agency_select_container').count }.from(2).to(1)
+  end
+
+  it "should not remove the last agency selector" do
+    edit_complaint
+    page.all('#remove_agency').first.click
+    expect(page).not_to have_selector('#remove_agency')
+  end
+end
+
 feature 'edit complaint', js: true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecSetupHelpers
@@ -23,7 +84,7 @@ feature 'edit complaint', js: true do
 
   before do
     populate_database(:individual_complaint)
-    individual_complaint.update(agency_id: lesedi.id)
+    individual_complaint.update(agency_ids: [lesedi.id])
     visit complaint_path(:en, individual_complaint.id)
   end
 
@@ -86,7 +147,7 @@ feature 'edit complaint', js: true do
     uncheck_subarea(:human_rights, "CAT") # originall had "CAT" "ICESCR"
     uncheck_subarea(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
     # AGENCY
-    select_local_municipal_agency('Emfuleni')
+    select_local_municipal_agency(page.all('.agency_select_container')[0],'Emfuleni')
     # DOCUMENTS
     attach_file("complaint_fileinput", upload_document)
     fill_in("attached_document_title", :with => "added complaint document")
@@ -206,7 +267,7 @@ feature 'edit complaint', js: true do
     select_datepicker_date("#date_received",Date.today.year,Date.today.month,9)
     select(User.admin.last.first_last_name, :from => "assignee")
     choose('special_investigations_unit')
-    select_local_municipal_agency('Emfuleni')
+    select_local_municipal_agency(page.all('.agency_select_container')[0],'Emfuleni')
     attach_file("complaint_fileinput", upload_document)
     fill_in("attached_document_title", :with => "some text any text")
     edit_cancel
@@ -256,7 +317,7 @@ feature 'edit complaint', js: true do
     uncheck_subarea(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
     uncheck_subarea(:special_investigations_unit, "Not properly investigated") #originally had "Unreasonable delay" "Not properly investigated"
     # AGENCY
-    select_local_municipal_agency("Emfuleni")
+    select_local_municipal_agency(page.all('.agency_select_container')[0],'Emfuleni')
     expect{ edit_save }.not_to change{ IndividualComplaint.first}
 
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")
@@ -298,7 +359,7 @@ feature 'edit complaint', js: true do
     uncheck_subarea(:special_investigations_unit, "Unreasonable delay") #originally had "Unreasonable delay" "Not properly investigated"
     uncheck_subarea(:special_investigations_unit, "Not properly investigated") #originally had "Unreasonable delay" "Not properly investigated"
     # AGENCY
-    select_local_municipal_agency('Emfuleni')
+    select_local_municipal_agency(page.all('.agency_select_container')[0],'Emfuleni')
     expect{ edit_save }.not_to change{ IndividualComplaint.first}
 
     expect(page).to have_selector('#firstName_error', :text => "You must enter a first name")

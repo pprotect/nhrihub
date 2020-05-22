@@ -9,6 +9,56 @@ module ComplaintsSpecHelpers
   include RemindersSpecCommonHelpers
   include NotesSpecCommonHelpers
 
+  def first_agency_selector
+    page.all('.agency_select_container')[0]
+  end
+
+  def descend_selection_hierarchy_to(agency)
+    select_dependency_map = {
+      top_level_category: {
+        'selector' => 'agencies_select',
+        'national' => 'National',
+        'provincial_agencies' => 'Provincial',
+        'municipalities' => 'Local'
+      },
+      national_agency_type: {
+        'selector' => 'national_agencies_select',
+        'government_agencies' => 'National government agencies',
+        'government_institutions' => 'National government institutions',
+        'democracy_institutions' => 'Democracy-supporting government institutions'
+      },
+      selected_national_agency_id: {
+        'selector' => 'government_agencies_select',
+        'select_option' => agency.name
+      },
+      selected_province_id: {
+        'selector' => 'provinces_select',
+        'select_option' => agency&.province&.name
+      },
+      provincial_agency_id: {
+        'selector' => agency&.province&.name&.gsub(/ /,'')&.underscore,
+        'select_option' => agency.name
+      },
+      selected_id: {
+        'selector' => agency&.province&.name&.gsub(/ /,'')&.underscore,
+        'select_option' => agency&.district_municipality&.name || agency.name
+      },
+      agency_id: {
+        'selector' => agency&.district_municipality&.name&.downcase&.gsub(/ /,'_') || agency&.province&.name&.downcase&.gsub(/ /,'_'),
+        'select_option' => agency.name
+      }
+    }
+    agency.selection_vector.each_pair do |k,v|
+      map = select_dependency_map[k]
+      raise 'selection vector key not mapped' if map.nil?
+      unless map.has_key? "select_option"
+        select map[v], from: map["selector"]
+      else
+        select map["select_option"], from: map["selector"]
+      end
+    end
+  end
+
   def default_query_params
     { case_reference: "",
       city: "",
@@ -233,11 +283,13 @@ module ComplaintsSpecHelpers
     find('.show_complaint').click
   end
 
-  def select_local_municipal_agency(name)
-    select('Local', from: 'agencies_select')
-    select('Gauteng', from: 'provinces_select')
-    select('Sedibeng', from: 'gauteng')
-    select(name, from: 'sedibeng')
+  def select_local_municipal_agency(context, name)
+    within context do
+      select('Local', from: 'agencies_select')
+      select('Gauteng', from: 'provinces_select')
+      select('Sedibeng', from: 'gauteng')
+      select(name, from: 'sedibeng')
+    end
   end
 
   def select_datepicker_date(id,year,month,day)

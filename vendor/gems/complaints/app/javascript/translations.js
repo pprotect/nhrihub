@@ -12,6 +12,8 @@ if(typeof I18n.translations[locale] == 'undefined'){
 _.extend(I18n.translations.en, en)
 _.extend(I18n.translations.en.complaint, error_translations.error_messages)
 _.extend(I18n.translations.en.complaint, defaults.defaults)
+_.extend(I18n.translations.en.buttons, defaults.defaults)
+_.extend(I18n.translations.en.buttons, error_translations.error_messages)
 _.extend(I18n.translations.en, communications_translations)
 _.extend(I18n.translations.en.communications.communication, defaults.defaults)
 

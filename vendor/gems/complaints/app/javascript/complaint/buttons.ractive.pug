@@ -13,6 +13,8 @@ div#buttons("data-toggle" = "edit")
     .btn.btn-success.btn-sm#check_dupes("on-click" = "@this.check_dupes()")
       i.fa.fa-check.fa-lg
       span {{ t.check_dupes }}
+    .form-group('class-has-error'='invalid_query')
+      span#invalid_query_error.help-block.error {{ t.invalid_query }}
   .edit('class-hidden'='proceed_to_intake_hidden')
     .btn.btn-success.btn-sm#proceed_to_intake("on-click" = "@this.proceed_to_intake()", 'class-disabled'='proceed_to_intake_disabled')
       i.fa.fa-check.fa-lg
@@ -53,7 +55,7 @@ script(type='text/javascript').
     css: $CSS,
     data : function(){
       return {
-        t : translations.t('complaint'),
+        t : translations.t('buttons'),
         map:{
           check_dupes:      {intake: 'show',    register: 'show',    show: 'hide', edit: 'hide'},
           proceed_to_intake:{intake: 'show',    register: 'disable', show: 'hide', edit: 'hide'},

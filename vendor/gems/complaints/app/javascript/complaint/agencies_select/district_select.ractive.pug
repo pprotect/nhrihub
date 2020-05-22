@@ -1,4 +1,4 @@
-select.dupe_check.form-control(id='{{tertiary_key}}', value='{{agency_select_params.selected_id}}')
+select.dupe_check.form-control(id='{{tertiary_key}}', value='{{selection_vector.selected_id}}')
   option(value='0', disabled=true, selected=true) select district/metropolitan municipality...
   optgroup(label='Metropolitan municipalities')
     | {{#province_metro}}
@@ -10,7 +10,7 @@ select.dupe_check.form-control(id='{{tertiary_key}}', value='{{agency_select_par
     | {{/province_districts}}
 
 .quarternary('class-show'='district_is_selected')
-  <localMunicipalitySelect agency_select_params='{{agency_select_params}}' quarternary_key='{{quarternary_key}}' local_municipalities='{{local_municipalities}}' />
+  <localMunicipalitySelect selection_vector='{{selection_vector}}' quarternary_key='{{quarternary_key}}' local_municipalities='{{local_municipalities}}' />
 
 style.
   select.form-control { width: auto; }
@@ -28,7 +28,7 @@ script.
     computed:{
       selected_district(){
         if(this.get('district_is_selected')){
-          return _(this.get('province_districts')).findWhere({id: this.get('agency_select_params.selected_id')})
+          return _(this.get('province_districts')).findWhere({id: this.get('selection_vector.selected_id')})
         }
       },
       local_municipalities(){
@@ -43,10 +43,10 @@ script.
         return _(this.get('province_districts')).map(function(pd){return pd.id})
       },
       metro_selected(){
-        return _(this.get('province_metro_ids')).contains(this.get('agency_select_params.selected_id'))
+        return _(this.get('province_metro_ids')).contains(this.get('selection_vector.selected_id'))
       },
       district_is_selected(){
-        return _(this.get('province_district_ids')).contains(this.get('agency_select_params.selected_id'))
+        return _(this.get('province_district_ids')).contains(this.get('selection_vector.selected_id'))
       },
       quarternary_key(){
         if(this.get('district_is_selected')){
@@ -55,24 +55,34 @@ script.
       },
       agency_id:{
         get(){
-          if(this.get('metro_selected')){
-              return this.get('agency_select_params.selected_id');
+          // it does not work to use this.get('metro_selected') inside the 'if' condition
+          // I have not been able to determine why, but bypassing that method DOES work, so use it!
+          if(_(this.get('province_metro_ids')).contains(this.get('selection_vector.selected_id'))){
+              return this.get('selection_vector.selected_id');
             }else if(this.get('district_is_selected')){
-              return this.findComponent('localMunicipalitySelect').get('agency_select_params.agency_id')
+              var selected_id = this.findComponent('localMunicipalitySelect').get('selection_vector.agency_id')
+              if(selected_id == 0){
+                return null
+              }else{
+                return selected_id
+              }
+            }else{
+              return null
             }
         },
         set(val){
           if(this.get('metro_selected')){
-              return this.set('agency_select_params.selected_id', val);
+              return this.set('selection_vector.selected_id', val);
             }else if(this.get('district_is_selected')){
-              return this.findComponent('localMunicipalitySelect').set('agency_select_params.agency_id',val)
+              return this.findComponent('localMunicipalitySelect').set('selection_vector.agency_id',val)
             }
         }
       }
     },
     observe: {
-      'agency_select_params.selected_id': {
+      'selection_vector.selected_id': {
         handler(value, old, path, idx){
+          // reset dependent menus
           if(!_.isUndefined(old) && this.get('district_is_selected')){
             this.set('agency_id', "0")
           }

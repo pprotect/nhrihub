@@ -1,10 +1,10 @@
-select.dupe_check.form-control#national_agencies_select(value='{{agency_select_params.national_agency_type}}')
+select.dupe_check.form-control#national_agencies_select(value='{{selection_vector.national_agency_type}}')
   option#prompt(disabled=true, selected=true) select national agency...
   option(value='government_agencies') National government agencies
   option(value='government_institutions') National government institutions
   option(value='democracy_institutions') Democracy-supporting government institutions
 .tertiary('class-show'='national_agencies_type_selected')
-  <governmentAgencySelect collection='{{collection}}' agency_select_params='{{agency_select_params}}' national_agency_type='{{agency_select_params.national_agency_type}}' />
+  <governmentAgencySelect collection='{{collection}}' selection_vector='{{selection_vector}}' national_agency_type='{{selection_vector.national_agency_type}}' />
 
 style.
   #national_agencies_select {
@@ -27,19 +27,21 @@ script.
       governmentAgencySelect: GovernmentAgencySelect,
     },
     computed:{
-      national_agencies_type_selected(){ return typeof this.get('agency_select_params.national_agency_type') != 'undefined'},
+      national_agencies_type_selected(){ return typeof this.get('selection_vector.national_agency_type') != 'undefined'},
       government_agencies(){return     _(this.get('national_agencies')).findWhere({type: "NationalGovernmentAgency"}).collection },
       government_institutions(){return _(this.get('national_agencies')).findWhere({type: "NationalGovernmentInstitution"}).collection },
       democracy_institutions(){return  _(this.get('national_agencies')).findWhere({type: "DemocracySupportingStateInstitution"}).collection },
-      collection(){ if(this.get('national_agencies_type_selected')){ return this.get(this.get('agency_select_params.national_agency_type'))} },
+      collection(){ if(this.get('national_agencies_type_selected')){ return this.get(this.get('selection_vector.national_agency_type'))} },
       agency_id:{
         get(){
-          if(this.get('national_agencies_type_selected')){
-             return this.get('agency_select_params.selected_national_agency_id');
+          if(this.get('national_agencies_type_selected') && _.isNumber( this.get('selection_vector.selected_national_agency_id'))){
+              return this.get('selection_vector.selected_national_agency_id');
+            }else{
+              return null;
             }
         },
         set(val){
-          this.set('agency_select_params.selected_national_agency_id',val);
+          this.set('selection_vector.selected_national_agency_id',val);
         }
       }
     },

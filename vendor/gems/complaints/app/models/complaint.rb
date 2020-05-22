@@ -75,28 +75,23 @@ class Complaint < ActiveRecord::Base
       selected_office_id: ""}
   end
 
-  def self.possible_duplicates(params)
-    agency_match = Complaint.with_agencies(params[:agency_id], match: :exact).sort_by(&:case_reference).map{|c| c.becomes(DuplicateComplaint)}
-    source = params[:type]
-    complainant_match = Complaint.
-                           send(:"with_duplicate_#{source}_complainant",params).
-                           map{|c| c.becomes(DuplicateComplaint)}
-    { complainant_match: complainant_match, agency_match: agency_match }
-  end
-
   def self.filtered(query)
-    logger.info "for_assignee: #{for_assignee(query[:selected_assignee_id]).length}"
-    logger.info "with_status: #{with_status(query[:selected_status_ids]).length}"
-    logger.info "with_complaint_area_ids: #{with_complaint_area_ids(query[:selected_complaint_area_ids]).length}"
-    logger.info "with_case_reference_match: #{with_case_reference_match(query[:case_reference]).length}"
-    logger.info "with_complainant_fragment_match: #{with_complainant_fragment_match(query[:complainant]).length}"
-    logger.info "since_date: #{since_date(query[:from]).length}"
-    logger.info "before_date: #{before_date(query[:to]).length}"
-    logger.info "with_city: #{with_city(query[:city]).length}"
-    logger.info "with_phone: #{with_phone(query[:phone]).length}"
-    logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
-    logger.info "with_agencies: #{with_agencies(query[:selected_agency_id]).length}"
-    logger.info "transferred_to: #{transferred_to(query[:selected_office_id]).length}"
+    # just for debugging
+    if ENV['log_filter'] == 'true'
+      logger.info "for_assignee: #{for_assignee(query[:selected_assignee_id]).length}"
+      logger.info "with_status: #{with_status(query[:selected_status_ids]).length}"
+      logger.info "with_complaint_area_ids: #{with_complaint_area_ids(query[:selected_complaint_area_ids]).length}"
+      logger.info "with_case_reference_match: #{with_case_reference_match(query[:case_reference]).length}"
+      logger.info "with_complainant_fragment_match: #{with_complainant_fragment_match(query[:complainant]).length}"
+      logger.info "since_date: #{since_date(query[:from]).length}"
+      logger.info "before_date: #{before_date(query[:to]).length}"
+      logger.info "with_city: #{with_city(query[:city]).length}"
+      logger.info "with_phone: #{with_phone(query[:phone]).length}"
+      logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
+      logger.info "with_agencies: #{with_agencies(query[:selected_agency_id]).length}"
+      logger.info "transferred_to: #{transferred_to(query[:selected_office_id]).length}"
+    end
+
     select("DISTINCT ON (complaints.id) complaints.*").
       for_assignee(query[:selected_assignee_id]).
       with_status(query[:selected_status_ids]).
@@ -181,22 +176,13 @@ class Complaint < ActiveRecord::Base
     type&.underscore&.humanize
   end
 
-  def agency_id=(val)
-    self.agencies = [Agency.find(val)]
-  rescue ActiveRecord::RecordNotFound 
-  end
+  #def agency_descriptions
+    #agencies.map(&:descriptions)
+  #end
 
-  def agency_description
-    Agency.find(agency_id)&.description unless agency_id.zero?
-  end
-
-  def agency_select_params
-    agency_id.zero? ? {} : Agency.find(agency_id)&.agency_select_params
-  end
-
-  def agency_id
-    agency_ids.first || 0
-  end
+  #def selection_vector
+    #agencies.map(&:selection_vector)
+  #end
 
   def type_as_symbol
     type.gsub(/Complaint$/,'').underscore
@@ -230,9 +216,8 @@ class Complaint < ActiveRecord::Base
                            :subarea_ids,
                            :area_subarea_ids,
                            :province_id,
-                           #:agency_id,
-                           :agency_description,
-                           :agency_select_params,
+                           :agencies,
+                           :agency_ids,
                            :legislation_ids,
                            :timeline_events,
                            :communications] }
@@ -276,10 +261,6 @@ class Complaint < ActiveRecord::Base
       alt_id_other_type :
       alt_id_type
   end
-
-  #def agency_ids
-    #complaint_agencies.map(&:agency_id)
-  #end
 
   # assumed to be valid date_string, checked in client before submitting
   def dob=(date_string)

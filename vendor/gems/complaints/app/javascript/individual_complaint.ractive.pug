@@ -142,7 +142,7 @@
 
       | {{>documents }}
 
-      <buttons mode='{{mode}}' editing='{{editing}}' has_errors='{{has_errors}}' />
+      <buttons mode='{{mode}}' editing='{{editing}}' has_errors='{{has_errors}}' invalid_query='{{invalid_query}}' />
 
 style
   include:scss complaint_styles.scss
@@ -153,8 +153,9 @@ script.
   import ComplaintBase from 'complaint_base'
   import translations from 'translations.js'
   import SAIDParser from 'south-african-id-parser'
+  require("array_equals.js")
 
-  export default ComplaintBase.extend({
+  var complaint = ComplaintBase.extend({
     template : $TEMPLATE,
     css: $CSS,
     data : function(){
@@ -164,14 +165,21 @@ script.
     },
     computed : {
       dupe_check_attributes() {
-        return ['type', 'id_value', 'alt_id_value', 'lastName', 'email', 'agency_id'];
+        return ['type', 'id_value', 'alt_id_value', 'lastName', 'email', 'agency_ids'];
+      },
+      dupe_check_values(){
+        var that=this
+        return _(this.get('dupe_check_attributes')).reduce(function(memo,attr){
+          memo[memo.length] = that.get(attr)
+          return memo
+          }, [])
       },
       persistent_attributes() {
         return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
           'city','province_id','postal_code','complaint_area_id', 'new_transferee_id',
           'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
           'status_changes_attributes', 'new_assignee_id', 'subarea_ids', 'legislation_ids',
-          'agency_id', 'attached_documents_attributes', 'details', 'new_jurisdiction_branch_id',
+          'agency_ids', 'attached_documents_attributes', 'details', 'new_jurisdiction_branch_id',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
           'firstName', 'lastName', 'title', 'type'];
       },
@@ -184,7 +192,6 @@ script.
           province_id : 'nonZero',
           complaint_area_id : 'numeric',
           subarea_id_count : 'nonZero',
-          //new_assignee_id: ['nonZero', {if : () => {return (this.get('new_complaint') && this.get('editing'))}}],
           dob: () => {
             return this.findAllComponents('datepicker')[1].validate()
           },
@@ -199,10 +206,23 @@ script.
           cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
           fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
           status_memo: ()=>{return this.findComponent('closedStatusRadio').validate() },
-          agency_id: 'numeric',
+          agency_ids: ()=>{return _.isArray(this.get('agency_ids')) && !_.isEmpty(this.get('agency_ids')) && _(this.get('agency_ids')).every(function(i){return _.isNumber(i)})},
           id_value: ()=>{ if(!_.isNull(this.get('id_value'))){this.set('id_value',this.get('id_value').toString().trim())};
                           return !(this.get('id_type') == 'State id') || SAIDParser.validate(this.get('id_value')) }, // true means it's valid
         };
       },
     },
+    observe: {
+      'dupe_check_values': {
+        handler(value, old, path, idx){
+          var changed_values = !value.equals(old)
+          var valid_ids = !_.isEmpty(this.get('agency_ids')) && _(this.get('agency_ids')).all(function(i){return _.isNumber(i)})
+          if(changed_values && valid_ids){
+            this.set('invalid_query',false)
+          }
+        }
+      }
+    },
     })
+
+  export default complaint

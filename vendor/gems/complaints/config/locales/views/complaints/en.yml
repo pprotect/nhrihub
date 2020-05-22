@@ -3,6 +3,13 @@ en:
     new:
       heading: "%{type} Complaint Intake: Duplicate Check"
 
+  agencies_selector:
+    national: 'National'
+    provincial: 'Provincial'
+    local: 'Local'
+    select: 'select...'
+    firstName_error_message: 'There must be at least one agency'
+
   complaints:
     index:
       heading: "Complaints"
@@ -70,6 +77,11 @@ en:
     no_complainant_match: "no possible duplicates for complainant"
     no_agency_match: "no possible duplicates for agency"
 
+  buttons:
+    check_dupes: "Check duplication"
+    proceed_to_intake: "Proceed with intake"
+    invalid_query: "You must complete at least one field for duplicate checking"
+
   complaint:
     agency_id_error_message: "You must select an agency"
     complainant: 'Complainant'
@@ -79,7 +91,7 @@ en:
     register_heading: "%{type} Complaint Intake"
     add_file: "Add file"
     add_document: "Add"
-    agency: "Agency"
+    agency: "Agency(ies)"
     alternate_id_type: "Alternate ID type"
     alternate_id: "Alternate ID"
     area: "Area"
@@ -92,8 +104,6 @@ en:
     by: 'by'
     case_reference: "Ref"
     cell_phone_pref: "Cell phone"
-    check_dupes: "Check duplication"
-    proceed_to_intake: "Proceed with intake"
     city: 'City'
     title : "Title"
     closed: "Closed"

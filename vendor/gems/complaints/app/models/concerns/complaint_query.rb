@@ -42,6 +42,14 @@ module ComplaintQuery
       joins(:complaint_agencies).where("complaint_agencies.agency_id in (?)", selected_agency_id)
     end
 
+    # used for duplicate checking, therefore return DuplicateComplaint instances
+    # in order to do the appropriate json conversion
+    def with_any_agencies_matching(agency_ids)
+      joins(:complaint_agencies).
+        where("complaint_agencies.agency_id in (?)", agency_ids.reject(&:blank?)).
+        map{|c| c.becomes(DuplicateComplaint)}
+    end
+
     def no_results
       where("1=0")
     end

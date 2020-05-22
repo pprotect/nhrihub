@@ -11,7 +11,7 @@ feature "agency select", js: true do
   let(:complaint){ IndividualComplaint.first }
 
   before do
-    populate_database(:individual_complaint)
+    populate_database(:individual_complaint, agency_count: 1)
     visit complaint_path(:en, complaint.id)
     edit_complaint
   end
@@ -128,7 +128,7 @@ feature "agency select", js: true do
         it "should add the selected provincial agency to the complaint" do
           select(selected_provincial_agency.name, from: 'eastern_cape')
           edit_save
-          expect(complaint.agency_id).to eq selected_provincial_agency.id
+          expect(complaint.agency_ids).to eq [selected_provincial_agency.id]
           expect(page.find('#agencies').text).to eq selected_provincial_agency.description
           edit_complaint
           expect( page.find('#provinces_select option', text: selected_province.name)).to be_selected
@@ -173,7 +173,7 @@ feature "agency select", js: true do
 
         it "should add the selected metropolitan municipality to the complaint" do
           edit_save
-          expect(complaint.agency_id).to eq selected_metro.id
+          expect(complaint.agency_ids).to eq [selected_metro.id]
           expect(page.find('#agencies').text).to eq selected_metro.description
         end
       end
@@ -191,7 +191,7 @@ feature "agency select", js: true do
         it "should add the selected local municipality to the complaint" do
           select(selected_local_muni_name, from: dropdown_id)
           edit_save
-          expect(complaint.agency_id).to eq selected_local_municipality.id
+          expect(complaint.agency_ids).to eq [selected_local_municipality.id]
           expect(page.find('#agencies').text).to eq selected_local_municipality.description
         end
       end
@@ -208,7 +208,7 @@ feature "agency select: menu intialization", js: true do
 
   before do
     populate_database(:individual_complaint)
-    complaint.update(agency_id: agency.id)
+    complaint.update(agency_ids: [agency.id])
     visit complaint_path(:en, complaint.id)
     edit_complaint
   end
@@ -277,7 +277,6 @@ feature "agency select: menu intialization", js: true do
       expect(page.find("##{district_key} option", text: agency.name)).to be_selected
     end
   end
-
 end
 
 feature "agency select: cancel after editing", js: true do
@@ -289,7 +288,7 @@ feature "agency select: cancel after editing", js: true do
 
   before do
     populate_database(:individual_complaint)
-    complaint.update(agency_id: agency.id)
+    complaint.update(agency_ids: [agency.id])
     visit complaint_path(:en, complaint.id)
     edit_complaint
   end
@@ -344,38 +343,180 @@ feature "select box cascade", js: true do
   include ComplaintsSpecHelpers
 
   let(:complaint){ IndividualComplaint.first }
-  # province: Northern Cape, district_municipality: ZF Mgcawu, local_municipality: !Kheis
-  let(:agency){ LocalMunicipality.first }
 
   before do
     populate_database(:individual_complaint)
-    complaint.update(agency_id: agency.id)
+    complaint.update(agency_ids: [agency.id])
     visit complaint_path(:en, complaint.id)
     edit_complaint
   end
 
-  describe "edit high-order select_box resets low-order menus" do
-    it "should reset later low-order menus" do
-      select('Provincial', from:'agencies_select')
-      expect(page.find('#provinces_select option', text: 'select province...')).to be_selected
-      expect(page).not_to have_selector('.tertiary.show')
-      expect(page).not_to have_selector('.quarternary.show')
+  describe "when selected agency is a national government agency" do
+    let(:agency){ NationalGovernmentAgency.first }
+
+    describe "edit high-order select_box resets low-order menus" do
+      it "should reset later low-order menus" do
+        select('Provincial', from:'agencies_select')
+        expect(page.find('#provinces_select option', text: 'select province...')).to be_selected
+        expect(page).not_to have_selector('.tertiary.show')
+        expect(page).not_to have_selector('.quarternary.show')
+      end
+    end
+
+    describe "edit secondary select box resets lower order menus" do
+      it "should reset later low-order menus" do
+        select('National government institutions', from: 'national_agencies_select')
+        expect(page.find('#government_agencies_select option', text: 'select government institution...')).to be_selected
+      end
     end
   end
 
-  describe "edit secondary select box resets lower order menus" do
-    it "should reset later low-order menus" do
-      select('Gauteng', from: 'provinces_select')
-      expect(page.find('#gauteng option', text: 'select district/metropolitan municipality...')).to be_selected
-      expect(page).not_to have_selector('.quarternary.show')
+  describe "when selected agency is a national government institution" do
+    # name: Civilian Secretariat for Police
+    let(:agency){ NationalGovernmentInstitution.first }
+
+    describe "edit high-order select_box resets low-order menus" do
+      it "should reset later low-order menus" do
+        select('Provincial', from:'agencies_select')
+        expect(page.find('#provinces_select option', text: 'select province...')).to be_selected
+        expect(page).not_to have_selector('.tertiary.show')
+        expect(page).not_to have_selector('.quarternary.show')
+      end
+    end
+
+    describe "edit secondary select box resets lower order menus" do
+      it "should reset later low-order menus" do
+        select('National government agencies', from: 'national_agencies_select')
+        expect(page.find('#government_agencies_select option', text: 'select national government agency...')).to be_selected
+      end
     end
   end
 
-  describe "edit tertiary select box resets lower order menus" do
-    it "should reset later low-order menus" do
-      select('Namakwa', from: 'northern_cape');
-      expect(page.find('#namakwa option', text: 'select local agency...')).to be_selected
+  describe "when selected agency is a democracy supporting government institution" do
+    let(:agency){ DemocracySupportingStateInstitution.first }
+
+    describe "edit high-order select_box resets low-order menus" do
+      it "should reset later low-order menus" do
+        select('Provincial', from:'agencies_select')
+        expect(page.find('#provinces_select option', text: 'select province...')).to be_selected
+        expect(page).not_to have_selector('.tertiary.show')
+        expect(page).not_to have_selector('.quarternary.show')
+      end
+    end
+
+    describe "edit secondary select box resets lower order menus" do
+      it "should reset later low-order menus" do
+        select('National government agencies', from: 'national_agencies_select')
+        expect(page.find('#government_agencies_select option', text: 'select national government agency...')).to be_selected
+      end
+    end
+  end
+
+  describe "when selected agency is a provincial agency" do
+    # Western Cape, Agriculture
+    let(:agency){ ProvincialAgency.first }
+
+    describe "edit high-order select_box resets low-order menus" do
+      it "should reset later low-order menus" do
+        select('Local', from:'agencies_select')
+        expect(page.find('#provinces_select option', text: 'select province...')).to be_selected
+        expect(page).not_to have_selector('.tertiary.show')
+      end
+    end
+
+    describe "edit secondary select box resets lower order menus" do
+      it "should reset later low-order menus" do
+        select('Eastern Cape', from: 'provinces_select')
+        expect(page.find('#eastern_cape option', text: 'select provincial agency...')).to be_selected
+      end
+    end
+  end
+
+  describe "when selected agency is a metropolitan municipality" do
+    # Buffalo City, Eastern Cape
+    let(:agency){ MetropolitanMunicipality.first }
+
+    describe "edit high-order select_box resets low-order menus" do
+      it "should reset later low-order menus" do
+        select('Provincial', from:'agencies_select')
+        expect(page.find('#provinces_select option', text: 'select province...')).to be_selected
+        expect(page).not_to have_selector('.tertiary.show')
+        expect(page).not_to have_selector('.quarternary.show')
+      end
+    end
+
+    describe "edit secondary select box resets lower order menus" do
+      it "should reset later low-order menus" do
+        select('Western Cape', from: 'provinces_select')
+        expect(page.find('#western_cape option', text: 'select district/metropolitan municipality...')).to be_selected
+      end
+    end
+  end
+
+  describe "when selected agency is a local municipality" do
+    # province: Northern Cape, district_municipality: ZF Mgcawu, local_municipality: !Kheis
+    let(:agency){ LocalMunicipality.first }
+
+
+    describe "edit high-order select_box resets low-order menus" do
+      it "should reset later low-order menus" do
+        select('Provincial', from:'agencies_select')
+        expect(page.find('#provinces_select option', text: 'select province...')).to be_selected
+        expect(page).not_to have_selector('.tertiary.show')
+        expect(page).not_to have_selector('.quarternary.show')
+      end
+    end
+
+    describe "edit secondary select box resets lower order menus" do
+      it "should reset later low-order menus" do
+        select('Gauteng', from: 'provinces_select')
+        expect(page.find('#gauteng option', text: 'select district/metropolitan municipality...')).to be_selected
+        expect(page).not_to have_selector('.quarternary.show')
+      end
+    end
+
+    describe "edit tertiary select box resets lower order menus" do
+      it "should reset later low-order menus" do
+        select('Namakwa', from: 'northern_cape');
+        expect(page.find('#namakwa option', text: 'select local agency...')).to be_selected
+      end
     end
   end
 end
 
+feature "add a multiple agencies", js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include ComplaintsSpecHelpers
+
+  let(:complaint){ IndividualComplaint.first }
+  let(:first_agency){ complaint.agencies.first }
+  let(:nga){ NationalGovernmentAgency.first }
+  let(:ngi){ NationalGovernmentInstitution.first }
+  let(:dssi){ DemocracySupportingStateInstitution.first }
+  let(:pa){ ProvincialAgency.first }
+  let(:lm){ LocalMunicipality.first }
+  let(:mm){ MetropolitanMunicipality.first }
+
+  let(:agencies){ [nga, ngi, pa, dssi, lm, mm] }
+
+  before do
+    populate_database(:individual_complaint, agency_count: 1)
+    visit complaint_path(:en, complaint.id)
+    edit_complaint
+  end
+
+  describe "add agency button" do
+    it "triggers another agency select box hierarchy" do
+      expect(page).to have_selector('#agencies_select', count: 1)
+      agencies.each do |agency|
+        page.find('#add_agency').click
+        within page.all('.agency_select_container').last do
+          descend_selection_hierarchy_to(agency)
+        end
+      end
+      edit_save
+      expect(page.all('#agencies .agency').map(&:text)).to match_array [first_agency.description, nga.description, ngi.description, dssi.description, pa.description, lm.description, mm.description]
+    end
+  end
+end
