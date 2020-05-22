@@ -27,4 +27,9 @@ class ProvincialAgency < Agency
      selected_province_id: province_id,
      provincial_agency_id: id }
   end
+
+  def select_option_sort_criterion
+    sort_field = name.match(/Provincial government/) ? "aaa"+name : name  # put Provincial government first
+    sort_field.downcase # ensure e-Government is appropriately sorted
+  end
 end
