@@ -131,13 +131,13 @@ en:
     fax_pref: 'Fax'
     female : "Female"
     firstName_error_message : "You must enter a first name"
-    first_name : "First name(s)"
+    first_name : "First name(s) or initials"
     gender : 'Gender'
     id: 'SA ID'
     id_value_error_message: "Invalid SA ID"
     initiating_branch: 'Initiating branch'
     initiating_office: 'Initiating office'
-    lastName : "Last name"
+    lastName : "Last name(s)"
     lastName_error_message : "You must enter a last name"
     mail_pref: "Mail"
     male : "Male"

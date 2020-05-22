@@ -176,14 +176,6 @@ class Complaint < ActiveRecord::Base
     type&.underscore&.humanize
   end
 
-  #def agency_descriptions
-    #agencies.map(&:descriptions)
-  #end
-
-  #def selection_vector
-    #agencies.map(&:selection_vector)
-  #end
-
   def type_as_symbol
     type.gsub(/Complaint$/,'').underscore
   end
