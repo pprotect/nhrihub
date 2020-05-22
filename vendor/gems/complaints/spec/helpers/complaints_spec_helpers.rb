@@ -50,7 +50,6 @@ module ComplaintsSpecHelpers
     }
     agency.selection_vector.each_pair do |k,v|
       map = select_dependency_map[k]
-      raise 'selection vector key not mapped' if map.nil?
       unless map.has_key? "select_option"
         select map[v], from: map["selector"]
       else

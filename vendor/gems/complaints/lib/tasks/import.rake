@@ -52,5 +52,8 @@ namespace :agencies do
       province = provinces.select{|p| p.name == pa["Province"]}.first
       ProvincialAgency.create(name: pa["Name"].strip, province_id: province.id)
     end
+    provinces.each do |province|
+      ProvincialAgency.create(name: "Provincial government", province_id: province.id)
+    end
   end
 end

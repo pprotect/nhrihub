@@ -63,7 +63,15 @@ class Agency < ActiveRecord::Base
   end
 
   def self.provincial_hierarchy
-    provincial('province_name').sort.map{|k,v| {id: v.first.province_id, type: 'ProvincialAgency', name: k, collection: v}}
+    provincial('province_name').sort.map do |province_name,agencies|
+      id = agencies.first.province_id
+      agencies = agencies.sort_by do |agency|
+        n=agency.name
+        n= "aaa"+n if n.match(/Provincial government/) # put Provincial government first
+        n.downcase # ensure e-Government is appropriately sorted
+      end
+      {id: id, type: 'ProvincialAgency', name: province_name, collection: agencies}
+    end
   end
 
   def self.local_hierarchy
