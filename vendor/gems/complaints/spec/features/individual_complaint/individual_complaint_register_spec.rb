@@ -82,6 +82,7 @@ feature "complaint register", :js => true do
 
   it "adds a new complaint that is valid" do
     user = User.staff.first
+    fill_in('dupe_ref', with: '00023/20')
     fill_in('title', :with => "Ambassador")
     fill_in('lastName', :with => "Normal")
     fill_in('firstName', :with => "Norman")
@@ -128,6 +129,7 @@ feature "complaint register", :js => true do
     expect(complaint).to be_a(IndividualComplaint)
     expect(complaint.case_reference.year).to eq complaint.case_reference.year
     expect(complaint.case_reference.sequence).to eq 3
+    expect(complaint.dupe_refs).to include dupe_complaint.id
     expect(complaint.title).to eq "Ambassador"
     expect(complaint.lastName).to eq "Normal"
     expect(complaint.firstName).to eq "Norman"

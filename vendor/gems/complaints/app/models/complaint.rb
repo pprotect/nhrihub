@@ -37,11 +37,37 @@ class Complaint < ActiveRecord::Base
   has_many :complaint_legislations
   has_many :legislations, through: :complaint_legislations
   belongs_to :province
+  belongs_to :duplication_group, counter_cache: true
 
   attr_accessor :witness_name, :heading
 
   # why after_commit iso after_create? see https://dev.mikamai.com/2016/01/19/postgresql-transaction-and-rails-callbacks/
+  # hmmm... doesn't seem to be true any more! need to investigate
   after_create :generate_case_reference
+
+  def dupe_refs=(refs)
+    complaints = CaseReference.find_all(refs: refs).map(&:complaint)
+    group_id = DuplicationGroup.create.id
+    previous_duplicates = duplicates
+    (complaints + complaints.map(&:duplicates)).flatten.each do |complaint|
+      complaint.update(duplication_group_id: group_id)
+    end
+    if persisted?
+      update(duplication_group_id: group_id)
+      DuplicationGroup.cleanup
+    else
+      self.duplication_group_id = group_id
+    end
+  end
+
+  def is_in_duplication_group?
+    duplication_group_id.present?
+  end
+
+  def duplicates
+    return [] if duplication_group_id.nil?
+    Complaint.where("duplication_group_id = ? and id != ?", duplication_group_id, id)
+  end
 
   def generate_case_reference
     self.case_reference = CaseReference.create
@@ -167,6 +193,19 @@ class Complaint < ActiveRecord::Base
       complaint.agencies << Agency.unscoped.find_or_create_by(name: "Unassigned")
     end
   end
+
+  #before_update do |complaint|
+    #Rails.logger.info "update complaint #{complaint.id} group_id change: #{complaint.duplication_group_id_change}"
+    #if complaint.duplication_group_id_changed? && !complaint.duplication_group_id_change[0].nil?
+      #new_group_id = complaint.duplication_group_id_change[1]
+      #Rails.logger.info "update complaint #{complaint.id} duplicates #{complaint.reload.duplicates.map(&:id)} to duplication_group_id #{new_group_id}"
+      #complaint.reload.duplicates.update_all(duplication_group_id: new_group_id) # update_all skips callbacks
+    #end
+  #end
+
+  #after_update do |complaint|
+    #Rails.logger.info "#{complaint.id} updated #{complaint.saved_change_to_duplication_group_id}"
+  #end
 
   def <=>(other)
     case_reference <=> other.case_reference

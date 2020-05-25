@@ -116,6 +116,7 @@ context "Samoa formatted string" do
 
   describe "CaseReference.sql_match" do
     let(:complaint){ FactoryBot.create(:complaint) }
+    let(:result){ ->(case_ref_fragment){ Complaint.with_case_reference_match(case_ref_fragment) } }
 
     before do
       complaint.case_reference.update(year: 19, sequence: 1234)
@@ -123,55 +124,54 @@ context "Samoa formatted string" do
 
     it "should disregard nil fragment" do
       case_ref_fragment = nil
-      expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
+      expect(result[ case_ref_fragment ]).to eq [complaint] # result is a lambda, one way it can be called is result[arg]
     end
 
     it "should disregard blank string fragment" do
       case_ref_fragment = ""
-      expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
+      expect(result[ case_ref_fragment ]).to eq [complaint]
     end
 
     it "should match single digit" do
       case_ref_fragment = "1"
-      expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
+      expect(result[ case_ref_fragment ]).to eq [complaint]
     end
 
     it "should match two digits" do
       case_ref_fragment = "19"
-      expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
+      expect(result[ case_ref_fragment ]).to eq [complaint]
     end
 
     it "should match three digits" do
       case_ref_fragment = "191"
-      expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
+      expect(result[ case_ref_fragment ]).to eq [complaint]
     end
 
     it "should match four digits" do
       case_ref_fragment = "1912"
-      expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
+      expect(result[ case_ref_fragment ]).to eq [complaint]
     end
 
     it "should match all digits" do
       case_ref_fragment = "191234"
-      expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
+      expect(result[ case_ref_fragment ]).to eq [complaint]
     end
 
     it "should match all digits with arbitrary alpha interspersed" do
       case_ref_fragment = "f1a9 b1c 23d4x"
-      expect(Complaint.with_case_reference_match(case_ref_fragment)).to eq [complaint]
+      expect(result[ case_ref_fragment ]).to eq [complaint]
     end
 
     it "should not match if extra digits are appended" do
       case_ref_fragment = "1912345"
-      expect(Complaint.with_case_reference_match(case_ref_fragment)).to be_empty
+      expect(result[ case_ref_fragment ]).to be_empty
     end
 
     it "should not match if any digits do not match" do
       case_ref_fragment = "291234"
-      expect(Complaint.with_case_reference_match(case_ref_fragment)).to be_empty
+      expect(result[ case_ref_fragment ]).to be_empty
     end
   end
-
 end
 
 context "South Africa formatted string" do
@@ -220,7 +220,54 @@ context "South Africa formatted string" do
     it "should sort by year and sequence, most-recent-first" do
       expect(@list.sort.map(&:to_s)).to eq ["7/2-00010/17", "7/2-00001/17", "7/2-00015/16", "7/2-00001/16"]
     end
-
   end
 
+  describe ".parse" do
+    let(:result){ CaseReference.parse(string).values_at(:year, :sequence) }
+    before do
+      stub_const("CaseReferenceRegex","(?:7\/2)?(?:\s{0,5})0{0,4}(?<sequence>[1-9]{1,5}[0-9]{0,5})(?:\/)?(?<year>[1-9][0-9])")
+    end
+
+    describe "when string is fully formed" do
+      let(:string){ "7/2-00200/20"}
+      it "extracts year and sequence disregarding fixed format elements" do
+        expect(result).to eq [20,200]
+      end
+    end
+
+    describe "when string is fully formed" do
+      let(:string){ "7/2-00001/20"}
+      it "extracts year and sequence disregarding fixed format elements" do
+        expect(result).to eq [20,1]
+      end
+    end
+
+    describe "when string omits fixed preamble" do
+      let(:string){ "00200/20"}
+      it "extracts year and sequence disregarding fixed format elements" do
+        expect(result).to eq [20,200]
+      end
+    end
+
+    describe "when string omits fixed preamble and sequence/year separator" do
+      let(:string){ "0020020"}
+      it "extracts year and sequence disregarding fixed format elements" do
+        expect(result).to eq [20,200]
+      end
+    end
+
+    describe "when string omits fixed preamble and sequence/year separator and has leading/trailing whitespace" do
+      let(:string){ " 0020020 "}
+      it "extracts year and sequence disregarding fixed format elements" do
+        expect(result).to eq [20,200]
+      end
+    end
+
+    describe "when string omits fixed preamble, sequence/year separator, sequence leading zeroes, and has leading/trailing whitespace" do
+      let(:string){ " 20020 "}
+      it "extracts year and sequence disregarding fixed format elements" do
+        expect(result).to eq [20,200]
+      end
+    end
+  end
 end

@@ -258,6 +258,7 @@ STAFF = [ { group: nil,
           ]
 
 CaseReferenceFormat="7/2-%05<sequence>i/%<year>i"
+CaseReferenceRegex=Regexp.new("(?:7\/2)?(?:\s{0,5})0{0,4}(?<sequence>[1-9]{1,5}[0-9]{0,5})(?:\/)?(?<year>[1-9][0-9])")
 
 LEGISLATIONS = [ {short_name: "PPA", full_name: "Public Protector Act"},
                  {short_name: "EMEA", full_name: "Executive Members Ethics Act"},

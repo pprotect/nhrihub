@@ -1,12 +1,30 @@
 class CaseReference < ActiveRecord::Base
   belongs_to :complaint
 
+  def self.find_all(refs:) # keyword argument!
+    result = nil
+    sql_fragments = refs.each_with_index do |ref, i|
+      year, sequence = parse(ref).values_at(:year, :sequence)
+      result = where(year: year, sequence: sequence) if i==0
+      result = result.send(:or, where(year: year, sequence: sequence)) unless i==0
+    end
+    raise ActiveRecord::RecordNotFound if result.empty?
+    result
+  end
+
+  #produces {year: yy, sequence: nnn}
+  def self.parse(fragment)
+    match = fragment.match(CaseReferenceRegex)
+    raise ArgumentError if match.nil?
+    match.named_captures&.symbolize_keys&.transform_values(&:to_i)
+  end
+
   def self.matching(fragment)
     return no_filter if fragment.nil?
     return no_filter if fragment.blank?
-    fragment = fragment.gsub(/\D/,'')
-    fragment = fragment.gsub(/^0*/,'')
-    fragment = "^#{fragment}"
+    fragment = fragment.gsub(/\D/,'') # remove anything that's not a digit
+    fragment = fragment.gsub(/^0*/,'') # remove leading zeroes for pattern match
+    fragment = "^#{fragment}" # "starts with" fragment
     return where("concat(case_references.sequence,case_references.year) ~ ?", fragment) if sequence_first
     return where("concat(case_references.year, case_references.sequence) ~ ?", fragment) if year_first
   end
@@ -38,7 +56,7 @@ class CaseReference < ActiveRecord::Base
   before_create :init_params
 
   def to_s
-    CaseReferenceFormat%{sequence:sequence,year:year}
+    CaseReferenceFormat%{sequence:sequence,year:year} # ruby string interpolation
   end
   alias_method :as_json, :to_s
 

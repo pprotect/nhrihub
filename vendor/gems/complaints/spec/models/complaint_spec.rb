@@ -258,3 +258,138 @@ describe "#as_json" do
     end
   end
 end
+
+describe "duplicate complaints" do
+  describe "simplest case, single bilateral duplication" do
+    before do
+      @complaint = FactoryBot.create(:complaint) 
+      @dupe_complaint = FactoryBot.create(:complaint, dupe_refs: [@complaint.case_reference.to_s])
+    end
+
+    it "should create a bilateral duplication link" do
+      expect(@dupe_complaint.reload.duplicates.map(&:id)).to eq [@complaint.id]
+      expect(@complaint.reload.duplicates.map(&:id)).to eq [@dupe_complaint.id]
+      expect(DuplicationGroup.count).to eq 1
+    end
+  end
+
+  describe "user mis-types the case ref to link as duplicate" do
+    before do
+      @complaint = FactoryBot.create(:complaint) 
+      @second_complaint = FactoryBot.create(:complaint)
+    end
+
+    it "should create a bilateral duplication link" do
+      expect{ @complaint.dupe_refs= ["abcd"] }.to raise_exception(ArgumentError)
+    end
+  end
+
+  describe "user types non-existent case ref" do
+    before do
+      @complaint = FactoryBot.create(:complaint) 
+      @second_complaint = FactoryBot.create(:complaint)
+    end
+
+    it "should create a bilateral duplication link" do
+      expect{ @complaint.dupe_refs= ["7/2-00200/20"] }.to raise_exception(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe "two dupe_refs supplied, which are not previously linked" do
+    # all three become linked
+    before do
+      @complaint = FactoryBot.create(:complaint) 
+      @second_complaint = FactoryBot.create(:complaint)
+      @third_complaint = FactoryBot.create(:complaint)
+      @complaint.dupe_refs=[@second_complaint.case_reference.to_s, @third_complaint.case_reference.to_s]
+    end
+
+    it "should create a trilateral duplication link" do
+      expect(@complaint.reload.duplicates.map(&:id)).to match_array [@second_complaint.id, @third_complaint.id]
+      expect(@second_complaint.reload.duplicates.map(&:id)).to match_array [@complaint.id, @third_complaint.id]
+      expect(@third_complaint.reload.duplicates.map(&:id)).to match_array [@second_complaint.id, @complaint.id]
+      expect(DuplicationGroup.count).to eq 1
+    end
+  end
+
+  describe "single dupe ref supplied, and it's already in a group" do
+    # join the existing group
+    before do
+      @complaint = FactoryBot.create(:complaint) 
+      @second_complaint = FactoryBot.create(:complaint)
+      @third_complaint = FactoryBot.create(:complaint)
+      @second_complaint.dupe_refs=[@third_complaint.case_reference.to_s]
+      @complaint.dupe_refs=[@second_complaint.case_reference.to_s]
+    end
+
+    it "should create a trilateral duplication link" do
+      expect(@complaint.reload.duplicates.map(&:id)).to match_array [@second_complaint.id, @third_complaint.id]
+      expect(@second_complaint.reload.duplicates.map(&:id)).to match_array [@complaint.id, @third_complaint.id]
+      expect(@third_complaint.reload.duplicates.map(&:id)).to match_array [@second_complaint.id, @complaint.id]
+      expect(DuplicationGroup.count).to eq 1
+    end
+  end
+
+  describe "two dupe refs supplied, and they're in different groups" do
+    # coalesce the two groups and end up with a single group with three complaints
+    before do
+      @complaint = FactoryBot.create(:complaint) 
+      @second_complaint = FactoryBot.create(:complaint)
+      @third_complaint = FactoryBot.create(:complaint)
+      @fourth_complaint = FactoryBot.create(:complaint)
+      @fifth_complaint = FactoryBot.create(:complaint)
+      @second_complaint.dupe_refs=[@third_complaint.case_reference.to_s]
+      @fourth_complaint.dupe_refs=[@fifth_complaint.case_reference.to_s]
+      @complaint.dupe_refs=[@second_complaint.case_reference.to_s, @fourth_complaint.case_reference.to_s]
+    end
+
+    it "should create a trilateral duplication link" do
+      expect(@complaint.reload.duplicates.map(&:id)).to match_array [@second_complaint.id, @third_complaint.id, @fourth_complaint.id, @fifth_complaint.id]
+      expect(@second_complaint.reload.duplicates.map(&:id)).to match_array [@complaint.id, @third_complaint.id, @fourth_complaint.id, @fifth_complaint.id]
+      expect(@third_complaint.reload.duplicates.map(&:id)).to match_array [@complaint.id, @second_complaint.id, @fourth_complaint.id, @fifth_complaint.id]
+      expect(@fourth_complaint.reload.duplicates.map(&:id)).to match_array [@complaint.id, @second_complaint.id, @third_complaint.id, @fifth_complaint.id]
+      expect(@fifth_complaint.reload.duplicates.map(&:id)).to match_array [@complaint.id, @second_complaint.id, @third_complaint.id, @fourth_complaint.id]
+      expect(DuplicationGroup.count).to eq 1
+    end
+  end
+
+  describe "complaint is already in a duplication group, and it's designated as a dupe of another" do
+    # all three complaints are in the resulting group
+    before do
+      @complaint = FactoryBot.create(:complaint) 
+      @second_complaint = FactoryBot.create(:complaint, dupe_refs: [@complaint.case_reference.to_s])
+      @third_complaint = FactoryBot.create(:complaint)
+      @fourth_complaint = FactoryBot.create(:complaint, dupe_refs: [@third_complaint.case_reference.to_s])
+      @complaint.reload.dupe_refs=[@third_complaint.case_reference.to_s]
+    end
+
+    it "should dissolve existing group and add to new group" do
+      expect(@complaint.reload.duplicates.map(&:id)).to match_array [@third_complaint.id, @fourth_complaint.id]
+      expect(DuplicationGroup.count).to eq 1
+      expect(@second_complaint.reload.duplication_group_id).to be_nil
+    end
+  end
+
+  describe "complaint is already in a duplication group, and it's designated as a dupe of another, second scenario" do
+    # all three complaints are in the resulting group
+    before do
+      # first group
+      @complaint = FactoryBot.create(:complaint) 
+      @another_complaint = FactoryBot.create(:complaint)
+      @second_complaint = FactoryBot.create(:complaint, dupe_refs: [@complaint.case_reference.to_s, @another_complaint.case_reference.to_s])
+
+      # second group
+      @third_complaint = FactoryBot.create(:complaint)
+      @fourth_complaint = FactoryBot.create(:complaint, dupe_refs: [@third_complaint.case_reference.to_s])
+
+      @complaint.dupe_refs=[@third_complaint.case_reference.to_s]
+    end
+
+    it "should dissolve existing group and add to new group" do
+      expect(@complaint.reload.duplicates.map(&:id)).to match_array [@third_complaint.id, @fourth_complaint.id]
+      expect(@second_complaint.duplicates.map(&:id)).to eq [@another_complaint.id]
+      expect(DuplicationGroup.count).to eq 2
+    end
+  end
+
+end

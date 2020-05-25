@@ -1,0 +1,10 @@
+.row
+  .col-md-2
+    label {{ t.duplicates }}
+  .col-md-10('data-toggle'='edit')
+    .no_edit.in
+    .edit
+      .row
+        .col-md-3
+          input.form-control#dupe_ref(autocomplete='none', value = '{{dupe_ref}}')
+

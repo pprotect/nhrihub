@@ -19,6 +19,8 @@
 
       | {{>date_received }}
 
+      | {{>duplicates }}
+
       .row('class-hidden'='new_complaint')
         .col-md-2
           label {{ t.current_assignee }}
@@ -26,7 +28,7 @@
           span#current_assignee {{ current_assignee_name }}
 
       .row
-        .col-md-2('data-toggle' = 'edit')
+        .col-md-2
           label {{ context.complainant }}
         .col-md-9#complainant('data-toggle'='edit')
           .no_edit.in
@@ -181,7 +183,7 @@ script.
           'status_changes_attributes', 'new_assignee_id', 'subarea_ids', 'legislation_ids',
           'agency_ids', 'attached_documents_attributes', 'details', 'new_jurisdiction_branch_id',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
-          'firstName', 'lastName', 'title', 'type'];
+          'firstName', 'lastName', 'title', 'type', 'dupe_ref'];
       },
       validation_criteria() {
         return {

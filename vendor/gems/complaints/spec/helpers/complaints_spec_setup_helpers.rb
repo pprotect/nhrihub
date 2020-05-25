@@ -105,7 +105,7 @@ module ComplaintsSpecSetupHelpers
                       :home_phone => Faker::PhoneNumber.phone_number,
                       :dob => "19/08/1950",
                       :email => "bish@bash.com",
-                      :complaint_subareas => gg_subareas + hr_subareas + siu_subareas,
+                      :complaint_subareas => assigned_gg_subareas + assigned_hr_subareas + assigned_siu_subareas,
                       :desired_outcome => Faker::Lorem.sentence,
                       :details => Faker::Lorem.sentence,
                       :complaint_documents => complaint_docs,
@@ -121,7 +121,7 @@ module ComplaintsSpecSetupHelpers
                       :home_phone => Faker::PhoneNumber.phone_number,
                       :dob => "19/08/1950",
                       :email => "foo@bash.com",
-                      :complaint_subareas => hr_subareas,
+                      :complaint_subareas => assigned_hr_subareas,
                       :desired_outcome => Faker::Lorem.sentence,
                       :details => Faker::Lorem.sentence,
                       :complaint_documents => complaint_docs,
@@ -176,10 +176,12 @@ module ComplaintsSpecSetupHelpers
   end
 
   def set_file_defaults
-    SiteConfig["complaint_document.filetypes"]=["pdf"]
-    SiteConfig["complaint_document.filesize"]= 5
-    SiteConfig["communication_document.filetypes"]=["pdf"]
-    SiteConfig["communication_document.filesize"]= 5
+    with_capture "Complaints::Engine", :settings do
+      SiteConfig["complaint_document.filetypes"]=["pdf"]
+      SiteConfig["complaint_document.filesize"]= 5
+      SiteConfig["communication_document.filetypes"]=["pdf"]
+      SiteConfig["communication_document.filesize"]= 5
+    end
   end
 
   def create_staff
@@ -279,8 +281,13 @@ module ComplaintsSpecSetupHelpers
 
   def gg_subareas
     ["Delayed action", "Failure to act", "Contrary to Law", "Oppressive", "Private"].collect do |name|
-      ComplaintSubarea.find_or_create_by(name: name, area_id: gg_area.id)
+      ComplaintSubarea.create(name: name, area_id: gg_area.id)
     end
+  end
+
+  def assigned_gg_subareas
+    names = ["Delayed action", "Failure to act", "Contrary to Law", "Oppressive", "Private"]
+    ComplaintSubarea.where(name: names)
   end
 
   def hr_area
@@ -289,8 +296,13 @@ module ComplaintsSpecSetupHelpers
 
   def hr_subareas
     ["CAT", "ICESCR"].collect do |name|
-      ComplaintSubarea.find_or_create_by(name: name, area_id: hr_area.id)
+      ComplaintSubarea.create(name: name, area_id: hr_area.id)
     end
+  end
+
+  def assigned_hr_subareas
+    names = ["CAT", "ICESCR"]
+    ComplaintSubarea.where(name: names)
   end
 
   def siu_area
@@ -303,8 +315,13 @@ module ComplaintsSpecSetupHelpers
 
   def siu_subareas
     ["Unreasonable delay", "Not properly investigated"].collect do |name|
-      ComplaintSubarea.find_or_create_by(name: name, area_id: siu_area.id)
+      ComplaintSubarea.create(name: name, area_id: siu_area.id)
     end
+  end
+
+  def assigned_siu_subareas
+    names = ["Unreasonable delay", "Not properly investigated"]
+    ComplaintSubarea.where(name: names)
   end
 
   def cc_subareas

@@ -83,38 +83,33 @@ en:
     invalid_query: "You must complete at least one field for duplicate checking"
 
   complaint:
-    agency_id_error_message: "You must select an agency"
-    complainant: 'Complainant'
-    assign_legislation: 'Related legislation'
-    select_legislation: "Select related legislation..."
-    assessment_memo: 'Information pending'
-    register_heading: "%{type} Complaint Intake"
-    add_file: "Add file"
+    'on': 'on' # b/c on is a keyword in yaml and the translation borks
     add_document: "Add"
+    add_file: "Add file"
     agency: "Agency(ies)"
-    alternate_id_type: "Alternate ID type"
+    agency_id_error_message: "You must select an agency"
     alternate_id: "Alternate ID"
+    alternate_id_type: "Alternate ID type"
     area: "Area"
+    assessment_memo: 'Information pending'
     assign: 'Assign staff'
-    transferee: 'Transferee'
+    assign_legislation: 'Related legislation'
     assignee_error_message: "You must designate an assignee"
     assignees_history: "History of assignees"
-    transfer: "Transfer"
-    jurisdiction_assignment: "Assign jurisdiction"
     by: 'by'
     case_reference: "Ref"
+    cell_phone_error_message: "Cell phone designated as preferred communication means. You must enter a cell phone number"
     cell_phone_pref: "Cell phone"
     city: 'City'
-    title : "Title"
+    city_error_message: 'You must enter a city'
     closed: "Closed"
     communications : "Communications"
     compact: 'Compact'
-    complaint_type: 'Complaint type'
+    complainant: 'Complainant'
     complained_to_subject_agency : 'Complained to subject agency?'
-    subareas: "Subarea(s)"
-    city_error_message: 'You must enter a city'
     complaint_area_id_error_message: "You must select an area"
     complaint_documents : 'Complaint documents'
+    complaint_type: 'Complaint type'
     current_assignee: 'Current assignee'
     date_received : "Date received"
     delete : "Delete"
@@ -124,10 +119,12 @@ en:
     dob: 'Date of birth'
     documents: "Documents"
     download : "Download"
+    duplicates : "Duplicate complaint case ref(s)"
     edit : "Edit"
     email_pref : "Email"
     evaluation : "Under Evaluation"
     expand: 'Expand'
+    fax_error_message: "Fax designated as preferred communication means. You must enter a fax number"
     fax_pref: 'Fax'
     female : "Female"
     firstName_error_message : "You must enter a first name"
@@ -137,50 +134,54 @@ en:
     id_value_error_message: "Invalid SA ID"
     initiating_branch: 'Initiating branch'
     initiating_office: 'Initiating office'
+    jurisdiction_assignment: "Assign jurisdiction"
     lastName : "Last name(s)"
     lastName_error_message : "You must enter a last name"
     mail_pref: "Mail"
     male : "Male"
     no : "No"
     notes : "Notes"
-    'on': 'on' # b/c on is a keyword in yaml and the translation borks
     open: "Open"
     organization_name: 'Organization name'
     organization_registration_number: 'Company/CC/Trust registration number'
-    physical_address: 'Physical Address'
-    phone: 'Phone'
-    phone_pref: 'Phone'
-    postal_address: 'Postal Address'
-    postal_code: 'Postal Code'
-    postal_code_error_message: 'You must enter a postal code'
-    preferred_means_error_message: "You must select a preferred means of communication"
-    postal_address_error_message: "Mail designated as preferred communication means. You must enter a postal address"
-    physical_address_error_message: "You must enter a physical address"
-    phone_error_message: "Phone designated as preferred communication means. You must enter a phone number"
-    cell_phone_error_message: "Cell phone designated as preferred communication means. You must enter a cell phone number"
-    preferred_means: 'Preferred means of communication'
     other: 'Other'
     other_type: 'Other type'
     passport: 'Passport'
     pension: 'Pension ID'
-    prison: 'Prison ID'
+    phone: 'Phone'
+    phone_error_message: "Phone designated as preferred communication means. You must enter a phone number"
+    phone_pref: 'Phone'
+    physical_address: 'Physical Address'
+    physical_address_error_message: "You must enter a physical address"
+    postal_address: 'Postal Address'
+    postal_address_error_message: "Mail designated as preferred communication means. You must enter a postal address"
+    postal_code: 'Postal Code'
+    postal_code_error_message: 'You must enter a postal code'
+    preferred_means: 'Preferred means of communication'
+    preferred_means_error_message: "You must select a preferred means of communication"
     principal_id: 'Principal ID'
+    prison: 'Prison ID'
     province: 'Province'
     province_error_message: 'You must select a province'
+    register_heading: "%{type} Complaint Intake"
+    related_legislation: "Related legislation(s)"
     reminders : "Reminders"
     required : "Required"
     select_initiating_branch: "Select initiating branch"
     select_initiating_office: "Select initiating office"
-    timeline: 'Timeline'
+    select_legislation: "Select related legislation..."
     status: 'Status'
-    subarea_id_count_error_message : "You must select at least one subarea"
-    suspended : "Suspended"
-    yes : "Yes"
-    village_error_message : "You must enter a village"
-    status_memo_error_message:  "You must supply a reason for closing"
     status_memo_default_prompt: "Close memo"
-    fax_error_message: "Fax designated as preferred communication means. You must enter a fax number"
-    related_legislation: "Related legislation(s)"
+    status_memo_error_message:  "You must supply a reason for closing"
+    subarea_id_count_error_message : "You must select at least one subarea"
+    subareas: "Subarea(s)"
+    suspended : "Suspended"
+    timeline: 'Timeline'
+    title : "Title"
+    transfer: "Transfer"
+    transferee: 'Transferee'
+    village_error_message : "You must enter a village"
+    yes : "Yes"
 
   own_motion:
     cell_phone: "Cell phone"

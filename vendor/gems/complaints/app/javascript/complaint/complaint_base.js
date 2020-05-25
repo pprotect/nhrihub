@@ -40,6 +40,7 @@ import Address from 'partials/_address.pug'
 import ContactInfo from 'partials/_contact_info.pug'
 import Legislations from 'partials/_legislations.pug'
 import DateReceived from 'partials/_date_received.pug'
+import Duplicates from 'partials/_duplicates.pug'
 import LegislationSelector from 'legislation_selector.ractive.pug'
 import Datepicker from 'datepicker'
 
@@ -204,6 +205,7 @@ export default Ractive.extend({
     contact_info: ContactInfo,
     legislations: Legislations,
     date_received: DateReceived,
+    duplicates: Duplicates,
   },
   oninit() {
     this.set({

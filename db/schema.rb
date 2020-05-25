@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_12_194507) do
+ActiveRecord::Schema.define(version: 2020_05_23_160656) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -335,6 +335,7 @@ ActiveRecord::Schema.define(version: 2020_04_12_194507) do
     t.integer "initiating_branch_id"
     t.integer "initiating_office_id"
     t.integer "province_id", limit: 2, default: 0
+    t.integer "duplication_group_id"
     t.index ["case_reference"], name: "index_complaints_on_case_reference", unique: true
   end
 
@@ -381,6 +382,12 @@ ActiveRecord::Schema.define(version: 2020_04_12_194507) do
     t.string "title"
     t.integer "archive_doc_count", default: 0
     t.string "type"
+  end
+
+  create_table "duplication_groups", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "complaints_count", default: 0
   end
 
   create_table "file_monitors", id: :serial, force: :cascade do |t|
