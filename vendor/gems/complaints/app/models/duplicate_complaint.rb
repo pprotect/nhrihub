@@ -1,6 +1,5 @@
 class DuplicateComplaint < Complaint
-  # it's a hack in order not to set type=DuplicateComplaint as a scope in queries
-  # b/c the Complaint table has a type field and so STI is invoked
+  # it's a subclass with no sti
   self.inheritance_column = :_type_disabled
 
   def as_json(options = {})

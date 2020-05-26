@@ -391,5 +391,4 @@ describe "duplicate complaints" do
       expect(DuplicationGroup.count).to eq 2
     end
   end
-
 end

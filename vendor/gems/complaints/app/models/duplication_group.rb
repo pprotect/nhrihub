@@ -8,5 +8,4 @@ class DuplicationGroup < ActiveRecord::Base
 
     where('complaints_count <= 1').destroy_all
   end
-
 end

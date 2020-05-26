@@ -68,6 +68,28 @@ feature 'show complaint with multiple agencies', js: true do
   end
 end
 
+feature "show complaint with duplicates", js: true do
+  include LoggedInEnAdminUserHelper # sets up logged in admin user
+  include ComplaintsSpecSetupHelpers
+  include ComplaintsSpecHelpers
+
+  let(:dupe_complaint){ FactoryBot.create(:individual_complaint) }
+  let(:other_dupe_complaint){ FactoryBot.create(:individual_complaint) }
+  let(:complaint){ FactoryBot.create(:individual_complaint, dupe_refs: [dupe_complaint.case_reference.to_s, other_dupe_complaint.case_reference.to_s]) }
+
+  before do
+    visit complaint_path(:en, complaint.id)
+  end
+
+  describe "duplicates rendering" do
+    it "should show duplicate case references with links" do
+      expect(page).to have_selector('.duplicate_case_reference a', text: dupe_complaint.case_reference.to_s)
+      expect(page).to have_selector('.duplicate_case_reference a', text: other_dupe_complaint.case_reference.to_s)
+    end
+  end
+end
+
+
 feature 'edit complaint', js: true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecSetupHelpers

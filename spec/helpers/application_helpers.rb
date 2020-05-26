@@ -114,7 +114,16 @@ module ApplicationHelpers
     page.evaluate_script('window.history.back()')
   end
 
+  def click_forward_button
+    page.evaluate_script('window.history.forward()')
+  end
+
   def query_string
     page.evaluate_script("window.location.search")
+  end
+
+  #e.g. /en/complaints/55
+  def browser_url
+    page.evaluate_script('window.location.pathname')
   end
 end

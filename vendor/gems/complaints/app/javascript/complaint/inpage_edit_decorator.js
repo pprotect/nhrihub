@@ -1,6 +1,6 @@
 const InpageEditDecorator = function(node,id){
   const ractive = this;
-  const edit = new InpageEdit({
+  const edit = new InpageEdit({ // see app/assets/javascripts/in_page_edit.coffee
     object : this,
     on : node,
     focus_element : 'input.title',

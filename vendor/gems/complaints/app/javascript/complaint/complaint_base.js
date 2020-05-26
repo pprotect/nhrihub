@@ -43,6 +43,7 @@ import DateReceived from 'partials/_date_received.pug'
 import Duplicates from 'partials/_duplicates.pug'
 import LegislationSelector from 'legislation_selector.ractive.pug'
 import Datepicker from 'datepicker'
+import Duplicate from 'duplicate.ractive.pug'
 
 export default Ractive.extend({
   el: '#complaint',
@@ -247,6 +248,7 @@ export default Ractive.extend({
     jurisdictionBranchSelector: JurisdictionBranchSelector,
     legislationSelector: LegislationSelector,
     datepicker: Datepicker,
+    duplicate: Duplicate,
   },
   add_agency(){
     this.push('agencies',{id: null})

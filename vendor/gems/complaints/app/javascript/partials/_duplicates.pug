@@ -2,9 +2,12 @@
   .col-md-2
     label {{ t.duplicates }}
   .col-md-10('data-toggle'='edit')
-    .no_edit.in
+    .no_edit.in.comma-list
+      | {{#duplicates}}
+      <duplicate case_reference='{{case_reference}}', id='{{id}}' />
+      | {{/duplicates}}
     .edit
       .row
         .col-md-3
-          input.form-control#dupe_ref(autocomplete='none', value = '{{dupe_ref}}')
+          input.form-control#dupe_ref(autocomplete='none', value='{{dupe_refs}}', placeholder='comma-separated list')
 

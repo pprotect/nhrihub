@@ -66,7 +66,7 @@ class Complaint < ActiveRecord::Base
 
   def duplicates
     return [] if duplication_group_id.nil?
-    Complaint.where("duplication_group_id = ? and id != ?", duplication_group_id, id)
+    DuplicateComplaint.where("duplication_group_id = ? and id != ?", duplication_group_id, id)
   end
 
   def generate_case_reference
@@ -251,7 +251,8 @@ class Complaint < ActiveRecord::Base
                            :agency_ids,
                            :legislation_ids,
                            :timeline_events,
-                           :communications] }
+                           :communications,
+                           :duplicates] }
     end
     super(options)
   end
