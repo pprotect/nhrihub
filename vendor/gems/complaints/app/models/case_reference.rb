@@ -2,6 +2,7 @@ class CaseReference < ActiveRecord::Base
   belongs_to :complaint
 
   def self.find_all(refs:) # keyword argument!
+    return [] if refs.blank?
     result = nil
     sql_fragments = refs.each_with_index do |ref, i|
       year, sequence = parse(ref).values_at(:year, :sequence)

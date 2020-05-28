@@ -89,7 +89,6 @@ feature "show complaint with duplicates", js: true do
   end
 end
 
-
 feature 'edit complaint', js: true do
   include LoggedInEnAdminUserHelper # sets up logged in admin user
   include ComplaintsSpecSetupHelpers
@@ -406,5 +405,32 @@ feature 'edit complaint', js: true do
     fill_in('complaint_details', :with => "bish bash bosh")
     expect(page).not_to have_selector('#details_error', :text => "You must enter the complaint details")
     expect(page).not_to have_selector('#complaint_error', :text => "Form has errors, cannot be saved")
+  end
+
+  describe 'validation of duplicate complaint field' do
+    it 'shows an error if one of the case references is badly formed' do
+      edit_complaint
+      fill_in('dupe_refs', with: "20x/20, 20/15")
+      edit_save
+      expect(page).to have_selector('#complaint_error', text: "Form has errors, cannot be saved")
+      expect(page).to have_selector('#dupe_refs_format_error', text: 'Invalid case reference')
+
+      #error removed when user types
+      fill_in('dupe_refs', with: "200/20, 20/15")
+      expect(page).not_to have_selector('#dupe_refs_format_error', text: 'Invalid case reference')
+    end
+
+    it 'shows an error if case reference is not found' do
+      edit_complaint
+      fill_in('dupe_refs', with: "200/20, 800/15")
+      edit_save
+      debugger
+      expect(page).to have_selector('#complaint_error', text: "Form has errors, cannot be saved")
+      expect(page).to have_selector('#dupe_refs_not_found_error', text: 'Case reference not found')
+
+      #error removed when user types
+      fill_in('dupe_refs', with: "200/20, 20/15")
+      expect(page).not_to have_selector('#dupe_refs_format_error', text: 'Case reference not found')
+    end
   end
 end

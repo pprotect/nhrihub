@@ -71,6 +71,7 @@ feature "complaint register", :js => true do
 
   it "adds a new complaint that is minimally valid" do
     expect( page_heading ).to eq "Individual Complaint Intake"
+    test_fail_placeholder("duplicate complaints field should not be shown")
     complete_required_fields(:individual)
     expect{save_complaint}.to change{ IndividualComplaint.count }.by(1)
 

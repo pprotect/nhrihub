@@ -304,6 +304,17 @@ export default Ractive.extend({
     this.set('complainantMatch', response.complainant_match)
     this.findComponent("dupeList").showModal()
   },
+  async async_validate(){
+    if(_.isEmpty(this.get('dupe_refs'))){
+      return true
+    }
+    let result = await $.get(
+      Routes.case_references_path('en'),
+      {dupe_refs: this.get('dupe_refs')}
+    )
+    this.set('dupe_refs_not_found_error', !result.case_references_exist)
+    return result.case_references_exist
+  },
   generate_word_doc() {
     return window.location = Routes.complaint_path('en',this.get('id'),{format : 'docx'});
   },

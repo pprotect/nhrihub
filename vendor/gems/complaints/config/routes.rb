@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     [:communication_document, :complaint_document].each do |namespace|
       namespace namespace do file_attachment_concern end # see lib/file_attachment_concern.rb
     end
+    resources :case_references, :only => [:index]
     resources :communication_documents, :only => [:destroy, :show]
     resources :complaint_documents, :only => [:destroy, :show]
     get 'complaint_admin/show', :to => 'complaint_admin#show'

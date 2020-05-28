@@ -33,5 +33,6 @@
   @provinces = #{@provinces.to_json.html_safe}
   @districts = #{@districts.to_json.html_safe}
   @metro_municipalities = #{@metro_municipalities.to_json.html_safe}
+  @case_ref_regex = "#{CaseReferenceRegexString.gsub(/\?<\w*>/,'')}"
 
 = javascript_pack_tag 'complaint'

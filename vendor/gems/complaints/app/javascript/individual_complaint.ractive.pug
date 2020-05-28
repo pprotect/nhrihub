@@ -183,7 +183,7 @@ script.
           'status_changes_attributes', 'new_assignee_id', 'subarea_ids', 'legislation_ids',
           'agency_ids', 'attached_documents_attributes', 'details', 'new_jurisdiction_branch_id',
           'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
-          'firstName', 'lastName', 'title', 'type', 'dupe_ref'];
+          'firstName', 'lastName', 'title', 'type', 'dupe_refs'];
       },
       validation_criteria() {
         return {
@@ -211,6 +211,20 @@ script.
           agency_ids: ()=>{return _.isArray(this.get('agency_ids')) && !_.isEmpty(this.get('agency_ids')) && _(this.get('agency_ids')).every(function(i){return _.isNumber(i)})},
           id_value: ()=>{ if(!_.isNull(this.get('id_value'))){this.set('id_value',this.get('id_value').toString().trim())};
                           return !(this.get('id_type') == 'State id') || SAIDParser.validate(this.get('id_value')) }, // true means it's valid
+          dupe_refs_format: ()=>{
+            if(_.isEmpty(this.get('dupe_refs'))){
+                return true
+              }else{
+                let re = new RegExp(this.get('case_ref_regex'))
+                let matches = this.get('dupe_refs').split(',').map(ref=> ref.match(re)==null)
+                return matches.every(match => !match)
+              }
+          },
+          dupe_refs_not_found: ()=>{
+            //it's necessary to have this attr here, even though it's validated remotely/asynchronously
+            //b/c the presence of this key links the dupe_refs_not_found_error to has_errors
+            return true
+          },
         };
       },
     },

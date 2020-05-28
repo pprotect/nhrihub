@@ -1,7 +1,7 @@
-.row
+.row.form-group('data-toggle'='edit')
   .col-md-2
     label {{ t.duplicates }}
-  .col-md-10('data-toggle'='edit')
+  .col-md-10
     .no_edit.in.comma-list
       | {{#duplicates}}
       <duplicate case_reference='{{case_reference}}', id='{{id}}' />
@@ -9,5 +9,7 @@
     .edit
       .row
         .col-md-3
-          input.form-control#dupe_ref(autocomplete='none', value='{{dupe_refs}}', placeholder='comma-separated list')
+          input.form-control#dupe_refs(autocomplete='none', value='{{dupe_refs}}', placeholder='comma-separated list', 'on-keyup'="remove_attribute_error('dupe_refs_format')")
+          span.help-block.error#dupe_refs_format_error('class-has-error'='dupe_refs_format_error') {{ t.dupe_refs_format_error_message }}
+          span.help-block.error#dupe_refs_not_found_error('class-has-error'='dupe_refs_not_found_error') {{ t.dupe_refs_not_found_error_message }}
 

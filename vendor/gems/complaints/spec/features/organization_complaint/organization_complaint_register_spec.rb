@@ -52,6 +52,7 @@ feature "organization complaint intake", :js => true do
 
   it "adds a new complaint that is valid" do
     expect( page_heading ).to eq "Organization Complaint Intake"
+    test_fail_placeholder("duplicate complaints field should not be shown")
     complete_required_fields(:organization)
     expect{save_complaint}.to change{ Complaint.count }.by(1)
 

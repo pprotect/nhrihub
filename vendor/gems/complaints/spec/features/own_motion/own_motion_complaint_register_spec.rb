@@ -52,6 +52,7 @@ feature "complaints index", :js => true do
 
   it "adds a new complaint that is valid" do
     expect( page_heading ).to eq "Own Motion Complaint Intake"
+    test_fail_placeholder("duplicate complaints field should not be shown")
     complete_required_fields(:own_motion)
     expect{save_complaint}.to change{ Complaint.count }.by(1)
 

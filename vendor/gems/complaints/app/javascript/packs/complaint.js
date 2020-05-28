@@ -19,6 +19,7 @@ _.extend(Ractive.defaults.data, {
   provinces,
   districts,
   metro_municipalities,
+  case_ref_regex,
 })
 
 import IndividualComplaint from '../individual_complaint.ractive.pug'

@@ -35,10 +35,10 @@ export default {
   progress_bar_create() {
     return this.findComponent('progressBar').start();
   },
-  update_persist(success, error, context) { // called by InpageEditDecorator
-    if (this.validate()) {
+  update_persist(success, error, context) { // called by InpageEdit
+    let fetch = ()=>{
       const data = this.formData();
-      return $.ajax({
+      $.ajax({
         // thanks to http://stackoverflow.com/a/22987941/451893
         //xhr: @progress_bar_create.bind(@)
         method : 'put',
@@ -49,6 +49,13 @@ export default {
         processData : false,
         contentType : false
       });
+    }
+    if (this.validate()) {
+      this.async_validate().then((remote_validation)=>{
+        if(remote_validation){
+          fetch();
+        }
+      })
     }
   }
 }

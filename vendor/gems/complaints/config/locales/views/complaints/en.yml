@@ -120,6 +120,8 @@ en:
     documents: "Documents"
     download : "Download"
     duplicates : "Duplicate complaint case ref(s)"
+    dupe_refs_format_error_message: "Invalid case reference(s)"
+    dupe_refs_not_found_error_message: "Case reference not found"
     edit : "Edit"
     email_pref : "Email"
     evaluation : "Under Evaluation"
