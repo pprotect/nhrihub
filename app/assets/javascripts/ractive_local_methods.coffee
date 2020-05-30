@@ -52,6 +52,8 @@ local_methods =
 
       _(value).each (item)->
         name = prefix + "["+ attribute + "][]"
+        if typeof item == 'object'
+          item = JSON.stringify(item)
         formData.append(name, item)
         return
 

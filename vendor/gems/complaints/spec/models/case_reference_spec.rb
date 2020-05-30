@@ -271,3 +271,24 @@ context "South Africa formatted string" do
     end
   end
 end
+
+describe '.find_all' do
+  let(:complaint){ Complaint.first }
+  let(:case_ref){ complaint.case_reference.to_s }
+
+  before do
+    FactoryBot.create(:complaint)
+  end
+
+  it 'raises exception if the single dupe_ref is not found' do
+    expect{ CaseReference.find_all(refs: ["200/19"]) }.to raise_exception ActiveRecord::RecordNotFound
+  end
+
+  it 'raises exception if any of multiple dupe_refs is not found' do
+    expect{ CaseReference.find_all(refs: ["200/19", case_ref]) }.to raise_exception ActiveRecord::RecordNotFound
+  end
+
+  it 'return array of CaseReference objects when all refs are found' do
+    expect( CaseReference.find_all(refs: [case_ref]) ).to eq [CaseReference.first]
+  end
+end

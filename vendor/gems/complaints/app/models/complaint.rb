@@ -46,7 +46,7 @@ class Complaint < ActiveRecord::Base
   after_create :generate_case_reference
 
   def dupe_refs=(refs)
-    complaints = CaseReference.find_all(refs: refs).map(&:complaint)
+    complaints = CaseReference.find_all(refs: refs.split(', ')).map(&:complaint)
     group_id = DuplicationGroup.create.id
     previous_duplicates = duplicates
     (complaints + complaints.map(&:duplicates)).flatten.each do |complaint|
@@ -67,6 +67,10 @@ class Complaint < ActiveRecord::Base
   def duplicates
     return [] if duplication_group_id.nil?
     DuplicateComplaint.where("duplication_group_id = ? and id != ?", duplication_group_id, id)
+  end
+
+  def duplicates=(dupe_array)
+    dupe_refs = dupe_array.reject(&:blank?).map{|dr| dr[:case_reference]}
   end
 
   def generate_case_reference

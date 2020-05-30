@@ -75,7 +75,7 @@ feature "show complaint with duplicates", js: true do
 
   let(:dupe_complaint){ FactoryBot.create(:individual_complaint) }
   let(:other_dupe_complaint){ FactoryBot.create(:individual_complaint) }
-  let(:complaint){ FactoryBot.create(:individual_complaint, dupe_refs: [dupe_complaint.case_reference.to_s, other_dupe_complaint.case_reference.to_s]) }
+  let(:complaint){ FactoryBot.create(:individual_complaint, dupe_refs: [dupe_complaint.case_reference.to_s, other_dupe_complaint.case_reference.to_s].join(', ')) }
 
   before do
     visit complaint_path(:en, complaint.id)
@@ -85,6 +85,8 @@ feature "show complaint with duplicates", js: true do
     it "should show duplicate case references with links" do
       expect(page).to have_selector('.duplicate_case_reference a', text: dupe_complaint.case_reference.to_s)
       expect(page).to have_selector('.duplicate_case_reference a', text: other_dupe_complaint.case_reference.to_s)
+      edit_complaint
+      expect(page.find('input#dupe_refs').value).to eq [dupe_complaint.case_reference.to_s, other_dupe_complaint.case_reference.to_s].join(', ')
     end
   end
 end
@@ -272,6 +274,7 @@ feature 'edit complaint', js: true do
     new_assignee_id = page.evaluate_script("complaint.get('new_assignee_id')")
     original_complaint = IndividualComplaint.first
     edit_complaint
+    fill_in('dupe_refs', with: "200/20, 20/15")
     fill_in('lastName', :with => "Normal")
     fill_in('firstName', :with => "Norman")
     fill_in('title', :with => "barista")
@@ -294,6 +297,7 @@ feature 'edit complaint', js: true do
     edit_cancel
     sleep(0.5) # seems like a huge amount of time to wait for javascript, but this is what it takes for reliable operation in chrome
     edit_complaint
+    expect(page.find('#dupe_refs').value).to eq original_complaint.duplicates.first.case_reference.to_s
     expect(page.find('#lastName').value).to eq original_complaint.lastName
     expect(page.find('#firstName').value).to eq original_complaint.firstName
     expect(page.find('#title').value).to eq original_complaint.title
@@ -424,13 +428,12 @@ feature 'edit complaint', js: true do
       edit_complaint
       fill_in('dupe_refs', with: "200/20, 800/15")
       edit_save
-      debugger
       expect(page).to have_selector('#complaint_error', text: "Form has errors, cannot be saved")
       expect(page).to have_selector('#dupe_refs_not_found_error', text: 'Case reference not found')
 
       #error removed when user types
       fill_in('dupe_refs', with: "200/20, 20/15")
-      expect(page).not_to have_selector('#dupe_refs_format_error', text: 'Case reference not found')
+      expect(page).not_to have_selector('#dupe_refs_not_found_error', text: 'Case reference not found')
     end
   end
 end

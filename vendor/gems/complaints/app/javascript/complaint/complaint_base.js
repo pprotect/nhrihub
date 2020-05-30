@@ -48,28 +48,19 @@ import Duplicate from 'duplicate.ractive.pug'
 export default Ractive.extend({
   el: '#complaint',
   computed : {
+    dupe_refs: {
+      get(){
+        return this.get('duplicates').map((duplicate)=>{return duplicate.case_reference}).join(', ')
+      },
+      set(val){
+        let case_refs = val.split(',')
+        let dupes = case_refs.map((cr)=>{return {case_reference: cr}})
+        this.set('duplicates', dupes)
+      }
+    },
     province_name(){
       return _(this.get('provinces')).findWhere({id: this.get('province_id')}).name
     },
-    //agency_ids(){
-        //var ids = _(this.findAllComponents('agenciesSelector')).map(function(as){return as.get('agency_id')});
-        //return _(ids).reject(function(i){return _.isNull(i)})
-        //var ass = this.findAllComponents('agenciesSelector')
-        //var ids = []
-        //for(var i=0; i<ass.length; i++){
-          //ids[i] = ass[i].get('agency_id')
-        //}
-        //return ids
-    //},
-    //agency_ids:{
-      //get(){
-        //var ids = _(this.findAllComponents('agenciesSelector')).map(function(as){return as.get('agency_id')});
-        //return _(ids).reject(function(i){return _.isNull(i)})
-      //},
-      //set(val){
-        //this.findComponent('agenciesSelector').set('agency_id', val);
-      //}
-    //},
     related_legislation_names(){
       if(!_.isEmpty(this.get('legislation_ids'))){
         var that = this

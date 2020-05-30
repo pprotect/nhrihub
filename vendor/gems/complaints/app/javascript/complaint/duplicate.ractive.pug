@@ -5,6 +5,12 @@ script(type='text/javascript').
   export default Ractive.extend({
     template : $TEMPLATE,
     computed : {
-      link(){ return Routes.complaint_path('en', this.get('id'))},
+      link(){
+        if(this.get('id')){
+          return Routes.complaint_path('en', this.get('id'))
+        }else{
+          return null
+        }
+      },
     }
   })

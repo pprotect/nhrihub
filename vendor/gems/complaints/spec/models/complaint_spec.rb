@@ -167,7 +167,8 @@ describe "#as_json" do
                                                      "alt_id_type", "physical_address", "agency_ids", "agencies", "legislation_ids",
                                                      "postal_address", "postal_code", "preferred_means", "province_id",
                                                      "alt_id_value", "alt_id_other_type", "fax", "home_phone", "id_type",
-                                                     "id_value", "organization_name", "organization_registration_number", "initiating_branch_id", "initiating_office_id"]
+                                                     "id_value", "organization_name", "organization_registration_number",
+                                                     "initiating_branch_id", "initiating_office_id", "duplicates", "duplication_group_id"]
       expect(@complaints.first["id"]).to eq Complaint.first.id # Complaint.first sorts by id in ascending order, returns lowest id/case_ref
       expect(@complaints.first["case_reference"]).to eq Complaint.first.case_reference.to_s
       expect(@complaints.first["city"]).to eq Complaint.first.city
@@ -245,7 +246,8 @@ describe "#as_json" do
                                                      "alt_id_type", "physical_address", "agency_ids", "agencies", "legislation_ids",
                                                      "postal_address", "postal_code", "preferred_means", "province_id",
                                                      "alt_id_value", "alt_id_other_type", "fax", "home_phone", "id_type",
-                                                     "id_value", "organization_name", "organization_registration_number", "initiating_branch_id", "initiating_office_id"]
+                                                     "id_value", "organization_name", "organization_registration_number",
+                                                     "initiating_branch_id", "initiating_office_id", "duplicates", "duplication_group_id"]
       expect(@complaints.first["reminders"]).to be_empty
       expect(@complaints.first["notes"]).to be_empty
       expect(@complaints.first["assigns"]).to be_empty
@@ -263,7 +265,7 @@ describe "duplicate complaints" do
   describe "simplest case, single bilateral duplication" do
     before do
       @complaint = FactoryBot.create(:complaint) 
-      @dupe_complaint = FactoryBot.create(:complaint, dupe_refs: [@complaint.case_reference.to_s])
+      @dupe_complaint = FactoryBot.create(:complaint, dupe_refs: [@complaint.case_reference.to_s].join(', '))
     end
 
     it "should create a bilateral duplication link" do
@@ -280,7 +282,7 @@ describe "duplicate complaints" do
     end
 
     it "should create a bilateral duplication link" do
-      expect{ @complaint.dupe_refs= ["abcd"] }.to raise_exception(ArgumentError)
+      expect{ @complaint.dupe_refs= "abcd" }.to raise_exception(ArgumentError)
     end
   end
 
@@ -291,7 +293,7 @@ describe "duplicate complaints" do
     end
 
     it "should create a bilateral duplication link" do
-      expect{ @complaint.dupe_refs= ["7/2-00200/20"] }.to raise_exception(ActiveRecord::RecordNotFound)
+      expect{ @complaint.dupe_refs= "7/2-00200/20" }.to raise_exception(ActiveRecord::RecordNotFound)
     end
   end
 
@@ -301,7 +303,7 @@ describe "duplicate complaints" do
       @complaint = FactoryBot.create(:complaint) 
       @second_complaint = FactoryBot.create(:complaint)
       @third_complaint = FactoryBot.create(:complaint)
-      @complaint.dupe_refs=[@second_complaint.case_reference.to_s, @third_complaint.case_reference.to_s]
+      @complaint.dupe_refs=[@second_complaint.case_reference.to_s, @third_complaint.case_reference.to_s].join(', ')
     end
 
     it "should create a trilateral duplication link" do
@@ -318,8 +320,8 @@ describe "duplicate complaints" do
       @complaint = FactoryBot.create(:complaint) 
       @second_complaint = FactoryBot.create(:complaint)
       @third_complaint = FactoryBot.create(:complaint)
-      @second_complaint.dupe_refs=[@third_complaint.case_reference.to_s]
-      @complaint.dupe_refs=[@second_complaint.case_reference.to_s]
+      @second_complaint.dupe_refs=@third_complaint.case_reference.to_s
+      @complaint.dupe_refs=@second_complaint.case_reference.to_s
     end
 
     it "should create a trilateral duplication link" do
@@ -338,9 +340,9 @@ describe "duplicate complaints" do
       @third_complaint = FactoryBot.create(:complaint)
       @fourth_complaint = FactoryBot.create(:complaint)
       @fifth_complaint = FactoryBot.create(:complaint)
-      @second_complaint.dupe_refs=[@third_complaint.case_reference.to_s]
-      @fourth_complaint.dupe_refs=[@fifth_complaint.case_reference.to_s]
-      @complaint.dupe_refs=[@second_complaint.case_reference.to_s, @fourth_complaint.case_reference.to_s]
+      @second_complaint.dupe_refs=@third_complaint.case_reference.to_s
+      @fourth_complaint.dupe_refs=@fifth_complaint.case_reference.to_s
+      @complaint.dupe_refs=[@second_complaint.case_reference.to_s, @fourth_complaint.case_reference.to_s].join(', ')
     end
 
     it "should create a trilateral duplication link" do
@@ -357,10 +359,10 @@ describe "duplicate complaints" do
     # all three complaints are in the resulting group
     before do
       @complaint = FactoryBot.create(:complaint) 
-      @second_complaint = FactoryBot.create(:complaint, dupe_refs: [@complaint.case_reference.to_s])
+      @second_complaint = FactoryBot.create(:complaint, dupe_refs: [@complaint.case_reference.to_s].join(', '))
       @third_complaint = FactoryBot.create(:complaint)
-      @fourth_complaint = FactoryBot.create(:complaint, dupe_refs: [@third_complaint.case_reference.to_s])
-      @complaint.reload.dupe_refs=[@third_complaint.case_reference.to_s]
+      @fourth_complaint = FactoryBot.create(:complaint, dupe_refs: [@third_complaint.case_reference.to_s].join(', '))
+      @complaint.reload.dupe_refs=@third_complaint.case_reference.to_s
     end
 
     it "should dissolve existing group and add to new group" do
@@ -376,13 +378,13 @@ describe "duplicate complaints" do
       # first group
       @complaint = FactoryBot.create(:complaint) 
       @another_complaint = FactoryBot.create(:complaint)
-      @second_complaint = FactoryBot.create(:complaint, dupe_refs: [@complaint.case_reference.to_s, @another_complaint.case_reference.to_s])
+      @second_complaint = FactoryBot.create(:complaint, dupe_refs: [@complaint.case_reference.to_s, @another_complaint.case_reference.to_s].join(', '))
 
       # second group
       @third_complaint = FactoryBot.create(:complaint)
-      @fourth_complaint = FactoryBot.create(:complaint, dupe_refs: [@third_complaint.case_reference.to_s])
+      @fourth_complaint = FactoryBot.create(:complaint, dupe_refs: [@third_complaint.case_reference.to_s].join(', '))
 
-      @complaint.dupe_refs=[@third_complaint.case_reference.to_s]
+      @complaint.dupe_refs=@third_complaint.case_reference.to_s
     end
 
     it "should dissolve existing group and add to new group" do

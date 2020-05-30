@@ -92,7 +92,7 @@ module ComplaintsSpecSetupHelpers
   def populate_database(type, options={})
     # start rspec with capture=true one time to trigger capture to file
     # after that seed data will be loaded from files
-    with_capture "Complaints::Engine", :complaints, :areas, :subareas, :agencies, :district_municipalities, :complaint_statuses do
+    with_capture "Complaints::Engine", :complaints, :areas, :subareas, :agencies, :district_municipalities, :complaint_statuses, :case_references do
       populate_associations
     end
     set_file_defaults
@@ -129,7 +129,8 @@ module ComplaintsSpecSetupHelpers
                       :agencies => _agencies(options[:agency_count] || 2),
                       :communications => _communications,
                       :organization_name => Faker::Company.name,
-                      :organization_registration_number => "56785678")
+                      :organization_registration_number => "56785678",
+                      :dupe_refs => Complaint.first.case_reference.to_s)
   end
 
   def create_legislations

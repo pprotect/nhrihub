@@ -1,374 +1,374 @@
-1	The Auditor-General	\N	2020-05-23 15:11:51.489286	2020-05-23 15:11:51.489286	\N	DemocracySupportingStateInstitution	\N	\N
-2	The Commission for the Promotion and Protection of the Rights of Cultural, Religious and Linguistic Communities	\N	2020-05-23 15:11:51.512519	2020-05-23 15:11:51.512519	\N	DemocracySupportingStateInstitution	\N	\N
-3	The Commission on Gender Equality	\N	2020-05-23 15:11:51.51539	2020-05-23 15:11:51.51539	\N	DemocracySupportingStateInstitution	\N	\N
-4	The Human Rights Commission	\N	2020-05-23 15:11:51.51818	2020-05-23 15:11:51.51818	\N	DemocracySupportingStateInstitution	\N	\N
-5	The Independent Electoral Commission	\N	2020-05-23 15:11:51.520523	2020-05-23 15:11:51.520523	\N	DemocracySupportingStateInstitution	\N	\N
-6	The Public Protector	\N	2020-05-23 15:11:51.523933	2020-05-23 15:11:51.523933	\N	DemocracySupportingStateInstitution	\N	\N
-7	Independent Complaints Directorate	\N	2020-05-23 15:11:51.541647	2020-05-23 15:11:51.541647	\N	NationalGovernmentInstitution	\N	\N
-8	National Intelligence Agency	\N	2020-05-23 15:11:51.561414	2020-05-23 15:11:51.561414	\N	NationalGovernmentInstitution	\N	\N
-9	National Treasury	\N	2020-05-23 15:11:51.564409	2020-05-23 15:11:51.564409	\N	NationalGovernmentInstitution	\N	\N
-10	Public Service Commission	\N	2020-05-23 15:11:51.567234	2020-05-23 15:11:51.567234	\N	NationalGovernmentInstitution	\N	\N
-11	Public Administration Leadership and Management Academy 	\N	2020-05-23 15:11:51.569801	2020-05-23 15:11:51.569801	\N	NationalGovernmentInstitution	\N	\N
-12	South African Police Service	\N	2020-05-23 15:11:51.572933	2020-05-23 15:11:51.572933	\N	NationalGovernmentInstitution	\N	\N
-13	South African Revenue Service	\N	2020-05-23 15:11:51.577271	2020-05-23 15:11:51.577271	\N	NationalGovernmentInstitution	\N	\N
-14	South African Secret Service	\N	2020-05-23 15:11:51.581841	2020-05-23 15:11:51.581841	\N	NationalGovernmentInstitution	\N	\N
-15	Statistics South Africa	\N	2020-05-23 15:11:51.612301	2020-05-23 15:11:51.612301	\N	NationalGovernmentInstitution	\N	\N
-16	Department of Agriculture, Forestry and Fisheries	\N	2020-05-23 15:11:51.628155	2020-05-23 15:11:51.628155	\N	NationalGovernmentAgency	\N	\N
-17	Department of Arts and Culture 	\N	2020-05-23 15:11:51.631706	2020-05-23 15:11:51.631706	\N	NationalGovernmentAgency	\N	\N
-18	Department of Basic Education	\N	2020-05-23 15:11:51.66005	2020-05-23 15:11:51.66005	\N	NationalGovernmentAgency	\N	\N
-19	Civilian Secretariat for Police	\N	2020-05-23 15:11:51.663237	2020-05-23 15:11:51.663237	\N	NationalGovernmentAgency	\N	\N
-20	Department of Communications	\N	2020-05-23 15:11:51.66583	2020-05-23 15:11:51.66583	\N	NationalGovernmentAgency	\N	\N
-21	Department of Cooperative Governance and Traditional Affairs	\N	2020-05-23 15:11:51.668276	2020-05-23 15:11:51.668276	\N	NationalGovernmentAgency	\N	\N
-22	Department of Correctional Services	\N	2020-05-23 15:11:51.670673	2020-05-23 15:11:51.670673	\N	NationalGovernmentAgency	\N	\N
-23	Department of Defence	\N	2020-05-23 15:11:51.673417	2020-05-23 15:11:51.673417	\N	NationalGovernmentAgency	\N	\N
-24	Department of Economic Development	\N	2020-05-23 15:11:51.676058	2020-05-23 15:11:51.676058	\N	NationalGovernmentAgency	\N	\N
-25	Department of Energy 	\N	2020-05-23 15:11:51.678623	2020-05-23 15:11:51.678623	\N	NationalGovernmentAgency	\N	\N
-26	Department of Environmental Affairs 	\N	2020-05-23 15:11:51.681059	2020-05-23 15:11:51.681059	\N	NationalGovernmentAgency	\N	\N
-27	Department of Health	\N	2020-05-23 15:11:51.683938	2020-05-23 15:11:51.683938	\N	NationalGovernmentAgency	\N	\N
-28	Department of Higher Education and Training	\N	2020-05-23 15:11:51.713508	2020-05-23 15:11:51.713508	\N	NationalGovernmentAgency	\N	\N
-29	Department of Home Affairs	\N	2020-05-23 15:11:51.718443	2020-05-23 15:11:51.718443	\N	NationalGovernmentAgency	\N	\N
-30	Department of Human Settlements	\N	2020-05-23 15:11:51.721991	2020-05-23 15:11:51.721991	\N	NationalGovernmentAgency	\N	\N
-31	Independent Police Investigative Directorate	\N	2020-05-23 15:11:51.725452	2020-05-23 15:11:51.725452	\N	NationalGovernmentAgency	\N	\N
-32	Department of International Relations and Cooperation	\N	2020-05-23 15:11:51.729742	2020-05-23 15:11:51.729742	\N	NationalGovernmentAgency	\N	\N
-33	Department of Justice and Constitutional Development	\N	2020-05-23 15:11:51.733093	2020-05-23 15:11:51.733093	\N	NationalGovernmentAgency	\N	\N
-34	Department of Labour	\N	2020-05-23 15:11:51.762741	2020-05-23 15:11:51.762741	\N	NationalGovernmentAgency	\N	\N
-35	Department of Military Veterans	\N	2020-05-23 15:11:51.766386	2020-05-23 15:11:51.766386	\N	NationalGovernmentAgency	\N	\N
-36	Department of Mineral Resources 	\N	2020-05-23 15:11:51.769517	2020-05-23 15:11:51.769517	\N	NationalGovernmentAgency	\N	\N
-37	National Treasury	\N	2020-05-23 15:11:51.772973	2020-05-23 15:11:51.772973	\N	NationalGovernmentAgency	\N	\N
-38	Department of Performance Monitoring and Evaluation	\N	2020-05-23 15:11:51.777167	2020-05-23 15:11:51.777167	\N	NationalGovernmentAgency	\N	\N
-39	Public Administration Leadership and Management Academy	\N	2020-05-23 15:11:51.836016	2020-05-23 15:11:51.836016	\N	NationalGovernmentAgency	\N	\N
-40	Department of Public Enterprises	\N	2020-05-23 15:11:51.862221	2020-05-23 15:11:51.862221	\N	NationalGovernmentAgency	\N	\N
-41	Department of Public Service and Administration	\N	2020-05-23 15:11:51.865208	2020-05-23 15:11:51.865208	\N	NationalGovernmentAgency	\N	\N
-42	Public Service Commission	\N	2020-05-23 15:11:51.868167	2020-05-23 15:11:51.868167	\N	NationalGovernmentAgency	\N	\N
-43	Department of Public Works	\N	2020-05-23 15:11:51.870916	2020-05-23 15:11:51.870916	\N	NationalGovernmentAgency	\N	\N
-44	Department of Rural Development and Land Reform	\N	2020-05-23 15:11:51.874607	2020-05-23 15:11:51.874607	\N	NationalGovernmentAgency	\N	\N
-45	Department of Science and Technology	\N	2020-05-23 15:11:51.878727	2020-05-23 15:11:51.878727	\N	NationalGovernmentAgency	\N	\N
-46	Department of Social Development 	\N	2020-05-23 15:11:51.883226	2020-05-23 15:11:51.883226	\N	NationalGovernmentAgency	\N	\N
-47	South African Police Service	\N	2020-05-23 15:11:51.912033	2020-05-23 15:11:51.912033	\N	NationalGovernmentAgency	\N	\N
-48	South African Revenue Service	\N	2020-05-23 15:11:51.91558	2020-05-23 15:11:51.91558	\N	NationalGovernmentAgency	\N	\N
-49	State Security Agency	\N	2020-05-23 15:11:51.918926	2020-05-23 15:11:51.918926	\N	NationalGovernmentAgency	\N	\N
-50	Department of Sport and Recreation South Africa	\N	2020-05-23 15:11:51.921855	2020-05-23 15:11:51.921855	\N	NationalGovernmentAgency	\N	\N
-51	Statistics South Africa	\N	2020-05-23 15:11:51.926367	2020-05-23 15:11:51.926367	\N	NationalGovernmentAgency	\N	\N
-52	Department of Tourism 	\N	2020-05-23 15:11:51.930815	2020-05-23 15:11:51.930815	\N	NationalGovernmentAgency	\N	\N
-53	Department of Trade and Industry	\N	2020-05-23 15:11:51.959978	2020-05-23 15:11:51.959978	\N	NationalGovernmentAgency	\N	\N
-54	Department of Traditional Affairs	\N	2020-05-23 15:11:51.96371	2020-05-23 15:11:51.96371	\N	NationalGovernmentAgency	\N	\N
-55	Department of Transport	\N	2020-05-23 15:11:51.966918	2020-05-23 15:11:51.966918	\N	NationalGovernmentAgency	\N	\N
-56	Department of Water Affairs	\N	2020-05-23 15:11:51.969964	2020-05-23 15:11:51.969964	\N	NationalGovernmentAgency	\N	\N
-57	Department of Women, Children & People with Disabilities	\N	2020-05-23 15:11:51.97341	2020-05-23 15:11:51.97341	\N	NationalGovernmentAgency	\N	\N
-58	The Presidency	\N	2020-05-23 15:11:51.976954	2020-05-23 15:11:51.976954	\N	NationalGovernmentAgency	\N	\N
-59	Cooperative Governance and Traditional Affairs	\N	2020-05-23 15:11:52.030025	2020-05-23 15:11:52.030025	\N	ProvincialAgency	9	\N
-60	Economic Development, Environmental Affairs and Tourism	\N	2020-05-23 15:11:52.060742	2020-05-23 15:11:52.060742	\N	ProvincialAgency	9	\N
-61	Education	\N	2020-05-23 15:11:52.066534	2020-05-23 15:11:52.066534	\N	ProvincialAgency	9	\N
-62	Health	\N	2020-05-23 15:11:52.070841	2020-05-23 15:11:52.070841	\N	ProvincialAgency	9	\N
-63	Human Settlements	\N	2020-05-23 15:11:52.076891	2020-05-23 15:11:52.076891	\N	ProvincialAgency	9	\N
-64	Provincial Treasury	\N	2020-05-23 15:11:52.083723	2020-05-23 15:11:52.083723	\N	ProvincialAgency	9	\N
-65	Public Works	\N	2020-05-23 15:11:52.115807	2020-05-23 15:11:52.115807	\N	ProvincialAgency	9	\N
-66	Rural Development and Agrarian Reform	\N	2020-05-23 15:11:52.121827	2020-05-23 15:11:52.121827	\N	ProvincialAgency	9	\N
-67	Safety and Liaison	\N	2020-05-23 15:11:52.131421	2020-05-23 15:11:52.131421	\N	ProvincialAgency	9	\N
-68	Social Development	\N	2020-05-23 15:11:52.161529	2020-05-23 15:11:52.161529	\N	ProvincialAgency	9	\N
-69	Sport, Recreation, Arts and Culture	\N	2020-05-23 15:11:52.165218	2020-05-23 15:11:52.165218	\N	ProvincialAgency	9	\N
-70	Transport	\N	2020-05-23 15:11:52.168549	2020-05-23 15:11:52.168549	\N	ProvincialAgency	9	\N
-71	Agriculture and Rural Development	\N	2020-05-23 15:11:52.173491	2020-05-23 15:11:52.173491	\N	ProvincialAgency	7	\N
-72	Cooperative Governance and Traditional Affairs	\N	2020-05-23 15:11:52.179465	2020-05-23 15:11:52.179465	\N	ProvincialAgency	7	\N
-73	Economic, Small Business Development, Tourism and Environmental Affairs	\N	2020-05-23 15:11:52.211637	2020-05-23 15:11:52.211637	\N	ProvincialAgency	7	\N
-74	Education	\N	2020-05-23 15:11:52.218972	2020-05-23 15:11:52.218972	\N	ProvincialAgency	7	\N
-75	Health	\N	2020-05-23 15:11:52.224911	2020-05-23 15:11:52.224911	\N	ProvincialAgency	7	\N
-76	Human Settlements	\N	2020-05-23 15:11:52.230853	2020-05-23 15:11:52.230853	\N	ProvincialAgency	7	\N
-77	Police, Roads and Transport	\N	2020-05-23 15:11:52.26153	2020-05-23 15:11:52.26153	\N	ProvincialAgency	7	\N
-78	Provincial Treasury	\N	2020-05-23 15:11:52.265376	2020-05-23 15:11:52.265376	\N	ProvincialAgency	7	\N
-79	Public Works and Infrastructure	\N	2020-05-23 15:11:52.268859	2020-05-23 15:11:52.268859	\N	ProvincialAgency	7	\N
-80	Social Development	\N	2020-05-23 15:11:52.273377	2020-05-23 15:11:52.273377	\N	ProvincialAgency	7	\N
-81	Sport, Arts, Culture and Recreation	\N	2020-05-23 15:11:52.279222	2020-05-23 15:11:52.279222	\N	ProvincialAgency	7	\N
-82	Agriculture and Rural Development	\N	2020-05-23 15:11:52.310539	2020-05-23 15:11:52.310539	\N	ProvincialAgency	1	\N
-83	Co-operative Governance and Traditional Affairs	\N	2020-05-23 15:11:52.316611	2020-05-23 15:11:52.316611	\N	ProvincialAgency	1	\N
-84	Community Safety	\N	2020-05-23 15:11:52.320684	2020-05-23 15:11:52.320684	\N	ProvincialAgency	1	\N
-85	e-Government	\N	2020-05-23 15:11:52.326198	2020-05-23 15:11:52.326198	\N	ProvincialAgency	1	\N
-86	Economic Development	\N	2020-05-23 15:11:52.332596	2020-05-23 15:11:52.332596	\N	ProvincialAgency	1	\N
-87	Education	\N	2020-05-23 15:11:52.363417	2020-05-23 15:11:52.363417	\N	ProvincialAgency	1	\N
-88	Health	\N	2020-05-23 15:11:52.367678	2020-05-23 15:11:52.367678	\N	ProvincialAgency	1	\N
-89	Human Settlements	\N	2020-05-23 15:11:52.371602	2020-05-23 15:11:52.371602	\N	ProvincialAgency	1	\N
-90	Infrastructure Development	\N	2020-05-23 15:11:52.37693	2020-05-23 15:11:52.37693	\N	ProvincialAgency	1	\N
-91	Roads and Transport	\N	2020-05-23 15:11:52.382569	2020-05-23 15:11:52.382569	\N	ProvincialAgency	1	\N
-92	Social Development	\N	2020-05-23 15:11:52.415057	2020-05-23 15:11:52.415057	\N	ProvincialAgency	1	\N
-93	Sport, Arts, Culture and Recreation	\N	2020-05-23 15:11:52.420559	2020-05-23 15:11:52.420559	\N	ProvincialAgency	1	\N
-94	Treasury	\N	2020-05-23 15:11:52.427455	2020-05-23 15:11:52.427455	\N	ProvincialAgency	1	\N
-95	Agriculture and Rural Development	\N	2020-05-23 15:11:52.433102	2020-05-23 15:11:52.433102	\N	ProvincialAgency	5	\N
-96	Arts and Culture	\N	2020-05-23 15:11:52.462474	2020-05-23 15:11:52.462474	\N	ProvincialAgency	5	\N
-97	Co-operative Governance and Traditional Affairs	\N	2020-05-23 15:11:52.466112	2020-05-23 15:11:52.466112	\N	ProvincialAgency	5	\N
-98	Community Safety and Liaison	\N	2020-05-23 15:11:52.469823	2020-05-23 15:11:52.469823	\N	ProvincialAgency	5	\N
-99	Economic Development, Tourism and Environmental Affairs	\N	2020-05-23 15:11:52.474482	2020-05-23 15:11:52.474482	\N	ProvincialAgency	5	\N
-100	Education	\N	2020-05-23 15:11:52.479435	2020-05-23 15:11:52.479435	\N	ProvincialAgency	5	\N
-101	Health	\N	2020-05-23 15:11:52.510243	2020-05-23 15:11:52.510243	\N	ProvincialAgency	5	\N
-102	Human Settlements	\N	2020-05-23 15:11:52.514349	2020-05-23 15:11:52.514349	\N	ProvincialAgency	5	\N
-103	Provincial Treasury	\N	2020-05-23 15:11:52.518953	2020-05-23 15:11:52.518953	\N	ProvincialAgency	5	\N
-104	Public Works	\N	2020-05-23 15:11:52.52337	2020-05-23 15:11:52.52337	\N	ProvincialAgency	5	\N
-105	Social Development	\N	2020-05-23 15:11:52.529143	2020-05-23 15:11:52.529143	\N	ProvincialAgency	5	\N
-106	Sport and Recreation	\N	2020-05-23 15:11:52.560377	2020-05-23 15:11:52.560377	\N	ProvincialAgency	5	\N
-107	Transport	\N	2020-05-23 15:11:52.565083	2020-05-23 15:11:52.565083	\N	ProvincialAgency	5	\N
-108	Agriculture and Rural Development	\N	2020-05-23 15:11:52.568696	2020-05-23 15:11:52.568696	\N	ProvincialAgency	6	\N
-109	Cooperative Governance, Human Settlements and Traditional Affairs	\N	2020-05-23 15:11:52.573029	2020-05-23 15:11:52.573029	\N	ProvincialAgency	6	\N
-110	Economic Development, Environment and Tourism	\N	2020-05-23 15:11:52.578458	2020-05-23 15:11:52.578458	\N	ProvincialAgency	6	\N
-111	Education	\N	2020-05-23 15:11:52.610879	2020-05-23 15:11:52.610879	\N	ProvincialAgency	6	\N
-112	Health	\N	2020-05-23 15:11:52.616186	2020-05-23 15:11:52.616186	\N	ProvincialAgency	6	\N
-113	Provincial Treasury	\N	2020-05-23 15:11:52.620883	2020-05-23 15:11:52.620883	\N	ProvincialAgency	6	\N
-114	Public Works, Roads and Infrastructure	\N	2020-05-23 15:11:52.626985	2020-05-23 15:11:52.626985	\N	ProvincialAgency	6	\N
-115	Social Development	\N	2020-05-23 15:11:52.632358	2020-05-23 15:11:52.632358	\N	ProvincialAgency	6	\N
-116	Sport, Arts and Culture	\N	2020-05-23 15:11:52.66281	2020-05-23 15:11:52.66281	\N	ProvincialAgency	6	\N
-117	Transport and Community Safety	\N	2020-05-23 15:11:52.666293	2020-05-23 15:11:52.666293	\N	ProvincialAgency	6	\N
-118	Agriculture, Rural Development, Land and Environmental Affairs	\N	2020-05-23 15:11:52.670015	2020-05-23 15:11:52.670015	\N	ProvincialAgency	2	\N
-119	Co-operative Governance and Traditional Affairs	\N	2020-05-23 15:11:52.675016	2020-05-23 15:11:52.675016	\N	ProvincialAgency	2	\N
-120	Community Safety, Security and Liaison	\N	2020-05-23 15:11:52.680276	2020-05-23 15:11:52.680276	\N	ProvincialAgency	2	\N
-121	Culture, Sport and Recreation	\N	2020-05-23 15:11:52.711211	2020-05-23 15:11:52.711211	\N	ProvincialAgency	2	\N
-122	Economic Development and Tourism	\N	2020-05-23 15:11:52.716512	2020-05-23 15:11:52.716512	\N	ProvincialAgency	2	\N
-123	Education	\N	2020-05-23 15:11:52.720627	2020-05-23 15:11:52.720627	\N	ProvincialAgency	2	\N
-124	Health	\N	2020-05-23 15:11:52.726037	2020-05-23 15:11:52.726037	\N	ProvincialAgency	2	\N
-125	Human Settlements	\N	2020-05-23 15:11:52.732469	2020-05-23 15:11:52.732469	\N	ProvincialAgency	2	\N
-126	Provincial Treasury	\N	2020-05-23 15:11:52.762309	2020-05-23 15:11:52.762309	\N	ProvincialAgency	2	\N
-127	Public Works, Roads and Transport	\N	2020-05-23 15:11:52.765813	2020-05-23 15:11:52.765813	\N	ProvincialAgency	2	\N
-128	Social Development	\N	2020-05-23 15:11:52.769499	2020-05-23 15:11:52.769499	\N	ProvincialAgency	2	\N
-129	Agriculture and Rural Development	\N	2020-05-23 15:11:52.774317	2020-05-23 15:11:52.774317	\N	ProvincialAgency	3	\N
-130	Arts, Culture, Sports and Recreation	\N	2020-05-23 15:11:52.78039	2020-05-23 15:11:52.78039	\N	ProvincialAgency	3	\N
-131	Community Safety and Transport Management	\N	2020-05-23 15:11:52.812776	2020-05-23 15:11:52.812776	\N	ProvincialAgency	3	\N
-132	Cooperative Governance, Human Settlements and Traditional Affairs	\N	2020-05-23 15:11:52.818615	2020-05-23 15:11:52.818615	\N	ProvincialAgency	3	\N
-133	Economic Development, Environment, Conservation and Tourism	\N	2020-05-23 15:11:52.824204	2020-05-23 15:11:52.824204	\N	ProvincialAgency	3	\N
-134	Education	\N	2020-05-23 15:11:52.83006	2020-05-23 15:11:52.83006	\N	ProvincialAgency	3	\N
-135	Health	\N	2020-05-23 15:11:52.860479	2020-05-23 15:11:52.860479	\N	ProvincialAgency	3	\N
-136	Provincial Treasury	\N	2020-05-23 15:11:52.865593	2020-05-23 15:11:52.865593	\N	ProvincialAgency	3	\N
-137	Public Works and Roads	\N	2020-05-23 15:11:52.870535	2020-05-23 15:11:52.870535	\N	ProvincialAgency	3	\N
-138	Social Development	\N	2020-05-23 15:11:52.87699	2020-05-23 15:11:52.87699	\N	ProvincialAgency	3	\N
-139	Agriculture, Land Reform and Rural Development	\N	2020-05-23 15:11:52.882665	2020-05-23 15:11:52.882665	\N	ProvincialAgency	8	\N
-140	Co-operative Governance, Human Settlements and Traditional Affairs	\N	2020-05-23 15:11:52.913867	2020-05-23 15:11:52.913867	\N	ProvincialAgency	8	\N
-141	Economic Development and Tourism	\N	2020-05-23 15:11:52.91858	2020-05-23 15:11:52.91858	\N	ProvincialAgency	8	\N
-142	Education	\N	2020-05-23 15:11:52.924091	2020-05-23 15:11:52.924091	\N	ProvincialAgency	8	\N
-143	Environment and Nature Conservation	\N	2020-05-23 15:11:52.929776	2020-05-23 15:11:52.929776	\N	ProvincialAgency	8	\N
-144	Health	\N	2020-05-23 15:11:52.960777	2020-05-23 15:11:52.960777	\N	ProvincialAgency	8	\N
-145	Provincial Treasury	\N	2020-05-23 15:11:52.965172	2020-05-23 15:11:52.965172	\N	ProvincialAgency	8	\N
-146	Roads and Public Works	\N	2020-05-23 15:11:52.96902	2020-05-23 15:11:52.96902	\N	ProvincialAgency	8	\N
-147	Social Development	\N	2020-05-23 15:11:52.97338	2020-05-23 15:11:52.97338	\N	ProvincialAgency	8	\N
-148	Sport, Arts and Culture	\N	2020-05-23 15:11:52.978734	2020-05-23 15:11:52.978734	\N	ProvincialAgency	8	\N
-149	Transport, Safety and Liaison	\N	2020-05-23 15:11:52.983569	2020-05-23 15:11:52.983569	\N	ProvincialAgency	8	\N
-150	Agriculture	\N	2020-05-23 15:11:53.013755	2020-05-23 15:11:53.013755	\N	ProvincialAgency	4	\N
-151	Community Safety	\N	2020-05-23 15:11:53.019245	2020-05-23 15:11:53.019245	\N	ProvincialAgency	4	\N
-152	Cultural Affairs and Sport	\N	2020-05-23 15:11:53.024209	2020-05-23 15:11:53.024209	\N	ProvincialAgency	4	\N
-153	Economic Development and Tourism	\N	2020-05-23 15:11:53.028791	2020-05-23 15:11:53.028791	\N	ProvincialAgency	4	\N
-154	Education	\N	2020-05-23 15:11:53.033549	2020-05-23 15:11:53.033549	\N	ProvincialAgency	4	\N
-155	Environmental Affairs and Development Planning	\N	2020-05-23 15:11:53.06372	2020-05-23 15:11:53.06372	\N	ProvincialAgency	4	\N
-156	Health	\N	2020-05-23 15:11:53.068089	2020-05-23 15:11:53.068089	\N	ProvincialAgency	4	\N
-157	Human Settlements	\N	2020-05-23 15:11:53.072328	2020-05-23 15:11:53.072328	\N	ProvincialAgency	4	\N
-158	Local Government	\N	2020-05-23 15:11:53.076546	2020-05-23 15:11:53.076546	\N	ProvincialAgency	4	\N
-159	Provincial Treasury	\N	2020-05-23 15:11:53.082623	2020-05-23 15:11:53.082623	\N	ProvincialAgency	4	\N
-160	Social Development	\N	2020-05-23 15:11:53.112456	2020-05-23 15:11:53.112456	\N	ProvincialAgency	4	\N
-161	Transport and Public Works	\N	2020-05-23 15:11:53.116267	2020-05-23 15:11:53.116267	\N	ProvincialAgency	4	\N
-162	Buffalo City	\N	2020-05-23 15:11:53.181853	2020-05-23 15:11:53.181853	BUF	MetropolitanMunicipality	9	\N
-163	City of Cape Town	\N	2020-05-23 15:11:53.226522	2020-05-23 15:11:53.226522	CPT	MetropolitanMunicipality	4	\N
-164	City of Johannesburg	\N	2020-05-23 15:11:53.229932	2020-05-23 15:11:53.229932	JHB	MetropolitanMunicipality	1	\N
-165	City of Tshwane	\N	2020-05-23 15:11:53.232737	2020-05-23 15:11:53.232737	TSH	MetropolitanMunicipality	1	\N
-166	Ekurhuleni	\N	2020-05-23 15:11:53.272841	2020-05-23 15:11:53.272841	EKU	MetropolitanMunicipality	1	\N
-167	eThekwini	\N	2020-05-23 15:11:53.277494	2020-05-23 15:11:53.277494	ETH	MetropolitanMunicipality	5	\N
-168	Mangaung	\N	2020-05-23 15:11:53.364477	2020-05-23 15:11:53.364477	MAN	MetropolitanMunicipality	7	\N
-169	Nelson Mandela Bay	\N	2020-05-23 15:11:53.373561	2020-05-23 15:11:53.373561	NMA	MetropolitanMunicipality	9	\N
-170	!Kheis	\N	2020-05-23 15:11:53.538099	2020-05-23 15:11:53.538099	NC084	LocalMunicipality	8	43
-171	Abaqulusi	\N	2020-05-23 15:11:53.562056	2020-05-23 15:11:53.562056	KZN263	LocalMunicipality	5	44
-172	Albert Luthuli	\N	2020-05-23 15:11:53.564998	2020-05-23 15:11:53.564998	MP301	LocalMunicipality	2	15
-173	Alfred Duma	\N	2020-05-23 15:11:53.568405	2020-05-23 15:11:53.568405	KZN238	LocalMunicipality	5	37
-174	Amahlathi	\N	2020-05-23 15:11:53.571765	2020-05-23 15:11:53.571765	EC124	LocalMunicipality	9	3
-175	Ba-Phalaborwa	\N	2020-05-23 15:11:53.57506	2020-05-23 15:11:53.57506	LIM334	LocalMunicipality	6	22
-176	Beaufort West	\N	2020-05-23 15:11:53.579378	2020-05-23 15:11:53.579378	WC053	LocalMunicipality	4	7
-177	Bela-Bela	\N	2020-05-23 15:11:53.585864	2020-05-23 15:11:53.585864	LIM366	LocalMunicipality	6	39
-178	Bergrivier	\N	2020-05-23 15:11:53.613673	2020-05-23 15:11:53.613673	WC013	LocalMunicipality	4	40
-179	Big Five Hlabisa	\N	2020-05-23 15:11:53.617972	2020-05-23 15:11:53.617972	KZN276	LocalMunicipality	5	35
-180	Bitou	\N	2020-05-23 15:11:53.622038	2020-05-23 15:11:53.622038	WC047	LocalMunicipality	4	14
-181	Blouberg	\N	2020-05-23 15:11:53.626185	2020-05-23 15:11:53.626185	LIM351	LocalMunicipality	6	6
-182	Blue Crane Route	\N	2020-05-23 15:11:53.629287	2020-05-23 15:11:53.629287	EC102	LocalMunicipality	9	29
-183	Breede Valley	\N	2020-05-23 15:11:53.632229	2020-05-23 15:11:53.632229	WC025	LocalMunicipality	4	5
-184	Bushbuckridge	\N	2020-05-23 15:11:53.660907	2020-05-23 15:11:53.660907	MP325	LocalMunicipality	2	11
-185	Cape Agulhas	\N	2020-05-23 15:11:53.664395	2020-05-23 15:11:53.664395	WC033	LocalMunicipality	4	27
-186	Cederberg	\N	2020-05-23 15:11:53.667662	2020-05-23 15:11:53.667662	WC012	LocalMunicipality	4	40
-187	City of Matlosana	\N	2020-05-23 15:11:53.670762	2020-05-23 15:11:53.670762	NW403	LocalMunicipality	3	9
-188	Collins Chabane	\N	2020-05-23 15:11:53.674839	2020-05-23 15:11:53.674839	LIM345	LocalMunicipality	6	38
-189	Dannhauser	\N	2020-05-23 15:11:53.678092	2020-05-23 15:11:53.678092	KZN254	LocalMunicipality	5	2
-190	Dawid Kruiper	\N	2020-05-23 15:11:53.681439	2020-05-23 15:11:53.681439	NC087	LocalMunicipality	8	43
-191	Dihlabeng	\N	2020-05-23 15:11:53.710261	2020-05-23 15:11:53.710261	FS192	LocalMunicipality	7	32
-192	Dikgatlong	\N	2020-05-23 15:11:53.71495	2020-05-23 15:11:53.71495	NC092	LocalMunicipality	8	13
-193	Dipaleseng	\N	2020-05-23 15:11:53.719001	2020-05-23 15:11:53.719001	MP306	LocalMunicipality	2	15
-194	Ditsobotla	\N	2020-05-23 15:11:53.722696	2020-05-23 15:11:53.722696	NW384	LocalMunicipality	3	24
-195	Dr Beyers Naudé	\N	2020-05-23 15:11:53.726662	2020-05-23 15:11:53.726662	EC101	LocalMunicipality	9	29
-196	Dr JS Moroka	\N	2020-05-23 15:11:53.731045	2020-05-23 15:11:53.731045	MP316	LocalMunicipality	2	25
-197	Dr Nkosazana Dlamini Zuma	\N	2020-05-23 15:11:53.734479	2020-05-23 15:11:53.734479	KZN436	LocalMunicipality	5	16
-198	Drakenstein	\N	2020-05-23 15:11:53.761538	2020-05-23 15:11:53.761538	WC023	LocalMunicipality	4	5
-199	eDumbe	\N	2020-05-23 15:11:53.764439	2020-05-23 15:11:53.764439	KZN261	LocalMunicipality	5	44
-200	Elias Motsoaledi	\N	2020-05-23 15:11:53.767952	2020-05-23 15:11:53.767952	LIM472	LocalMunicipality	6	31
-201	Elundini	\N	2020-05-23 15:11:53.770923	2020-05-23 15:11:53.770923	EC141	LocalMunicipality	9	18
-202	eMadlangeni	\N	2020-05-23 15:11:53.774117	2020-05-23 15:11:53.774117	KZN253	LocalMunicipality	5	2
-203	Emakhazeni	\N	2020-05-23 15:11:53.777181	2020-05-23 15:11:53.777181	MP314	LocalMunicipality	2	25
-204	Emalahleni	\N	2020-05-23 15:11:53.78046	2020-05-23 15:11:53.78046	EC136	LocalMunicipality	9	8
-205	Emalahleni	\N	2020-05-23 15:11:53.784472	2020-05-23 15:11:53.784472	MP312	LocalMunicipality	2	25
-206	Emfuleni	\N	2020-05-23 15:11:53.814663	2020-05-23 15:11:53.814663	GT421	LocalMunicipality	1	30
-207	Emthanjeni	\N	2020-05-23 15:11:53.819444	2020-05-23 15:11:53.819444	NC073	LocalMunicipality	8	28
-208	Endumeni	\N	2020-05-23 15:11:53.824053	2020-05-23 15:11:53.824053	KZN241	LocalMunicipality	5	36
-209	Engcobo	\N	2020-05-23 15:11:53.827901	2020-05-23 15:11:53.827901	EC137	LocalMunicipality	9	8
-210	Enoch Mgijima	\N	2020-05-23 15:11:53.831709	2020-05-23 15:11:53.831709	EC139	LocalMunicipality	9	8
-211	Ephraim Mogale	\N	2020-05-23 15:11:53.860108	2020-05-23 15:11:53.860108	LIM471	LocalMunicipality	6	31
-212	Fetakgomo/Greater Tubatse	\N	2020-05-23 15:11:53.86394	2020-05-23 15:11:53.86394	LIM476	LocalMunicipality	6	31
-213	Ga-Segonyana	\N	2020-05-23 15:11:53.866882	2020-05-23 15:11:53.866882	NC452	LocalMunicipality	8	19
-214	Gamagara	\N	2020-05-23 15:11:53.869534	2020-05-23 15:11:53.869534	NC453	LocalMunicipality	8	19
-215	George	\N	2020-05-23 15:11:53.872242	2020-05-23 15:11:53.872242	WC044	LocalMunicipality	4	14
-216	Govan Mbeki	\N	2020-05-23 15:11:53.875554	2020-05-23 15:11:53.875554	MP307	LocalMunicipality	2	15
-217	Great Kei	\N	2020-05-23 15:11:53.878956	2020-05-23 15:11:53.878956	EC123	LocalMunicipality	9	3
-218	Greater Giyani	\N	2020-05-23 15:11:53.882284	2020-05-23 15:11:53.882284	LIM331	LocalMunicipality	6	22
-219	Greater Kokstad	\N	2020-05-23 15:11:53.911974	2020-05-23 15:11:53.911974	KZN433	LocalMunicipality	5	16
-220	Greater Letaba	\N	2020-05-23 15:11:53.915974	2020-05-23 15:11:53.915974	LIM332	LocalMunicipality	6	22
-221	Greater Taung	\N	2020-05-23 15:11:53.920044	2020-05-23 15:11:53.920044	NW394	LocalMunicipality	3	10
-222	Greater Tzaneen	\N	2020-05-23 15:11:53.923436	2020-05-23 15:11:53.923436	LIM333	LocalMunicipality	6	22
-223	Hantam	\N	2020-05-23 15:11:53.926723	2020-05-23 15:11:53.926723	NC065	LocalMunicipality	8	23
-224	Hessequa	\N	2020-05-23 15:11:53.930069	2020-05-23 15:11:53.930069	WC042	LocalMunicipality	4	14
-225	Impendle	\N	2020-05-23 15:11:53.933783	2020-05-23 15:11:53.933783	KZN224	LocalMunicipality	5	34
-226	Ingquza Hill	\N	2020-05-23 15:11:53.96139	2020-05-23 15:11:53.96139	EC153	LocalMunicipality	9	26
-227	Inkosi Langalibalele	\N	2020-05-23 15:11:53.964147	2020-05-23 15:11:53.964147	KZN237	LocalMunicipality	5	37
-228	Intsika Yethu	\N	2020-05-23 15:11:53.967394	2020-05-23 15:11:53.967394	EC135	LocalMunicipality	9	8
-229	Inxuba Yethemba	\N	2020-05-23 15:11:53.970191	2020-05-23 15:11:53.970191	EC131	LocalMunicipality	9	8
-230	JB Marks	\N	2020-05-23 15:11:53.973658	2020-05-23 15:11:53.973658	NW405	LocalMunicipality	3	9
-231	Joe Morolong	\N	2020-05-23 15:11:53.976943	2020-05-23 15:11:53.976943	NC451	LocalMunicipality	8	19
-232	Jozini	\N	2020-05-23 15:11:53.980506	2020-05-23 15:11:53.980506	KZN272	LocalMunicipality	5	35
-233	Kagisano-Molopo	\N	2020-05-23 15:11:54.011042	2020-05-23 15:11:54.011042	NW397	LocalMunicipality	3	10
-234	Kai !Garib	\N	2020-05-23 15:11:54.017491	2020-05-23 15:11:54.017491	NC082	LocalMunicipality	8	43
-235	Kamiesberg	\N	2020-05-23 15:11:54.022116	2020-05-23 15:11:54.022116	NC064	LocalMunicipality	8	23
-236	Kannaland	\N	2020-05-23 15:11:54.026341	2020-05-23 15:11:54.026341	WC041	LocalMunicipality	4	14
-237	Kareeberg	\N	2020-05-23 15:11:54.030334	2020-05-23 15:11:54.030334	NC074	LocalMunicipality	8	28
-238	Karoo Hoogland	\N	2020-05-23 15:11:54.033308	2020-05-23 15:11:54.033308	NC066	LocalMunicipality	8	23
-239	Kgatelopele	\N	2020-05-23 15:11:54.062138	2020-05-23 15:11:54.062138	NC086	LocalMunicipality	8	43
-240	Kgetlengrivier	\N	2020-05-23 15:11:54.06568	2020-05-23 15:11:54.06568	NW374	LocalMunicipality	3	4
-241	Khâi-Ma	\N	2020-05-23 15:11:54.069027	2020-05-23 15:11:54.069027	NC067	LocalMunicipality	8	23
-242	King Sabata Dalindyebo	\N	2020-05-23 15:11:54.072317	2020-05-23 15:11:54.072317	EC157	LocalMunicipality	9	26
-243	Knysna	\N	2020-05-23 15:11:54.07587	2020-05-23 15:11:54.07587	WC048	LocalMunicipality	4	14
-244	Kopanong	\N	2020-05-23 15:11:54.079854	2020-05-23 15:11:54.079854	FS162	LocalMunicipality	7	42
-245	Kou-Kamma	\N	2020-05-23 15:11:54.085903	2020-05-23 15:11:54.085903	EC109	LocalMunicipality	9	29
-246	Kouga	\N	2020-05-23 15:11:54.111229	2020-05-23 15:11:54.111229	EC108	LocalMunicipality	9	29
-247	KwaDukuza	\N	2020-05-23 15:11:54.113795	2020-05-23 15:11:54.113795	KZN292	LocalMunicipality	5	17
-248	Laingsburg	\N	2020-05-23 15:11:54.116731	2020-05-23 15:11:54.116731	WC051	LocalMunicipality	4	7
-249	Langeberg	\N	2020-05-23 15:11:54.119138	2020-05-23 15:11:54.119138	WC026	LocalMunicipality	4	5
-250	Lekwa	\N	2020-05-23 15:11:54.122114	2020-05-23 15:11:54.122114	MP305	LocalMunicipality	2	15
-251	Lekwa-Teemane	\N	2020-05-23 15:11:54.125874	2020-05-23 15:11:54.125874	NW396	LocalMunicipality	3	10
-252	Lepelle-Nkumpi	\N	2020-05-23 15:11:54.129463	2020-05-23 15:11:54.129463	LIM355	LocalMunicipality	6	6
-253	Lephalale	\N	2020-05-23 15:11:54.132802	2020-05-23 15:11:54.132802	LIM362	LocalMunicipality	6	39
-254	Lesedi	\N	2020-05-23 15:11:54.16223	2020-05-23 15:11:54.16223	GT423	LocalMunicipality	1	30
-255	Letsemeng	\N	2020-05-23 15:11:54.165481	2020-05-23 15:11:54.165481	FS161	LocalMunicipality	7	42
-256	Madibeng	\N	2020-05-23 15:11:54.168181	2020-05-23 15:11:54.168181	NW372	LocalMunicipality	3	4
-257	Mafube	\N	2020-05-23 15:11:54.171134	2020-05-23 15:11:54.171134	FS205	LocalMunicipality	7	12
-258	Magareng	\N	2020-05-23 15:11:54.174224	2020-05-23 15:11:54.174224	NC093	LocalMunicipality	8	13
-259	Mahikeng	\N	2020-05-23 15:11:54.177087	2020-05-23 15:11:54.177087	NW383	LocalMunicipality	3	24
-260	Makana	\N	2020-05-23 15:11:54.180812	2020-05-23 15:11:54.180812	EC104	LocalMunicipality	9	29
-261	Makhado	\N	2020-05-23 15:11:54.184401	2020-05-23 15:11:54.184401	LIM344	LocalMunicipality	6	38
-262	Makhuduthamaga	\N	2020-05-23 15:11:54.214169	2020-05-23 15:11:54.214169	LIM473	LocalMunicipality	6	31
-263	Maluti-a-Phofung	\N	2020-05-23 15:11:54.218351	2020-05-23 15:11:54.218351	FS194	LocalMunicipality	7	32
-264	Mamusa	\N	2020-05-23 15:11:54.222362	2020-05-23 15:11:54.222362	NW393	LocalMunicipality	3	10
-265	Mandeni	\N	2020-05-23 15:11:54.226509	2020-05-23 15:11:54.226509	KZN291	LocalMunicipality	5	17
-266	Mantsopa	\N	2020-05-23 15:11:54.229549	2020-05-23 15:11:54.229549	FS196	LocalMunicipality	7	32
-267	Maphumulo	\N	2020-05-23 15:11:54.232561	2020-05-23 15:11:54.232561	KZN294	LocalMunicipality	5	17
-268	Maquassi Hills	\N	2020-05-23 15:11:54.262274	2020-05-23 15:11:54.262274	NW404	LocalMunicipality	3	9
-269	Maruleng	\N	2020-05-23 15:11:54.265838	2020-05-23 15:11:54.265838	LIM335	LocalMunicipality	6	22
-270	Masilonyana	\N	2020-05-23 15:11:54.269095	2020-05-23 15:11:54.269095	FS181	LocalMunicipality	7	21
-271	Matatiele	\N	2020-05-23 15:11:54.272759	2020-05-23 15:11:54.272759	EC441	LocalMunicipality	9	1
-272	Matjhabeng	\N	2020-05-23 15:11:54.27579	2020-05-23 15:11:54.27579	FS184	LocalMunicipality	7	21
-273	Matzikama	\N	2020-05-23 15:11:54.278662	2020-05-23 15:11:54.278662	WC011	LocalMunicipality	4	40
-274	Mbhashe	\N	2020-05-23 15:11:54.281967	2020-05-23 15:11:54.281967	EC121	LocalMunicipality	9	3
-275	Mbizana	\N	2020-05-23 15:11:54.310587	2020-05-23 15:11:54.310587	EC443	LocalMunicipality	9	1
-276	Mbombela	\N	2020-05-23 15:11:54.314526	2020-05-23 15:11:54.314526	MP326	LocalMunicipality	2	11
-277	Merafong City	\N	2020-05-23 15:11:54.317392	2020-05-23 15:11:54.317392	GT484	LocalMunicipality	1	41
-278	Metsimaholo	\N	2020-05-23 15:11:54.320652	2020-05-23 15:11:54.320652	FS204	LocalMunicipality	7	12
-279	Mhlontlo	\N	2020-05-23 15:11:54.324095	2020-05-23 15:11:54.324095	EC156	LocalMunicipality	9	26
-280	Midvaal	\N	2020-05-23 15:11:54.32723	2020-05-23 15:11:54.32723	GT422	LocalMunicipality	1	30
-281	Mkhambathini	\N	2020-05-23 15:11:54.330518	2020-05-23 15:11:54.330518	KZN226	LocalMunicipality	5	34
-282	Mkhondo	\N	2020-05-23 15:11:54.333856	2020-05-23 15:11:54.333856	MP303	LocalMunicipality	2	15
-283	Mnquma	\N	2020-05-23 15:11:54.362408	2020-05-23 15:11:54.362408	EC122	LocalMunicipality	9	3
-284	Modimolle/Mookgophong	\N	2020-05-23 15:11:54.365731	2020-05-23 15:11:54.365731	LIM368	LocalMunicipality	6	39
-285	Mogalakwena	\N	2020-05-23 15:11:54.368827	2020-05-23 15:11:54.368827	LIM367	LocalMunicipality	6	39
-286	Mogale City	\N	2020-05-23 15:11:54.372286	2020-05-23 15:11:54.372286	GT481	LocalMunicipality	1	41
-287	Mohokare	\N	2020-05-23 15:11:54.375582	2020-05-23 15:11:54.375582	FS163	LocalMunicipality	7	42
-288	Molemole	\N	2020-05-23 15:11:54.378825	2020-05-23 15:11:54.378825	LIM353	LocalMunicipality	6	6
-289	Moqhaka	\N	2020-05-23 15:11:54.382406	2020-05-23 15:11:54.382406	FS201	LocalMunicipality	7	12
-290	Moretele	\N	2020-05-23 15:11:54.413399	2020-05-23 15:11:54.413399	NW371	LocalMunicipality	3	4
-291	Moses Kotane	\N	2020-05-23 15:11:54.418341	2020-05-23 15:11:54.418341	NW375	LocalMunicipality	3	4
-292	Mossel Bay	\N	2020-05-23 15:11:54.423032	2020-05-23 15:11:54.423032	WC043	LocalMunicipality	4	14
-293	Mpofana	\N	2020-05-23 15:11:54.427022	2020-05-23 15:11:54.427022	KZN223	LocalMunicipality	5	34
-294	Msinga	\N	2020-05-23 15:11:54.430568	2020-05-23 15:11:54.430568	KZN244	LocalMunicipality	5	36
-295	Msukaligwa	\N	2020-05-23 15:11:54.434235	2020-05-23 15:11:54.434235	MP302	LocalMunicipality	2	15
-296	Msunduzi	\N	2020-05-23 15:11:54.46221	2020-05-23 15:11:54.46221	KZN225	LocalMunicipality	5	34
-297	Mthonjaneni	\N	2020-05-23 15:11:54.465562	2020-05-23 15:11:54.465562	KZN285	LocalMunicipality	5	20
-298	Mtubatuba	\N	2020-05-23 15:11:54.468586	2020-05-23 15:11:54.468586	KZN275	LocalMunicipality	5	35
-299	Musina	\N	2020-05-23 15:11:54.471471	2020-05-23 15:11:54.471471	LIM341	LocalMunicipality	6	38
-300	Nala	\N	2020-05-23 15:11:54.474803	2020-05-23 15:11:54.474803	FS185	LocalMunicipality	7	21
-301	Naledi	\N	2020-05-23 15:11:54.478276	2020-05-23 15:11:54.478276	NW392	LocalMunicipality	3	10
-302	Nama Khoi	\N	2020-05-23 15:11:54.481672	2020-05-23 15:11:54.481672	NC062	LocalMunicipality	8	23
-303	Ndlambe	\N	2020-05-23 15:11:54.510147	2020-05-23 15:11:54.510147	EC105	LocalMunicipality	9	29
-304	Ndwedwe	\N	2020-05-23 15:11:54.513223	2020-05-23 15:11:54.513223	KZN293	LocalMunicipality	5	17
-305	Newcastle	\N	2020-05-23 15:11:54.516492	2020-05-23 15:11:54.516492	KZN252	LocalMunicipality	5	2
-306	Ngqushwa	\N	2020-05-23 15:11:54.520037	2020-05-23 15:11:54.520037	EC126	LocalMunicipality	9	3
-307	Ngwathe	\N	2020-05-23 15:11:54.523239	2020-05-23 15:11:54.523239	FS203	LocalMunicipality	7	12
-308	Nkandla	\N	2020-05-23 15:11:54.526831	2020-05-23 15:11:54.526831	KZN286	LocalMunicipality	5	20
-309	Nketoana	\N	2020-05-23 15:11:54.529928	2020-05-23 15:11:54.529928	FS193	LocalMunicipality	7	32
-310	Nkomazi	\N	2020-05-23 15:11:54.533802	2020-05-23 15:11:54.533802	MP324	LocalMunicipality	2	11
-311	Nongoma	\N	2020-05-23 15:11:54.561997	2020-05-23 15:11:54.561997	KZN265	LocalMunicipality	5	44
-312	Nqutu	\N	2020-05-23 15:11:54.565106	2020-05-23 15:11:54.565106	KZN242	LocalMunicipality	5	36
-313	Ntabankulu	\N	2020-05-23 15:11:54.605061	2020-05-23 15:11:54.605061	EC444	LocalMunicipality	9	1
-314	Nyandeni	\N	2020-05-23 15:11:54.611888	2020-05-23 15:11:54.611888	EC155	LocalMunicipality	9	26
-315	Okhahlamba	\N	2020-05-23 15:11:54.614855	2020-05-23 15:11:54.614855	KZN235	LocalMunicipality	5	37
-316	Oudtshoorn	\N	2020-05-23 15:11:54.617531	2020-05-23 15:11:54.617531	WC045	LocalMunicipality	4	14
-317	Overstrand	\N	2020-05-23 15:11:54.620115	2020-05-23 15:11:54.620115	WC032	LocalMunicipality	4	27
-318	Phokwane	\N	2020-05-23 15:11:54.623065	2020-05-23 15:11:54.623065	NC094	LocalMunicipality	8	13
-319	Phumelela	\N	2020-05-23 15:11:54.626028	2020-05-23 15:11:54.626028	FS195	LocalMunicipality	7	32
-320	Pixley ka Seme	\N	2020-05-23 15:11:54.629901	2020-05-23 15:11:54.629901	MP304	LocalMunicipality	2	15
-321	Polokwane	\N	2020-05-23 15:11:54.63345	2020-05-23 15:11:54.63345	LIM354	LocalMunicipality	6	6
-322	Port St Johns	\N	2020-05-23 15:11:54.664663	2020-05-23 15:11:54.664663	EC154	LocalMunicipality	9	26
-323	Prince Albert	\N	2020-05-23 15:11:54.668695	2020-05-23 15:11:54.668695	WC052	LocalMunicipality	4	7
-324	Ramotshere Moiloa	\N	2020-05-23 15:11:54.672323	2020-05-23 15:11:54.672323	NW385	LocalMunicipality	3	24
-325	Rand West City	\N	2020-05-23 15:11:54.676143	2020-05-23 15:11:54.676143	GT485	LocalMunicipality	1	41
-326	Ratlou	\N	2020-05-23 15:11:54.680013	2020-05-23 15:11:54.680013	NW381	LocalMunicipality	3	24
-327	Ray Nkonyeni	\N	2020-05-23 15:11:54.683907	2020-05-23 15:11:54.683907	KZN216	LocalMunicipality	5	33
-328	Raymond Mhlaba	\N	2020-05-23 15:11:54.712694	2020-05-23 15:11:54.712694	EC129	LocalMunicipality	9	3
-329	Renosterberg	\N	2020-05-23 15:11:54.716688	2020-05-23 15:11:54.716688	NC075	LocalMunicipality	8	28
-330	Richmond	\N	2020-05-23 15:11:54.720199	2020-05-23 15:11:54.720199	KZN227	LocalMunicipality	5	34
-331	Richtersveld	\N	2020-05-23 15:11:54.724256	2020-05-23 15:11:54.724256	NC061	LocalMunicipality	8	23
-332	Rustenburg	\N	2020-05-23 15:11:54.728375	2020-05-23 15:11:54.728375	NW373	LocalMunicipality	3	4
-333	Sakhisizwe	\N	2020-05-23 15:11:54.731903	2020-05-23 15:11:54.731903	EC138	LocalMunicipality	9	8
-334	Saldanha Bay	\N	2020-05-23 15:11:54.760345	2020-05-23 15:11:54.760345	WC014	LocalMunicipality	4	40
-335	Senqu	\N	2020-05-23 15:11:54.763747	2020-05-23 15:11:54.763747	EC142	LocalMunicipality	9	18
-336	Setsoto	\N	2020-05-23 15:11:54.766815	2020-05-23 15:11:54.766815	FS191	LocalMunicipality	7	32
-337	Siyancuma	\N	2020-05-23 15:11:54.769589	2020-05-23 15:11:54.769589	NC078	LocalMunicipality	8	28
-338	Siyathemba	\N	2020-05-23 15:11:54.772841	2020-05-23 15:11:54.772841	NC077	LocalMunicipality	8	28
-339	Sol Plaatje	\N	2020-05-23 15:11:54.7762	2020-05-23 15:11:54.7762	NC091	LocalMunicipality	8	13
-340	Stellenbosch	\N	2020-05-23 15:11:54.780066	2020-05-23 15:11:54.780066	WC024	LocalMunicipality	4	5
-341	Steve Tshwete	\N	2020-05-23 15:11:54.783626	2020-05-23 15:11:54.783626	MP313	LocalMunicipality	2	25
-342	Sundays River Valley	\N	2020-05-23 15:11:54.814396	2020-05-23 15:11:54.814396	EC106	LocalMunicipality	9	29
-343	Swartland	\N	2020-05-23 15:11:54.819526	2020-05-23 15:11:54.819526	WC015	LocalMunicipality	4	40
-344	Swellendam	\N	2020-05-23 15:11:54.824055	2020-05-23 15:11:54.824055	WC034	LocalMunicipality	4	27
-345	Thaba Chweu	\N	2020-05-23 15:11:54.828234	2020-05-23 15:11:54.828234	MP321	LocalMunicipality	2	11
-346	Thabazimbi	\N	2020-05-23 15:11:54.831583	2020-05-23 15:11:54.831583	LIM361	LocalMunicipality	6	39
-347	Theewaterskloof	\N	2020-05-23 15:11:54.863084	2020-05-23 15:11:54.863084	WC031	LocalMunicipality	4	27
-348	Thembelihle	\N	2020-05-23 15:11:54.86838	2020-05-23 15:11:54.86838	NC076	LocalMunicipality	8	28
-349	Thembisile Hani	\N	2020-05-23 15:11:54.872419	2020-05-23 15:11:54.872419	MP315	LocalMunicipality	2	25
-350	Thulamela	\N	2020-05-23 15:11:54.876601	2020-05-23 15:11:54.876601	LIM343	LocalMunicipality	6	38
-351	Tokologo	\N	2020-05-23 15:11:54.881135	2020-05-23 15:11:54.881135	FS182	LocalMunicipality	7	21
-352	Tsantsabane	\N	2020-05-23 15:11:54.911431	2020-05-23 15:11:54.911431	NC085	LocalMunicipality	8	43
-353	Tswaing	\N	2020-05-23 15:11:54.915906	2020-05-23 15:11:54.915906	NW382	LocalMunicipality	3	24
-354	Tswelopele	\N	2020-05-23 15:11:54.920645	2020-05-23 15:11:54.920645	FS183	LocalMunicipality	7	21
-355	Ubuhlebezwe	\N	2020-05-23 15:11:54.92535	2020-05-23 15:11:54.92535	KZN434	LocalMunicipality	5	16
-356	Ubuntu	\N	2020-05-23 15:11:54.929791	2020-05-23 15:11:54.929791	NC071	LocalMunicipality	8	28
-357	Ulundi	\N	2020-05-23 15:11:54.933797	2020-05-23 15:11:54.933797	KZN266	LocalMunicipality	5	44
-358	Umdoni	\N	2020-05-23 15:11:54.962374	2020-05-23 15:11:54.962374	KZN212	LocalMunicipality	5	33
-359	uMfolozi	\N	2020-05-23 15:11:54.96637	2020-05-23 15:11:54.96637	KZN281	LocalMunicipality	5	20
-360	uMhlabuyalingana	\N	2020-05-23 15:11:54.969495	2020-05-23 15:11:54.969495	KZN271	LocalMunicipality	5	35
-361	uMhlathuze	\N	2020-05-23 15:11:54.972987	2020-05-23 15:11:54.972987	KZN282	LocalMunicipality	5	20
-362	uMlalazi	\N	2020-05-23 15:11:54.976394	2020-05-23 15:11:54.976394	KZN284	LocalMunicipality	5	20
-363	uMngeni	\N	2020-05-23 15:11:54.979825	2020-05-23 15:11:54.979825	KZN222	LocalMunicipality	5	34
-364	uMshwathi	\N	2020-05-23 15:11:54.983468	2020-05-23 15:11:54.983468	KZN221	LocalMunicipality	5	34
-365	Umsobomvu	\N	2020-05-23 15:11:55.01261	2020-05-23 15:11:55.01261	NC072	LocalMunicipality	8	28
-366	uMuziwabantu	\N	2020-05-23 15:11:55.017398	2020-05-23 15:11:55.017398	KZN214	LocalMunicipality	5	33
-367	Umvoti	\N	2020-05-23 15:11:55.021829	2020-05-23 15:11:55.021829	KZN245	LocalMunicipality	5	36
-368	Umzimkhulu	\N	2020-05-23 15:11:55.026905	2020-05-23 15:11:55.026905	KZN435	LocalMunicipality	5	16
-369	Umzimvubu	\N	2020-05-23 15:11:55.031359	2020-05-23 15:11:55.031359	EC442	LocalMunicipality	9	1
-370	Umzumbe	\N	2020-05-23 15:11:55.061549	2020-05-23 15:11:55.061549	KZN213	LocalMunicipality	5	33
-371	uPhongolo	\N	2020-05-23 15:11:55.067422	2020-05-23 15:11:55.067422	KZN262	LocalMunicipality	5	44
-372	Victor Khanye	\N	2020-05-23 15:11:55.071508	2020-05-23 15:11:55.071508	MP311	LocalMunicipality	2	25
-373	Walter Sisulu	\N	2020-05-23 15:11:55.076111	2020-05-23 15:11:55.076111	EC145	LocalMunicipality	9	18
-374	Witzenberg	\N	2020-05-23 15:11:55.081883	2020-05-23 15:11:55.081883	WC022	LocalMunicipality	4	5
+1	The Auditor-General	\N	2020-05-29 20:13:34.948363	2020-05-29 20:13:34.948363	\N	DemocracySupportingStateInstitution	\N	\N
+2	The Commission for the Promotion and Protection of the Rights of Cultural, Religious and Linguistic Communities	\N	2020-05-29 20:13:34.951847	2020-05-29 20:13:34.951847	\N	DemocracySupportingStateInstitution	\N	\N
+3	The Commission on Gender Equality	\N	2020-05-29 20:13:34.954428	2020-05-29 20:13:34.954428	\N	DemocracySupportingStateInstitution	\N	\N
+4	The Human Rights Commission	\N	2020-05-29 20:13:34.956996	2020-05-29 20:13:34.956996	\N	DemocracySupportingStateInstitution	\N	\N
+5	The Independent Electoral Commission	\N	2020-05-29 20:13:34.959435	2020-05-29 20:13:34.959435	\N	DemocracySupportingStateInstitution	\N	\N
+6	The Public Protector	\N	2020-05-29 20:13:34.961971	2020-05-29 20:13:34.961971	\N	DemocracySupportingStateInstitution	\N	\N
+7	Independent Complaints Directorate	\N	2020-05-29 20:13:34.982703	2020-05-29 20:13:34.982703	\N	NationalGovernmentInstitution	\N	\N
+8	National Intelligence Agency	\N	2020-05-29 20:13:34.98737	2020-05-29 20:13:34.98737	\N	NationalGovernmentInstitution	\N	\N
+9	National Treasury	\N	2020-05-29 20:13:34.997527	2020-05-29 20:13:34.997527	\N	NationalGovernmentInstitution	\N	\N
+10	Public Service Commission	\N	2020-05-29 20:13:35.000707	2020-05-29 20:13:35.000707	\N	NationalGovernmentInstitution	\N	\N
+11	Public Administration Leadership and Management Academy 	\N	2020-05-29 20:13:35.003145	2020-05-29 20:13:35.003145	\N	NationalGovernmentInstitution	\N	\N
+12	South African Police Service	\N	2020-05-29 20:13:35.005815	2020-05-29 20:13:35.005815	\N	NationalGovernmentInstitution	\N	\N
+13	South African Revenue Service	\N	2020-05-29 20:13:35.00858	2020-05-29 20:13:35.00858	\N	NationalGovernmentInstitution	\N	\N
+14	South African Secret Service	\N	2020-05-29 20:13:35.011759	2020-05-29 20:13:35.011759	\N	NationalGovernmentInstitution	\N	\N
+15	Statistics South Africa	\N	2020-05-29 20:13:35.014182	2020-05-29 20:13:35.014182	\N	NationalGovernmentInstitution	\N	\N
+16	Department of Agriculture, Forestry and Fisheries	\N	2020-05-29 20:13:35.09055	2020-05-29 20:13:35.09055	\N	NationalGovernmentAgency	\N	\N
+17	Department of Arts and Culture 	\N	2020-05-29 20:13:35.099249	2020-05-29 20:13:35.099249	\N	NationalGovernmentAgency	\N	\N
+18	Department of Basic Education	\N	2020-05-29 20:13:35.101726	2020-05-29 20:13:35.101726	\N	NationalGovernmentAgency	\N	\N
+19	Civilian Secretariat for Police	\N	2020-05-29 20:13:35.103381	2020-05-29 20:13:35.103381	\N	NationalGovernmentAgency	\N	\N
+20	Department of Communications	\N	2020-05-29 20:13:35.104835	2020-05-29 20:13:35.104835	\N	NationalGovernmentAgency	\N	\N
+21	Department of Cooperative Governance and Traditional Affairs	\N	2020-05-29 20:13:35.106596	2020-05-29 20:13:35.106596	\N	NationalGovernmentAgency	\N	\N
+22	Department of Correctional Services	\N	2020-05-29 20:13:35.108534	2020-05-29 20:13:35.108534	\N	NationalGovernmentAgency	\N	\N
+23	Department of Defence	\N	2020-05-29 20:13:35.110087	2020-05-29 20:13:35.110087	\N	NationalGovernmentAgency	\N	\N
+24	Department of Economic Development	\N	2020-05-29 20:13:35.111435	2020-05-29 20:13:35.111435	\N	NationalGovernmentAgency	\N	\N
+25	Department of Energy 	\N	2020-05-29 20:13:35.113228	2020-05-29 20:13:35.113228	\N	NationalGovernmentAgency	\N	\N
+26	Department of Environmental Affairs 	\N	2020-05-29 20:13:35.115621	2020-05-29 20:13:35.115621	\N	NationalGovernmentAgency	\N	\N
+27	Department of Health	\N	2020-05-29 20:13:35.117316	2020-05-29 20:13:35.117316	\N	NationalGovernmentAgency	\N	\N
+28	Department of Higher Education and Training	\N	2020-05-29 20:13:35.118808	2020-05-29 20:13:35.118808	\N	NationalGovernmentAgency	\N	\N
+29	Department of Home Affairs	\N	2020-05-29 20:13:35.121869	2020-05-29 20:13:35.121869	\N	NationalGovernmentAgency	\N	\N
+30	Department of Human Settlements	\N	2020-05-29 20:13:35.12516	2020-05-29 20:13:35.12516	\N	NationalGovernmentAgency	\N	\N
+31	Independent Police Investigative Directorate	\N	2020-05-29 20:13:35.128955	2020-05-29 20:13:35.128955	\N	NationalGovernmentAgency	\N	\N
+32	Department of International Relations and Cooperation	\N	2020-05-29 20:13:35.132325	2020-05-29 20:13:35.132325	\N	NationalGovernmentAgency	\N	\N
+33	Department of Justice and Constitutional Development	\N	2020-05-29 20:13:35.135835	2020-05-29 20:13:35.135835	\N	NationalGovernmentAgency	\N	\N
+34	Department of Labour	\N	2020-05-29 20:13:35.13933	2020-05-29 20:13:35.13933	\N	NationalGovernmentAgency	\N	\N
+35	Department of Military Veterans	\N	2020-05-29 20:13:35.148317	2020-05-29 20:13:35.148317	\N	NationalGovernmentAgency	\N	\N
+36	Department of Mineral Resources 	\N	2020-05-29 20:13:35.150904	2020-05-29 20:13:35.150904	\N	NationalGovernmentAgency	\N	\N
+37	National Treasury	\N	2020-05-29 20:13:35.15247	2020-05-29 20:13:35.15247	\N	NationalGovernmentAgency	\N	\N
+38	Department of Performance Monitoring and Evaluation	\N	2020-05-29 20:13:35.154009	2020-05-29 20:13:35.154009	\N	NationalGovernmentAgency	\N	\N
+39	Public Administration Leadership and Management Academy	\N	2020-05-29 20:13:35.155355	2020-05-29 20:13:35.155355	\N	NationalGovernmentAgency	\N	\N
+40	Department of Public Enterprises	\N	2020-05-29 20:13:35.156958	2020-05-29 20:13:35.156958	\N	NationalGovernmentAgency	\N	\N
+41	Department of Public Service and Administration	\N	2020-05-29 20:13:35.15822	2020-05-29 20:13:35.15822	\N	NationalGovernmentAgency	\N	\N
+42	Public Service Commission	\N	2020-05-29 20:13:35.159656	2020-05-29 20:13:35.159656	\N	NationalGovernmentAgency	\N	\N
+43	Department of Public Works	\N	2020-05-29 20:13:35.160888	2020-05-29 20:13:35.160888	\N	NationalGovernmentAgency	\N	\N
+44	Department of Rural Development and Land Reform	\N	2020-05-29 20:13:35.162329	2020-05-29 20:13:35.162329	\N	NationalGovernmentAgency	\N	\N
+45	Department of Science and Technology	\N	2020-05-29 20:13:35.163488	2020-05-29 20:13:35.163488	\N	NationalGovernmentAgency	\N	\N
+46	Department of Social Development 	\N	2020-05-29 20:13:35.164677	2020-05-29 20:13:35.164677	\N	NationalGovernmentAgency	\N	\N
+47	South African Police Service	\N	2020-05-29 20:13:35.16601	2020-05-29 20:13:35.16601	\N	NationalGovernmentAgency	\N	\N
+48	South African Revenue Service	\N	2020-05-29 20:13:35.167134	2020-05-29 20:13:35.167134	\N	NationalGovernmentAgency	\N	\N
+49	State Security Agency	\N	2020-05-29 20:13:35.168235	2020-05-29 20:13:35.168235	\N	NationalGovernmentAgency	\N	\N
+50	Department of Sport and Recreation South Africa	\N	2020-05-29 20:13:35.170507	2020-05-29 20:13:35.170507	\N	NationalGovernmentAgency	\N	\N
+51	Statistics South Africa	\N	2020-05-29 20:13:35.172646	2020-05-29 20:13:35.172646	\N	NationalGovernmentAgency	\N	\N
+52	Department of Tourism 	\N	2020-05-29 20:13:35.175183	2020-05-29 20:13:35.175183	\N	NationalGovernmentAgency	\N	\N
+53	Department of Trade and Industry	\N	2020-05-29 20:13:35.17822	2020-05-29 20:13:35.17822	\N	NationalGovernmentAgency	\N	\N
+54	Department of Traditional Affairs	\N	2020-05-29 20:13:35.181185	2020-05-29 20:13:35.181185	\N	NationalGovernmentAgency	\N	\N
+55	Department of Transport	\N	2020-05-29 20:13:35.184646	2020-05-29 20:13:35.184646	\N	NationalGovernmentAgency	\N	\N
+56	Department of Water Affairs	\N	2020-05-29 20:13:35.187829	2020-05-29 20:13:35.187829	\N	NationalGovernmentAgency	\N	\N
+57	Department of Women, Children & People with Disabilities	\N	2020-05-29 20:13:35.190451	2020-05-29 20:13:35.190451	\N	NationalGovernmentAgency	\N	\N
+58	The Presidency	\N	2020-05-29 20:13:35.198887	2020-05-29 20:13:35.198887	\N	NationalGovernmentAgency	\N	\N
+59	Cooperative Governance and Traditional Affairs	\N	2020-05-29 20:13:35.208791	2020-05-29 20:13:35.208791	\N	ProvincialAgency	9	\N
+60	Economic Development, Environmental Affairs and Tourism	\N	2020-05-29 20:13:35.211367	2020-05-29 20:13:35.211367	\N	ProvincialAgency	9	\N
+61	Education	\N	2020-05-29 20:13:35.213305	2020-05-29 20:13:35.213305	\N	ProvincialAgency	9	\N
+62	Health	\N	2020-05-29 20:13:35.215744	2020-05-29 20:13:35.215744	\N	ProvincialAgency	9	\N
+63	Human Settlements	\N	2020-05-29 20:13:35.217979	2020-05-29 20:13:35.217979	\N	ProvincialAgency	9	\N
+64	Provincial Treasury	\N	2020-05-29 20:13:35.221891	2020-05-29 20:13:35.221891	\N	ProvincialAgency	9	\N
+65	Public Works	\N	2020-05-29 20:13:35.225318	2020-05-29 20:13:35.225318	\N	ProvincialAgency	9	\N
+66	Rural Development and Agrarian Reform	\N	2020-05-29 20:13:35.229178	2020-05-29 20:13:35.229178	\N	ProvincialAgency	9	\N
+67	Safety and Liaison	\N	2020-05-29 20:13:35.234424	2020-05-29 20:13:35.234424	\N	ProvincialAgency	9	\N
+68	Social Development	\N	2020-05-29 20:13:35.238027	2020-05-29 20:13:35.238027	\N	ProvincialAgency	9	\N
+69	Sport, Recreation, Arts and Culture	\N	2020-05-29 20:13:35.247643	2020-05-29 20:13:35.247643	\N	ProvincialAgency	9	\N
+70	Transport	\N	2020-05-29 20:13:35.250315	2020-05-29 20:13:35.250315	\N	ProvincialAgency	9	\N
+71	Agriculture and Rural Development	\N	2020-05-29 20:13:35.252752	2020-05-29 20:13:35.252752	\N	ProvincialAgency	7	\N
+72	Cooperative Governance and Traditional Affairs	\N	2020-05-29 20:13:35.254915	2020-05-29 20:13:35.254915	\N	ProvincialAgency	7	\N
+73	Economic, Small Business Development, Tourism and Environmental Affairs	\N	2020-05-29 20:13:35.257192	2020-05-29 20:13:35.257192	\N	ProvincialAgency	7	\N
+74	Education	\N	2020-05-29 20:13:35.25913	2020-05-29 20:13:35.25913	\N	ProvincialAgency	7	\N
+75	Health	\N	2020-05-29 20:13:35.260842	2020-05-29 20:13:35.260842	\N	ProvincialAgency	7	\N
+76	Human Settlements	\N	2020-05-29 20:13:35.262598	2020-05-29 20:13:35.262598	\N	ProvincialAgency	7	\N
+77	Police, Roads and Transport	\N	2020-05-29 20:13:35.264409	2020-05-29 20:13:35.264409	\N	ProvincialAgency	7	\N
+78	Provincial Treasury	\N	2020-05-29 20:13:35.266936	2020-05-29 20:13:35.266936	\N	ProvincialAgency	7	\N
+79	Public Works and Infrastructure	\N	2020-05-29 20:13:35.269189	2020-05-29 20:13:35.269189	\N	ProvincialAgency	7	\N
+80	Social Development	\N	2020-05-29 20:13:35.273491	2020-05-29 20:13:35.273491	\N	ProvincialAgency	7	\N
+81	Sport, Arts, Culture and Recreation	\N	2020-05-29 20:13:35.277379	2020-05-29 20:13:35.277379	\N	ProvincialAgency	7	\N
+82	Agriculture and Rural Development	\N	2020-05-29 20:13:35.280786	2020-05-29 20:13:35.280786	\N	ProvincialAgency	1	\N
+83	Co-operative Governance and Traditional Affairs	\N	2020-05-29 20:13:35.284854	2020-05-29 20:13:35.284854	\N	ProvincialAgency	1	\N
+84	Community Safety	\N	2020-05-29 20:13:35.287904	2020-05-29 20:13:35.287904	\N	ProvincialAgency	1	\N
+85	e-Government	\N	2020-05-29 20:13:35.297289	2020-05-29 20:13:35.297289	\N	ProvincialAgency	1	\N
+86	Economic Development	\N	2020-05-29 20:13:35.299779	2020-05-29 20:13:35.299779	\N	ProvincialAgency	1	\N
+87	Education	\N	2020-05-29 20:13:35.302019	2020-05-29 20:13:35.302019	\N	ProvincialAgency	1	\N
+88	Health	\N	2020-05-29 20:13:35.303897	2020-05-29 20:13:35.303897	\N	ProvincialAgency	1	\N
+89	Human Settlements	\N	2020-05-29 20:13:35.305929	2020-05-29 20:13:35.305929	\N	ProvincialAgency	1	\N
+90	Infrastructure Development	\N	2020-05-29 20:13:35.30839	2020-05-29 20:13:35.30839	\N	ProvincialAgency	1	\N
+91	Roads and Transport	\N	2020-05-29 20:13:35.310492	2020-05-29 20:13:35.310492	\N	ProvincialAgency	1	\N
+92	Social Development	\N	2020-05-29 20:13:35.312473	2020-05-29 20:13:35.312473	\N	ProvincialAgency	1	\N
+93	Sport, Arts, Culture and Recreation	\N	2020-05-29 20:13:35.314263	2020-05-29 20:13:35.314263	\N	ProvincialAgency	1	\N
+94	Treasury	\N	2020-05-29 20:13:35.317357	2020-05-29 20:13:35.317357	\N	ProvincialAgency	1	\N
+95	Agriculture and Rural Development	\N	2020-05-29 20:13:35.320251	2020-05-29 20:13:35.320251	\N	ProvincialAgency	5	\N
+96	Arts and Culture	\N	2020-05-29 20:13:35.323765	2020-05-29 20:13:35.323765	\N	ProvincialAgency	5	\N
+97	Co-operative Governance and Traditional Affairs	\N	2020-05-29 20:13:35.327506	2020-05-29 20:13:35.327506	\N	ProvincialAgency	5	\N
+98	Community Safety and Liaison	\N	2020-05-29 20:13:35.330496	2020-05-29 20:13:35.330496	\N	ProvincialAgency	5	\N
+99	Economic Development, Tourism and Environmental Affairs	\N	2020-05-29 20:13:35.334161	2020-05-29 20:13:35.334161	\N	ProvincialAgency	5	\N
+100	Education	\N	2020-05-29 20:13:35.337021	2020-05-29 20:13:35.337021	\N	ProvincialAgency	5	\N
+101	Health	\N	2020-05-29 20:13:35.339848	2020-05-29 20:13:35.339848	\N	ProvincialAgency	5	\N
+102	Human Settlements	\N	2020-05-29 20:13:35.348776	2020-05-29 20:13:35.348776	\N	ProvincialAgency	5	\N
+103	Provincial Treasury	\N	2020-05-29 20:13:35.351303	2020-05-29 20:13:35.351303	\N	ProvincialAgency	5	\N
+104	Public Works	\N	2020-05-29 20:13:35.353109	2020-05-29 20:13:35.353109	\N	ProvincialAgency	5	\N
+105	Social Development	\N	2020-05-29 20:13:35.355176	2020-05-29 20:13:35.355176	\N	ProvincialAgency	5	\N
+106	Sport and Recreation	\N	2020-05-29 20:13:35.357634	2020-05-29 20:13:35.357634	\N	ProvincialAgency	5	\N
+107	Transport	\N	2020-05-29 20:13:35.359467	2020-05-29 20:13:35.359467	\N	ProvincialAgency	5	\N
+108	Agriculture and Rural Development	\N	2020-05-29 20:13:35.361262	2020-05-29 20:13:35.361262	\N	ProvincialAgency	6	\N
+109	Cooperative Governance, Human Settlements and Traditional Affairs	\N	2020-05-29 20:13:35.362966	2020-05-29 20:13:35.362966	\N	ProvincialAgency	6	\N
+110	Economic Development, Environment and Tourism	\N	2020-05-29 20:13:35.364615	2020-05-29 20:13:35.364615	\N	ProvincialAgency	6	\N
+111	Education	\N	2020-05-29 20:13:35.366378	2020-05-29 20:13:35.366378	\N	ProvincialAgency	6	\N
+112	Health	\N	2020-05-29 20:13:35.367958	2020-05-29 20:13:35.367958	\N	ProvincialAgency	6	\N
+113	Provincial Treasury	\N	2020-05-29 20:13:35.371261	2020-05-29 20:13:35.371261	\N	ProvincialAgency	6	\N
+114	Public Works, Roads and Infrastructure	\N	2020-05-29 20:13:35.374066	2020-05-29 20:13:35.374066	\N	ProvincialAgency	6	\N
+115	Social Development	\N	2020-05-29 20:13:35.376643	2020-05-29 20:13:35.376643	\N	ProvincialAgency	6	\N
+116	Sport, Arts and Culture	\N	2020-05-29 20:13:35.378631	2020-05-29 20:13:35.378631	\N	ProvincialAgency	6	\N
+117	Transport and Community Safety	\N	2020-05-29 20:13:35.380998	2020-05-29 20:13:35.380998	\N	ProvincialAgency	6	\N
+118	Agriculture, Rural Development, Land and Environmental Affairs	\N	2020-05-29 20:13:35.383459	2020-05-29 20:13:35.383459	\N	ProvincialAgency	2	\N
+119	Co-operative Governance and Traditional Affairs	\N	2020-05-29 20:13:35.385825	2020-05-29 20:13:35.385825	\N	ProvincialAgency	2	\N
+120	Community Safety, Security and Liaison	\N	2020-05-29 20:13:35.388256	2020-05-29 20:13:35.388256	\N	ProvincialAgency	2	\N
+121	Culture, Sport and Recreation	\N	2020-05-29 20:13:35.390589	2020-05-29 20:13:35.390589	\N	ProvincialAgency	2	\N
+122	Economic Development and Tourism	\N	2020-05-29 20:13:35.39963	2020-05-29 20:13:35.39963	\N	ProvincialAgency	2	\N
+123	Education	\N	2020-05-29 20:13:35.40202	2020-05-29 20:13:35.40202	\N	ProvincialAgency	2	\N
+124	Health	\N	2020-05-29 20:13:35.403911	2020-05-29 20:13:35.403911	\N	ProvincialAgency	2	\N
+125	Human Settlements	\N	2020-05-29 20:13:35.405942	2020-05-29 20:13:35.405942	\N	ProvincialAgency	2	\N
+126	Provincial Treasury	\N	2020-05-29 20:13:35.407825	2020-05-29 20:13:35.407825	\N	ProvincialAgency	2	\N
+127	Public Works, Roads and Transport	\N	2020-05-29 20:13:35.409557	2020-05-29 20:13:35.409557	\N	ProvincialAgency	2	\N
+128	Social Development	\N	2020-05-29 20:13:35.411379	2020-05-29 20:13:35.411379	\N	ProvincialAgency	2	\N
+129	Agriculture and Rural Development	\N	2020-05-29 20:13:35.413152	2020-05-29 20:13:35.413152	\N	ProvincialAgency	3	\N
+130	Arts, Culture, Sports and Recreation	\N	2020-05-29 20:13:35.4151	2020-05-29 20:13:35.4151	\N	ProvincialAgency	3	\N
+131	Community Safety and Transport Management	\N	2020-05-29 20:13:35.416886	2020-05-29 20:13:35.416886	\N	ProvincialAgency	3	\N
+132	Cooperative Governance, Human Settlements and Traditional Affairs	\N	2020-05-29 20:13:35.419179	2020-05-29 20:13:35.419179	\N	ProvincialAgency	3	\N
+133	Economic Development, Environment, Conservation and Tourism	\N	2020-05-29 20:13:35.422054	2020-05-29 20:13:35.422054	\N	ProvincialAgency	3	\N
+134	Education	\N	2020-05-29 20:13:35.42477	2020-05-29 20:13:35.42477	\N	ProvincialAgency	3	\N
+135	Health	\N	2020-05-29 20:13:35.427657	2020-05-29 20:13:35.427657	\N	ProvincialAgency	3	\N
+136	Provincial Treasury	\N	2020-05-29 20:13:35.430604	2020-05-29 20:13:35.430604	\N	ProvincialAgency	3	\N
+137	Public Works and Roads	\N	2020-05-29 20:13:35.433921	2020-05-29 20:13:35.433921	\N	ProvincialAgency	3	\N
+138	Social Development	\N	2020-05-29 20:13:35.436291	2020-05-29 20:13:35.436291	\N	ProvincialAgency	3	\N
+139	Agriculture, Land Reform and Rural Development	\N	2020-05-29 20:13:35.438445	2020-05-29 20:13:35.438445	\N	ProvincialAgency	8	\N
+140	Co-operative Governance, Human Settlements and Traditional Affairs	\N	2020-05-29 20:13:35.440778	2020-05-29 20:13:35.440778	\N	ProvincialAgency	8	\N
+141	Economic Development and Tourism	\N	2020-05-29 20:13:35.448909	2020-05-29 20:13:35.448909	\N	ProvincialAgency	8	\N
+142	Education	\N	2020-05-29 20:13:35.451352	2020-05-29 20:13:35.451352	\N	ProvincialAgency	8	\N
+143	Environment and Nature Conservation	\N	2020-05-29 20:13:35.453592	2020-05-29 20:13:35.453592	\N	ProvincialAgency	8	\N
+144	Health	\N	2020-05-29 20:13:35.455579	2020-05-29 20:13:35.455579	\N	ProvincialAgency	8	\N
+145	Provincial Treasury	\N	2020-05-29 20:13:35.457484	2020-05-29 20:13:35.457484	\N	ProvincialAgency	8	\N
+146	Roads and Public Works	\N	2020-05-29 20:13:35.459234	2020-05-29 20:13:35.459234	\N	ProvincialAgency	8	\N
+147	Social Development	\N	2020-05-29 20:13:35.461169	2020-05-29 20:13:35.461169	\N	ProvincialAgency	8	\N
+148	Sport, Arts and Culture	\N	2020-05-29 20:13:35.463043	2020-05-29 20:13:35.463043	\N	ProvincialAgency	8	\N
+149	Transport, Safety and Liaison	\N	2020-05-29 20:13:35.465109	2020-05-29 20:13:35.465109	\N	ProvincialAgency	8	\N
+150	Agriculture	\N	2020-05-29 20:13:35.46687	2020-05-29 20:13:35.46687	\N	ProvincialAgency	4	\N
+151	Community Safety	\N	2020-05-29 20:13:35.468527	2020-05-29 20:13:35.468527	\N	ProvincialAgency	4	\N
+152	Cultural Affairs and Sport	\N	2020-05-29 20:13:35.470483	2020-05-29 20:13:35.470483	\N	ProvincialAgency	4	\N
+153	Economic Development and Tourism	\N	2020-05-29 20:13:35.47241	2020-05-29 20:13:35.47241	\N	ProvincialAgency	4	\N
+154	Education	\N	2020-05-29 20:13:35.474675	2020-05-29 20:13:35.474675	\N	ProvincialAgency	4	\N
+155	Environmental Affairs and Development Planning	\N	2020-05-29 20:13:35.476899	2020-05-29 20:13:35.476899	\N	ProvincialAgency	4	\N
+156	Health	\N	2020-05-29 20:13:35.479097	2020-05-29 20:13:35.479097	\N	ProvincialAgency	4	\N
+157	Human Settlements	\N	2020-05-29 20:13:35.481253	2020-05-29 20:13:35.481253	\N	ProvincialAgency	4	\N
+158	Local Government	\N	2020-05-29 20:13:35.483936	2020-05-29 20:13:35.483936	\N	ProvincialAgency	4	\N
+159	Provincial Treasury	\N	2020-05-29 20:13:35.486191	2020-05-29 20:13:35.486191	\N	ProvincialAgency	4	\N
+160	Social Development	\N	2020-05-29 20:13:35.488428	2020-05-29 20:13:35.488428	\N	ProvincialAgency	4	\N
+161	Transport and Public Works	\N	2020-05-29 20:13:35.490669	2020-05-29 20:13:35.490669	\N	ProvincialAgency	4	\N
+162	Buffalo City	\N	2020-05-29 20:13:35.52498	2020-05-29 20:13:35.52498	BUF	MetropolitanMunicipality	9	\N
+163	City of Cape Town	\N	2020-05-29 20:13:35.538665	2020-05-29 20:13:35.538665	CPT	MetropolitanMunicipality	4	\N
+164	City of Johannesburg	\N	2020-05-29 20:13:35.540312	2020-05-29 20:13:35.540312	JHB	MetropolitanMunicipality	1	\N
+165	City of Tshwane	\N	2020-05-29 20:13:35.548446	2020-05-29 20:13:35.548446	TSH	MetropolitanMunicipality	1	\N
+166	Ekurhuleni	\N	2020-05-29 20:13:35.555453	2020-05-29 20:13:35.555453	EKU	MetropolitanMunicipality	1	\N
+167	eThekwini	\N	2020-05-29 20:13:35.557348	2020-05-29 20:13:35.557348	ETH	MetropolitanMunicipality	5	\N
+168	Mangaung	\N	2020-05-29 20:13:35.573186	2020-05-29 20:13:35.573186	MAN	MetropolitanMunicipality	7	\N
+169	Nelson Mandela Bay	\N	2020-05-29 20:13:35.577807	2020-05-29 20:13:35.577807	NMA	MetropolitanMunicipality	9	\N
+170	!Kheis	\N	2020-05-29 20:13:35.624866	2020-05-29 20:13:35.624866	NC084	LocalMunicipality	8	43
+171	Abaqulusi	\N	2020-05-29 20:13:35.627435	2020-05-29 20:13:35.627435	KZN263	LocalMunicipality	5	44
+172	Albert Luthuli	\N	2020-05-29 20:13:35.629856	2020-05-29 20:13:35.629856	MP301	LocalMunicipality	2	15
+173	Alfred Duma	\N	2020-05-29 20:13:35.63242	2020-05-29 20:13:35.63242	KZN238	LocalMunicipality	5	37
+174	Amahlathi	\N	2020-05-29 20:13:35.634984	2020-05-29 20:13:35.634984	EC124	LocalMunicipality	9	3
+175	Ba-Phalaborwa	\N	2020-05-29 20:13:35.63686	2020-05-29 20:13:35.63686	LIM334	LocalMunicipality	6	22
+176	Beaufort West	\N	2020-05-29 20:13:35.638464	2020-05-29 20:13:35.638464	WC053	LocalMunicipality	4	7
+177	Bela-Bela	\N	2020-05-29 20:13:35.639836	2020-05-29 20:13:35.639836	LIM366	LocalMunicipality	6	39
+178	Bergrivier	\N	2020-05-29 20:13:35.64848	2020-05-29 20:13:35.64848	WC013	LocalMunicipality	4	40
+179	Big Five Hlabisa	\N	2020-05-29 20:13:35.650855	2020-05-29 20:13:35.650855	KZN276	LocalMunicipality	5	35
+180	Bitou	\N	2020-05-29 20:13:35.652404	2020-05-29 20:13:35.652404	WC047	LocalMunicipality	4	14
+181	Blouberg	\N	2020-05-29 20:13:35.653825	2020-05-29 20:13:35.653825	LIM351	LocalMunicipality	6	6
+182	Blue Crane Route	\N	2020-05-29 20:13:35.655207	2020-05-29 20:13:35.655207	EC102	LocalMunicipality	9	29
+183	Breede Valley	\N	2020-05-29 20:13:35.65684	2020-05-29 20:13:35.65684	WC025	LocalMunicipality	4	5
+184	Bushbuckridge	\N	2020-05-29 20:13:35.658528	2020-05-29 20:13:35.658528	MP325	LocalMunicipality	2	11
+185	Cape Agulhas	\N	2020-05-29 20:13:35.659865	2020-05-29 20:13:35.659865	WC033	LocalMunicipality	4	27
+186	Cederberg	\N	2020-05-29 20:13:35.661143	2020-05-29 20:13:35.661143	WC012	LocalMunicipality	4	40
+187	City of Matlosana	\N	2020-05-29 20:13:35.66262	2020-05-29 20:13:35.66262	NW403	LocalMunicipality	3	9
+188	Collins Chabane	\N	2020-05-29 20:13:35.664031	2020-05-29 20:13:35.664031	LIM345	LocalMunicipality	6	38
+189	Dannhauser	\N	2020-05-29 20:13:35.665361	2020-05-29 20:13:35.665361	KZN254	LocalMunicipality	5	2
+190	Dawid Kruiper	\N	2020-05-29 20:13:35.666793	2020-05-29 20:13:35.666793	NC087	LocalMunicipality	8	43
+191	Dihlabeng	\N	2020-05-29 20:13:35.668201	2020-05-29 20:13:35.668201	FS192	LocalMunicipality	7	32
+192	Dikgatlong	\N	2020-05-29 20:13:35.670158	2020-05-29 20:13:35.670158	NC092	LocalMunicipality	8	13
+193	Dipaleseng	\N	2020-05-29 20:13:35.671893	2020-05-29 20:13:35.671893	MP306	LocalMunicipality	2	15
+194	Ditsobotla	\N	2020-05-29 20:13:35.673443	2020-05-29 20:13:35.673443	NW384	LocalMunicipality	3	24
+195	Dr Beyers Naudé	\N	2020-05-29 20:13:35.674993	2020-05-29 20:13:35.674993	EC101	LocalMunicipality	9	29
+196	Dr JS Moroka	\N	2020-05-29 20:13:35.676748	2020-05-29 20:13:35.676748	MP316	LocalMunicipality	2	25
+197	Dr Nkosazana Dlamini Zuma	\N	2020-05-29 20:13:35.678485	2020-05-29 20:13:35.678485	KZN436	LocalMunicipality	5	16
+198	Drakenstein	\N	2020-05-29 20:13:35.680276	2020-05-29 20:13:35.680276	WC023	LocalMunicipality	4	5
+199	eDumbe	\N	2020-05-29 20:13:35.682172	2020-05-29 20:13:35.682172	KZN261	LocalMunicipality	5	44
+200	Elias Motsoaledi	\N	2020-05-29 20:13:35.684085	2020-05-29 20:13:35.684085	LIM472	LocalMunicipality	6	31
+201	Elundini	\N	2020-05-29 20:13:35.685384	2020-05-29 20:13:35.685384	EC141	LocalMunicipality	9	18
+202	eMadlangeni	\N	2020-05-29 20:13:35.686749	2020-05-29 20:13:35.686749	KZN253	LocalMunicipality	5	2
+203	Emakhazeni	\N	2020-05-29 20:13:35.688181	2020-05-29 20:13:35.688181	MP314	LocalMunicipality	2	25
+204	Emalahleni	\N	2020-05-29 20:13:35.689727	2020-05-29 20:13:35.689727	EC136	LocalMunicipality	9	8
+205	Emalahleni	\N	2020-05-29 20:13:35.697729	2020-05-29 20:13:35.697729	MP312	LocalMunicipality	2	25
+206	Emfuleni	\N	2020-05-29 20:13:35.699572	2020-05-29 20:13:35.699572	GT421	LocalMunicipality	1	30
+207	Emthanjeni	\N	2020-05-29 20:13:35.7014	2020-05-29 20:13:35.7014	NC073	LocalMunicipality	8	28
+208	Endumeni	\N	2020-05-29 20:13:35.703071	2020-05-29 20:13:35.703071	KZN241	LocalMunicipality	5	36
+209	Engcobo	\N	2020-05-29 20:13:35.704333	2020-05-29 20:13:35.704333	EC137	LocalMunicipality	9	8
+210	Enoch Mgijima	\N	2020-05-29 20:13:35.705826	2020-05-29 20:13:35.705826	EC139	LocalMunicipality	9	8
+211	Ephraim Mogale	\N	2020-05-29 20:13:35.707391	2020-05-29 20:13:35.707391	LIM471	LocalMunicipality	6	31
+212	Fetakgomo/Greater Tubatse	\N	2020-05-29 20:13:35.709004	2020-05-29 20:13:35.709004	LIM476	LocalMunicipality	6	31
+213	Ga-Segonyana	\N	2020-05-29 20:13:35.710337	2020-05-29 20:13:35.710337	NC452	LocalMunicipality	8	19
+214	Gamagara	\N	2020-05-29 20:13:35.711711	2020-05-29 20:13:35.711711	NC453	LocalMunicipality	8	19
+215	George	\N	2020-05-29 20:13:35.713079	2020-05-29 20:13:35.713079	WC044	LocalMunicipality	4	14
+216	Govan Mbeki	\N	2020-05-29 20:13:35.714327	2020-05-29 20:13:35.714327	MP307	LocalMunicipality	2	15
+217	Great Kei	\N	2020-05-29 20:13:35.715781	2020-05-29 20:13:35.715781	EC123	LocalMunicipality	9	3
+218	Greater Giyani	\N	2020-05-29 20:13:35.717295	2020-05-29 20:13:35.717295	LIM331	LocalMunicipality	6	22
+219	Greater Kokstad	\N	2020-05-29 20:13:35.719052	2020-05-29 20:13:35.719052	KZN433	LocalMunicipality	5	16
+220	Greater Letaba	\N	2020-05-29 20:13:35.720674	2020-05-29 20:13:35.720674	LIM332	LocalMunicipality	6	22
+221	Greater Taung	\N	2020-05-29 20:13:35.722491	2020-05-29 20:13:35.722491	NW394	LocalMunicipality	3	10
+222	Greater Tzaneen	\N	2020-05-29 20:13:35.72495	2020-05-29 20:13:35.72495	LIM333	LocalMunicipality	6	22
+223	Hantam	\N	2020-05-29 20:13:35.727436	2020-05-29 20:13:35.727436	NC065	LocalMunicipality	8	23
+224	Hessequa	\N	2020-05-29 20:13:35.72923	2020-05-29 20:13:35.72923	WC042	LocalMunicipality	4	14
+225	Impendle	\N	2020-05-29 20:13:35.730942	2020-05-29 20:13:35.730942	KZN224	LocalMunicipality	5	34
+226	Ingquza Hill	\N	2020-05-29 20:13:35.733522	2020-05-29 20:13:35.733522	EC153	LocalMunicipality	9	26
+227	Inkosi Langalibalele	\N	2020-05-29 20:13:35.735315	2020-05-29 20:13:35.735315	KZN237	LocalMunicipality	5	37
+228	Intsika Yethu	\N	2020-05-29 20:13:35.736999	2020-05-29 20:13:35.736999	EC135	LocalMunicipality	9	8
+229	Inxuba Yethemba	\N	2020-05-29 20:13:35.738547	2020-05-29 20:13:35.738547	EC131	LocalMunicipality	9	8
+230	JB Marks	\N	2020-05-29 20:13:35.740146	2020-05-29 20:13:35.740146	NW405	LocalMunicipality	3	9
+231	Joe Morolong	\N	2020-05-29 20:13:35.748296	2020-05-29 20:13:35.748296	NC451	LocalMunicipality	8	19
+232	Jozini	\N	2020-05-29 20:13:35.750139	2020-05-29 20:13:35.750139	KZN272	LocalMunicipality	5	35
+233	Kagisano-Molopo	\N	2020-05-29 20:13:35.751789	2020-05-29 20:13:35.751789	NW397	LocalMunicipality	3	10
+234	Kai !Garib	\N	2020-05-29 20:13:35.753639	2020-05-29 20:13:35.753639	NC082	LocalMunicipality	8	43
+235	Kamiesberg	\N	2020-05-29 20:13:35.755146	2020-05-29 20:13:35.755146	NC064	LocalMunicipality	8	23
+236	Kannaland	\N	2020-05-29 20:13:35.75753	2020-05-29 20:13:35.75753	WC041	LocalMunicipality	4	14
+237	Kareeberg	\N	2020-05-29 20:13:35.759774	2020-05-29 20:13:35.759774	NC074	LocalMunicipality	8	28
+238	Karoo Hoogland	\N	2020-05-29 20:13:35.761207	2020-05-29 20:13:35.761207	NC066	LocalMunicipality	8	23
+239	Kgatelopele	\N	2020-05-29 20:13:35.762718	2020-05-29 20:13:35.762718	NC086	LocalMunicipality	8	43
+240	Kgetlengrivier	\N	2020-05-29 20:13:35.764162	2020-05-29 20:13:35.764162	NW374	LocalMunicipality	3	4
+241	Khâi-Ma	\N	2020-05-29 20:13:35.766313	2020-05-29 20:13:35.766313	NC067	LocalMunicipality	8	23
+242	King Sabata Dalindyebo	\N	2020-05-29 20:13:35.76813	2020-05-29 20:13:35.76813	EC157	LocalMunicipality	9	26
+243	Knysna	\N	2020-05-29 20:13:35.770762	2020-05-29 20:13:35.770762	WC048	LocalMunicipality	4	14
+244	Kopanong	\N	2020-05-29 20:13:35.772991	2020-05-29 20:13:35.772991	FS162	LocalMunicipality	7	42
+245	Kou-Kamma	\N	2020-05-29 20:13:35.774595	2020-05-29 20:13:35.774595	EC109	LocalMunicipality	9	29
+246	Kouga	\N	2020-05-29 20:13:35.776772	2020-05-29 20:13:35.776772	EC108	LocalMunicipality	9	29
+247	KwaDukuza	\N	2020-05-29 20:13:35.778603	2020-05-29 20:13:35.778603	KZN292	LocalMunicipality	5	17
+248	Laingsburg	\N	2020-05-29 20:13:35.780171	2020-05-29 20:13:35.780171	WC051	LocalMunicipality	4	7
+249	Langeberg	\N	2020-05-29 20:13:35.781736	2020-05-29 20:13:35.781736	WC026	LocalMunicipality	4	5
+250	Lekwa	\N	2020-05-29 20:13:35.783128	2020-05-29 20:13:35.783128	MP305	LocalMunicipality	2	15
+251	Lekwa-Teemane	\N	2020-05-29 20:13:35.784418	2020-05-29 20:13:35.784418	NW396	LocalMunicipality	3	10
+252	Lepelle-Nkumpi	\N	2020-05-29 20:13:35.785886	2020-05-29 20:13:35.785886	LIM355	LocalMunicipality	6	6
+253	Lephalale	\N	2020-05-29 20:13:35.787414	2020-05-29 20:13:35.787414	LIM362	LocalMunicipality	6	39
+254	Lesedi	\N	2020-05-29 20:13:35.789077	2020-05-29 20:13:35.789077	GT423	LocalMunicipality	1	30
+255	Letsemeng	\N	2020-05-29 20:13:35.790599	2020-05-29 20:13:35.790599	FS161	LocalMunicipality	7	42
+256	Madibeng	\N	2020-05-29 20:13:35.798045	2020-05-29 20:13:35.798045	NW372	LocalMunicipality	3	4
+257	Mafube	\N	2020-05-29 20:13:35.7997	2020-05-29 20:13:35.7997	FS205	LocalMunicipality	7	12
+258	Magareng	\N	2020-05-29 20:13:35.801396	2020-05-29 20:13:35.801396	NC093	LocalMunicipality	8	13
+259	Mahikeng	\N	2020-05-29 20:13:35.802982	2020-05-29 20:13:35.802982	NW383	LocalMunicipality	3	24
+260	Makana	\N	2020-05-29 20:13:35.804468	2020-05-29 20:13:35.804468	EC104	LocalMunicipality	9	29
+261	Makhado	\N	2020-05-29 20:13:35.805886	2020-05-29 20:13:35.805886	LIM344	LocalMunicipality	6	38
+262	Makhuduthamaga	\N	2020-05-29 20:13:35.807372	2020-05-29 20:13:35.807372	LIM473	LocalMunicipality	6	31
+263	Maluti-a-Phofung	\N	2020-05-29 20:13:35.809107	2020-05-29 20:13:35.809107	FS194	LocalMunicipality	7	32
+264	Mamusa	\N	2020-05-29 20:13:35.810622	2020-05-29 20:13:35.810622	NW393	LocalMunicipality	3	10
+265	Mandeni	\N	2020-05-29 20:13:35.811977	2020-05-29 20:13:35.811977	KZN291	LocalMunicipality	5	17
+266	Mantsopa	\N	2020-05-29 20:13:35.813406	2020-05-29 20:13:35.813406	FS196	LocalMunicipality	7	32
+267	Maphumulo	\N	2020-05-29 20:13:35.815117	2020-05-29 20:13:35.815117	KZN294	LocalMunicipality	5	17
+268	Maquassi Hills	\N	2020-05-29 20:13:35.817028	2020-05-29 20:13:35.817028	NW404	LocalMunicipality	3	9
+269	Maruleng	\N	2020-05-29 20:13:35.81873	2020-05-29 20:13:35.81873	LIM335	LocalMunicipality	6	22
+270	Masilonyana	\N	2020-05-29 20:13:35.820622	2020-05-29 20:13:35.820622	FS181	LocalMunicipality	7	21
+271	Matatiele	\N	2020-05-29 20:13:35.822435	2020-05-29 20:13:35.822435	EC441	LocalMunicipality	9	1
+272	Matjhabeng	\N	2020-05-29 20:13:35.824138	2020-05-29 20:13:35.824138	FS184	LocalMunicipality	7	21
+273	Matzikama	\N	2020-05-29 20:13:35.825697	2020-05-29 20:13:35.825697	WC011	LocalMunicipality	4	40
+274	Mbhashe	\N	2020-05-29 20:13:35.827457	2020-05-29 20:13:35.827457	EC121	LocalMunicipality	9	3
+275	Mbizana	\N	2020-05-29 20:13:35.829205	2020-05-29 20:13:35.829205	EC443	LocalMunicipality	9	1
+276	Mbombela	\N	2020-05-29 20:13:35.830799	2020-05-29 20:13:35.830799	MP326	LocalMunicipality	2	11
+277	Merafong City	\N	2020-05-29 20:13:35.832481	2020-05-29 20:13:35.832481	GT484	LocalMunicipality	1	41
+278	Metsimaholo	\N	2020-05-29 20:13:35.834121	2020-05-29 20:13:35.834121	FS204	LocalMunicipality	7	12
+279	Mhlontlo	\N	2020-05-29 20:13:35.835677	2020-05-29 20:13:35.835677	EC156	LocalMunicipality	9	26
+280	Midvaal	\N	2020-05-29 20:13:35.837195	2020-05-29 20:13:35.837195	GT422	LocalMunicipality	1	30
+281	Mkhambathini	\N	2020-05-29 20:13:35.839044	2020-05-29 20:13:35.839044	KZN226	LocalMunicipality	5	34
+282	Mkhondo	\N	2020-05-29 20:13:35.847075	2020-05-29 20:13:35.847075	MP303	LocalMunicipality	2	15
+283	Mnquma	\N	2020-05-29 20:13:35.849587	2020-05-29 20:13:35.849587	EC122	LocalMunicipality	9	3
+284	Modimolle/Mookgophong	\N	2020-05-29 20:13:35.85174	2020-05-29 20:13:35.85174	LIM368	LocalMunicipality	6	39
+285	Mogalakwena	\N	2020-05-29 20:13:35.854006	2020-05-29 20:13:35.854006	LIM367	LocalMunicipality	6	39
+286	Mogale City	\N	2020-05-29 20:13:35.855942	2020-05-29 20:13:35.855942	GT481	LocalMunicipality	1	41
+287	Mohokare	\N	2020-05-29 20:13:35.857739	2020-05-29 20:13:35.857739	FS163	LocalMunicipality	7	42
+288	Molemole	\N	2020-05-29 20:13:35.859277	2020-05-29 20:13:35.859277	LIM353	LocalMunicipality	6	6
+289	Moqhaka	\N	2020-05-29 20:13:35.860762	2020-05-29 20:13:35.860762	FS201	LocalMunicipality	7	12
+290	Moretele	\N	2020-05-29 20:13:35.862245	2020-05-29 20:13:35.862245	NW371	LocalMunicipality	3	4
+291	Moses Kotane	\N	2020-05-29 20:13:35.863824	2020-05-29 20:13:35.863824	NW375	LocalMunicipality	3	4
+292	Mossel Bay	\N	2020-05-29 20:13:35.865433	2020-05-29 20:13:35.865433	WC043	LocalMunicipality	4	14
+293	Mpofana	\N	2020-05-29 20:13:35.888787	2020-05-29 20:13:35.888787	KZN223	LocalMunicipality	5	34
+294	Msinga	\N	2020-05-29 20:13:35.897544	2020-05-29 20:13:35.897544	KZN244	LocalMunicipality	5	36
+295	Msukaligwa	\N	2020-05-29 20:13:35.900526	2020-05-29 20:13:35.900526	MP302	LocalMunicipality	2	15
+296	Msunduzi	\N	2020-05-29 20:13:35.902723	2020-05-29 20:13:35.902723	KZN225	LocalMunicipality	5	34
+297	Mthonjaneni	\N	2020-05-29 20:13:35.904678	2020-05-29 20:13:35.904678	KZN285	LocalMunicipality	5	20
+298	Mtubatuba	\N	2020-05-29 20:13:35.907037	2020-05-29 20:13:35.907037	KZN275	LocalMunicipality	5	35
+299	Musina	\N	2020-05-29 20:13:35.908914	2020-05-29 20:13:35.908914	LIM341	LocalMunicipality	6	38
+300	Nala	\N	2020-05-29 20:13:35.910484	2020-05-29 20:13:35.910484	FS185	LocalMunicipality	7	21
+301	Naledi	\N	2020-05-29 20:13:35.912218	2020-05-29 20:13:35.912218	NW392	LocalMunicipality	3	10
+302	Nama Khoi	\N	2020-05-29 20:13:35.913996	2020-05-29 20:13:35.913996	NC062	LocalMunicipality	8	23
+303	Ndlambe	\N	2020-05-29 20:13:35.915805	2020-05-29 20:13:35.915805	EC105	LocalMunicipality	9	29
+304	Ndwedwe	\N	2020-05-29 20:13:35.917503	2020-05-29 20:13:35.917503	KZN293	LocalMunicipality	5	17
+305	Newcastle	\N	2020-05-29 20:13:35.919315	2020-05-29 20:13:35.919315	KZN252	LocalMunicipality	5	2
+306	Ngqushwa	\N	2020-05-29 20:13:35.921294	2020-05-29 20:13:35.921294	EC126	LocalMunicipality	9	3
+307	Ngwathe	\N	2020-05-29 20:13:35.923317	2020-05-29 20:13:35.923317	FS203	LocalMunicipality	7	12
+308	Nkandla	\N	2020-05-29 20:13:35.925022	2020-05-29 20:13:35.925022	KZN286	LocalMunicipality	5	20
+309	Nketoana	\N	2020-05-29 20:13:35.926758	2020-05-29 20:13:35.926758	FS193	LocalMunicipality	7	32
+310	Nkomazi	\N	2020-05-29 20:13:35.928386	2020-05-29 20:13:35.928386	MP324	LocalMunicipality	2	11
+311	Nongoma	\N	2020-05-29 20:13:35.930557	2020-05-29 20:13:35.930557	KZN265	LocalMunicipality	5	44
+312	Nqutu	\N	2020-05-29 20:13:35.933411	2020-05-29 20:13:35.933411	KZN242	LocalMunicipality	5	36
+313	Ntabankulu	\N	2020-05-29 20:13:35.935318	2020-05-29 20:13:35.935318	EC444	LocalMunicipality	9	1
+314	Nyandeni	\N	2020-05-29 20:13:35.937045	2020-05-29 20:13:35.937045	EC155	LocalMunicipality	9	26
+315	Okhahlamba	\N	2020-05-29 20:13:35.938872	2020-05-29 20:13:35.938872	KZN235	LocalMunicipality	5	37
+316	Oudtshoorn	\N	2020-05-29 20:13:35.943398	2020-05-29 20:13:35.943398	WC045	LocalMunicipality	4	14
+317	Overstrand	\N	2020-05-29 20:13:35.945133	2020-05-29 20:13:35.945133	WC032	LocalMunicipality	4	27
+318	Phokwane	\N	2020-05-29 20:13:35.946763	2020-05-29 20:13:35.946763	NC094	LocalMunicipality	8	13
+319	Phumelela	\N	2020-05-29 20:13:35.948347	2020-05-29 20:13:35.948347	FS195	LocalMunicipality	7	32
+320	Pixley ka Seme	\N	2020-05-29 20:13:35.949868	2020-05-29 20:13:35.949868	MP304	LocalMunicipality	2	15
+321	Polokwane	\N	2020-05-29 20:13:35.951299	2020-05-29 20:13:35.951299	LIM354	LocalMunicipality	6	6
+322	Port St Johns	\N	2020-05-29 20:13:35.952929	2020-05-29 20:13:35.952929	EC154	LocalMunicipality	9	26
+323	Prince Albert	\N	2020-05-29 20:13:35.954412	2020-05-29 20:13:35.954412	WC052	LocalMunicipality	4	7
+324	Ramotshere Moiloa	\N	2020-05-29 20:13:35.955923	2020-05-29 20:13:35.955923	NW385	LocalMunicipality	3	24
+325	Rand West City	\N	2020-05-29 20:13:35.957386	2020-05-29 20:13:35.957386	GT485	LocalMunicipality	1	41
+326	Ratlou	\N	2020-05-29 20:13:35.958937	2020-05-29 20:13:35.958937	NW381	LocalMunicipality	3	24
+327	Ray Nkonyeni	\N	2020-05-29 20:13:35.960646	2020-05-29 20:13:35.960646	KZN216	LocalMunicipality	5	33
+328	Raymond Mhlaba	\N	2020-05-29 20:13:35.962223	2020-05-29 20:13:35.962223	EC129	LocalMunicipality	9	3
+329	Renosterberg	\N	2020-05-29 20:13:35.964005	2020-05-29 20:13:35.964005	NC075	LocalMunicipality	8	28
+330	Richmond	\N	2020-05-29 20:13:35.965935	2020-05-29 20:13:35.965935	KZN227	LocalMunicipality	5	34
+331	Richtersveld	\N	2020-05-29 20:13:35.968017	2020-05-29 20:13:35.968017	NC061	LocalMunicipality	8	23
+332	Rustenburg	\N	2020-05-29 20:13:35.96954	2020-05-29 20:13:35.96954	NW373	LocalMunicipality	3	4
+333	Sakhisizwe	\N	2020-05-29 20:13:35.971166	2020-05-29 20:13:35.971166	EC138	LocalMunicipality	9	8
+334	Saldanha Bay	\N	2020-05-29 20:13:35.972863	2020-05-29 20:13:35.972863	WC014	LocalMunicipality	4	40
+335	Senqu	\N	2020-05-29 20:13:35.974748	2020-05-29 20:13:35.974748	EC142	LocalMunicipality	9	18
+336	Setsoto	\N	2020-05-29 20:13:35.976549	2020-05-29 20:13:35.976549	FS191	LocalMunicipality	7	32
+337	Siyancuma	\N	2020-05-29 20:13:35.978793	2020-05-29 20:13:35.978793	NC078	LocalMunicipality	8	28
+338	Siyathemba	\N	2020-05-29 20:13:35.981307	2020-05-29 20:13:35.981307	NC077	LocalMunicipality	8	28
+339	Sol Plaatje	\N	2020-05-29 20:13:35.984462	2020-05-29 20:13:35.984462	NC091	LocalMunicipality	8	13
+340	Stellenbosch	\N	2020-05-29 20:13:35.987228	2020-05-29 20:13:35.987228	WC024	LocalMunicipality	4	5
+341	Steve Tshwete	\N	2020-05-29 20:13:35.989894	2020-05-29 20:13:35.989894	MP313	LocalMunicipality	2	25
+342	Sundays River Valley	\N	2020-05-29 20:13:35.995393	2020-05-29 20:13:35.995393	EC106	LocalMunicipality	9	29
+343	Swartland	\N	2020-05-29 20:13:35.99774	2020-05-29 20:13:35.99774	WC015	LocalMunicipality	4	40
+344	Swellendam	\N	2020-05-29 20:13:35.999801	2020-05-29 20:13:35.999801	WC034	LocalMunicipality	4	27
+345	Thaba Chweu	\N	2020-05-29 20:13:36.001647	2020-05-29 20:13:36.001647	MP321	LocalMunicipality	2	11
+346	Thabazimbi	\N	2020-05-29 20:13:36.003405	2020-05-29 20:13:36.003405	LIM361	LocalMunicipality	6	39
+347	Theewaterskloof	\N	2020-05-29 20:13:36.004935	2020-05-29 20:13:36.004935	WC031	LocalMunicipality	4	27
+348	Thembelihle	\N	2020-05-29 20:13:36.006954	2020-05-29 20:13:36.006954	NC076	LocalMunicipality	8	28
+349	Thembisile Hani	\N	2020-05-29 20:13:36.008351	2020-05-29 20:13:36.008351	MP315	LocalMunicipality	2	25
+350	Thulamela	\N	2020-05-29 20:13:36.009701	2020-05-29 20:13:36.009701	LIM343	LocalMunicipality	6	38
+351	Tokologo	\N	2020-05-29 20:13:36.010995	2020-05-29 20:13:36.010995	FS182	LocalMunicipality	7	21
+352	Tsantsabane	\N	2020-05-29 20:13:36.01231	2020-05-29 20:13:36.01231	NC085	LocalMunicipality	8	43
+353	Tswaing	\N	2020-05-29 20:13:36.014654	2020-05-29 20:13:36.014654	NW382	LocalMunicipality	3	24
+354	Tswelopele	\N	2020-05-29 20:13:36.017081	2020-05-29 20:13:36.017081	FS183	LocalMunicipality	7	21
+355	Ubuhlebezwe	\N	2020-05-29 20:13:36.018939	2020-05-29 20:13:36.018939	KZN434	LocalMunicipality	5	16
+356	Ubuntu	\N	2020-05-29 20:13:36.0206	2020-05-29 20:13:36.0206	NC071	LocalMunicipality	8	28
+357	Ulundi	\N	2020-05-29 20:13:36.022421	2020-05-29 20:13:36.022421	KZN266	LocalMunicipality	5	44
+358	Umdoni	\N	2020-05-29 20:13:36.024265	2020-05-29 20:13:36.024265	KZN212	LocalMunicipality	5	33
+359	uMfolozi	\N	2020-05-29 20:13:36.026046	2020-05-29 20:13:36.026046	KZN281	LocalMunicipality	5	20
+360	uMhlabuyalingana	\N	2020-05-29 20:13:36.027715	2020-05-29 20:13:36.027715	KZN271	LocalMunicipality	5	35
+361	uMhlathuze	\N	2020-05-29 20:13:36.029333	2020-05-29 20:13:36.029333	KZN282	LocalMunicipality	5	20
+362	uMlalazi	\N	2020-05-29 20:13:36.030864	2020-05-29 20:13:36.030864	KZN284	LocalMunicipality	5	20
+363	uMngeni	\N	2020-05-29 20:13:36.033109	2020-05-29 20:13:36.033109	KZN222	LocalMunicipality	5	34
+364	uMshwathi	\N	2020-05-29 20:13:36.034974	2020-05-29 20:13:36.034974	KZN221	LocalMunicipality	5	34
+365	Umsobomvu	\N	2020-05-29 20:13:36.037061	2020-05-29 20:13:36.037061	NC072	LocalMunicipality	8	28
+366	uMuziwabantu	\N	2020-05-29 20:13:36.03895	2020-05-29 20:13:36.03895	KZN214	LocalMunicipality	5	33
+367	Umvoti	\N	2020-05-29 20:13:36.043438	2020-05-29 20:13:36.043438	KZN245	LocalMunicipality	5	36
+368	Umzimkhulu	\N	2020-05-29 20:13:36.045191	2020-05-29 20:13:36.045191	KZN435	LocalMunicipality	5	16
+369	Umzimvubu	\N	2020-05-29 20:13:36.046622	2020-05-29 20:13:36.046622	EC442	LocalMunicipality	9	1
+370	Umzumbe	\N	2020-05-29 20:13:36.048199	2020-05-29 20:13:36.048199	KZN213	LocalMunicipality	5	33
+371	uPhongolo	\N	2020-05-29 20:13:36.049729	2020-05-29 20:13:36.049729	KZN262	LocalMunicipality	5	44
+372	Victor Khanye	\N	2020-05-29 20:13:36.051221	2020-05-29 20:13:36.051221	MP311	LocalMunicipality	2	25
+373	Walter Sisulu	\N	2020-05-29 20:13:36.052748	2020-05-29 20:13:36.052748	EC145	LocalMunicipality	9	18
+374	Witzenberg	\N	2020-05-29 20:13:36.05415	2020-05-29 20:13:36.05415	WC022	LocalMunicipality	4	5

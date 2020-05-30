@@ -3,13 +3,10 @@ class CaseReference < ActiveRecord::Base
 
   def self.find_all(refs:) # keyword argument!
     return [] if refs.blank?
-    result = nil
-    sql_fragments = refs.each_with_index do |ref, i|
-      year, sequence = parse(ref).values_at(:year, :sequence)
-      result = where(year: year, sequence: sequence) if i==0
-      result = result.send(:or, where(year: year, sequence: sequence)) unless i==0
+    result = refs.inject(where('1=0')) do |query,ref|
+      query.send(:or, where(parse(ref)))
     end
-    raise ActiveRecord::RecordNotFound if result.empty?
+    raise ActiveRecord::RecordNotFound if result.length < refs.length
     result
   end
 
