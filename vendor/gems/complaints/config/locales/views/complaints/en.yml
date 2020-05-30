@@ -119,7 +119,7 @@ en:
     dob: 'Date of birth'
     documents: "Documents"
     download : "Download"
-    duplicates : "Duplicate complaint case ref(s)"
+    duplicates : "Duplicate complaints"
     dupe_refs_format_error_message: "Invalid case reference(s)"
     dupe_refs_not_found_error_message: "Case reference not found"
     edit : "Edit"
