@@ -108,6 +108,7 @@ feature 'edit complaint', js: true do
   before do
     populate_database(:individual_complaint)
     individual_complaint.update(agency_ids: [lesedi.id])
+    @duplicate_complaint = FactoryBot.create(:complaint)
     visit complaint_path(:en, individual_complaint.id)
   end
 
@@ -151,6 +152,13 @@ feature 'edit complaint', js: true do
 
   it "edits a complaint" do
     edit_complaint
+
+    # DUPLICATES
+    fill_in('dupe_refs', with: @duplicate_complaint.case_reference.to_s)
+
+    #LINKED COMPLAINTS
+    fill_in('link_refs', with: @duplicate_complaint.case_reference.to_s)
+
     # COMPLAINANT
     fill_in('lastName', :with => "Normal")
     fill_in('firstName', :with => "Norman")
@@ -179,7 +187,7 @@ feature 'edit complaint', js: true do
     sleep(0.2) # javascript
     expect(page.find('#date_received').value).to eq "#{Date.today.strftime('23/%m/%Y')}"
 
-    expect{ edit_save }.to change{ IndividualComplaint.find(1).lastName }.to("Normal").
+    expect{ edit_save; wait_for_ajax }.to change{ IndividualComplaint.find(1).lastName }.to("Normal").
                        and change{ IndividualComplaint.find(1).firstName }.to("Norman").
                        and change{ IndividualComplaint.find(1).city }.to("Normaltown").
                        and change{ IndividualComplaint.find(1).home_phone }.to("555-1212").
@@ -191,6 +199,8 @@ feature 'edit complaint', js: true do
     # first Complaint has current status "registered"
     # last Complaint has current status "closed"
     # here we're editing the first complaint
+    expect( individual_complaint.reload.duplicates.map(&:case_reference).map(&:to_s)).to include @duplicate_complaint.case_reference.to_s
+    expect( individual_complaint.reload.linked_complaints.map(&:case_reference).map(&:to_s)).to include @duplicate_complaint.case_reference.to_s
     expect( individual_complaint.reload.title ).to eq "kahunga"
     expect( individual_complaint.reload.complained_to_subject_agency ).to eq false
     expect( individual_complaint.reload.dob ).to eq "19/08/1950"
@@ -213,6 +223,8 @@ feature 'edit complaint', js: true do
     expect(page).to have_selector('#complaint_details', :text => "the boy stood on the burning deck")
     expect(page).to have_selector('#complained_to_subject_agency', :text => "no")
     expect(page).to have_selector('#date',:text => Date.new(Date.today.year, Date.today.month, 23).strftime(Complaint::DateFormat))
+    expect(page).to have_selector('.duplicate_case_reference', text: @duplicate_complaint.case_reference.to_s)
+    expect(page).to have_selector('.linked_complaint', text: @duplicate_complaint.case_reference.to_s)
 
     within good_governance_area do
       IndividualComplaint.first.complaint_subareas.good_governance.map(&:name).each do |subarea_name|
@@ -434,6 +446,32 @@ feature 'edit complaint', js: true do
       #error removed when user types
       fill_in('dupe_refs', with: "200/20, 20/15")
       expect(page).not_to have_selector('#dupe_refs_not_found_error', text: 'Case reference not found')
+    end
+  end
+
+  describe 'validation of duplicate complaint field' do
+    it 'shows an error if one of the case references is badly formed' do
+      edit_complaint
+      fill_in('link_refs', with: "20x/20, 20/15")
+      edit_save
+      expect(page).to have_selector('#complaint_error', text: "Form has errors, cannot be saved")
+      expect(page).to have_selector('#link_refs_format_error', text: 'Invalid case reference')
+
+      #error removed when user types
+      fill_in('link_refs', with: "200/20, 20/15")
+      expect(page).not_to have_selector('#link_refs_format_error', text: 'Invalid case reference')
+    end
+
+    it 'shows an error if case reference is not found' do
+      edit_complaint
+      fill_in('link_refs', with: "200/20, 800/15")
+      edit_save
+      expect(page).to have_selector('#complaint_error', text: "Form has errors, cannot be saved")
+      expect(page).to have_selector('#link_refs_not_found_error', text: 'Case reference not found')
+
+      #error removed when user types
+      fill_in('link_refs', with: "200/20, 20/15")
+      expect(page).not_to have_selector('#link_refs_not_found_error', text: 'Case reference not found')
     end
   end
 end

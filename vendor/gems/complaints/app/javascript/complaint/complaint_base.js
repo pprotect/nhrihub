@@ -41,21 +41,34 @@ import ContactInfo from 'partials/_contact_info.pug'
 import Legislations from 'partials/_legislations.pug'
 import DateReceived from 'partials/_date_received.pug'
 import Duplicates from 'partials/_duplicates.pug'
+import Duplicate from 'related_complaint.ractive.pug'
+import LinkedComplaints from 'partials/_linked_complaints.pug'
+import LinkedComplaint from 'related_complaint.ractive.pug'
 import LegislationSelector from 'legislation_selector.ractive.pug'
 import Datepicker from 'datepicker'
-import Duplicate from 'duplicate.ractive.pug'
 
 export default Ractive.extend({
   el: '#complaint',
   computed : {
     dupe_refs: {
       get(){
-        return this.get('duplicates').map((duplicate)=>{return duplicate.case_reference}).join(', ')
+        let val = this.get('duplicates').map((duplicate)=>{return duplicate.case_reference}).join(', ')
+        return val
       },
       set(val){
         let case_refs = val.split(',')
         let dupes = case_refs.map((cr)=>{return {case_reference: cr}})
         this.set('duplicates', dupes)
+      }
+    },
+    link_refs: {
+      get(){
+        return this.get('linked_complaints').map((linked)=>{return linked.case_reference}).join(', ')
+      },
+      set(val){
+        let case_refs = val.split(',')
+        let linked = case_refs.map((cr)=>{return {case_reference: cr}})
+        this.set('linked_complaints', linked)
       }
     },
     province_name(){
@@ -198,6 +211,7 @@ export default Ractive.extend({
     legislations: Legislations,
     date_received: DateReceived,
     duplicates: Duplicates,
+    linked_complaints: LinkedComplaints,
   },
   oninit() {
     this.set({
@@ -206,6 +220,8 @@ export default Ractive.extend({
       new_assignee_id: 0,
       new_transferee_id: 0,
       new_jurisdiction_branch_id: 0,
+      dupe_refs_validation_required: false,
+      link_refs_validation_required: false,
     });
   },
   onconfig() {
@@ -240,6 +256,16 @@ export default Ractive.extend({
     legislationSelector: LegislationSelector,
     datepicker: Datepicker,
     duplicate: Duplicate,
+    linkedComplaint: LinkedComplaint,
+  },
+  observe: {
+    'dupe_refs link_refs': {
+      handler(value, old, path, idx){
+        if(!_.isUndefined(old)){
+          this.set(`${path}_validation_required`, true)
+        }
+      }
+    }
   },
   add_agency(){
     this.push('agencies',{id: null})
@@ -296,15 +322,31 @@ export default Ractive.extend({
     this.findComponent("dupeList").showModal()
   },
   async async_validate(){
-    if(_.isEmpty(this.get('dupe_refs'))){
-      return true
+    if(_.isEmpty(this.get('dupe_refs')) && _.isEmpty(this.get('link_refs'))){ return true }
+
+    const dupe_refs_result = () => {
+      if(this.get('dupe_refs_validation_required')){
+        return $.get( Routes.case_references_path('en'), {refs: this.get('dupe_refs')})
+      }else{
+        return {case_references_exist: true}
+      }
     }
-    let result = await $.get(
-      Routes.case_references_path('en'),
-      {dupe_refs: this.get('dupe_refs')}
-    )
-    this.set('dupe_refs_not_found_error', !result.case_references_exist)
-    return result.case_references_exist
+
+    const link_refs_result = () => {
+      if(this.get('link_refs_validation_required')){
+        return $.get( Routes.case_references_path('en'), {refs: this.get('link_refs')})
+      }else{
+        return {case_references_exist: true}
+      }
+    }
+
+    const validations = await Promise.all([dupe_refs_result(), link_refs_result()])
+
+    const [dupe_refs_valid, link_refs_valid] = await validations.map(res => res.case_references_exist)
+
+    this.set({dupe_refs_not_found_error: !dupe_refs_valid, link_refs_not_found_error: !link_refs_valid})
+
+    return [dupe_refs_valid, link_refs_valid].every(valid=>valid)
   },
   generate_word_doc() {
     return window.location = Routes.complaint_path('en',this.get('id'),{format : 'docx'});

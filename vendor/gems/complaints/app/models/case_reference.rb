@@ -2,9 +2,10 @@ class CaseReference < ActiveRecord::Base
   belongs_to :complaint
 
   def self.find_all(refs:) # keyword argument!
-    return [] if refs.blank?
+    return [] if refs.reject(&:blank?).empty?
     result = refs.inject(where('1=0')) do |query,ref|
-      query.send(:or, where(parse(ref)))
+      attrs = parse(ref)
+      query.send(:or, where(attrs)) unless attrs.values.any?(&:nil?)
     end
     raise ActiveRecord::RecordNotFound if result.length < refs.length
     result
@@ -12,6 +13,7 @@ class CaseReference < ActiveRecord::Base
 
   #produces {year: yy, sequence: nnn}
   def self.parse(fragment)
+    return {year: nil, sequence: nil} if fragment.blank?
     match = fragment.match(CaseReferenceRegex)
     raise ArgumentError if match.nil?
     match.named_captures&.symbolize_keys&.transform_values(&:to_i)

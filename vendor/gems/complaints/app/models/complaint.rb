@@ -38,6 +38,7 @@ class Complaint < ActiveRecord::Base
   has_many :legislations, through: :complaint_legislations
   belongs_to :province
   belongs_to :duplication_group, counter_cache: true
+  belongs_to :linked_complaints_group, counter_cache: true
 
   attr_accessor :witness_name, :heading
 
@@ -46,7 +47,8 @@ class Complaint < ActiveRecord::Base
   after_create :generate_case_reference
 
   def dupe_refs=(refs)
-    complaints = CaseReference.find_all(refs: refs.split(', ')).map(&:complaint)
+    refs = refs.split(', ') if refs.is_a? String
+    complaints = CaseReference.find_all(refs: refs).map(&:complaint)
     group_id = DuplicationGroup.create.id
     previous_duplicates = duplicates
     (complaints + complaints.map(&:duplicates)).flatten.each do |complaint|
@@ -60,17 +62,38 @@ class Complaint < ActiveRecord::Base
     end
   end
 
-  def is_in_duplication_group?
-    duplication_group_id.present?
-  end
-
   def duplicates
     return [] if duplication_group_id.nil?
     DuplicateComplaint.where("duplication_group_id = ? and id != ?", duplication_group_id, id)
   end
 
   def duplicates=(dupe_array)
-    dupe_refs = dupe_array.reject(&:blank?).map{|dr| dr[:case_reference]}
+    self.dupe_refs = dupe_array.reject(&:blank?).map{|dr| dr[:case_reference]}
+  end
+
+  def link_refs=(refs)
+    refs = refs.split(', ') if refs.is_a? String
+    complaints = CaseReference.find_all(refs: refs).map(&:complaint)
+    group_id = LinkedComplaintsGroup.create.id
+    previous_linked_complaints = linked_complaints
+    (complaints + complaints.map(&:linked_complaints)).flatten.each do |complaint|
+      complaint.update(linked_complaints_group_id: group_id)
+    end
+    if persisted?
+      update(linked_complaints_group_id: group_id)
+      LinkedComplaintsGroup.cleanup
+    else
+      self.linked_complaints_group_id = group_id
+    end
+  end
+
+  def linked_complaints
+    return [] if linked_complaints_group_id.nil?
+    LinkedComplaint.where("linked_complaints_group_id = ? and id != ?", linked_complaints_group_id, id)
+  end
+
+  def linked_complaints=(link_array)
+    self.link_refs = link_array.reject(&:blank?).map{|dr| dr[:case_reference]}
   end
 
   def generate_case_reference
@@ -198,19 +221,6 @@ class Complaint < ActiveRecord::Base
     end
   end
 
-  #before_update do |complaint|
-    #Rails.logger.info "update complaint #{complaint.id} group_id change: #{complaint.duplication_group_id_change}"
-    #if complaint.duplication_group_id_changed? && !complaint.duplication_group_id_change[0].nil?
-      #new_group_id = complaint.duplication_group_id_change[1]
-      #Rails.logger.info "update complaint #{complaint.id} duplicates #{complaint.reload.duplicates.map(&:id)} to duplication_group_id #{new_group_id}"
-      #complaint.reload.duplicates.update_all(duplication_group_id: new_group_id) # update_all skips callbacks
-    #end
-  #end
-
-  #after_update do |complaint|
-    #Rails.logger.info "#{complaint.id} updated #{complaint.saved_change_to_duplication_group_id}"
-  #end
-
   def <=>(other)
     case_reference <=> other.case_reference
   end
@@ -256,7 +266,8 @@ class Complaint < ActiveRecord::Base
                            :legislation_ids,
                            :timeline_events,
                            :communications,
-                           :duplicates] }
+                           :duplicates,
+                           :linked_complaints,] }
     end
     super(options)
   end

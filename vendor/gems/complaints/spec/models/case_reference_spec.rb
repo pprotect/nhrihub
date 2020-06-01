@@ -269,6 +269,13 @@ context "South Africa formatted string" do
         expect(result).to eq [20,200]
       end
     end
+
+    describe "when string is blank" do
+      let(:string){ "" }
+      it "returns hash with nil values" do
+        expect(result).to eq [nil, nil]
+      end
+    end
   end
 end
 

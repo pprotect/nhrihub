@@ -51,10 +51,13 @@ local_methods =
         value = [""]
 
       _(value).each (item)->
-        name = prefix + "["+ attribute + "][]"
         if typeof item == 'object'
-          item = JSON.stringify(item)
-        formData.append(name, item)
+          for key, value of item
+            name = "#{prefix}[#{attribute}][][#{key}]"
+            formData.append(name, value)
+        else
+          name = "#{prefix}[#{attribute}][]"
+          formData.append(name, item)
         return
 
     _(simple_attributes).each (attribute)=>

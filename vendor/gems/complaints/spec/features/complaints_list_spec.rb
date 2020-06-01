@@ -310,7 +310,7 @@ feature "reloads complaints if a different assignee is selected", js: true do
   before do
     populate_database(:individual_complaint)
     user = FactoryBot.create(:user, firstName: "Norman", lastName: "Normal")
-    @norms_complaint = FactoryBot.create(:complaint, :registered, :with_associations, :assigned_to => user)
+    @norms_complaint = FactoryBot.create(:complaint, :registered, :with_associations, :investigation, :assigned_to => user)
     visit complaints_path('en')
   end
 

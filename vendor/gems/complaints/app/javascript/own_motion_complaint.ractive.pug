@@ -22,6 +22,8 @@
 
       | {{>duplicates }}
 
+      | {{>linked_complaints }}
+
       .row('class-hidden'='new_complaint')
         .col-md-2
           label {{ t.current_assignee }}
@@ -160,7 +162,7 @@ script(type='text/javascript').
           'status_changes_attributes', 'new_assignee_id', 'subarea_ids', 'legislation_ids',
           'agency_ids', 'attached_documents_attributes', 'details', 'new_jurisdiction_branch_id',
           'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
-          'firstName', 'lastName', 'title', 'type'];
+          'firstName', 'lastName', 'title', 'type', 'duplicates', 'linked_complaints'];
       },
       validation_criteria() {
         return {
@@ -184,6 +186,34 @@ script(type='text/javascript').
           fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
           status_memo: ()=>{console.log('validate status memo'); return this.findComponent('closedStatusRadio').validate() },
           agency_ids: ()=>{return _.isArray(this.get('agency_ids')) && !_.isEmpty(this.get('agency_ids')) && _(this.get('agency_ids')).every(function(i){return _.isNumber(i)})},
+          dupe_refs_format: ()=>{
+            if(_.isEmpty(this.get('dupe_refs'))){
+                return true
+              }else{
+                let re = new RegExp(this.get('case_ref_regex'))
+                let matches = this.get('dupe_refs').split(',').map(ref=> ref.match(re)==null)
+                return matches.every(match => !match)
+              }
+          },
+          dupe_refs_not_found: ()=>{
+            //it's necessary to have this attr here, even though it's validated remotely/asynchronously
+            //b/c the presence of this key links the dupe_refs_not_found_error to has_errors
+            return true
+          },
+          link_refs_format: ()=>{
+            if(_.isEmpty(this.get('link_refs'))){
+                return true
+              }else{
+                let re = new RegExp(this.get('case_ref_regex'))
+                let matches = this.get('link_refs').split(',').map(ref=> ref.match(re)==null)
+                return matches.every(match => !match)
+              }
+          },
+          link_refs_not_found: ()=>{
+            //it's necessary to have this attr here, even though it's validated remotely/asynchronously
+            //b/c the presence of this key links the link_refs_not_found_error to has_errors
+            return true
+          },
         };
       }
     },

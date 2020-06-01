@@ -55,7 +55,6 @@ class ComplaintsController < ApplicationController
       params[:complaint][:assigns_attributes] = [{ user_id: new_assignee_id,
                                                    assigner_id: current_user.id}]
     end
-    #if true
     if complaint.update(complaint_params)
       complaint.heading= t('.heading', case_reference: complaint.case_reference)
       render :json => complaint, :status => 200
@@ -164,7 +163,7 @@ class ComplaintsController < ApplicationController
                                        :date, :imported, :complaint_area_id, 'new_transferee_id',
                                        :cell_phone, :fax, :province_id, :postal_code, :id_type, :id_value, :alt_id_type, :alt_id_value,
                                        :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
-                                       :organization_name, :organization_registration_number, :duplicates =>[], :agency_ids => [],
+                                       :organization_name, :organization_registration_number, :linked_complaints => [:id, :case_reference, :url], :duplicates =>[:id, :case_reference, :url], :agency_ids => [],
                                        :legislation_ids => [],
                                        :complaint_transfers_attributes => [:user_id, :office_id],
                                        :jurisdiction_assignments_attributes => [:user_id, :branch_id],

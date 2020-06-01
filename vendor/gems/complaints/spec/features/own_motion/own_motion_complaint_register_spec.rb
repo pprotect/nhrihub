@@ -36,6 +36,7 @@ feature "complaints index", :js => true do
 
   let(:formatted_case_reference) { ->(year,sequence){ CaseReferenceFormat%{year:year,sequence:sequence} } }
   let(:current_year){ Date.today.strftime('%y').to_i }
+  let(:dupe_complaint_ref){ Complaint.first.case_reference.to_s }
 
   before do
     populate_database(:own_motion_complaint)
@@ -52,7 +53,6 @@ feature "complaints index", :js => true do
 
   it "adds a new complaint that is valid" do
     expect( page_heading ).to eq "Own Motion Complaint Intake"
-    test_fail_placeholder("duplicate complaints field should not be shown")
     complete_required_fields(:own_motion)
     expect{save_complaint}.to change{ Complaint.count }.by(1)
 
@@ -64,7 +64,8 @@ feature "complaints index", :js => true do
 
   it "adds a new complaint that is valid" do
     user = User.staff.first
-    fill_in('dupe_ref', with: '00023/20')
+    fill_in('dupe_refs', with: dupe_complaint_ref)
+    fill_in('link_refs', with: dupe_complaint_ref)
     fill_in('title', :with => "Ambassador")
     fill_in('lastName', :with => "Normal")
     fill_in('firstName', :with => "Norman")
@@ -100,7 +101,8 @@ feature "complaints index", :js => true do
     expect(complaint).to be_a(OwnMotionComplaint)
     expect(complaint.case_reference.year).to eq complaint.case_reference.year
     expect(complaint.case_reference.sequence).to eq 3
-    expect(complaint.dupe_refs).to include dupe_complaint.id
+    expect(complaint.duplicates.map(&:case_reference).map(&:to_s)).to include dupe_complaint_ref
+    expect(complaint.linked_complaints.map(&:case_reference).map(&:to_s)).to include dupe_complaint_ref
     expect(complaint.title).to eq "Ambassador"
     expect(complaint.lastName).to eq "Normal"
     expect(complaint.firstName).to eq "Norman"
@@ -131,6 +133,8 @@ feature "complaints index", :js => true do
     ## on the client
     expect(page_heading).to eq "Complaint, case reference: #{Complaint.last.case_reference}"
     expect(find('#complaint #complaint_type').text).to eq "Own motion complaint"
+    expect(all('.linked_complaint').map(&:text)).to include dupe_complaint_ref
+    expect(all('.duplicate_case_reference').map(&:text)).to include dupe_complaint_ref
     expect(find('#complaint #title').text).to eq "Ambassador"
     expect(find('#complaint #lastName').text).to eq "Normal"
     expect(find('#complaint #firstName').text).to eq "Norman"

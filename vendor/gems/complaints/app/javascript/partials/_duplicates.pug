@@ -4,12 +4,12 @@
   .col-md-10
     .no_edit.in.comma-list
       | {{#duplicates}}
-      <duplicate case_reference='{{case_reference}}', id='{{id}}' />
+      <duplicate identifier='duplicate_case_reference' case_reference='{{case_reference}}', id='{{id}}' />
       | {{/duplicates}}
     .edit
       .row
         .col-md-3
-          input.form-control#dupe_refs(autocomplete='none', value='{{dupe_refs}}', placeholder='comma-separated list', 'on-keyup'="remove_attribute_error('dupe_refs_format','dupe_refs_not_found')")
-          span.help-block.error#dupe_refs_format_error('class-has-error'='dupe_refs_format_error') {{ t.dupe_refs_format_error_message }}
-          span.help-block.error#dupe_refs_not_found_error('class-has-error'='dupe_refs_not_found_error') {{ t.dupe_refs_not_found_error_message }}
+          input.form-control#dupe_refs(autocomplete='none', lazy='true', value='{{dupe_refs}}', placeholder='comma-separated list', 'on-keyup'="remove_attribute_error('dupe_refs_format','dupe_refs_not_found')")
+          span.help-block.error#dupe_refs_format_error('class-has-error'='dupe_refs_format_error') {{ t.refs_format_error_message }}
+          span.help-block.error#dupe_refs_not_found_error('class-has-error'='dupe_refs_not_found_error') {{ t.refs_not_found_error_message }}
 

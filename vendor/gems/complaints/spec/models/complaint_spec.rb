@@ -168,7 +168,8 @@ describe "#as_json" do
                                                      "postal_address", "postal_code", "preferred_means", "province_id",
                                                      "alt_id_value", "alt_id_other_type", "fax", "home_phone", "id_type",
                                                      "id_value", "organization_name", "organization_registration_number",
-                                                     "initiating_branch_id", "initiating_office_id", "duplicates", "duplication_group_id"]
+                                                     "initiating_branch_id", "initiating_office_id",
+                                                     "duplicates", "duplication_group_id", "linked_complaints", "linked_complaints_group_id"]
       expect(@complaints.first["id"]).to eq Complaint.first.id # Complaint.first sorts by id in ascending order, returns lowest id/case_ref
       expect(@complaints.first["case_reference"]).to eq Complaint.first.case_reference.to_s
       expect(@complaints.first["city"]).to eq Complaint.first.city
@@ -247,7 +248,8 @@ describe "#as_json" do
                                                      "postal_address", "postal_code", "preferred_means", "province_id",
                                                      "alt_id_value", "alt_id_other_type", "fax", "home_phone", "id_type",
                                                      "id_value", "organization_name", "organization_registration_number",
-                                                     "initiating_branch_id", "initiating_office_id", "duplicates", "duplication_group_id"]
+                                                     "initiating_branch_id", "initiating_office_id",
+                                                     "duplicates", "duplication_group_id", "linked_complaints", "linked_complaints_group_id"]
       expect(@complaints.first["reminders"]).to be_empty
       expect(@complaints.first["notes"]).to be_empty
       expect(@complaints.first["assigns"]).to be_empty
@@ -391,6 +393,32 @@ describe "duplicate complaints" do
       expect(@complaint.reload.duplicates.map(&:id)).to match_array [@third_complaint.id, @fourth_complaint.id]
       expect(@second_complaint.duplicates.map(&:id)).to eq [@another_complaint.id]
       expect(DuplicationGroup.count).to eq 2
+    end
+  end
+end
+
+describe "save with duplicates" do
+  let!(:complaint){FactoryBot.create(:individual_complaint)}
+  let!(:duplicate_complaint){FactoryBot.create(:individual_complaint)}
+
+  context "normal assigment of duplicate complaint" do
+    it "should assign duplicate complaint as a duplicate of complaint" do
+      complaint.update(duplicates: [{case_reference: duplicate_complaint.case_reference.to_s}])
+      expect(complaint.reload.duplicates.map(&:id)).to include duplicate_complaint.id
+    end
+  end
+
+  context "assigment when there are no duplicates" do
+    it "should not change duplicate assignment" do
+      complaint.update(duplicates: [{case_reference: ""}])
+      expect(complaint.reload.duplicates).to be_empty
+    end
+  end
+
+  context "assigment when the duplicate array contains a blank string" do
+    it "should not change duplicate assignment" do
+      complaint.update(duplicates: [""])
+      expect(complaint.reload.duplicates).to be_empty
     end
   end
 end

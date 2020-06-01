@@ -1,0 +1,15 @@
+.row.form-group('data-toggle'='edit')
+  .col-md-2
+    label {{ t.linked }}
+  .col-md-10
+    .no_edit.in.comma-list
+      | {{#linked_complaints}}
+      <linkedComplaint identifier='linked_complaint' case_reference='{{case_reference}}', id='{{id}}' />
+      | {{/linked_complaints}}
+    .edit
+      .row
+        .col-md-3
+          input.form-control#link_refs(autocomplete='none', lazy='true', value='{{link_refs}}', placeholder='comma-separated list', 'on-keyup'="remove_attribute_error('link_refs_format','link_refs_not_found')")
+          span.help-block.error#link_refs_format_error('class-has-error'='link_refs_format_error') {{ t.refs_format_error_message }}
+          span.help-block.error#link_refs_not_found_error('class-has-error'='link_refs_not_found_error') {{ t.refs_not_found_error_message }}
+
