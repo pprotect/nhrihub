@@ -39,6 +39,7 @@ class Complaint < ActiveRecord::Base
   belongs_to :province
   belongs_to :duplication_group, counter_cache: true
   belongs_to :linked_complaints_group, counter_cache: true
+  has_and_belongs_to_many :complainants
 
   attr_accessor :witness_name, :heading
 
