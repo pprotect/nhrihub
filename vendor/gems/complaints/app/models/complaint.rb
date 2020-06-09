@@ -5,11 +5,6 @@ class Complaint < ActiveRecord::Base
   include ComplaintQuery
   DateFormat = "%d/%m/%Y"
 
-  enum preferred_means: [:mail, :email, :home_phone, :cell_phone, :fax]
-  enum id_type: ["undefined", "Passport number", "State id"], _prefix: true
-  enum alt_id_type: ["undefined", "pension number", "prison id", "other"], _prefix: true
-
-
   include Rails.application.routes.url_helpers
   belongs_to :complaint_area
   has_many :complaint_complaint_subareas, :dependent => :destroy
@@ -36,15 +31,13 @@ class Complaint < ActiveRecord::Base
   accepts_nested_attributes_for :jurisdiction_assignments
   has_many :complaint_legislations
   has_many :legislations, through: :complaint_legislations
-  belongs_to :province
   belongs_to :duplication_group, counter_cache: true
   belongs_to :linked_complaints_group, counter_cache: true
   has_and_belongs_to_many :complainants
+  accepts_nested_attributes_for :complainants
 
   attr_accessor :witness_name, :heading
 
-  # why after_commit iso after_create? see https://dev.mikamai.com/2016/01/19/postgresql-transaction-and-rails-callbacks/
-  # hmmm... doesn't seem to be true any more! need to investigate
   after_create :generate_case_reference
 
   def dupe_refs=(refs)
@@ -99,9 +92,6 @@ class Complaint < ActiveRecord::Base
 
   def generate_case_reference
     self.case_reference = CaseReference.create
-    #update_column :case_reference, Complaint.next_case_reference
-    # must be done after commit b/c case_reference is not final until the last commit
-    assigns.last&.notify_assignee
   end
 
   def assign_initial_status(user)
@@ -129,39 +119,43 @@ class Complaint < ActiveRecord::Base
       selected_office_id: ""}
   end
 
-  def self.filtered(query)
+  def self.filtered(selected_assignee_id:,selected_status_ids:,selected_complaint_area_ids:,case_reference:,complainant:,from:,to:,city:,phone:,selected_subarea_ids:,selected_agency_id:,selected_office_id:)
     # just for debugging
     if ENV['log_filter'] == 'true'
-      logger.info "for_assignee: #{for_assignee(query[:selected_assignee_id]).length}"
-      logger.info "with_status: #{with_status(query[:selected_status_ids]).length}"
-      logger.info "with_complaint_area_ids: #{with_complaint_area_ids(query[:selected_complaint_area_ids]).length}"
-      logger.info "with_case_reference_match: #{with_case_reference_match(query[:case_reference]).length}"
-      logger.info "with_complainant_fragment_match: #{with_complainant_fragment_match(query[:complainant]).length}"
-      logger.info "since_date: #{since_date(query[:from]).length}"
-      logger.info "before_date: #{before_date(query[:to]).length}"
-      logger.info "with_city: #{with_city(query[:city]).length}"
-      logger.info "with_phone: #{with_phone(query[:phone]).length}"
-      logger.info "with_subareas: #{with_subareas(query[:selected_subarea_ids]).length}"
-      logger.info "with_agencies: #{with_agencies(query[:selected_agency_id]).length}"
-      logger.info "transferred_to: #{transferred_to(query[:selected_office_id]).length}"
+      puts [selected_assignee_id, selected_status_ids, complainant, from, to,
+       city, phone, selected_complaint_area_ids, selected_subarea_ids,
+       case_reference, selected_agency_id, selected_office_id].inspect
+      logger.info "for_assignee: #{for_assignee(selected_assignee_id).length}"
+      logger.info "with_status: #{with_status(selected_status_ids).length}"
+      logger.info "with_complaint_area_ids: #{with_complaint_area_ids(selected_complaint_area_ids).length}"
+      logger.info "with_case_reference_match: #{with_case_reference_match(case_reference).length}"
+      logger.info "with_complainant_fragment_match: #{with_complainant_fragment_match(complainant).length}"
+      logger.info "since_date: #{since_date(from).length}"
+      logger.info "before_date: #{before_date(to).length}"
+      logger.info "with_city: #{with_city(city).length}"
+      logger.info "with_phone: #{with_phone(phone).length}"
+      logger.info "with_subareas: #{with_subareas(selected_subarea_ids).length}"
+      logger.info "with_agencies: #{with_agencies(selected_agency_id).length}"
+      logger.info "transferred_to: #{transferred_to(selected_office_id).length}"
     end
 
-    select("DISTINCT ON (complaints.id) complaints.*").
-      for_assignee(query[:selected_assignee_id]).
-      with_status(query[:selected_status_ids]).
-      with_complaint_area_ids(query[:selected_complaint_area_ids]).
-      with_case_reference_match(query[:case_reference]).
-      with_complainant_fragment_match(query[:complainant]).
-      since_date(query[:from]).
-      before_date(query[:to]).
-      with_city(query[:city]).
-      with_phone(query[:phone]).
-      with_subareas(query[:selected_subarea_ids]).
-      with_agencies(query[:selected_agency_id]).
-      transferred_to(query[:selected_office_id])
+    res = select("DISTINCT ON (complaints.id) complaints.*").
+      for_assignee(selected_assignee_id).
+      with_status(selected_status_ids).
+      with_complaint_area_ids(selected_complaint_area_ids).
+      with_case_reference_match(case_reference).
+      with_complainant_fragment_match(complainant).
+      since_date(from).
+      before_date(to).
+      with_city(city).
+      with_phone(phone).
+      with_subareas(selected_subarea_ids).
+      with_agencies(selected_agency_id).
+      transferred_to(selected_office_id)
   end
 
   def self.index_page_associations(query)
+    query = query.to_h.symbolize_keys
     filtered(query).
       includes({:assigns => :assignee},
         :complaint_area,
@@ -179,7 +173,7 @@ class Complaint < ActiveRecord::Base
     # or if the status is changing
     attrs = attrs[0]
     attrs.symbolize_keys
-    change_date = attrs[:change_date].nil? ? DateTime.now : DateTime.new(attrs[:change_date])
+    change_date = attrs[:change_date].nil? ? DateTime.now : Date.parse(attrs[:change_date]).to_datetime
     user_id = attrs[:user_id]
     if !persisted?
       complaint_status = ComplaintStatus.find_or_create_by(:name => self.class::InitialStatus )
@@ -199,19 +193,7 @@ class Complaint < ActiveRecord::Base
     end
   end
 
-  before_save do |complaint|
-    # workaround hack b/c FormData object sends "null" string for null values
-    string_or_text_columns = Complaint.columns.select{|c| (c.type == :string) || (c.type == :text)}.map(&:name)
-    string_or_text_columns.each do |column_name|
-      complaint.send("#{column_name}=", nil) if complaint.send(column_name) == "null" || complaint.send(column_name) == "undefined"
-    end
-    integer_columns = Complaint.columns.select{|c| c.type == :integer}.map(&:name)
-    # it's a hack... TODO there must be a better way!
-    integer_columns.each do |column_name|
-      ## an integer columm returns a string value from ActiveRecord if it is an enum type
-      complaint.send("#{column_name}=",nil) if complaint.send(column_name).nil? || complaint.send(column_name).zero? unless complaint.send(column_name).is_a?(String)
-    end
-  end
+  before_save FormDataSanitize
 
   before_create do |complaint|
     if complaint.date_received.nil? || complaint.date_received == "undefined" || complaint.date_received == "null"
@@ -221,6 +203,15 @@ class Complaint < ActiveRecord::Base
       complaint.agencies << Agency.unscoped.find_or_create_by(name: "Unassigned")
     end
   end
+
+  def complainants_attributes=(array_of_attrs)
+    sanitized_attrs = array_of_attrs.each do |attrs|
+      attrs.delete("id") if attrs["id"] == "null" # formData designates null/nil with "null"
+    end
+    super sanitized_attrs
+  end
+  alias_method :complainants=, :complainants_attributes=
+  #alias_method :complainants_attributes, :complainants
 
   def <=>(other)
     case_reference <=> other.case_reference
@@ -245,30 +236,30 @@ class Complaint < ActiveRecord::Base
   def as_json(options = {})
     # these fields are included in options when json: complaint is called in a controller
     if options.except(:status, :prefixes, :template, :layout).blank?
-      options = { :methods => [:complaint_type,
-                           :heading,
-                           :reminders,
-                           :notes,
-                           :assigns,
-                           :current_assignee_id,
-                           :current_assignee_name,
-                           :date,
-                           :date_of_birth,
-                           :dob,
-                           :status_id,
-                           :current_status,
-                           :attached_documents,
-                           :complaint_area_id,
-                           :subarea_ids,
-                           :area_subarea_ids,
-                           :province_id,
-                           :agencies,
-                           :agency_ids,
-                           :legislation_ids,
-                           :timeline_events,
-                           :communications,
-                           :duplicates,
-                           :linked_complaints,] }
+      options = { :methods => [ :agencies,
+                                #:agency_ids,
+                                :area_subarea_ids,
+                                :assigns,
+                                :attached_documents,
+                                :case_reference,
+                                :communications,
+                                :complainants,
+                                :complaint_area_id,
+                                :complaint_type,
+                                :current_assignee_id,
+                                :current_assignee_name,
+                                :current_status,
+                                :date,
+                                :duplicates,
+                                :heading,
+                                :legislation_ids,
+                                :linked_complaints,
+                                :notes,
+                                :reminders,
+                                :status_id,
+                                :subarea_ids,
+                                :timeline_events,
+                                :type_as_symbol ] }
     end
     super(options)
   end
@@ -280,6 +271,7 @@ class Complaint < ActiveRecord::Base
   # supports the checkbox selectors for subareas
   alias_method :subarea_ids, :complaint_subarea_ids
   alias_method :subarea_ids=, :complaint_subarea_ids=
+
 
   #used for testing
   def good_governance_subareas
@@ -303,22 +295,6 @@ class Complaint < ActiveRecord::Base
       hash
     end
   end
-
-  def alt_id_name
-    alt_id_type_other? ?
-      alt_id_other_type :
-      alt_id_type
-  end
-
-  # assumed to be valid date_string, checked in client before submitting
-  def dob=(date_string)
-    write_attribute("dob", Date.parse(date_string))
-  end
-
-  def dob
-    read_attribute("dob").strftime(DateFormat) unless read_attribute("dob").blank?
-  end
-  alias :date_of_birth :dob
 
   def attached_documents
     complaint_documents
@@ -397,24 +373,4 @@ class Complaint < ActiveRecord::Base
   end
   alias_method :index_url, :url # only for conformity wih the reminder convention
 
-  #def index_url
-    #complaints_url('en', {:host => SITE_URL, :protocol => 'https', :case_reference => case_reference})
-  #end
-
-  def complainant_full_name
-    [title, firstName, lastName].join(' ')
-  end
-
-  def gender_full_text
-    case gender
-    when "M"
-      "male"
-    when "F"
-      "female"
-    when "O"
-      "other"
-    else
-      ""
-    end
-  end
 end

@@ -3,7 +3,7 @@ class LinkedComplaint < Complaint
   self.inheritance_column = :_type_disabled
 
   def as_json(options = {})
-    options = {only: [:case_reference, :id], methods: [:url]}
+    options = {only: [:id], methods: [:case_reference, :url]}
     super(options)
   end
 end

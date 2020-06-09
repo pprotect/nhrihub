@@ -108,17 +108,18 @@ script.
     observe: {
       'agency_id': {
         handler(value, old, path, idx){
-          if(!_.isUndefined(old) && (value != 0)){
+          console.log(`observe agency_id from ${old} to ${value}`)
+          if(!_.isNaN(old) && !_.isUndefined(old) && !_.isNull(old)){
             this.parent.remove_agency_id(old)
           }
-          if(!_.isNull(value) && !_.isUndefined(old) && (value != 0)){
+          if(!_.isNaN(value) && !_.isUndefined(value) && !_.isNull(value) && (value != 0)){
             this.parent.add_agency_id(value)
           }
         }
       },
       'selection_vector.top_level_category': {
         handler(value, old, path, idx){
-          if(!_.isUndefined(old)){
+          if(!_.isUndefined(old) && !_.isUndefined(value)){
             // reset dependent menus
             this.set('selection_vector.selected_province_id', "0")
           }
@@ -126,7 +127,7 @@ script.
       },
       'selection_vector.selected_province_id': {
         handler(value, old, path, idx){
-          if(!_.isUndefined(old)){
+          if(!_.isUndefined(old) && !_.isNull(value) && !_.isUndefined(value)){
             // reset dependent menus
             this.set('selection_vector.provincial_agency_id', "0")
             this.set('selection_vector.selected_id', "0")
@@ -135,7 +136,7 @@ script.
       },
       'selection_vector.national_agency_type': {
         handler(value, old, path, idx){
-          if(!_.isUndefined(old)){
+          if(!_.isUndefined(old) && !_.isNull(value) && !_.isUndefined(value)){
             // reset dependent menus
             this.set('selection_vector.selected_national_agency_id', "0")
           }

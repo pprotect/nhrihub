@@ -1,3 +1,4 @@
+# TODO I think this can be DRY'd by making it a subclass of ComplaintsController, overriding where necessary
 class DuplicateComplaintsController < ApplicationController
   def index
     @duplicate_complaints = DuplicateComplaint.possible_duplicates(complaint_duplicate_params)
@@ -6,8 +7,9 @@ class DuplicateComplaintsController < ApplicationController
 
   def new
     populate_associations
-    @type = params[:type]
-    @complaint = Complaint.new(agencies: [Agency.new])
+    @type = params[:type] #individual, own_motion, organization
+    klass = "#{@type.camelize}Complaint".constantize
+    @complaint = klass.new(agencies: [Agency.new], complainants_attributes: [Complainant.new.attributes])
     @edit = true
     @mode = "intake"
     @title = t('.heading', type: params[:type].titlecase)
@@ -20,6 +22,7 @@ class DuplicateComplaintsController < ApplicationController
     @areas = ComplaintArea.includes(:subareas).all
     @subareas = ComplaintSubarea.all
     @agency_tree = Agency.hierarchy # {national: xx, provincial: xx, local: xx}
+    @all_agencies = Agency.includes(:province, district_municipality: :province)
     @staff = User.order(:lastName,:firstName).select(:id,:firstName,:lastName)
     @maximum_filesize = ComplaintDocument.maximum_filesize * 1000000
     @permitted_filetypes = ComplaintDocument.permitted_filetypes
@@ -36,7 +39,10 @@ class DuplicateComplaintsController < ApplicationController
   def complaint_duplicate_params
     params.require(:match).permit(:type, :organization_name, :organization_registration_number,
                                   :initiating_branch_id, :initiating_office_id,
-                                  :id_value, :alt_id_value, :lastName, :email, agency_ids:[] )
+                                  complainant: [:id_value, :alt_id_value, :lastName, :email,
+                                                :organization_name, :organization_registration_number,
+                                                :initiating_office_id, :initiating_branch_id],
+                                  agency_ids:[] )
   end
 end
 

@@ -101,10 +101,6 @@ module ComplaintsSpecSetupHelpers
     FactoryBot.create( type, :registered,
                       :assigned_to => [user, staff_user],
                       :date_received => DateTime.now.advance(:days => -100),
-                      :city => Faker::Address.city,
-                      :home_phone => Faker::PhoneNumber.phone_number,
-                      :dob => "19/08/1950",
-                      :email => "bish@bash.com",
                       :complaint_subareas => assigned_gg_subareas + assigned_hr_subareas + assigned_siu_subareas,
                       :desired_outcome => Faker::Lorem.sentence,
                       :details => Faker::Lorem.sentence,
@@ -113,14 +109,17 @@ module ComplaintsSpecSetupHelpers
                       :agencies => _agencies(options[:agency_count] || 2),
                       :communications => _communications,
                       :organization_name => "Acme Corp",
-                      :organization_registration_number => "12341234")
+                      :organization_registration_number => "12341234",
+                      #:complainants => [FactoryBot.create(:complainant,
+                                                          #:city => Faker::Address.city,
+                                                          #:home_phone => Faker::PhoneNumber.phone_number,
+                                                          #:dob => "19/08/1950",
+                                                          #:email => "bish@bash.com",
+                                                         #)]
+                     )
     FactoryBot.create( type, :closed,
                       :assigned_to => [user, staff_user],
                       :date_received => DateTime.now.advance(:days => -100),
-                      :city => Faker::Address.city,
-                      :home_phone => Faker::PhoneNumber.phone_number,
-                      :dob => "19/08/1950",
-                      :email => "foo@bash.com",
                       :complaint_subareas => assigned_hr_subareas,
                       :desired_outcome => Faker::Lorem.sentence,
                       :details => Faker::Lorem.sentence,
@@ -130,7 +129,14 @@ module ComplaintsSpecSetupHelpers
                       :communications => _communications,
                       :organization_name => Faker::Company.name,
                       :organization_registration_number => "56785678",
-                      :dupe_refs => Complaint.first.case_reference.to_s)
+                      :dupe_refs => Complaint.first.case_reference.to_s,
+                      #:complainants => [FactoryBot.create(:complainant,
+                                                          #:city => Faker::Address.city,
+                                                          #:home_phone => Faker::PhoneNumber.phone_number,
+                                                          #:dob => "19/08/1950",
+                                                          #:email => "foo@bash.com",
+                                                         #)]
+                     )
   end
 
   def create_legislations
@@ -156,19 +162,19 @@ module ComplaintsSpecSetupHelpers
   def create_complaints
     admin = User.where(:login => 'admin').first
     assignees = [admin, admin]
-    FactoryBot.create(:complaint, :open, :assigned_to => assignees,
+    FactoryBot.create(:individual_complaint, :open, :assigned_to => assignees,
                       #:case_reference => "c12-22",
                       :complaint_area => hr_area,
                       :complaint_subareas => hr_subareas,
                       :agencies => [Agency.first]
                      )
-    FactoryBot.create(:complaint, :open, :assigned_to => assignees,
+    FactoryBot.create(:individual_complaint, :open, :assigned_to => assignees,
                       #:case_reference => "c12-33",
                       :complaint_area => hr_area,
                       :complaint_subareas => hr_subareas,
                       :agencies => [Agency.first]
                      )
-    @complaint = FactoryBot.create(:complaint, :open, :assigned_to => assignees,
+    @complaint = FactoryBot.create(:individual_complaint, :open, :assigned_to => assignees,
                                    #:case_reference => "c12-55",
                                    :complaint_area => hr_area,
                                    :complaint_subareas => hr_subareas,

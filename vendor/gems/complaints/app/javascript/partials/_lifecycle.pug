@@ -16,6 +16,12 @@
     .col-md-10
       <statusChange status_changes_attributes='{{status_changes_attributes}}' persisted='{{persisted}}' current_status='{{current_status}}' status_memo='{{status_memo}}' status_memo_error = '{{status_memo_error}}' status_memo_options = '{{status_memo_options}}' statuses='{{statuses}}' status_id = '{{status_id}}' />
 
+.row('class-hidden'='new_complaint')
+  .col-md-2
+    label {{ t.current_assignee }}
+  .col-md-10
+    span#current_assignee {{ current_assignee_name }}
+
 .row.form-group('class-has-error' = 'new_assignee_id_error', "data-toggle" = "edit", 'class-hidden'='new_complaint')
   .no_edit.in
   .edit

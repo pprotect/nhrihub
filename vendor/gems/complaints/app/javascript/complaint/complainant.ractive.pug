@@ -1,0 +1,239 @@
+.row.hide('class-show'='own_motion_type', 'data-toggle'='edit')
+  .col-md-2
+    label {{ context.initiating_branch }}
+  .col-md-10
+    .no_edit.in {{ initiating_branch }}
+    .edit
+      .btn-group.select
+        button.btn.btn-default.dropdown-toggle#initiating_branch_select(type='button', 'data-toggle'='dropdown')
+          span.filter-option.pull-left {{ context.select_initiating_branch }}
+          span.caret
+        ul.dropdown-menu.single_level
+          | {{#branches}}
+          <officeselect initiating_branch_id='{{~/initiating_branch_id}}' name='{{name}}' id='{{id}}' />
+          | {{/branches}}
+
+.row.hide('class-show'='own_motion_type', 'data-toggle'='edit')
+  .col-md-2
+    label {{ context.initiating_office }}
+  .col-md-10
+    .no_edit.in {{ initiating_office }}
+    .edit
+      .btn-group.select
+        button.btn.btn-default.dropdown-toggle#initiating_office_select(type='button', 'data-toggle'='dropdown')
+          span.filter-option.pull-left {{ context.select_initiating_office }}
+          span.caret
+        ul.dropdown-menu
+          | {{#office_groups}}
+          li.dropdown-header
+            | {{ name }}
+          | {{#offices}}
+          <officeselect initiating_branch_id='{{~/initiating_branch_id}}' name='{{name}}' id='{{id}}' />
+          | {{/offices}}
+          | {{/office_groups}}
+
+.row.hide('class-show'='organization_type')
+  .col-md-2
+    label {{ context.organization_name }}
+  .col-md-3('data-toggle' = 'edit')
+    .edit
+      input.form-control.dupe_check#organization_name(autocomplete='none', name='organization_name', value='{{organization_name}}')
+    .no_edit.in
+      span#organization_name {{ organization_name }}
+  .col-md-4
+    label {{ context.organization_registration_number }}
+  .col-md-3('data-toggle' = 'edit')
+    .edit
+      input.form-control.dupe_check#organization_registration_number(autocomplete='none', name='organization_registration_number', value='{{organization_registration_number}}')
+    .no_edit.in
+      span#organization_registration_number {{ organization_registration_number }}
+
+.row
+  .col-md-2
+    label {{ context.complainant }}
+  .col-md-9#complainant('data-toggle'='edit')
+    .no_edit.in
+      span#title {{ title }}
+      span#firstName {{ firstName }}
+      span#lastName {{ lastName }}
+    .edit
+      .row
+        .col-md-4.form-group
+          label(for = 'title') {{ t.title }}
+          input.form-control#title(autocomplete='none', value = '{{title}}')
+        .col-md-4.form-group('class-has-error' = 'firstName_error')
+          label.required(for = 'firstName') {{ t.first_name }}
+          input.form-control#firstName(autocomplete='none', value = '{{firstName}}', 'on-keydown'="@this.remove_attribute_error('firstName')")
+          span.help-block.error#firstName_error {{ t.firstName_error_message }}
+        .col-md-4.form-group('class-has-error' = 'lastName_error')
+          label.required(for = 'lastName') {{ t.lastName }}
+          input.form-control.dupe_check#lastName(name='lastName', autocomplete='none', value = '{{lastName}}', 'on-keydown'="@this.remove_attribute_error('lastName')")
+          span.help-block.error#lastName_error {{ t.lastName_error_message }}
+
+.row
+  .col-md-12.form-group( "data-toggle" = "edit", style='padding-top:0px; padding-bottom:0px;')
+    .row.no_edit.in
+      .col-md-2
+        label {{ t.dob }}
+      .col-md-3
+        span#complainant_dob {{ date_of_birth }}
+      .col-md-2('style' = "text-align:right")
+        label {{ t.gender }}
+      .col-md-4
+        span#gender {{gender}}
+    .row.edit
+      .col-md-2
+        label.required {{ t.dob }}
+      .col-md-2
+        <datepicker date_error='{{dob_error}}' year_range='-100:0' date='{{dob}}' id='dob' />
+      .col-md-2(style = "text-align:right")
+        label {{ t.gender }}
+      .col-md-5
+        form
+          label(style = "font-weight:normal")
+            span(style = "margin-right:6px") {{ t.male }}
+            input#m(name = "{{gender}}", type = "radio", value = "M")
+          label(style = "font-weight:normal")
+            span(style = "margin-right:6px; margin-left:12px") {{ t.female }}
+            input#f(name = "{{gender}}", type = "radio", value = "F")
+          label(style = "font-weight:normal")
+            span(style = "margin-right:6px; margin-left:12px") {{ t.other }}
+            input#o(name = "{{gender}}", type = "radio", value = "O")
+
+.row.form-group( 'data-toggle' = 'edit')
+  .col-md-2.complaint_label {{ t.principal_id }}
+  .col-md-3.edit
+    label
+      | {{ t.passport }}
+      input#identify_by_passport(type = 'radio', name = '{{id_type}}', value = 'Passport number', 'on-change'="@this.remove_attribute_error('id_value')")
+    label
+      | {{ t.id }}
+      input#identify_by_id(type = 'radio', name = '{{id_type}}', value = 'State id')
+  .col-md-3.edit
+    input.form-control.dupe_check#id_value(autocomplete='none', type = 'text', name = 'id_value', value= "{{id_value}}", 'on-keydown'="@this.remove_attribute_error('id_value')")
+    span.help-block.error#id_value_error('class-has-error'='id_value_error') {{ t.id_value_error_message }}
+  .col-md-3.no_edit.in#id_type {{ id_type }}
+  .col-md-3.no_edit.in#id_value {{ id_value }}
+
+.row.form-group
+  .col-md-2.complaint_label {{ t.alternate_id_type }}
+  .col-md-4('data-toggle' = 'edit')
+    .edit
+      label
+        | {{ t.pension }}
+        input#identify_by_pension_id(type = 'radio', name = '{{alt_id_type}}', value = 'pension number')
+      label
+        | {{ t.prison }}
+        input#identify_by_prison_id(type = 'radio', name = '{{alt_id_type}}', value = 'prison id')
+      label
+        | {{ t.other }}
+        input#identify_by_other_id(type = 'radio', name = '{{alt_id_type}}', value = 'other')
+    .no_edit.in#alt_id_name {{ alt_id_name }}
+  .col-md-4#alt_id_other_type_field('class-visible' = 'other_id_selected' , 'data-toggle'='edit')
+    .edit
+      label {{ t.other_type }}
+      input.form-control#alt_id_other_type(autocomplete='none', type='text', value='{{alt_id_other_type}}')
+
+.row.form-group( 'data-toggle'='edit')
+  .col-md-2.complaint_label {{ t.alternate_id }}
+  .col-md-5
+    .edit
+      input.form-control.dupe_check#alt_id_value(autocomplete='none', type = 'text', name = 'alt_id_value', value = "{{alt_id_value}}")
+    .no_edit.in#alt_id_value {{ alt_id_value }}
+
+| {{>address }}
+
+| {{>contact_info }}
+
+| {{>preferred_means }}
+
+
+script.
+  import translations from 'translations.js'
+  import Address from 'partials/_address.pug'
+  import ContactInfo from 'partials/_contact_info.pug'
+  import PreferredMeans from 'partials/_preferred_means.pug'
+  import Validator from 'validator'
+  import Datepicker from 'datepicker'
+  import OfficeSelect from 'office_select.ractive.pug'
+
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    data() {
+      return {
+        t : translations.t('complainant'),
+        serialization_key: 'complaint[complainants][]',
+      };
+    },
+    partials: {
+      preferred_means: PreferredMeans,
+      address: Address,
+      contact_info: ContactInfo,
+    },
+    components: {
+      datepicker: Datepicker,
+      officeselect: OfficeSelect
+    },
+    computed : {
+      organization_type(){
+        return this.get('type')=='organization'
+      },
+      own_motion_type(){
+        return this.get('type')=='own_motion'
+      },
+      individual_type(){
+        return this.get('type')=='individual'
+      },
+      context(){
+        return translations.t(this.get('type'))
+      },
+      has_errors() {
+        return this.validator.has_errors();
+      },
+      date_of_birth(){
+        return this.get('dob')
+      },
+      province_name(){
+        return _(this.get('provinces')).findWhere({id: this.get('province_id')}).name
+      },
+      persistent_attributes() {
+        return ['id', 'id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
+          'city','province_id','postal_code', 'physical_address', 'postal_address',
+          'home_phone','cell_phone','fax','preferred_means', 'dob', 'email', 'gender',
+          'firstName', 'lastName', 'title'];
+      },
+      validation_criteria() {
+        return {
+          firstName : ['notBlank'],
+          lastName : ['notBlank'],
+          city : ['notBlank'],
+          postal_code : ['notBlank'],
+          province_id : ['numeric', 'nonZero'],
+          dob: () => {
+            return this.findComponent('datepicker').validate()
+          },
+          preferred_means : 'notBlank',
+          postal_address: ['notBlank', {if: ()=>this.get('preferred_means') == 'mail'}],
+          email: ['notBlank', {if: ()=>this.get('preferred_means') == 'email'}],
+          home_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'home_phone'}],
+          cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
+          fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
+          id_value: ()=>{ if(!_.isNull(this.get('id_value'))){this.set('id_value',this.get('id_value').toString().trim())};
+                          return !(this.get('id_type') == 'State id') || SAIDParser.validate(this.get('id_value')) }, // true means it's valid
+        }
+      }
+    },
+    onconfig() {
+      return this.validator = new Validator(this);
+    },
+    remove_attribute_error(attribute){
+      var that = this
+      _(arguments).each(function(attribute){
+        that.set(attribute+"_error",false);
+      })
+    },
+    remove_errors(){
+      let attrs = _(this.get()).keys()
+      this.remove_attribute_error(...attrs)
+    },
+  })

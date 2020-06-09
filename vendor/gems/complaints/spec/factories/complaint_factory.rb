@@ -9,11 +9,17 @@ def rand_title
   arr.join(' ')
 end
 
+def organization_registration
+  [ Faker::SouthAfrica.pty_ltd_registration_number,
+    Faker::SouthAfrica.close_corporation_registration_number,
+    Faker::SouthAfrica.listed_company_registration_number,
+    Faker::SouthAfrica.trust_registration_number].sample
+end
+
 def rand_filename
   l = rand(3)+3
   Faker::Lorem.words(number: l).join('_').downcase + ".docx"
 end
-
 
 def transfer_to(transferred_to) 
   return [] if transferred_to.nil?
@@ -36,83 +42,17 @@ def admin_assigns(assignees)
   end
 end
 
-def first_names
-  number = [1,2,3].sample
-  names = []
-  number.times do
-    names << Faker::Name.first_name
-  end
-  names.join(' ')
-end
-
-def organization_registration
-  [ Faker::SouthAfrica.pty_ltd_registration_number,
-    Faker::SouthAfrica.close_corporation_registration_number,
-    Faker::SouthAfrica.listed_company_registration_number,
-    Faker::SouthAfrica.trust_registration_number].sample
-end
-
-def id_attribute
-  type = [0,1].sample
-  value = case type
-          when 0
-            Faker::SouthAfrica.id_number
-          when 1
-            Faker::Alphanumeric.alphanumeric(number: 9)
-          end
-  {type: type, value: value}
-end
-
-def sa_city
-  Faker::Config.locale = "en-ZA"
-  city = Faker::Address.city
-  Faker::Config.locale = "en"
-  city
-end
-
-def sa_province
-  Faker::Config.locale = "en-ZA"
-  province = Faker::Address.provinces
-  Faker::Config.locale = "en"
-  Province.find_or_create_by(name: province)
-end
-
-def sa_postal_code
-  Faker::Config.locale = "en-ZA"
-  post_code = Faker::Address.zip_code
-  Faker::Config.locale = "en"
-  post_code
-end
-
 FactoryBot.define do
   factory :complaint do
-    firstName { first_names }
-    lastName { Faker::Name.last_name }
-    phone { Faker::PhoneNumber.phone_number }
     created_at { DateTime.now.advance(:days => (rand(365) - 730))}
     details { Faker::Lorem.paragraphs(number: 2).join(" ") }
-    occupation { Faker::Company.profession }
-    employer { Faker::Company.name }
-    email { Faker::Internet.email }
-    gender { ["m","f","o"].sample }
-    dob { y=20+rand(40); m=rand(12); d=rand(31); Date.today.advance(:years => -y, :months => -m, :days => -d).to_s }
+    desired_outcome { Faker::Lorem.paragraphs(number: 2).join(" ") }
     complaint_area_id { ComplaintArea.pluck(:id).sample(1).first }
-    title { Faker::Name.prefix }
-    id_type { id_attribute[:type] }
-    id_value { id_attribute[:value] }
-    alt_id_type { Complaint.alt_id_types.keys.sample }
-    alt_id_value { rand(10000000)+1000000 }
     organization_name { Faker::Company.name }
     organization_registration_number { organization_registration }
-    physical_address { Faker::Address.street_address }
-    postal_address { "PO Box #{rand(5000)}" }
-    city { sa_city }
-    province_id { sa_province.id }
-    postal_code { sa_postal_code }
-    cell_phone { Faker::SouthAfrica.cell_phone }
-    home_phone { Faker::SouthAfrica.phone_number }
-    fax { Faker::SouthAfrica.phone_number }
-    preferred_means { [0,1,2,3].sample }
+    after :build do |complaint|
+      complaint.complainants << FactoryBot.create(:complainant)
+    end
 
     transient do
       assigned_to {[]}
@@ -157,8 +97,9 @@ FactoryBot.define do
       after :build do |complaint|
         complaint.complaint_area = ComplaintArea.all.sample
         complaint.complaint_subareas << ComplaintSubarea.all.sample(2)
-        status = ComplaintStatus::Names.map{|name| name.downcase.gsub(/ /,'_').to_sym}.sample
-        complaint.status_changes << FactoryBot.create(:status_change, status, :change_date => DateTime.now, :user_id => User.all.sample.id)
+        complaint.status_changes << FactoryBot.create(:status_change, :registered, :change_date => DateTime.now.advance(days: -(356+rand(365))), :user_id => User.all.sample.id)
+        status = (ComplaintStatus::Names - ["Registered"]).map{|name| name.downcase.to_sym}.sample
+        complaint.status_changes << FactoryBot.create(:status_change, status, :change_date => DateTime.now.advance(months: -1), :user_id => User.all.sample.id)
         complaint.agency_ids = Agency.pluck(:id).sample(2)
       end
     end

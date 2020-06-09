@@ -263,18 +263,23 @@ end
 
 describe "selects complaints with home- cell- or fax-number matching" do
   before do
-    @complaint1 = FactoryBot.create(:complaint, home_phone: "(541) 888-3311", cell_phone: "303 869 8832", fax: "332-1881")
-    @complaint2 = FactoryBot.create(:complaint, home_phone: "(323) 143-9873", cell_phone: "182 889 1324", fax: "(303) 484 8672")
-    @complaint3 = FactoryBot.create(:complaint, home_phone: "183-2387", cell_phone: "(398) 181 3327", fax: "432 1841")
+    complainant_attributes = FactoryBot.attributes_for(:complainant, home_phone: "(541) 888-3311", cell_phone: "303 869 8832", fax: "332-1881")
+    @complaint1 = FactoryBot.create(:complaint, complainants_attributes: [complainant_attributes])
+
+    complainant_attributes = FactoryBot.attributes_for(:complainant, home_phone: "(323) 143-9873", cell_phone: "182 889 1324", fax: "(303) 484 8672")
+    @complaint2 = FactoryBot.create(:complaint, complainants_attributes: [complainant_attributes])
+
+    complainant_attributes = FactoryBot.attributes_for(:complainant, home_phone: "183-2387", cell_phone: "(398) 181 3327", fax: "432 1841")
+    @complaint3 = FactoryBot.create(:complaint, complainants_attributes: [complainant_attributes])
   end
 
   it "should match any of the phone numbers against the filter criterion" do
-    expect(Complaint.with_phone("8").map(&:id)).to eq [@complaint1, @complaint2, @complaint3].map(&:id)
-    expect(Complaint.with_phone("88").map(&:id)).to eq [@complaint1, @complaint2].map(&:id)
-    expect(Complaint.with_phone("883").map(&:id)).to eq [@complaint1].map(&:id)
-    expect(Complaint.with_phone("32").map(&:id)).to eq [@complaint1, @complaint2, @complaint3].map(&:id)
-    expect(Complaint.with_phone("321").map(&:id)).to eq [@complaint1, @complaint3].map(&:id)
-    expect(Complaint.with_phone("034").map(&:id)).to eq [@complaint2].map(&:id)
+    expect(Complaint.with_phone("8").map(&:id)).to match_array [@complaint1, @complaint2, @complaint3].map(&:id)
+    expect(Complaint.with_phone("88").map(&:id)).to match_array [@complaint1, @complaint2].map(&:id)
+    expect(Complaint.with_phone("883").map(&:id)).to match_array [@complaint1].map(&:id)
+    expect(Complaint.with_phone("32").map(&:id)).to match_array [@complaint1, @complaint2, @complaint3].map(&:id)
+    expect(Complaint.with_phone("321").map(&:id)).to match_array [@complaint1, @complaint3].map(&:id)
+    expect(Complaint.with_phone("034").map(&:id)).to match_array [@complaint2].map(&:id)
   end
 end
 
@@ -351,5 +356,46 @@ describe "#transferred_to" do
 
   it "should return complaints transferred to the specified office" do
     expect(Complaint.transferred_to(gauteng_office.id)).to eq [gauteng_complaint]
+  end
+end
+
+describe "with_complainant_fragment_match" do
+  context "when there are single complainants" do
+    before do
+      ["Harry Harker", "Harriet Harker", "Adolph Champlin", "Dawn Mills"].each_with_index do |full_name, index|
+        first, last = full_name.split
+        complainant = FactoryBot.create(:complainant, firstName: first, lastName: last)
+        instance_variable_set("@complaint#{index}", FactoryBot.create(:complaint))
+        instance_variable_get("@complaint#{index}").send("complainants=", [complainant] )
+      end
+    end
+
+    it "should match name fragments" do
+      expect(Complaint.with_complainant_fragment_match("h")).to match_array [@complaint0, @complaint1, @complaint2]
+      expect(Complaint.with_complainant_fragment_match("ha")).to match_array [@complaint0, @complaint1, @complaint2]
+      expect(Complaint.with_complainant_fragment_match("har")).to match_array [@complaint0, @complaint1]
+      expect(Complaint.with_complainant_fragment_match("harr")).to match_array [@complaint0, @complaint1]
+      expect(Complaint.with_complainant_fragment_match("harri")).to match_array [@complaint1]
+    end
+  end
+
+  context "when there are multiple complainants" do
+    before do
+      [["Harriet Harker", "Harry Harker"], ["Candy Wrapper", "Norman Normal"], ["Adolph Champlin", "Elvis Presley"], ["Hampton Train", "Dawn Mills"]].each_with_index do |names, index|
+        complainants = []
+        names.each do |full_name|
+          first, last = full_name.split
+          complainants << FactoryBot.create(:complainant, firstName: first, lastName: last)
+        end
+        instance_variable_set("@complaint#{index}", FactoryBot.create(:complaint))
+        instance_variable_get("@complaint#{index}").send("complainants=", complainants )
+      end
+    end
+
+    it "should match name fragments" do
+      expect(Complaint.with_complainant_fragment_match("har")).to match_array [@complaint0]
+      expect(Complaint.with_complainant_fragment_match("ham")).to match_array [@complaint2, @complaint3]
+      expect(Complaint.with_complainant_fragment_match("er")).to match_array [@complaint0, @complaint1]
+    end
   end
 end

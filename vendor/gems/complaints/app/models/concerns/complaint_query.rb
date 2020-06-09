@@ -43,7 +43,7 @@ module ComplaintQuery
     end
 
     # used for duplicate checking, therefore return DuplicateComplaint instances
-    # in order to do the appropriate json conversion
+    # in order to do the appropriate json representation
     def with_any_agencies_matching(agency_ids)
       joins(:complaint_agencies).
         where("complaint_agencies.agency_id in (?)", agency_ids.reject(&:blank?)).
@@ -75,14 +75,16 @@ module ComplaintQuery
     def with_phone(phone_fragment)
       digits = phone_fragment&.delete('^0-9')
       return no_filter if digits.nil? || digits.empty?
-      #where("complaints.phone ~ '.*#{digits}.*'")
       digits_regex = digits.chars.join("[^[:digit:]]*")
-      where("home_phone ~ '#{digits_regex}' OR cell_phone ~ '#{digits_regex}' OR fax ~ '#{digits_regex}'")
+      #joins(:complainants).where("complainants.home_phone ~ '#{digits_regex}' or complainants.cell_phone ~ '#{digits_regex}' or complainants.fax ~ '#{digits_regex}'").having("count(complainants.id) >= 1")
+      select("DISTINCT ON (complaints.id) complaints.*").
+        joins(:complainants).
+        where("complainants.home_phone ~ '#{digits_regex}' OR complainants.cell_phone ~ '#{digits_regex}' OR complainants.fax ~ '#{digits_regex}'")
     end
 
     def with_city(city_fragment)
       return no_filter if city_fragment.blank?
-      where("\"complaints\".\"city\" ~* '.*#{city_fragment}.*'")
+      joins(:complainants).where("\"complainants\".\"city\" ~* '.*#{city_fragment}.*'")
     end
 
     def since_date(from)
@@ -106,8 +108,8 @@ module ComplaintQuery
 
     def with_complainant_fragment_match(complainant_fragment)
       return no_filter if complainant_fragment.blank?
-      sql = "\"complaints\".\"firstName\" || ' ' || \"complaints\".\"lastName\" ~* '.*#{complainant_fragment}.*'"
-      where(sql)
+      sql = "\"complainants\".\"firstName\" || ' ' || \"complainants\".\"lastName\" ~* '.*#{complainant_fragment}.*'"
+      joins(:complainants).where(sql)
     end
 
     # {"id_value"=>"1234abcd",
@@ -118,13 +120,13 @@ module ComplaintQuery
     def with_duplicate_individual_complainant(params)
       params = params.to_h.symbolize_keys
       query = []
-      query << '"complaints"."id_value" = :id_value' unless params[:id_value].blank?
-      query << '"complaints"."alt_id_value" = :alt_id_value' unless params[:alt_id_value].blank?
-      query << '"complaints"."lastName" = :lastName' unless params[:lastName].blank?
-      query << '"complaints"."email" = :email' unless params[:email].blank?
+      query << '"complainants"."id_value" = :id_value' unless params[:id_value].blank?
+      query << '"complainants"."alt_id_value" = :alt_id_value' unless params[:alt_id_value].blank?
+      query << '"complainants"."lastName" = :lastName' unless params[:lastName].blank?
+      query << '"complainants"."email" = :email' unless params[:email].blank?
       query = query.join(' or ')
       query = "1 = 0" if query.blank?
-      where(query, params).sort_by(&:case_reference)
+      select("distinct on (complaints.id) complaints.id").joins(:complainants).where(query, params).sort_by(&:case_reference)
     end
 
     def with_duplicate_organization_complainant(params)

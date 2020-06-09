@@ -23,110 +23,7 @@
 
       | {{>linked_complaints }}
 
-      .row('class-hidden'='new_complaint')
-        .col-md-2
-          label {{ t.current_assignee }}
-        .col-md-10
-          span#current_assignee {{ current_assignee_name }}
-
-      .row
-        .col-md-2
-          label {{ context.complainant }}
-        .col-md-9#complainant('data-toggle'='edit')
-          .no_edit.in
-            span#title {{ title }}
-            span#firstName {{ firstName }}
-            span#lastName {{ lastName }}
-          .edit
-            .row
-              .col-md-4.form-group
-                label(for = 'title') {{ t.title }}
-                input.form-control#title(autocomplete='none', value = '{{title}}')
-              .col-md-4.form-group('class-has-error' = 'firstName_error')
-                label.required(for = 'firstName') {{ t.first_name }}
-                input.form-control#firstName(autocomplete='none', value = '{{firstName}}', 'on-keydown'="@this.remove_attribute_error('firstName')")
-                span.help-block.error#firstName_error {{ t.firstName_error_message }}
-              .col-md-4.form-group('class-has-error' = 'lastName_error')
-                label.required(for = 'lastName') {{ t.lastName }}
-                input.form-control.dupe_check#lastName(name='lastName', autocomplete='none', value = '{{lastName}}', 'on-keydown'="@this.remove_attribute_error('lastName')")
-                span.help-block.error#lastName_error {{ t.lastName_error_message }}
-
-      .row
-        .col-md-12.form-group( "data-toggle" = "edit", style='padding-top:0px; padding-bottom:0px;')
-          .row.no_edit.in
-            .col-md-2
-              label {{ t.dob }}
-            .col-md-3
-              span#complainant_dob {{ date_of_birth }}
-            .col-md-2('style' = "text-align:right")
-              label {{ t.gender }}
-            .col-md-4
-              span#gender {{gender}}
-          .row.edit
-            .col-md-2
-              label.required {{ t.dob }}
-            .col-md-2
-              <datepicker date_error='{{dob_error}}' year_range='-100:0' date='{{dob}}' id='dob' />
-            .col-md-2(style = "text-align:right")
-              label {{ t.gender }}
-            .col-md-5
-              form
-                label(style = "font-weight:normal")
-                  span(style = "margin-right:6px") {{ t.male }}
-                  input#m(name = "{{gender}}", type = "radio", value = "M")
-                label(style = "font-weight:normal")
-                  span(style = "margin-right:6px; margin-left:12px") {{ t.female }}
-                  input#f(name = "{{gender}}", type = "radio", value = "F")
-                label(style = "font-weight:normal")
-                  span(style = "margin-right:6px; margin-left:12px") {{ t.other }}
-                  input#o(name = "{{gender}}", type = "radio", value = "O")
-
-      .row.form-group( 'data-toggle' = 'edit')
-        .col-md-2.complaint_label {{ t.principal_id }}
-        .col-md-3.edit
-          label
-            | {{ t.passport }}
-            input#identify_by_passport(type = 'radio', name = '{{id_type}}', value = 'Passport number', 'on-change'="@this.remove_attribute_error('id_value')")
-          label
-            | {{ t.id }}
-            input#identify_by_id(type = 'radio', name = '{{id_type}}', value = 'State id')
-        .col-md-3.edit
-          input.form-control.dupe_check#id_value(autocomplete='none', type = 'text', name = 'id_value', value= "{{id_value}}", 'on-keydown'="@this.remove_attribute_error('id_value')")
-          span.help-block.error#id_value_error('class-has-error'='id_value_error') {{ t.id_value_error_message }}
-        .col-md-3.no_edit.in#id_type {{ id_type }}
-        .col-md-3.no_edit.in#id_value {{ id_value }}
-
-      .row.form-group
-        .col-md-2.complaint_label {{ t.alternate_id_type }}
-        .col-md-4('data-toggle' = 'edit')
-          .edit
-            label
-              | {{ t.pension }}
-              input#identify_by_pension_id(type = 'radio', name = '{{alt_id_type}}', value = 'pension #')
-            label
-              | {{ t.prison }}
-              input#identify_by_prison_id(type = 'radio', name = '{{alt_id_type}}', value = 'prison id')
-            label
-              | {{ t.other }}
-              input#identify_by_other_id(type = 'radio', name = '{{alt_id_type}}', value = 'other')
-          .no_edit.in#alt_id_name {{ alt_id_name }}
-        .col-md-4#alt_id_other_type_field('class-visible' = 'other_id_selected' , 'data-toggle'='edit')
-          .edit
-            label {{ t.other_type }}
-            input.form-control#alt_id_other_type(autocomplete='none', type='text', value='{{alt_id_other_type}}')
-
-      .row.form-group( 'data-toggle'='edit')
-        .col-md-2.complaint_label {{ t.alternate_id }}
-        .col-md-5
-          .edit
-            input.form-control.dupe_check#alt_id_value(autocomplete='none', type = 'text', name = 'alt_id_value', value = "{{alt_id_value}}")
-          .no_edit.in#alt_id_value {{ alt_id_value }}
-
-      | {{>address }}
-
-      | {{>contact_info }}
-
-      | {{>preferred_means }}
+      <complainants type='{{type}}' complainants='{{complainants}}' />
 
       | {{>details }}
 
@@ -169,50 +66,39 @@ script.
     },
     computed : {
       dupe_check_attributes() {
-        return ['type', 'id_value', 'alt_id_value', 'lastName', 'email', 'agency_ids'];
+        return ['type', 'complainant[id_value]', 'complainant[alt_id_value]', 'complainant[lastName]', 'complainant[email]', 'agency_ids'];
       },
       dupe_check_values(){
-        var that=this
-        return _(this.get('dupe_check_attributes')).reduce(function(memo,attr){
-          memo[memo.length] = that.get(attr)
-          return memo
-          }, [])
+        //var that=this
+        //return _(this.get('dupe_check_attributes')).reduce(function(memo,attr){
+          //memo[memo.length] = that.get(attr)
+          //return memo
+          //}, [])
+        return Object.values(this.get('duplication_query'))
       },
       persistent_attributes() {
-        return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
-          'city','province_id','postal_code','complaint_area_id', 'new_transferee_id',
-          'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
+        return ['complaint_area_id', 'new_transferee_id',
           'status_changes_attributes', 'new_assignee_id', 'subarea_ids', 'legislation_ids',
           'agency_ids', 'attached_documents_attributes', 'details', 'new_jurisdiction_branch_id',
-          'dob', 'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
-          'firstName', 'lastName', 'title', 'type', 'duplicates', 'linked_complaints'];
+          'complained_to_subject_agency', 'desired_outcome', 'date',
+          'type', 'duplicates', 'linked_complaints', 'complainants'];
       },
       validation_criteria() {
         return {
-          firstName : ['notBlank'],
-          lastName : ['notBlank'],
-          city : ['notBlank'],
-          postal_code : ['notBlank'],
-          province_id : 'nonZero',
+          fake_attribute: ()=> {
+            // setting the complainants_error is delegated to the complainants component
+            // here we just trigger the validation to occur. The result is managed by the component.
+            this.findAllComponents('complainant').forEach(complainant=>complainant.validate())
+            return true
+          },
           complaint_area_id : 'numeric',
           subarea_id_count : 'nonZero',
-          dob: () => {
-            return this.findAllComponents('datepicker')[1].validate()
-          },
           date_received: () => {
-            return this.findAllComponents('datepicker')[0].validate()
+            return this.findComponent('datepicker').validate()
           },
           details : ['notBlank'],
-          preferred_means : 'notBlank',
-          postal_address: ['notBlank', {if: ()=>this.get('preferred_means') == 'mail'}],
-          email: ['notBlank', {if: ()=>this.get('preferred_means') == 'email'}],
-          home_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'home_phone'}],
-          cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
-          fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
           status_memo: ()=>{return this.findComponent('closedStatusRadio').validate() },
           agency_ids: ()=>{return _.isArray(this.get('agency_ids')) && !_.isEmpty(this.get('agency_ids')) && _(this.get('agency_ids')).every(function(i){return _.isNumber(i)})},
-          id_value: ()=>{ if(!_.isNull(this.get('id_value'))){this.set('id_value',this.get('id_value').toString().trim())};
-                          return !(this.get('id_type') == 'State id') || SAIDParser.validate(this.get('id_value')) }, // true means it's valid
           dupe_refs_format: ()=>{
             if(_.isEmpty(this.get('dupe_refs'))){
                 return true
@@ -225,6 +111,7 @@ script.
           dupe_refs_not_found: ()=>{
             //it's necessary to have this attr here, even though it's validated remotely/asynchronously
             //b/c the presence of this key links the dupe_refs_not_found_error to has_errors
+            // TODO this can be fixed... later!
             return true
           },
           link_refs_format: ()=>{
@@ -239,6 +126,7 @@ script.
           link_refs_not_found: ()=>{
             //it's necessary to have this attr here, even though it's validated remotely/asynchronously
             //b/c the presence of this key links the link_refs_not_found_error to has_errors
+            // TODO this can be fixed... later!
             return true
           },
         };
@@ -247,14 +135,16 @@ script.
     observe: {
       'dupe_check_values': {
         handler(value, old, path, idx){
-          var changed_values = !value.equals(old)
+          if(!_.isUndefined(value)){
+            var changed_values = !value.equals(old)
+          }
           var valid_ids = !_.isEmpty(this.get('agency_ids')) && _(this.get('agency_ids')).all(function(i){return _.isNumber(i)})
-          if(changed_values && valid_ids){
+          if(changed_values || valid_ids){
             this.set('invalid_query',false)
           }
         }
       }
     },
-    })
+  })
 
   export default complaint

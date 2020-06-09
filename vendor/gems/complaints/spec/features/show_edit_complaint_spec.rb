@@ -102,12 +102,13 @@ feature 'edit complaint', js: true do
 
   let(:closed_complaint){ IndividualComplaint.all.select{|c| c.current_status.complaint_status.name == "Closed"}.first }
   let(:individual_complaint){ IndividualComplaint.first }
-  let(:lesedi){ LocalMunicipality.where(name: 'Lesedi').first }
-  let(:emfuleni){ LocalMunicipality.where(name: 'Emfuleni').first }
+  let(:lesedi){ LocalMunicipality.find_by(name: 'Lesedi') }
+  let(:emfuleni){ LocalMunicipality.find_by(name: 'Emfuleni') }
+  let(:doc){ NationalGovernmentAgency.find_by(name: "Department of Communications") }
 
   before do
     populate_database(:individual_complaint)
-    individual_complaint.update(agency_ids: [lesedi.id])
+    individual_complaint.update(agency_ids: [doc.id, lesedi.id])
     @duplicate_complaint = FactoryBot.create(:complaint)
     visit complaint_path(:en, individual_complaint.id)
   end
@@ -187,10 +188,11 @@ feature 'edit complaint', js: true do
     sleep(0.2) # javascript
     expect(page.find('#date_received').value).to eq "#{Date.today.strftime('23/%m/%Y')}"
 
-    expect{ edit_save; wait_for_ajax }.to change{ IndividualComplaint.find(1).lastName }.to("Normal").
-                       and change{ IndividualComplaint.find(1).firstName }.to("Norman").
-                       and change{ IndividualComplaint.find(1).city }.to("Normaltown").
-                       and change{ IndividualComplaint.find(1).home_phone }.to("555-1212").
+    complainant = IndividualComplaint.find(1).complainants[0]
+    expect{ edit_save; wait_for_ajax }.to change{ complainant.reload.lastName }.to("Normal").
+                       and change{ complainant.reload.firstName }.to("Norman").
+                       and change{ complainant.reload.city }.to("Normaltown").
+                       and change{ complainant.reload.home_phone }.to("555-1212").
                        and change{ IndividualComplaint.find(1).assignees.count }.by(1).
                        and change{ IndividualComplaint.find(1).complaint_documents.count }.by(1).
                        and change{ stored_files_count }.by(1).
@@ -201,9 +203,9 @@ feature 'edit complaint', js: true do
     # here we're editing the first complaint
     expect( individual_complaint.reload.duplicates.map(&:case_reference).map(&:to_s)).to include @duplicate_complaint.case_reference.to_s
     expect( individual_complaint.reload.linked_complaints.map(&:case_reference).map(&:to_s)).to include @duplicate_complaint.case_reference.to_s
-    expect( individual_complaint.reload.title ).to eq "kahunga"
+    expect( complainant.reload.title ).to eq "kahunga"
     expect( individual_complaint.reload.complained_to_subject_agency ).to eq false
-    expect( individual_complaint.reload.dob ).to eq "19/08/1950"
+    expect( complainant.reload.dob ).to eq "19/08/1950"
     expect( individual_complaint.reload.details ).to eq "the boy stood on the burning deck"
     expect( individual_complaint.reload.desired_outcome ).to eq "Things are more better"
     expect( individual_complaint.reload.complaint_area.name ).to eq "Special Investigations Unit"
@@ -215,7 +217,7 @@ feature 'edit complaint', js: true do
     expect( individual_complaint.reload.special_investigations_unit_subareas.first.name ).to eq "Not properly investigated"
     expect( individual_complaint.reload.assignees ).to include User.admin.last
     expect( individual_complaint.reload.agencies.map(&:name) ).to include "Emfuleni"
-    expect( individual_complaint.reload.agencies.count ).to eq 1
+    expect( individual_complaint.reload.agencies.count ).to eq 2
     expect( individual_complaint.reload.date_received.to_date).to eq Date.new(Date.today.year, Date.today.month, 23)
 
     expect(page).to have_selector('#complainant_dob', :text => "19/08/1950")
@@ -244,7 +246,7 @@ feature 'edit complaint', js: true do
       end
     end
 
-    expect(find('.agency').text).to eq emfuleni.description
+    expect(all('.agency').map(&:text)).to match_array [ emfuleni.description, doc.description ]
 
     within complaint_documents do
       expect(page.all('#complaint_documents .complaint_document .filename').map(&:text)).to include "first_upload_file.pdf"
@@ -285,6 +287,7 @@ feature 'edit complaint', js: true do
   it "restores previous values when editing is cancelled" do
     new_assignee_id = page.evaluate_script("complaint.get('new_assignee_id')")
     original_complaint = IndividualComplaint.first
+    complainant = original_complaint.complainants[0]
     edit_complaint
     fill_in('dupe_refs', with: "200/20, 20/15")
     fill_in('lastName', :with => "Normal")
@@ -303,23 +306,24 @@ feature 'edit complaint', js: true do
     select_datepicker_date("#date_received",Date.today.year,Date.today.month,9)
     select(User.admin.last.first_last_name, :from => "assignee")
     choose('special_investigations_unit')
-    select_local_municipal_agency(page.all('.agency_select_container')[0],'Emfuleni')
+    select_local_municipal_agency(page.all('.agency_select_container')[1],'Emfuleni')
+    page.all('.agency_select_container')[0].find('#remove_agency .btn').click
     attach_file("complaint_fileinput", upload_document)
     fill_in("attached_document_title", :with => "some text any text")
     edit_cancel
     sleep(0.5) # seems like a huge amount of time to wait for javascript, but this is what it takes for reliable operation in chrome
     edit_complaint
     expect(page.find('#dupe_refs').value).to eq original_complaint.duplicates.first.case_reference.to_s
-    expect(page.find('#lastName').value).to eq original_complaint.lastName
-    expect(page.find('#firstName').value).to eq original_complaint.firstName
-    expect(page.find('#title').value).to eq original_complaint.title
-    expect(page.find('#city').value).to eq original_complaint.city
-    expect(page.find('#home_phone').value).to eq original_complaint.home_phone
+    expect(page.find('#lastName').value).to eq complainant.lastName
+    expect(page.find('#firstName').value).to eq complainant.firstName
+    expect(page.find('#title').value).to eq complainant.title
+    expect(page.find('#city').value).to eq complainant.city
+    expect(page.find('#home_phone').value).to eq complainant.home_phone
     ["Delayed action", "Failure to act", "Contrary to Law", "Oppressive", "Private", "CAT", "ICESCR", "Unreasonable delay", "Not properly investigated"].each do |subarea_name|
       expect(page.find('.subarea', :text => subarea_name).find('input')).to be_checked
     end
-    expect(page.find('#dob').value).to eq original_complaint.dob
-    expect(page.find('#email').value).to eq original_complaint.email.to_s
+    expect(page.find('#dob').value).to eq complainant.dob
+    expect(page.find('#email').value).to eq complainant.email.to_s
     expect(page.find('#m')).not_to be_checked
     expect(page.find('#complaint_details').value).to eq original_complaint.details
     expect(page.find('#desired_outcome').value).to eq original_complaint.desired_outcome.to_s
@@ -332,6 +336,17 @@ feature 'edit complaint', js: true do
     expect(page.find('select#sedibeng option', text:'Lesedi')).to be_selected
     expect(page).not_to have_selector("#attached_document_title")
     expect(page).not_to have_selector(".title .filename")
+  end
+
+  it "restores agencies configuration when editing is cancelled" do
+    edit_complaint
+    expect(page).to have_selector('.agency_select_container .tertiary', count: 2) # both selectors
+    expect(page).to have_selector('.agency_select_container .quarternary') # only the local municipality selector
+    page.all('.agency_select_container .btn')[0].click # remove the "Department of Commumications" agency
+    expect(page).to have_selector('.agency_select_container .quarternary') # the local municipality selector remains
+    expect(page).to have_selector('.agency_select_container', count: 1) # and no other
+    edit_cancel
+    expect(page.all('.agency').map(&:text)).to match_array ["Department of Communications", "Lesedi municipality (in Gauteng province, Sedibeng district)"]
   end
 
   it "resets errors if editing is cancelled" do
@@ -416,7 +431,7 @@ feature 'edit complaint', js: true do
     expect(page).not_to have_selector('#mandate_id_error', :text => 'You must select an area')
     check_subarea(:special_investigations_unit, "Unreasonable delay")
     expect(page).not_to have_selector('#subarea_id_count_error', :text => 'You must select at least one subarea')
-    fill_in('dob', :with => "1950/08/19")
+    fill_in('dob', :with => "19/08/1950")
     expect(page).not_to have_selector('#dob_error', :text => "You must enter the complainant's date of birth with format dd/mm/yyyy")
     fill_in('complaint_details', :with => "bish bash bosh")
     expect(page).not_to have_selector('#details_error', :text => "You must enter the complaint details")

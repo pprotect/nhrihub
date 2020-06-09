@@ -179,6 +179,9 @@ class @InpageEdit
     re = new RegExp(/_error$/)
     error_attrs = _(keys).select (k)-> re.test(k)
     _(error_attrs).each (a)=> @options.object.set(a,false)
+    @options.object.findAllComponents().forEach (component)=>
+      if !_.isUndefined(component.remove_errors)
+        component.remove_errors()
 
   _remove_pending_document_uploads : ->
     pending_uploads = _(@options.object.findAllComponents('attachedDocument')).select (doc)-> !doc.get('persisted')

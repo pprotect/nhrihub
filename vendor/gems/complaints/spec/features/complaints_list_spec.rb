@@ -100,10 +100,10 @@ feature "complaints index defaults to current user, status not closed", :js => t
 
   before do
     populate_database(:individual_complaint)
-    FactoryBot.create(:complaint, :registered, :assigned_to => [@user, @staff_user])
-    FactoryBot.create(:complaint, :closed, :assigned_to => [@user, @staff_user])
-    FactoryBot.create(:complaint, :registered, :assigned_to => [@staff_user, @user])
-    FactoryBot.create(:complaint, :closed, :assigned_to => [@staff_user, @user])
+    FactoryBot.create(:individual_complaint, :registered, :assigned_to => [@user, @staff_user])
+    FactoryBot.create(:individual_complaint, :closed, :assigned_to => [@user, @staff_user])
+    FactoryBot.create(:individual_complaint, :registered, :assigned_to => [@staff_user, @user])
+    FactoryBot.create(:individual_complaint, :closed, :assigned_to => [@staff_user, @user])
     visit complaints_path('en')
   end
 
@@ -126,10 +126,10 @@ feature "complaints list", js: true do
     populate_database(:individual_complaint)
     Complaint.destroy_all
     # all these complaints are are assigned only to the "Unassigned" agency
-    FactoryBot.create(:complaint, :registered, :good_governance, :assigned_to => [@user, @staff_user])
-    FactoryBot.create(:complaint, :assessment, :good_governance, :assigned_to => [@user, @staff_user])
-    FactoryBot.create(:complaint, :registered, :good_governance, :assigned_to => [@user, @staff_user])
-    FactoryBot.create(:complaint, :investigation, :good_governance, :assigned_to => [@user, @staff_user])
+    FactoryBot.create(:individual_complaint, :registered, :good_governance, :assigned_to => [@user, @staff_user])
+    FactoryBot.create(:individual_complaint, :assessment, :good_governance, :assigned_to => [@user, @staff_user])
+    FactoryBot.create(:individual_complaint, :registered, :good_governance, :assigned_to => [@user, @staff_user])
+    FactoryBot.create(:individual_complaint, :investigation, :good_governance, :assigned_to => [@user, @staff_user])
     visit complaints_path('en')
   end
 
@@ -154,6 +154,8 @@ feature "complaints index", :js => true do
   include ActiveStorageHelpers
   include AreaSubareaCommonHelpers
 
+  let(:complaint){ Complaint.first }
+  let(:complainant) { complaint.complainants[0] }
   # most recent first
   let(:assignees) do
     Complaint.first.assigns.sort_by(&:created_at).reverse.
@@ -217,16 +219,16 @@ feature "complaints index", :js => true do
 
   it "shows basic information for each complaint" do
     within first_complaint do
-      expect(find('.current_assignee').text).to eq Complaint.first.assignees.first.first_last_name
-      expect(find('.date_received').text).to eq Complaint.first.date_received.strftime(Complaint::DateFormat)
-      expect(all('#timeline .timeline_event').first.text).to match /#{Complaint.first.status_changes.first.event_description}/
-      expect(all('#timeline .timeline_event .user_name').first.text).to match /#{Complaint.first.status_changes.first.user.first_last_name}/
-      expect(all('#timeline .timeline_event .date').first.text).to match /#{Complaint.first.status_changes.first.change_date.getlocal.to_date.strftime("%b %-e, %Y")}/
-      expect(all('#timeline .timeline_event').last.text).to match /#{Complaint.first.status_changes.last.event_description}/
-      expect(all('#timeline .timeline_event .user_name').last.text).to match /#{Complaint.first.status_changes.last.user.first_last_name}/
-      expect(all('#timeline .timeline_event .date').last.text).to match /#{Complaint.first.status_changes.last.change_date.getlocal.to_date.strftime("%b %-e, %Y")}/
-      expect(find('.lastName').text).to eq Complaint.first.lastName
-      expect(find('.firstName').text).to eq Complaint.first.firstName
+      expect(find('.current_assignee').text).to eq complaint.assignees.first.first_last_name
+      expect(find('.date_received').text).to eq complaint.date_received.strftime(Complaint::DateFormat)
+      expect(all('#timeline .timeline_event').first.text).to match /#{complaint.status_changes.first.event_description}/
+      expect(all('#timeline .timeline_event .user_name').first.text).to match /#{complaint.status_changes.first.user.first_last_name}/
+      expect(all('#timeline .timeline_event .date').first.text).to match /#{complaint.status_changes.first.change_date.getlocal.to_date.strftime("%b %-e, %Y")}/
+      expect(all('#timeline .timeline_event').last.text).to match /#{complaint.status_changes.last.event_description}/
+      expect(all('#timeline .timeline_event .user_name').last.text).to match /#{complaint.status_changes.last.user.first_last_name}/
+      expect(all('#timeline .timeline_event .date').last.text).to match /#{complaint.status_changes.last.change_date.getlocal.to_date.strftime("%b %-e, %Y")}/
+      expect(find('.lastName').text).to eq complainant.lastName
+      expect(find('.firstName').text).to eq complainant.firstName
     end
   end
 
@@ -234,10 +236,10 @@ feature "complaints index", :js => true do
     within first_complaint do
       show_complaint
     end
-    expect(page_heading).to eq "Complaint, case reference: #{Complaint.first.case_reference}"
-    expect(find('#city').text).to eq Complaint.first.city
-    expect(find('#home_phone').text).to eq Complaint.first.home_phone
-    expect(find('#complaint_details').text).to eq Complaint.first.details
+    expect(page_heading).to eq "Complaint, case reference: #{complaint.case_reference}"
+    expect(find('#city').text).to eq complainant.city
+    expect(find('#home_phone').text).to eq complainant.home_phone
+    expect(find('#complaint_details').text).to eq complaint.details
 
 
     expect(page).to have_selector('.timeline_event', :count => 4)
@@ -310,7 +312,7 @@ feature "reloads complaints if a different assignee is selected", js: true do
   before do
     populate_database(:individual_complaint)
     user = FactoryBot.create(:user, firstName: "Norman", lastName: "Normal")
-    @norms_complaint = FactoryBot.create(:complaint, :registered, :with_associations, :investigation, :assigned_to => user)
+    @norms_complaint = FactoryBot.create(:individual_complaint, :registered, :with_associations, :investigation, :assigned_to => user)
     visit complaints_path('en')
   end
 
@@ -359,7 +361,7 @@ feature "shows complaints that are unassigned", js: true do
   include NavigationHelpers
   include ComplaintsSpecHelpers
 
-  let!(:unassigned_complaint){ populate_associations; FactoryBot.create(:complaint, :registered, :with_associations, :assessment) }
+  let!(:unassigned_complaint){ populate_associations; FactoryBot.create(:individual_complaint, :registered, :with_associations, :assessment) }
 
   before do
     visit complaints_path('en')
@@ -434,7 +436,7 @@ feature "selects complaints by partial match of case reference", :js => true do
     create_subareas
     15.times do
       # case_refs are Cyy-1 .. Cyy-15
-      FactoryBot.create(:complaint,
+      FactoryBot.create(:individual_complaint,
                         :with_associations,
                         :registered,
                         :assigned_to => User.first)
@@ -469,12 +471,11 @@ feature "selects complaints by partial match of complainant", :js => true do
     user = User.first
     ["Harry Harker", "Harriet Harker", "Adolph Champlin", "Dawn Mills"].each do |full_name|
       first, last = full_name.split
-      FactoryBot.create(:complaint,
+      FactoryBot.create(:individual_complaint,
                         :with_associations,
                         :registered,
                         assigned_to: user,
-                        firstName: first,
-                        lastName: last)
+                        complainants: [FactoryBot.create(:complainant, firstName: first, lastName: last)])
     end
     visit complaints_path(:en)
   end
@@ -506,21 +507,21 @@ feature "selects complaints by match of date ranges", :js => true do
     create_subareas
     create_agencies
     user = User.first
-    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 1.month.ago)
-    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 1.month.ago.end_of_day)
-    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 1.month.ago.beginning_of_day)
+    FactoryBot.create(:individual_complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 1.month.ago)
+    FactoryBot.create(:individual_complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 1.month.ago.end_of_day)
+    FactoryBot.create(:individual_complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 1.month.ago.beginning_of_day)
 
-    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 2.months.ago)
-    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 2.months.ago.end_of_day)
-    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 2.months.ago.beginning_of_day)
+    FactoryBot.create(:individual_complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 2.months.ago)
+    FactoryBot.create(:individual_complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 2.months.ago.end_of_day)
+    FactoryBot.create(:individual_complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 2.months.ago.beginning_of_day)
 
-    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 3.months.ago)
-    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 3.months.ago.end_of_day)
-    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 3.months.ago.beginning_of_day)
+    FactoryBot.create(:individual_complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 3.months.ago)
+    FactoryBot.create(:individual_complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 3.months.ago.end_of_day)
+    FactoryBot.create(:individual_complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 3.months.ago.beginning_of_day)
 
-    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 4.months.ago)
-    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 4.months.ago.end_of_day)
-    FactoryBot.create(:complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 4.months.ago.beginning_of_day)
+    FactoryBot.create(:individual_complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 4.months.ago)
+    FactoryBot.create(:individual_complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 4.months.ago.end_of_day)
+    FactoryBot.create(:individual_complaint, :with_associations, :assessment, :registered, agencies: [Agency.first], assigned_to: user, date_received: 4.months.ago.beginning_of_day)
     visit complaints_path(:en)
   end
 
@@ -606,7 +607,8 @@ feature "selects complaints by partial match of city", :js => true do
     create_agencies
     user = User.first
     ['Newtown','Someplace','Amityville','Sebastopol'].each do |town|
-      FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, city: town)
+      complaint = FactoryBot.create(:individual_complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user)
+      complaint.complainants = [FactoryBot.create(:complainant, city: town)]
     end
     visit complaints_path(:en)
   end
@@ -634,10 +636,13 @@ feature "selects complaints by partial match of phone", :js => true do
     create_subareas
     create_agencies
     user = User.first
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, home_phone: '1284235660ext99', cell_phone: '', fax: '')
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, home_phone: '312988622x34', cell_phone: '', fax: '')
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, home_phone: 'high3235', cell_phone: '', fax: '')
-    FactoryBot.create(:complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user, home_phone: '432', cell_phone: '', fax: '')
+    [{home_phone: '1284235660ext99', cell_phone: '', fax: ''},
+     {home_phone: '312988622x34', cell_phone: '', fax: ''},
+     {home_phone: 'high3235', cell_phone: '', fax: ''},
+     {home_phone: '432', cell_phone: '', fax: ''}].each do |attrs|
+       complaint = FactoryBot.create(:individual_complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user)
+       complaint.complainants = [FactoryBot.create(:complainant, attrs)]
+     end
     visit complaints_path(:en)
   end
 
@@ -663,10 +668,10 @@ feature "selects complaints by match of area", :js => true do
       create_subareas
       create_agencies
       user = User.first
-      FactoryBot.create(:complaint, :registered, :human_rights, agencies: [Agency.first], assigned_to: user)
-      FactoryBot.create(:complaint, :registered, :good_governance, agencies: [Agency.first], assigned_to: user)
-      FactoryBot.create(:complaint, :registered, :special_investigations_unit, agencies: [Agency.first], assigned_to: user)
-      FactoryBot.create(:complaint, :registered, :corporate_services, agencies: [Agency.first], assigned_to: user)
+      FactoryBot.create(:individual_complaint, :registered, :human_rights, agencies: [Agency.first], assigned_to: user)
+      FactoryBot.create(:individual_complaint, :registered, :good_governance, agencies: [Agency.first], assigned_to: user)
+      FactoryBot.create(:individual_complaint, :registered, :special_investigations_unit, agencies: [Agency.first], assigned_to: user)
+      FactoryBot.create(:individual_complaint, :registered, :corporate_services, agencies: [Agency.first], assigned_to: user)
       visit complaints_path(:en)
     end
 
@@ -693,14 +698,16 @@ feature "selects complaints by match of area", :js => true do
 
   context "when no complaint_areas are populated" do
     before do
-      #create_complaint_areas
       create_subareas
       create_agencies
       user = User.first
-      FactoryBot.create(:complaint, :with_associations, :registered, :human_rights, agencies: [Agency.first], assigned_to: user, home_phone: '1284235660ext99', cell_phone: '', fax: '')
-      FactoryBot.create(:complaint, :with_associations, :registered, :good_governance, agencies: [Agency.first], assigned_to: user, home_phone: '312988622x34', cell_phone: '', fax: '')
-      FactoryBot.create(:complaint, :with_associations, :registered, :special_investigations_unit, agencies: [Agency.first], assigned_to: user, home_phone: 'high3235', cell_phone: '', fax: '')
-      FactoryBot.create(:complaint, :with_associations, :registered, :corporate_services, agencies: [Agency.first], assigned_to: user, home_phone: '432', cell_phone: '', fax: '')
+      [[:human_rights, {home_phone: '1284235660ext99', cell_phone: '', fax: ''}],
+       [:good_governance, {home_phone: '312988622x34', cell_phone: '', fax: ''}],
+       [:special_investigations_unit, {home_phone: 'high3235', cell_phone: '', fax: ''}],
+       [:corporate_services, {home_phone: '432', cell_phone: '', fax: ''}] ].each do |attrs|
+         complaint = FactoryBot.create(:individual_complaint, attrs[0], :with_associations, :registered, agencies: [Agency.first], assigned_to: user)
+         complaint.complainants = [FactoryBot.create(:complainant, attrs[1])]
+       end
       visit complaints_path(:en)
     end
 
@@ -732,9 +739,9 @@ feature "selects complaints matching the selected subarea", :js => true do
       siu_cb = FactoryBot.create(:complaint_subarea, :siu, name: 'foo')
       gg_cb  = FactoryBot.create(:complaint_subarea, :good_governance, name: 'bar')
       hr_cb  = FactoryBot.create(:complaint_subarea, :human_rights, name: 'baz')
-      FactoryBot.create(:complaint, :registered, complaint_subareas: [gg_cb], assigned_to: user, agencies: [Agency.first])
-      FactoryBot.create(:complaint, :registered, complaint_subareas: [siu_cb],  assigned_to: user, agencies: [Agency.first])
-      FactoryBot.create(:complaint, :registered, complaint_subareas: [hr_cb],  assigned_to: user, agencies: [Agency.first])
+      FactoryBot.create(:individual_complaint, :registered, complaint_subareas: [gg_cb], assigned_to: user, agencies: [Agency.first])
+      FactoryBot.create(:individual_complaint, :registered, complaint_subareas: [siu_cb],  assigned_to: user, agencies: [Agency.first])
+      FactoryBot.create(:individual_complaint, :registered, complaint_subareas: [hr_cb],  assigned_to: user, agencies: [Agency.first])
       visit complaints_path(:en)
     end
 
@@ -757,9 +764,12 @@ feature "selects complaints matching the selected subarea", :js => true do
       create_complaint_areas
       create_agencies
       user = User.first
-      FactoryBot.create(:complaint, :registered, assigned_to: user, agencies: [Agency.first], home_phone: '1284235660ext99', cell_phone: '', fax: '')
-      FactoryBot.create(:complaint, :registered, assigned_to: user, agencies: [Agency.first], home_phone: '312588622x34', cell_phone: '', fax: '')
-      FactoryBot.create(:complaint, :registered, assigned_to: user, agencies: [Agency.first], home_phone: 'high3235', cell_phone: '', fax: '')
+      [{home_phone: '1284235660ext99', cell_phone: '', fax: ''},
+       {home_phone: '312588622x34', cell_phone: '', fax: ''},
+       {home_phone: 'high3235', cell_phone: '', fax: ''} ].each do |attrs|
+         complaint = FactoryBot.create(:individual_complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user)
+         complaint.complainants = [FactoryBot.create(:complainant, attrs)]
+       end
       visit complaints_path(:en)
     end
 
@@ -786,11 +796,11 @@ feature "selects complaints matching selected agency(-ies)", :js => true do
       create_agencies
       create_subareas
       user = User.first
-      cc = FactoryBot.create(:complaint, :with_associations, :registered, assigned_to: user)
+      cc = FactoryBot.create(:individual_complaint, :with_associations, :registered, assigned_to: user)
       cc.agencies = [Agency.first]
-      cc = FactoryBot.create(:complaint, :with_associations, :registered, assigned_to: user)
+      cc = FactoryBot.create(:individual_complaint, :with_associations, :registered, assigned_to: user)
       cc.agencies = [Agency.second]
-      cc = FactoryBot.create(:complaint, :with_associations, :registered, assigned_to: user)
+      cc = FactoryBot.create(:individual_complaint, :with_associations, :registered, assigned_to: user)
       cc.agencies = [Agency.third]
       visit complaints_path(:en)
     end
@@ -816,10 +826,14 @@ feature "selects complaints matching selected agency(-ies)", :js => true do
     before do
       create_complaint_areas
       create_subareas
+      create_agencies
       user = User.first
-      FactoryBot.create(:complaint, :with_associations, :registered, assigned_to: user, home_phone: '1284235660ext99', cell_phone: '', fax: '')
-      FactoryBot.create(:complaint, :with_associations, :registered, assigned_to: user, home_phone: '312588622x34', cell_phone: '', fax: '')
-      FactoryBot.create(:complaint, :with_associations, :registered, assigned_to: user, home_phone: 'high3235', cell_phone: '', fax: '')
+      [{home_phone: '1284235660ext99', cell_phone: '', fax: ''},
+       {home_phone: '312588622x34', cell_phone: '', fax: ''},
+       {home_phone: 'high3235', cell_phone: '', fax: ''} ].each do |attrs|
+         complaint = FactoryBot.create(:individual_complaint, :with_associations, :registered, agencies: [Agency.first], assigned_to: user)
+         complaint.complainants = [FactoryBot.create(:complainant, attrs)]
+       end
       visit complaints_path(:en)
     end
 

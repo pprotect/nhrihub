@@ -91,8 +91,9 @@ class ComplaintsController < ApplicationController
 
   def new
     populate_associations
-    @type = params[:type]
-    @complaint = Complaint.new(agencies: [Agency.new])
+    @type = params[:type] #individual, own_motion, organization
+    klass = "#{@type.camelize}Complaint".constantize
+    @complaint = klass.new(agencies: [Agency.new], complainants_attributes: [Complainant.new.attributes])
     @edit = true
     @mode = "register"
     @title = t('.heading', type: params[:type].titlecase)
@@ -161,11 +162,11 @@ class ComplaintsController < ApplicationController
     params.require(:complaint).permit( :firstName, :lastName, :title, :city, :home_phone, :new_assignee_id,
                                        :dob, :email, :complained_to_subject_agency, :desired_outcome, :gender, :details,
                                        :date, :imported, :complaint_area_id, 'new_transferee_id',
-                                       :cell_phone, :fax, :province_id, :postal_code, :id_type, :id_value, :alt_id_type, :alt_id_value,
-                                       :alt_id_other_type, :physical_address, :postal_address, :preferred_means,
+                                       :cell_phone, :fax, :province_id, :postal_code, :id_type, :id_value,
+                                       :physical_address, :postal_address, :preferred_means,
                                        :organization_name, :organization_registration_number, :linked_complaints => [:id, :case_reference, :url], :duplicates =>[:id, :case_reference, :url], :agency_ids => [],
-                                       :legislation_ids => [],
-                                       :complaint_transfers_attributes => [:user_id, :office_id],
+                                       :complainants => [:id, :id_type, :id_value, :alt_id_type, :alt_id_value, :alt_id_other_type, :alt_id_name, :city, :province_id, :postal_code, :physical_address, :postal_address, :home_phone, :cell_phone, :fax, :preferred_means, :dob, :email, :gender, :firstName, :lastName, :title],
+                                       :complaint_transfers_attributes => [:user_id, :office_id], :legislation_ids => [],
                                        :jurisdiction_assignments_attributes => [:user_id, :branch_id],
                                        :assigns_attributes => [:user_id, :assigner_id],
                                        :subarea_ids => [],

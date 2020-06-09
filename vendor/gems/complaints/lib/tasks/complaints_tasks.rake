@@ -1,10 +1,10 @@
-
 namespace :complaints do
   desc "populates all complaint-related tables"
   task :populate => [:populate_complaints]
 
   task :depopulate => :environment do
     Complaint.destroy_all
+    Complainant.destroy_all
   end
 
   desc "populates DemocracySupportingStateInstitution"
@@ -29,7 +29,7 @@ namespace :complaints do
   end
 
   desc "populates complaints"
-  task :populate_complaints => [ :populate_statuses, :populate_areas_subareas, 'populate_legislations', 'projects:populate_mandates', 'projects:populate_agnc', "complaints:depopulate"] do
+  task :populate_complaints => [ :populate_statuses, :populate_areas_subareas, 'populate_legislations', 'projects:populate_mandates', 'projects:populate_agnc', "populate_gov_agencies", "populate_gov_institutions", "populate_democracy_institutions", "complaints:depopulate"] do
     n = 50
     n.times do |i|
       complaint = [:individual_complaint, :own_motion_complaint, :organization_complaint].sample
@@ -91,5 +91,4 @@ namespace :complaints do
       Province.find_or_create_by(:name => province)
     end
   end
-
 end

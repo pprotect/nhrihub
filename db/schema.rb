@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_01_135704) do
+ActiveRecord::Schema.define(version: 2020_06_08_124636) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -248,7 +248,6 @@ ActiveRecord::Schema.define(version: 2020_06_01_135704) do
     t.string "city"
     t.integer "province_id"
     t.string "postal_code"
-    t.string "phone"
     t.string "email"
     t.string "cell_phone"
     t.string "home_phone"
@@ -256,9 +255,16 @@ ActiveRecord::Schema.define(version: 2020_06_01_135704) do
     t.integer "preferred_means", limit: 2
     t.integer "id_type", limit: 2, default: 0
     t.bigint "id_value"
-    t.integer "alt_id_type", limit: 2
+    t.integer "alt_id_type", limit: 2, default: 0
     t.string "alt_id_value"
     t.string "alt_id_other_type"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "complainants_complaints", force: :cascade do |t|
+    t.integer "complaint_id"
+    t.integer "complainant_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -275,13 +281,6 @@ ActiveRecord::Schema.define(version: 2020_06_01_135704) do
     t.string "type"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "complaint_complainants", force: :cascade do |t|
-    t.integer "complaint_id"
-    t.integer "complainant_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "complaint_complaint_subareas", force: :cascade do |t|
@@ -333,7 +332,6 @@ ActiveRecord::Schema.define(version: 2020_06_01_135704) do
   end
 
   create_table "complaints", id: :serial, force: :cascade do |t|
-    t.string "case_reference"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text "desired_outcome"
@@ -349,7 +347,6 @@ ActiveRecord::Schema.define(version: 2020_06_01_135704) do
     t.integer "initiating_office_id"
     t.integer "duplication_group_id"
     t.integer "linked_complaints_group_id"
-    t.index ["case_reference"], name: "index_complaints_on_case_reference", unique: true
   end
 
   create_table "controllers", id: :serial, force: :cascade do |t|

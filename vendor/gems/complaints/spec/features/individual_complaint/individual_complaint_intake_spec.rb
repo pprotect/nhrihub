@@ -40,6 +40,11 @@ feature "individual complaint duplicate check", :js => true do
 
   before do
     populate_database(:individual_complaint)
+
+    Complaint.first.complainants = [FactoryBot.create(:complainant, :city => Faker::Address.city,
+                                                                :home_phone => Faker::PhoneNumber.phone_number,
+                                                                :dob => "19/08/1950",
+                                                                :email => "bish@bash.com")]
     complaint1.update(agency_ids: [agency.id])
     complaint2.update(agency_ids: [agency.id])
     visit complaint_intake_path('en', 'individual')

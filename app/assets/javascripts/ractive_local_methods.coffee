@@ -65,6 +65,7 @@ local_methods =
       prefix = @get('serialization_key')
       name = prefix + "["+ attribute + "]"
       formData.append(name, value) unless _.isNull(value)
+
       return
 
     formData

@@ -26,6 +26,7 @@ import StatusChange from 'status_change.ractive.pug'
 import TransfereeSelector from 'transferee_selector.ractive.pug'
 import Transferees from 'transferees.ractive.pug'
 import JurisdictionBranchSelector from 'jurisdiction_branch_selector.ractive.pug'
+import Complainants from 'complainants.ractive.pug'
 import Lifecycle from 'partials/_lifecycle.pug'
 import Documents from 'partials/_documents.pug'
 import _Agencies from 'partials/_agencies.pug'
@@ -70,9 +71,6 @@ export default Ractive.extend({
         let linked = case_refs.map((cr)=>{return {case_reference: cr}})
         this.set('linked_complaints', linked)
       }
-    },
-    province_name(){
-      return _(this.get('provinces')).findWhere({id: this.get('province_id')}).name
     },
     related_legislation_names(){
       if(!_.isEmpty(this.get('legislation_ids'))){
@@ -188,10 +186,18 @@ export default Ractive.extend({
       }
     },
     duplication_query(){
-      var attrs = this.get('dupe_check_attributes');
-      var that = this;
-      var query = {match: {}};
-      _(attrs).map(function(attr){query.match[attr]=that.get(attr)})
+      let attrs = this.get('dupe_check_attributes');
+      let query = {match: {}};
+      let value
+      attrs.forEach(attr=>{
+        if(/complainant/.test(attr)){
+          let complainant_attr = attr.match(/complainant\[(.*)\]/)[1]
+          value = this.findComponent('complainant').get(complainant_attr)
+        }else{
+          value = this.get(attr)
+        }
+        query.match[attr]=value
+      })
       return query
     }
   },
@@ -204,8 +210,8 @@ export default Ractive.extend({
     complained_to_agency: ComplainedToAgency,
     desired_outcome: DesiredOutcome,
     details: Details,
-    preferred_means: PreferredMeans,
     actions: Actions,
+    preferred_means: PreferredMeans,
     address: Address,
     contact_info: ContactInfo,
     legislations: Legislations,
@@ -234,7 +240,8 @@ export default Ractive.extend({
   data : function(){
     return {
       t : translations.t('complaint'),
-      register_heading : translations.t('complaint.register_heading',{type: type.humanize().titlecase()})
+      register_heading : translations.t('complaint.register_heading',{type: type.humanize().titlecase()}),
+      agency_ids: [],
     }
   },
   components : {
@@ -257,6 +264,7 @@ export default Ractive.extend({
     datepicker: Datepicker,
     duplicate: Duplicate,
     linkedComplaint: LinkedComplaint,
+    complainants: Complainants,
   },
   observe: {
     'dupe_refs link_refs': {
@@ -271,10 +279,17 @@ export default Ractive.extend({
     this.push('agencies',{id: null})
   },
   remove_agency_id(id){
-    this.set('agency_ids', _(this.get('agency_ids')).without(id))
+    let agency_ids = this.get('agency_ids')
+    agency_ids.splice(agency_ids.indexOf(id),1)
+    console.log(`remove ${id}`)
+    this.set({agency_ids: agency_ids})
   },
   add_agency_id(id){
-    this.push('agency_ids',id)
+    //this.push('agency_ids',id) //doesn't work as expected
+    let agency_ids = this.get('agency_ids')
+    agency_ids.unshift(id)
+    this.set({agency_ids: agency_ids})
+    console.log(`add ${id}`)
     this.remove_attribute_error('agency_ids')
   },
   proceed_to_intake(){
@@ -351,12 +366,12 @@ export default Ractive.extend({
   generate_word_doc() {
     return window.location = Routes.complaint_path('en',this.get('id'),{format : 'docx'});
   },
-  validate() {
-    return this.validator.validate();
-  },
-  validate_attribute(attribute){
-    return this.validator.validate_attribute(attribute);
-  },
+  //validate() {
+    //return this.validator.validate();
+  //},
+  //validate_attribute(attribute){
+    //return this.validator.validate_attribute(attribute);
+  //},
   remove_attribute_error(attribute){
     var that = this
     _(arguments).each(function(attribute){

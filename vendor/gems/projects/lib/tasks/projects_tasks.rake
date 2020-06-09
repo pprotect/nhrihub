@@ -37,10 +37,7 @@ namespace :projects do
   desc "populates agencies"
   task :populate_agnc => :environment do
     Agency.destroy_all
-    # AGENCIES defined in lib/constants
-    agencies = AGENCIES.each do |short,full|
-      Agency.create(:name => short, :full_name => full)
-    end
+    Rake::Task["agencies:import"].invoke
   end
 
 end

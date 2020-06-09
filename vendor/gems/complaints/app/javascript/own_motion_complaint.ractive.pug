@@ -24,78 +24,7 @@
 
       | {{>linked_complaints }}
 
-      .row('class-hidden'='new_complaint')
-        .col-md-2
-          label {{ t.current_assignee }}
-        .col-md-10
-          span#current_assignee {{ current_assignee_name }}
-
-      .row('data-toggle'='edit')
-        .col-md-2
-          label {{ t.initiating_branch }}
-        .col-md-10
-          .no_edit.in {{ initiating_branch }}
-          .edit
-            .btn-group.select
-              button.btn.btn-default.dropdown-toggle#initiating_branch_select(type='button', 'data-toggle'='dropdown')
-                span.filter-option.pull-left {{ t.select_initiating_branch }}
-                span.caret
-              ul.dropdown-menu.single_level
-                | {{#branches}}
-                <officeselect initiating_branch_id='{{~/initiating_branch_id}}' name='{{name}}' id='{{id}}' />
-                | {{/branches}}
-
-      .row('data-toggle'='edit')
-        .col-md-2
-          label {{ t.initiating_office }}
-        .col-md-10
-          .no_edit.in {{ initiating_office }}
-          .edit
-            .btn-group.select
-              button.btn.btn-default.dropdown-toggle#initiating_office_select(type='button', 'data-toggle'='dropdown')
-                span.filter-option.pull-left {{ t.select_initiating_office }}
-                span.caret
-              ul.dropdown-menu
-                | {{#office_groups}}
-                li.dropdown-header
-                  | {{ name }}
-                | {{#offices}}
-                <officeselect initiating_branch_id='{{~/initiating_branch_id}}' name='{{name}}' id='{{id}}' />
-                | {{/offices}}
-                | {{/office_groups}}
-
-      .row
-        .col-md-2('data-toggle' = 'edit')
-          label {{ context.complainant }}
-        .col-md-9#complainant('data-toggle'='edit')
-          .no_edit.in
-            span#title {{ title }}
-            span#firstName {{ firstName }}
-            span#lastName {{ lastName }}
-          .edit
-            .row
-              .col-md-4.form-group
-                label(for = 'title')
-                  | {{ t.title }}
-                input.form-control#title(autocomplete='none', value = '{{title}}')
-              .col-md-4.form-group('class-has-error' = 'firstName_error')
-                label.required(for = 'firstName')
-                  | {{ t.first_name }}
-                input.form-control#firstName(autocomplete='none', value = '{{firstName}}', 'on-keydown'="@this.remove_attribute_error('firstName')")
-                span.help-block.error#firstName_error
-                  | {{ t.firstName_error_message }}
-              .col-md-4.form-group('class-has-error' = 'lastName_error')
-                label.required(for = 'lastName')
-                  | {{ t.lastName }}
-                input.form-control#lastName(autocomplete='none', value = '{{lastName}}', 'on-keydown'="@this.remove_attribute_error('lastName')")
-                span.help-block.error#lastName_error
-                  | {{ t.lastName_error_message }}
-
-      | {{>address }}
-
-      | {{>contact_info}}
-
-      | {{>preferred_means }}
+      <complainants type='{{type}}' complainants='{{complainants}}' />
 
       | {{>details }}
 
@@ -124,7 +53,6 @@ script(type='text/javascript').
   window.$ = window.jQuery = $ // it's the only method I could get to work for making $ available globally!
   window._ = _
   import ComplaintBase from 'complaint_base'
-  import OfficeSelect from 'office_select.ractive.pug'
   import translations from 'translations.js'
 
   export default ComplaintBase.extend({
@@ -153,24 +81,23 @@ script(type='text/javascript').
         }else{ throw "office not found"}
       },
       dupe_check_attributes() {
-        return ['type', 'initiating_branch_id', 'initiating_office_id', 'agency_ids'];
+        return ['type', 'complainant[initiating_branch_id]', 'complainant[initiating_office_id]', 'agency_ids'];
       },
       persistent_attributes() {
-        return ['id_type','id_value','alt_id_type','alt_id_value', 'alt_id_other_type',
-          'city','province_id','postal_code','complaint_area_id', 'new_transferee_id',
-          'physical_address', 'postal_address','home_phone','cell_phone','fax','preferred_means',
+        return ['complaint_area_id', 'new_transferee_id',
           'status_changes_attributes', 'new_assignee_id', 'subarea_ids', 'legislation_ids',
           'agency_ids', 'attached_documents_attributes', 'details', 'new_jurisdiction_branch_id',
-          'email', 'complained_to_subject_agency', 'desired_outcome', 'gender', 'date',
-          'firstName', 'lastName', 'title', 'type', 'duplicates', 'linked_complaints'];
+          'complained_to_subject_agency', 'desired_outcome', 'date',
+          'type', 'duplicates', 'linked_complaints', 'complainants_attributes'];
       },
       validation_criteria() {
         return {
-          firstName : ['notBlank'],
-          lastName : ['notBlank'],
-          city : ['notBlank'],
-          postal_code : ['notBlank'],
-          province_id : 'nonZero',
+          fake_attribute: ()=> {
+            // setting the complainants_attributes_error is delegated to the complainants component
+            // here we just trigger the validation to occur. The result is managed by the component.
+            this.findAllComponents('complainant').forEach(complainant=>complainant.validate())
+            return true
+          },
           complaint_area_id : 'numeric',
           subarea_id_count : 'nonZero',
           //new_assignee_id: ['nonZero', {if : () => {return (this.get('new_complaint') && this.get('editing'))}}],
@@ -178,12 +105,6 @@ script(type='text/javascript').
             return this.findAllComponents('datepicker')[0].validate()
           },
           details : ['notBlank'],
-          preferred_means : 'notBlank',
-          postal_address: ['notBlank', {if: ()=>this.get('preferred_means') == 'mail'}],
-          email: ['notBlank', {if: ()=>this.get('preferred_means') == 'email'}],
-          home_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'home_phone'}],
-          cell_phone: ['notBlank', {if: ()=>this.get('preferred_means') == 'cell_phone'}],
-          fax: ['notBlank', {if: ()=>this.get('preferred_means') == 'fax'}],
           status_memo: ()=>{console.log('validate status memo'); return this.findComponent('closedStatusRadio').validate() },
           agency_ids: ()=>{return _.isArray(this.get('agency_ids')) && !_.isEmpty(this.get('agency_ids')) && _(this.get('agency_ids')).every(function(i){return _.isNumber(i)})},
           dupe_refs_format: ()=>{
@@ -217,7 +138,4 @@ script(type='text/javascript').
         };
       }
     },
-    components: {
-      officeselect: OfficeSelect
-    }
   })

@@ -1,0 +1,24 @@
+| {{#complainants}}
+<complainant type='{{type}}' id='{{ id }}' alt_id_name='{{ alt_id_name }}' alt_id_other_type='{{ alt_id_other_type }}' alt_id_type='{{ alt_id_type }}' alt_id_value='{{ alt_id_value }}' dob='{{ dob }}' email='{{ email }}' home_phone='{{ home_phone }}' cell_phone='{{ cell_phone }}' fax='{{ fax }}' firstName='{{ firstName }}' gender='{{ gender }}' id_type='{{ id_type }}' id_value='{{ id_value }}' lastName='{{ lastName }}' title='{{ title }}' physical_address='{{ physical_address }}' postal_address='{{ postal_address }}' city='{{ city }}' province_id='{{ province_id }}' postal_code='{{ postal_code }}' preferred_means='{{ preferred_means }}'  />
+| {{/complainants}}
+
+script.
+  import Complainant from 'complainant.ractive.pug'
+  export default Ractive.extend({
+    template: $TEMPLATE,
+    components: {
+      complainant: Complainant,
+    },
+    computed: {
+      complainants_error(){
+        return this.findAllComponents('complainant').some(complainant=>complainant.get('has_errors'))
+      }
+    },
+    observe: {
+      "complainants_error": {
+        handler(value, old, path, idx){
+          this.parent.set('complainants_error', value)
+        }
+      }
+    }
+  })

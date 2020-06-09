@@ -98,24 +98,25 @@ feature "complaints index", :js => true do
                                 #.and change{ ActionMailer::Base.deliveries.count }.by(1)
     ## on the server
     complaint = Complaint.last
+    complainant = complaint.complainants[0]
     expect(complaint).to be_a(OwnMotionComplaint)
     expect(complaint.case_reference.year).to eq complaint.case_reference.year
     expect(complaint.case_reference.sequence).to eq 3
     expect(complaint.duplicates.map(&:case_reference).map(&:to_s)).to include dupe_complaint_ref
     expect(complaint.linked_complaints.map(&:case_reference).map(&:to_s)).to include dupe_complaint_ref
-    expect(complaint.title).to eq "Ambassador"
-    expect(complaint.lastName).to eq "Normal"
-    expect(complaint.firstName).to eq "Norman"
-    expect(complaint.physical_address).to eq "1311 Santa Rosa Avenue"
-    expect(complaint.postal_address).to eq "8844 Sebastopol Road"
-    expect(complaint.city).to eq "Normaltown"
-    expect(complaint.province.name).to eq "Gauteng"
-    expect(complaint.postal_code).to eq "12345"
-    expect(complaint.email).to eq "norm@acme.co.ws"
-    expect(complaint.home_phone).to eq "555-1212"
-    expect(complaint.cell_phone).to eq "555-1212"
-    expect(complaint.fax).to eq "832-4489"
-    expect(complaint.preferred_means).to eq 'fax'
+    expect(complainant.title).to eq "Ambassador"
+    expect(complainant.lastName).to eq "Normal"
+    expect(complainant.firstName).to eq "Norman"
+    expect(complainant.physical_address).to eq "1311 Santa Rosa Avenue"
+    expect(complainant.postal_address).to eq "8844 Sebastopol Road"
+    expect(complainant.city).to eq "Normaltown"
+    expect(complainant.province.name).to eq "Gauteng"
+    expect(complainant.postal_code).to eq "12345"
+    expect(complainant.email).to eq "norm@acme.co.ws"
+    expect(complainant.home_phone).to eq "555-1212"
+    expect(complainant.cell_phone).to eq "555-1212"
+    expect(complainant.fax).to eq "832-4489"
+    expect(complainant.preferred_means).to eq 'fax'
     expect(complaint.details).to eq "a long story about lots of stuff"
     expect(complaint.desired_outcome).to eq "Life gets better"
     expect(complaint.complaint_area.name).to eq 'Special Investigations Unit'

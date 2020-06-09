@@ -28,13 +28,14 @@ script#file_selector_template(type='text/ractive' src='../../../../../../app/vie
               | {{/timeline_events_recent_first}}
         .row
           .col-md-3
-            label {{ t.complainant }}
-          .col-md-9
-            | {{#title}}
-            span.title {{ title }}
-            | {{/title}}
-            span.firstName {{ firstName }}
-            span.lastName {{ lastName }}
+            label {{ context.complainant }}
+          .col-md-9.comma-list
+            | {{#complainants}}
+            span
+              .partOfName.title {{ title }}
+              .partOfName.firstName {{ firstName }}
+              .partOfName.lastName {{ lastName }}
+            | {{/complainants}}
       .col-md-3.actions
         .row(style = "margin-left:0px;")
           .col-md-1.col-md-offset-2
@@ -52,6 +53,7 @@ script#file_selector_template(type='text/ractive' src='../../../../../../app/vie
 
 style.
   .firstName, .title {margin-right: .25em;}
+  .partOfName { display: inline-block; }
 
 script(type='text/javascript').
   import ComplaintDocuments from './complaint_documents'
@@ -70,6 +72,7 @@ script(type='text/javascript').
     template : $TEMPLATE,
     css: $CSS,
     computed : {
+      context(){ return translations.t(this.get('type')) },
       timeline_events_recent_first(){
         return _(this.get('timeline_events')).sortBy(function(sc){return -$.datepicker.formatDate('@',new Date(sc.change_date)) });
       },
@@ -112,7 +115,7 @@ script(type='text/javascript').
       },
     },
     data : function(){ return {
-      t : translations.t('complaint')
+      t : translations.t('complaint'),
     }},
     components : {
       attachedDocuments : ComplaintDocuments,

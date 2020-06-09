@@ -88,8 +88,6 @@ en:
     add_file: "Add file"
     agency: "Agency(ies)"
     agency_id_error_message: "You must select an agency"
-    alternate_id: "Alternate ID"
-    alternate_id_type: "Alternate ID type"
     area: "Area"
     assessment_memo: 'Information pending'
     assign: 'Assign staff'
@@ -98,14 +96,9 @@ en:
     assignees_history: "History of assignees"
     by: 'by'
     case_reference: "Ref"
-    cell_phone_error_message: "Cell phone designated as preferred communication means. You must enter a cell phone number"
-    cell_phone_pref: "Cell phone"
-    city: 'City'
-    city_error_message: 'You must enter a city'
     closed: "Closed"
     communications : "Communications"
     compact: 'Compact'
-    complainant: 'Complainant'
     complained_to_subject_agency : 'Complained to subject agency?'
     complaint_area_id_error_message: "You must select an area"
     complaint_documents : 'Complaint documents'
@@ -116,7 +109,6 @@ en:
     desired_outcome : 'Desired outcome'
     details : 'Details'
     details_error_message : 'You must enter the complaint details'
-    dob: 'Date of birth'
     documents: "Documents"
     download : "Download"
     duplicates : "Duplicate complaints"
@@ -124,9 +116,38 @@ en:
     refs_format_error_message: "Invalid case reference(s)"
     refs_not_found_error_message: "Case reference not found"
     edit : "Edit"
-    email_pref : "Email"
     evaluation : "Under Evaluation"
     expand: 'Expand'
+    jurisdiction_assignment: "Assign jurisdiction"
+    no : "No"
+    notes : "Notes"
+    open: "Open"
+    register_heading: "%{type} Complaint Intake"
+    related_legislation: "Related legislation(s)"
+    reminders : "Reminders"
+    required : "Required"
+    select_legislation: "Select related legislation..."
+    status: 'Status'
+    status_memo_default_prompt: "Close memo"
+    status_memo_error_message:  "You must supply a reason for closing"
+    subarea_id_count_error_message : "You must select at least one subarea"
+    subareas: "Subarea(s)"
+    suspended : "Suspended"
+    timeline: 'Timeline'
+    transfer: "Transfer"
+    transferee: 'Transferee'
+    village_error_message : "You must enter a village"
+    yes : "Yes"
+
+  complainant:
+    alternate_id: "Alternate ID"
+    alternate_id_type: "Alternate ID type"
+    cell_phone_error_message: "Cell phone designated as preferred communication means. You must enter a cell phone number"
+    cell_phone_pref: "Cell phone"
+    city: 'City'
+    city_error_message: 'You must enter a city'
+    dob: 'Date of birth'
+    email_pref : "Email"
     fax_error_message: "Fax designated as preferred communication means. You must enter a fax number"
     fax_pref: 'Fax'
     female : "Female"
@@ -135,18 +156,10 @@ en:
     gender : 'Gender'
     id: 'SA ID'
     id_value_error_message: "Invalid SA ID"
-    initiating_branch: 'Initiating branch'
-    initiating_office: 'Initiating office'
-    jurisdiction_assignment: "Assign jurisdiction"
     lastName : "Last name(s)"
     lastName_error_message : "You must enter a last name"
     mail_pref: "Mail"
     male : "Male"
-    no : "No"
-    notes : "Notes"
-    open: "Open"
-    organization_name: 'Organization name'
-    organization_registration_number: 'Company/CC/Trust registration number'
     other: 'Other'
     other_type: 'Other type'
     passport: 'Passport'
@@ -166,25 +179,7 @@ en:
     prison: 'Prison ID'
     province: 'Province'
     province_error_message: 'You must select a province'
-    register_heading: "%{type} Complaint Intake"
-    related_legislation: "Related legislation(s)"
-    reminders : "Reminders"
-    required : "Required"
-    select_initiating_branch: "Select initiating branch"
-    select_initiating_office: "Select initiating office"
-    select_legislation: "Select related legislation..."
-    status: 'Status'
-    status_memo_default_prompt: "Close memo"
-    status_memo_error_message:  "You must supply a reason for closing"
-    subarea_id_count_error_message : "You must select at least one subarea"
-    subareas: "Subarea(s)"
-    suspended : "Suspended"
-    timeline: 'Timeline'
     title : "Title"
-    transfer: "Transfer"
-    transferee: 'Transferee'
-    village_error_message : "You must enter a village"
-    yes : "Yes"
 
   own_motion:
     cell_phone: "Cell phone"
@@ -194,22 +189,19 @@ en:
     fax: 'Fax number'
     phone: 'Phone'
     phone_error_message: "Phone designated as preferred communication means. You must enter a phone number"
+    initiating_branch: 'Initiating branch'
+    initiating_office: 'Initiating office'
+    select_initiating_branch: "Select initiating branch"
+    select_initiating_office: "Select initiating office"
 
   individual:
     cell_phone: "Cell phone"
-    complainant: 'Complainant'
+    complainant: 'Complainant(s)'
     email : "Email"
     email_error_message: "email designated as preferred communication means. You must enter an email"
     fax: 'Fax number'
     phone: 'Home phone'
     phone_error_message: "Home phone designated as preferred communication means. You must enter a home phone number"
-
-  datepicker:
-    dob_error_message: "You must enter the complainant's date of birth with format dd/mm/yyyy"
-    date_received_error_message : "You must enter date with format dd/mm/yyyy"
-    from_error_message: "Invalid date, format must be dd/mm/yyyy"
-    to_error_message: "Invalid date, format must be dd/mm/yyyy"
-    new_communication_date_error_message: "Invalid date, format must be dd/mm/yyyy"
 
   organization:
     cell_phone: "Contact cell phone"
@@ -217,8 +209,17 @@ en:
     email : "Contact email"
     email_error_message: "Contact email designated as preferred communication means. You must enter a contact email"
     fax: 'Contact fax'
+    organization_name: 'Organization name'
+    organization_registration_number: 'Company/CC/Trust registration number'
     phone: "Contact phone"
     phone_error_message: "Contact phone designated as preferred communication means. You must enter a contact phone number"
+
+  datepicker:
+    dob_error_message: "You must enter the complainant's date of birth with format dd/mm/yyyy"
+    date_received_error_message : "You must enter date with format dd/mm/yyyy"
+    from_error_message: "Invalid date, format must be dd/mm/yyyy"
+    to_error_message: "Invalid date, format must be dd/mm/yyyy"
+    new_communication_date_error_message: "Invalid date, format must be dd/mm/yyyy"
 
   filter_controls:
     agency: "Agency(ies)"
